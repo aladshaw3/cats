@@ -1,0 +1,7 @@
+[Tests]
+  [./INS_Best_Options]
+    type = 'Exodiff'
+    input = 'obstructed_conduit_ins_best.i'
+    exodiff = 'obstructed_conduit_ins_best_out.e'
+  [../]
+[]

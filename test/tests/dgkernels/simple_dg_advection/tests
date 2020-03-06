@@ -1,0 +1,7 @@
+[Tests]
+  [./mass_advection_test]
+    type = Exodiff
+    input = MassTransport_1D.i
+    exodiff = MassTransport_1D_out.e
+  [../]
+[]

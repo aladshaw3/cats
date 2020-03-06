@@ -1,0 +1,7 @@
+[Tests]
+  [./test_mod_reaction]
+    type = 'Exodiff'
+    input = 'obstruction_reaction_meshmod.i'
+    exodiff = 'obstruction_reaction_meshmod_out.e'
+  [../]
+[]

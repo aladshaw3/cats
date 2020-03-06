@@ -1,0 +1,7 @@
+[Tests]
+  [./coupling_supg_dg_methods]
+    type = Exodiff
+    input = obstructed_mass_momentum_flow.i
+    exodiff = obstructed_mass_momentum_flow_out.e
+  [../]
+[]

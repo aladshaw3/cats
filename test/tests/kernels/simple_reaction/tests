@@ -1,0 +1,7 @@
+[Tests]
+  [./test_reaction]
+    type = 'Exodiff'
+    input = 'obstruction_reaction.i'
+    exodiff = 'obstruction_reaction_out.e'
+  [../]
+[]
