@@ -1,0 +1,7 @@
+[Tests]
+  [./test_multi_unv_domain]
+    type = 'Exodiff'
+    input = '2domain_surf_rxn.i'
+    exodiff = '2domain_surf_rxn_out.e'
+  [../]
+[]

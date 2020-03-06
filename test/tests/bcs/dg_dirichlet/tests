@@ -1,0 +1,7 @@
+[Tests]
+  [./test_dg_dirichlet_emulator]
+    type = 'Exodiff'
+    input = '2domain_surf_rxn_dirichlet.i'
+    exodiff = '2domain_surf_rxn_dirichlet_out.e'
+  [../]
+[]
