@@ -1,16 +1,9 @@
 /*!
- *  \file DGConcentrationFluxLimitedBC.h
- *	\brief Boundary Condition kernel to mimic a Dirichlet BC for DG methods with coupled velocity
- *	\details This file creates a boundary condition kernel to impose a dirichlet-like boundary
- *			condition in DG methods. True DG methods do not have Dirichlet boundary conditions,
- *			so this kernel seeks to impose a constraint on the inlet of a boundary that is met
- *			if the value of a variable at the inlet boundary is equal to the finite element
- *			solution at that boundary. When the condition is not met, the residuals get penalyzed
- *			until the condition is met.
- *
- *      This kernel inherits from DGFluxLimitedBC and uses coupled x, y, and z components
- *      of the coupled velocity to build an edge velocity vector. This also now requires the
- *      addition of OffDiagJacobian elements.
+ *  \file DGVarPoreDiffusion.h
+ *	\brief Discontinous Galerkin kernel for diffusion with variable diffusivity and porosity coefficients
+ *	\details This file creates a discontinous Galerkin kernel for density diffusion in a given domain that
+ *           has variable diffusivity and porosity. The diffusivity is represented by a set of non-linear variables
+ *           in the x, y, and z directions (in the case of anisotropic diffusion).
  *
  *      The DG method for diffusion involves 2 correction parameters:
  *
@@ -33,14 +26,16 @@
  *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic equations:
  *                    Theory and Implementation, SIAM, Houston, TX, 2008.
  *
+ *	\note Any DG kernel under CATS will have a cooresponding G kernel (usually of same name) that must be included
+ *		with the DG kernel in the input file. This is because the DG finite element method breaks into several different
+ *		residual pieces, only a handful of which are handled by the DG kernel system and the other parts must be handled
+ *		by the standard Galerkin system.
+ *
  *  \author Austin Ladshaw
- *	\date 07/12/2018
- *	\copyright This kernel was designed and built at the Georgia Institute
- *             of Technology by Austin Ladshaw for PhD research in the area
- *             of adsorption and surface science and was developed for use
- *			   by Idaho National Laboratory and Oak Ridge National Laboratory
- *			   engineers and scientists. Portions Copyright (c) 2015, all
- *             rights reserved.
+ *	\date 03/09/2020
+ *	\copyright This kernel was designed and built at Oak Ridge National
+ *              Laboratory by Austin Ladshaw for research in catalyst
+ *              performance for new vehicle technologies.
  *
  *			   Austin Ladshaw does not claim any ownership or copyright to the
  *			   MOOSE framework in which these kernels are constructed, only
@@ -64,47 +59,46 @@
 
 #pragma once
 
-#include "DGFluxLimitedBC.h"
+#include "DGVariableDiffusion.h"
 
-/// DGConcentrationFluxLimitedBC class object forward declaration
-class DGConcentrationFluxLimitedBC;
+/// DGVarPoreDiffusion class object forward declarations
+class DGVarPoreDiffusion;
 
 template<>
-InputParameters validParams<DGConcentrationFluxLimitedBC>();
+InputParameters validParams<DGVarPoreDiffusion>();
 
-/// DGConcentrationFluxLimitedBC class object inherits from IntegratedBC object
-/** This class object inherits from the IntegratedBC object.
-	All public and protected members of this class are required function overrides.  */
-class DGConcentrationFluxLimitedBC : public DGFluxLimitedBC
+/// DGVarPoreDiffusion class object inherits from DGKernel object
+/** This class object inherits from the DGKernel object in the MOOSE framework.
+	All public and protected members of this class are required function overrides. The object
+	will provide residuals and Jacobians for the discontinous Galerkin formulation of diffusion
+	physics in the MOOSE framework. This kernel couples with variables for diffusivity in
+  x, y, and z directions.
+
+	\note As a reminder, any DGKernel in MOOSE was be accompanied by the equivalent GKernel in
+	order to provide the full residuals and Jacobians for the system. */
+class DGVarPoreDiffusion : public DGVariableDiffusion
 {
 public:
-	/// Required constructor for BC objects in MOOSE
-	DGConcentrationFluxLimitedBC(const InputParameters & parameters);
+	/// Required constructor for objects in MOOSE
+	DGVarPoreDiffusion(const InputParameters & parameters);
 
 protected:
-	/// Required function override for BC objects in MOOSE
+	/// Required residual function for DG kernels in MOOSE
 	/** This function returns a residual contribution for this object.*/
-	virtual Real computeQpResidual() override;
-
-	/// Required function override for BC objects in MOOSE
+	virtual Real computeQpResidual(Moose::DGResidualType type) override;
+	/// Required Jacobian function for DG kernels in MOOSE
 	/** This function returns a Jacobian contribution for this object. The Jacobian being
 		computed is the associated diagonal element in the overall Jacobian matrix for the
 		system and is used in preconditioning of the linear sub-problem. */
-	virtual Real computeQpJacobian() override;
-
+	virtual Real computeQpJacobian(Moose::DGJacobianType type) override;
   /// Not required, but recomended function for DG kernels in MOOSE
   /** This function returns an off-diagonal jacobian contribution for this object. The jacobian
   being computed will be associated with the variables coupled to this object and not the
   main coupled variable itself. */
-  virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
+  virtual Real computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar) override;
 
-  const VariableValue & _ux;			///< Velocity in the x-direction
-  const VariableValue & _uy;			///< Velocity in the y-direction
-  const VariableValue & _uz;			///< Velocity in the z-direction
-
-  const unsigned int _ux_var;					///< Variable identification for ux
-  const unsigned int _uy_var;					///< Variable identification for uy
-  const unsigned int _uz_var;					///< Variable identification for uz
+  const VariableValue & _porosity;			    ///< Porosity variable
+  const unsigned int _porosity_var;					///< Variable identification for porosity
 
 private:
 

@@ -1,6 +1,6 @@
 /*!
- *  \file DGConcentrationFluxLimitedBC.h
- *	\brief Boundary Condition kernel to mimic a Dirichlet BC for DG methods with coupled velocity
+ *  \file DGPoreDiffFluxLimitedBC.h
+ *	\brief Boundary Condition kernel to mimic a Dirichlet BC for DG methods with coupled velocity, diffusivity, and porosity
  *	\details This file creates a boundary condition kernel to impose a dirichlet-like boundary
  *			condition in DG methods. True DG methods do not have Dirichlet boundary conditions,
  *			so this kernel seeks to impose a constraint on the inlet of a boundary that is met
@@ -10,7 +10,8 @@
  *
  *      This kernel inherits from DGFluxLimitedBC and uses coupled x, y, and z components
  *      of the coupled velocity to build an edge velocity vector. This also now requires the
- *      addition of OffDiagJacobian elements.
+ *      addition of OffDiagJacobian elements. In addition, we now also coupled with a variable
+ *      diffusivity.
  *
  *      The DG method for diffusion involves 2 correction parameters:
  *
@@ -34,7 +35,7 @@
  *                    Theory and Implementation, SIAM, Houston, TX, 2008.
  *
  *  \author Austin Ladshaw
- *	\date 07/12/2018
+ *	\date 03/09/2020
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Austin Ladshaw for PhD research in the area
  *             of adsorption and surface science and was developed for use
@@ -62,110 +63,45 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "DGConcentrationFluxLimitedBC.h"
+#pragma once
 
-/**
- * All MOOSE based object classes you create must be registered using this macro.  The first
- * argument is the name of the App with an "App" suffix (i.e., "fennecApp"). The second
- * argument is the name of the C++ class you created.
- */
-registerMooseObject("catsApp", DGConcentrationFluxLimitedBC);
+#include "DGVarVelDiffFluxLimitedBC.h"
+
+/// DGPoreDiffFluxLimitedBC class object forward declaration
+class DGPoreDiffFluxLimitedBC;
 
 template<>
-InputParameters validParams<DGConcentrationFluxLimitedBC>()
+InputParameters validParams<DGPoreDiffFluxLimitedBC>();
+
+/// DGPoreDiffFluxLimitedBC class object inherits from IntegratedBC object
+/** This class object inherits from the IntegratedBC object.
+	All public and protected members of this class are required function overrides.  */
+class DGPoreDiffFluxLimitedBC : public DGVarVelDiffFluxLimitedBC
 {
-	InputParameters params = validParams<DGFluxLimitedBC>();
-	params.addRequiredCoupledVar("ux","Variable for velocity in x-direction");
-	params.addRequiredCoupledVar("uy","Variable for velocity in y-direction");
-	params.addRequiredCoupledVar("uz","Variable for velocity in z-direction");
-	return params;
-}
+public:
+	/// Required constructor for BC objects in MOOSE
+	DGPoreDiffFluxLimitedBC(const InputParameters & parameters);
 
-DGConcentrationFluxLimitedBC::DGConcentrationFluxLimitedBC(const InputParameters & parameters) :
-DGFluxLimitedBC(parameters),
-_ux(coupledValue("ux")),
-_uy(coupledValue("uy")),
-_uz(coupledValue("uz")),
-_ux_var(coupled("ux")),
-_uy_var(coupled("uy")),
-_uz_var(coupled("uz"))
-{
+protected:
+	/// Required function override for BC objects in MOOSE
+	/** This function returns a residual contribution for this object.*/
+	virtual Real computeQpResidual() override;
 
-}
+	/// Required function override for BC objects in MOOSE
+	/** This function returns a Jacobian contribution for this object. The Jacobian being
+		computed is the associated diagonal element in the overall Jacobian matrix for the
+		system and is used in preconditioning of the linear sub-problem. */
+	virtual Real computeQpJacobian() override;
 
-Real DGConcentrationFluxLimitedBC::computeQpResidual()
-{
-	_velocity(0)=_ux[_qp];
-	_velocity(1)=_uy[_qp];
-	_velocity(2)=_uz[_qp];
+  /// Not required, but recomended function for DG kernels in MOOSE
+  /** This function returns an off-diagonal jacobian contribution for this object. The jacobian
+  being computed will be associated with the variables coupled to this object and not the
+  main coupled variable itself. */
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-	return DGFluxLimitedBC::computeQpResidual();
-}
+  const VariableValue & _porosity;			    ///< Porosity variable
+  const unsigned int _porosity_var;					///< Variable identification for porosity
 
-Real DGConcentrationFluxLimitedBC::computeQpJacobian()
-{
-	_velocity(0)=_ux[_qp];
-	_velocity(1)=_uy[_qp];
-	_velocity(2)=_uz[_qp];
+private:
 
-	return DGFluxLimitedBC::computeQpJacobian();
-}
-
-Real DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(unsigned int jvar)
-{
-	_velocity(0)=_ux[_qp];
-	_velocity(1)=_uy[_qp];
-	_velocity(2)=_uz[_qp];
-
-  Real r = 0;
-
-  if (jvar == _ux_var)
-  {
-    //Output
-    if ((_velocity)*_normals[_qp] > 0.0)
-    {
-      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](0));
-    }
-    //Input
-    else
-    {
-      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](0));
-      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](0));
-    }
-    return r;
-  }
-
-  if (jvar == _uy_var)
-  {
-    //Output
-    if ((_velocity)*_normals[_qp] > 0.0)
-    {
-      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](1));
-    }
-    //Input
-    else
-    {
-      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](1));
-      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](1));
-    }
-    return r;
-  }
-
-  if (jvar == _uz_var)
-  {
-    //Output
-    if ((_velocity)*_normals[_qp] > 0.0)
-    {
-      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](2));
-    }
-    //Input
-    else
-    {
-      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](2));
-      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](2));
-    }
-    return r;
-  }
-
-  return 0.0;
-}
+};

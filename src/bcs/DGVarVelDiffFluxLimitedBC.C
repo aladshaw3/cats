@@ -1,6 +1,6 @@
 /*!
- *  \file DGConcentrationFluxLimitedBC.h
- *	\brief Boundary Condition kernel to mimic a Dirichlet BC for DG methods with coupled velocity
+ *  \file DGVarVelDiffFluxLimitedBC.h
+ *	\brief Boundary Condition kernel to mimic a Dirichlet BC for DG methods with coupled velocity and diffusivity
  *	\details This file creates a boundary condition kernel to impose a dirichlet-like boundary
  *			condition in DG methods. True DG methods do not have Dirichlet boundary conditions,
  *			so this kernel seeks to impose a constraint on the inlet of a boundary that is met
@@ -10,7 +10,8 @@
  *
  *      This kernel inherits from DGFluxLimitedBC and uses coupled x, y, and z components
  *      of the coupled velocity to build an edge velocity vector. This also now requires the
- *      addition of OffDiagJacobian elements.
+ *      addition of OffDiagJacobian elements. In addition, we now also coupled with a variable
+ *      diffusivity.
  *
  *      The DG method for diffusion involves 2 correction parameters:
  *
@@ -34,7 +35,7 @@
  *                    Theory and Implementation, SIAM, Houston, TX, 2008.
  *
  *  \author Austin Ladshaw
- *	\date 07/12/2018
+ *	\date 03/09/2020
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Austin Ladshaw for PhD research in the area
  *             of adsorption and surface science and was developed for use
@@ -62,107 +63,158 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "DGConcentrationFluxLimitedBC.h"
+#include "DGVarVelDiffFluxLimitedBC.h"
 
 /**
  * All MOOSE based object classes you create must be registered using this macro.  The first
  * argument is the name of the App with an "App" suffix (i.e., "fennecApp"). The second
  * argument is the name of the C++ class you created.
  */
-registerMooseObject("catsApp", DGConcentrationFluxLimitedBC);
+registerMooseObject("catsApp", DGVarVelDiffFluxLimitedBC);
 
 template<>
-InputParameters validParams<DGConcentrationFluxLimitedBC>()
+InputParameters validParams<DGVarVelDiffFluxLimitedBC>()
 {
-	InputParameters params = validParams<DGFluxLimitedBC>();
-	params.addRequiredCoupledVar("ux","Variable for velocity in x-direction");
-	params.addRequiredCoupledVar("uy","Variable for velocity in y-direction");
-	params.addRequiredCoupledVar("uz","Variable for velocity in z-direction");
+	InputParameters params = validParams<DGConcentrationFluxLimitedBC>();
+  params.addRequiredCoupledVar("Dx","Variable for diffusion in x-direction");
+	params.addRequiredCoupledVar("Dy","Variable for diffusion in y-direction");
+	params.addRequiredCoupledVar("Dz","Variable for diffusion in z-direction");
 	return params;
 }
 
-DGConcentrationFluxLimitedBC::DGConcentrationFluxLimitedBC(const InputParameters & parameters) :
-DGFluxLimitedBC(parameters),
-_ux(coupledValue("ux")),
-_uy(coupledValue("uy")),
-_uz(coupledValue("uz")),
-_ux_var(coupled("ux")),
-_uy_var(coupled("uy")),
-_uz_var(coupled("uz"))
+DGVarVelDiffFluxLimitedBC::DGVarVelDiffFluxLimitedBC(const InputParameters & parameters) :
+DGConcentrationFluxLimitedBC(parameters),
+_Dx(coupledValue("Dx")),
+_Dy(coupledValue("Dy")),
+_Dz(coupledValue("Dz")),
+_Dx_var(coupled("Dx")),
+_Dy_var(coupled("Dy")),
+_Dz_var(coupled("Dz"))
 {
 
 }
 
-Real DGConcentrationFluxLimitedBC::computeQpResidual()
+Real DGVarVelDiffFluxLimitedBC::computeQpResidual()
 {
 	_velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];
 	_velocity(2)=_uz[_qp];
+
+  _Diffusion(0,0) = _Dx[_qp];
+  _Diffusion(0,1) = 0.0;
+  _Diffusion(0,2) = 0.0;
+
+  _Diffusion(1,0) = 0.0;
+  _Diffusion(1,1) = _Dy[_qp];
+  _Diffusion(1,2) = 0.0;
+
+  _Diffusion(2,0) = 0.0;
+  _Diffusion(2,1) = 0.0;
+  _Diffusion(2,2) = _Dz[_qp];
 
 	return DGFluxLimitedBC::computeQpResidual();
 }
 
-Real DGConcentrationFluxLimitedBC::computeQpJacobian()
+Real DGVarVelDiffFluxLimitedBC::computeQpJacobian()
 {
 	_velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];
 	_velocity(2)=_uz[_qp];
+
+  _Diffusion(0,0) = _Dx[_qp];
+  _Diffusion(0,1) = 0.0;
+  _Diffusion(0,2) = 0.0;
+
+  _Diffusion(1,0) = 0.0;
+  _Diffusion(1,1) = _Dy[_qp];
+  _Diffusion(1,2) = 0.0;
+
+  _Diffusion(2,0) = 0.0;
+  _Diffusion(2,1) = 0.0;
+  _Diffusion(2,2) = _Dz[_qp];
 
 	return DGFluxLimitedBC::computeQpJacobian();
 }
 
-Real DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(unsigned int jvar)
+Real DGVarVelDiffFluxLimitedBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
 	_velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];
 	_velocity(2)=_uz[_qp];
+
+  _Diffusion(0,0) = _Dx[_qp];
+  _Diffusion(0,1) = 0.0;
+  _Diffusion(0,2) = 0.0;
+
+  _Diffusion(1,0) = 0.0;
+  _Diffusion(1,1) = _Dy[_qp];
+  _Diffusion(1,2) = 0.0;
+
+  _Diffusion(2,0) = 0.0;
+  _Diffusion(2,1) = 0.0;
+  _Diffusion(2,2) = _Dz[_qp];
 
   Real r = 0;
 
   if (jvar == _ux_var)
   {
-    //Output
-    if ((_velocity)*_normals[_qp] > 0.0)
-    {
-      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](0));
-    }
-    //Input
-    else
-    {
-      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](0));
-      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](0));
-    }
-    return r;
+    return DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(jvar);
   }
 
   if (jvar == _uy_var)
   {
-    //Output
-    if ((_velocity)*_normals[_qp] > 0.0)
-    {
-      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](1));
-    }
-    //Input
-    else
-    {
-      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](1));
-      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](1));
-    }
-    return r;
+    return DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(jvar);
   }
 
   if (jvar == _uz_var)
   {
+    return DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(jvar);
+  }
+
+  if (jvar == _Dx_var)
+  {
     //Output
     if ((_velocity)*_normals[_qp] > 0.0)
     {
-      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](2));
+      r += 0.0;
     }
     //Input
     else
     {
-      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](2));
-      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](2));
+      r += _epsilon * (_u[_qp] - _u_input) * _phi[_j][_qp] * _grad_test[_i][_qp](0) * _normals[_qp](0);
+      r -= (_phi[_j][_qp] * _grad_u[_qp](0) * _normals[_qp](0) * _test[_i][_qp]);
+    }
+    return r;
+  }
+
+  if (jvar == _Dy_var)
+  {
+    //Output
+    if ((_velocity)*_normals[_qp] > 0.0)
+    {
+      r += 0.0;
+    }
+    //Input
+    else
+    {
+      r += _epsilon * (_u[_qp] - _u_input) * _phi[_j][_qp] * _grad_test[_i][_qp](1) * _normals[_qp](1);
+      r -= (_phi[_j][_qp] * _grad_u[_qp](1) * _normals[_qp](1) * _test[_i][_qp]);
+    }
+    return r;
+  }
+
+  if (jvar == _Dz_var)
+  {
+    //Output
+    if ((_velocity)*_normals[_qp] > 0.0)
+    {
+      r += 0.0;
+    }
+    //Input
+    else
+    {
+      r += _epsilon * (_u[_qp] - _u_input) * _phi[_j][_qp] * _grad_test[_i][_qp](2) * _normals[_qp](2);
+      r -= (_phi[_j][_qp] * _grad_u[_qp](2) * _normals[_qp](2) * _test[_i][_qp]);
     }
     return r;
   }

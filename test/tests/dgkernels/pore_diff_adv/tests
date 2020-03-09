@@ -1,0 +1,7 @@
+[Tests]
+  [./pore_diff_adv_basic_test]
+    type = Exodiff
+    input = var_dg_kernels.i
+    exodiff = var_dg_kernels_out.e
+  [../]
+[]
