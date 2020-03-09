@@ -1,0 +1,7 @@
+[Tests]
+  [./pore_diff_adv_coupled_test]
+    type = Exodiff
+    input = nl_var_dg_kernels.i
+    exodiff = nl_var_dg_kernels_out.e
+  [../]
+[]

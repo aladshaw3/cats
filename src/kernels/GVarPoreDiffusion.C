@@ -107,7 +107,7 @@ Real GVarPoreDiffusion::computeQpOffDiagJacobian(unsigned int jvar)
   _Diffusion(2,0) = 0.0;
   _Diffusion(2,1) = 0.0;
   _Diffusion(2,2) = _Dz[_qp];
-  
+
   if (jvar == _Dx_var)
   {
     return _phi[_j][_qp]*_grad_test[_i][_qp](0)*_grad_u[_qp](0)*_porosity[_qp];
