@@ -1,0 +1,7 @@
+[Tests]
+  [./hetero_langmuir_test]
+    type = 'Exodiff'
+    input = 'lang_sorption.i'
+    exodiff = 'lang_sorption_out.e'
+  [../]
+[]
