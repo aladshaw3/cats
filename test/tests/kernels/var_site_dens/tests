@@ -1,0 +1,7 @@
+[Tests]
+  [./variable_site_dens_langmuir]
+    type = 'Exodiff'
+    input = 'var_site_lang_model.i'
+    exodiff = 'var_site_lang_model_out.e'
+  [../]
+[]
