@@ -1,0 +1,7 @@
+[Tests]
+  [./coupled_langmuir_temp_test]
+    type = 'Exodiff'
+    input = 'coupled_lang_model.i'
+    exodiff = 'coupled_lang_model_out.e'
+  [../]
+[]
