@@ -1,0 +1,7 @@
+[Tests]
+  [./coupled_mass_transfer]
+    type = 'Exodiff'
+    input = 'transfer_nl_var_dg_kernels.i'
+    exodiff = 'transfer_nl_var_dg_kernels_out.e'
+  [../]
+[]
