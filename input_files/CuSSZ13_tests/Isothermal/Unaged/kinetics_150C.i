@@ -1,7 +1,7 @@
 [GlobalParams]
   dg_scheme = nipg
   sigma = 10
-  Coefficient = 1.0
+  Coefficient = 0.5
 [] #END GlobalParams
 
 [Problem]
@@ -28,25 +28,25 @@
 
     [./q1]
         order = FIRST
-        family = LAGRANGE
+        family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./q2]
         order = FIRST
-        family = LAGRANGE
+        family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./q3]
         order = FIRST
-        family = LAGRANGE
+        family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./qT]
         order = FIRST
-        family = LAGRANGE
+        family = MONOMIAL
         initial_condition = 0
     [../]
 
@@ -75,19 +75,19 @@
   [./w1]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0.050158034226165
+      initial_condition = 0.05016
   [../]
 
   [./w2]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0.035551848023962
+      initial_condition = 0.03534
   [../]
 
   [./w3]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0.03941211725362
+      initial_condition = 0.03963
   [../]
 
   [./temp]
@@ -148,8 +148,8 @@
       coupled_site_density = w1
       main_coupled = NH3
       coupled_list = 'NH3 H2O'
-      enthalpies = '-83080.8 -30428.7'
-      entropies = '71.7 157.4'
+      enthalpies = '-60019.6 -25656.6'
+      entropies = '-42.4329 -5.24228'
       coupled_temp = temp
     [../]
 
@@ -167,8 +167,8 @@
       coupled_site_density = w2
       main_coupled = NH3
       coupled_list = 'NH3'
-      enthalpies = '-75602.7'
-      entropies = '-39.4'
+      enthalpies = '-77077.9'
+      entropies = '-41.8576'
       coupled_temp = temp
     [../]
 
@@ -186,8 +186,8 @@
       coupled_site_density = w3
       main_coupled = NH3
       coupled_list = 'NH3'
-      enthalpies = '-84693.9'
-      entropies = '-23.3'
+      enthalpies = '-78147'
+      entropies = '-12.1126'
       coupled_temp = temp
     [../]
 
