@@ -1,7 +1,7 @@
 [GlobalParams]
   dg_scheme = nipg
   sigma = 10
-  Coefficient = 0.0
+  Coefficient = 0.5
 [] #END GlobalParams
 
 [Problem]
@@ -15,8 +15,8 @@
 
     type = GeneratedMesh
     dim = 2
-    nx = 3
-    ny = 40
+    nx = 5
+    ny = 20
     xmin = 0.0
     xmax = 2.0    #2cm radius
     ymin = 0.0
@@ -26,34 +26,34 @@
 
 [Variables]
 
+## ----- NOTE: Cross-Coupled Variables for Mass MUST have same order and family !!! ------- ##
     [./NH3]
-        order = CONSTANT   #Should be changed to FIRST later
-        #order = FIRST
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./q1]
         order = FIRST
-        family = LAGRANGE
+        family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./q2]
         order = FIRST
-        family = LAGRANGE
+        family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./q3]
         order = FIRST
-        family = LAGRANGE
+        family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./qT]
         order = FIRST
-        family = LAGRANGE
+        family = MONOMIAL
         initial_condition = 0
     [../]
 
@@ -101,7 +101,13 @@
   [./Diff]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.1
+    initial_condition = 75.0
+  [../]
+ 
+  [./Dz]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.0
   [../]
 
   [./pore]
@@ -119,7 +125,7 @@
   [./vel_y]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 10000
+      initial_condition = 7555.15
   [../]
 
   [./vel_z]
@@ -155,7 +161,7 @@
         porosity = pore
         Dx = Diff
         Dy = Diff
-        Dz = Diff
+        Dz = Dz
     [../]
     [./transfer_qT]
       type = CoupledPorePhaseTransfer
@@ -172,6 +178,11 @@
       type = Reaction
       variable = q1
     [../]
+#    [./q1_e]
+#        type = BodyForce
+#        variable = q1
+#        value = 0.33
+#    [../]
     [./q1_lang] #site 1
       type = VarSiteDensityExtLangModel
       variable = q1
@@ -191,10 +202,15 @@
       type = Reaction
       variable = q2
     [../]
+#    [./q2_e]
+#        type = BodyForce
+#        variable = q2
+#        value = 0.33
+#    [../]
     [./q2_lang] #site 2
       type = VarSiteDensityExtLangModel
       variable = q2
-      coupled_site_density = w2
+     coupled_site_density = w2
       main_coupled = NH3
       coupled_list = 'NH3'
       enthalpies = '-75602.7'
@@ -210,6 +226,11 @@
       type = Reaction
       variable = q3
     [../]
+#    [./q3_e]
+#        type = BodyForce
+#        variable = q3
+#        value = 0.33
+#    [../]
     [./q3_lang] #site 3
       type = VarSiteDensityExtLangModel
       variable = q3
@@ -250,7 +271,7 @@
     #    porosity = pore
     #    Dx = Diff
     #    Dy = Diff
-    #    Dz = Diff
+    #    Dz = Dz
     #[../]
     # ------------- NOTE: Ignoring H2O mass transfer for this test  --------------
 
@@ -272,7 +293,7 @@
         porosity = pore
         Dx = Diff
         Dy = Diff
-        Dz = Diff
+        Dz = Dz
     [../]
 
     #[./H2O_dgadv]
@@ -289,7 +310,7 @@
     #    porosity = pore
     #    Dx = Diff
     #    Dy = Diff
-    #    Dz = Diff
+    #    Dz = Dz
     #[../]
 
 [] #END DGKernels
@@ -397,7 +418,7 @@
   petsc_options_value = 'gmres asm lu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = none
+  line_search = bt
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-4
   nl_rel_step_tol = 1e-10
@@ -406,14 +427,14 @@
   l_tol = 1e-6
   l_max_its = 300
 
-  start_time = 0.0
-  end_time = 10.0
-  dtmax = 0.05
+  start_time = 2.0
+  end_time = 16.0
+  dtmax = 0.5
 
   [./TimeStepper]
 	   type = SolutionTimeAdaptiveDT
      #type = ConstantDT
-     dt = 0.001
+     dt = 0.01
   [../]
 [] #END Executioner
 

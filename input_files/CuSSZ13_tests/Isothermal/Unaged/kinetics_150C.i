@@ -117,7 +117,7 @@
   [./vel_y]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 10000
+      initial_condition = 7555.15
   [../]
 
   [./vel_z]

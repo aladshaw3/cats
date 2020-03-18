@@ -87,12 +87,15 @@ Real ExtendedLangmuirModel::computeExtLangmuirTempJacobi()
 	double kc_sum = 0.0, kch_sum = 0.0;
 	for (unsigned int j = 0; j<_coupled.size(); ++j)
 	{
-		kc_sum = kc_sum + _langmuir_coef[j] * (*_coupled[j])[_qp];
-		kch_sum = kch_sum + _langmuir_coef[j] * (*_coupled[j])[_qp] * _enthalpies[j];
+        if ((*_coupled[j])[_qp] > 0.0)
+        {
+            kc_sum = kc_sum + _langmuir_coef[j] * (*_coupled[j])[_qp];
+            kch_sum = kch_sum + _langmuir_coef[j] * (*_coupled[j])[_qp] * _enthalpies[j];
+        }
 	}
 	double numerator = _enthalpies[_lang_index] + (_enthalpies[_lang_index]*kc_sum) - kch_sum;
 	double denom = (1.0+kc_sum)*(1.0+kc_sum);
-	return _maxcap*_langmuir_coef[_lang_index]*_coupled_i[_qp]*_phi[_j][_qp]*(1.0/Rstd/_coupled_temp[_qp]/_coupled_temp[_qp])*numerator/denom;
+    return _maxcap*_langmuir_coef[_lang_index]*_coupled_i[_qp]*_phi[_j][_qp]*(1.0/Rstd/_coupled_temp[_qp]/_coupled_temp[_qp])*numerator/denom;
 }
 
 Real ExtendedLangmuirModel::computeQpResidual()

@@ -79,9 +79,10 @@ Real ExtendedLangmuirFunction::computeExtLangmuirEquilibrium()
 	double sum = 0.0;
 	for (unsigned int i = 0; i<_coupled.size(); ++i)
 	{
-		sum = sum + _langmuir_coef[i] * (*_coupled[i])[_qp];
+        if ((*_coupled[i])[_qp] > 0.0)
+            sum = sum + _langmuir_coef[i] * (*_coupled[i])[_qp];
 	}
-	return _maxcap*((_langmuir_coef[_lang_index]*_coupled_i[_qp])/(1.0+sum));
+    return _maxcap*((_langmuir_coef[_lang_index]*_coupled_i[_qp])/(1.0+sum));
 }
 
 Real ExtendedLangmuirFunction::computeExtLangmuirConcJacobi()
@@ -89,9 +90,11 @@ Real ExtendedLangmuirFunction::computeExtLangmuirConcJacobi()
 	double sum = 0.0;
 	for (unsigned int j = 0; j<_coupled.size(); ++j)
 	{
-		sum = sum + _langmuir_coef[j] * (*_coupled[j])[_qp];
+        if ((*_coupled[j])[_qp] > 0.0)
+            sum = sum + _langmuir_coef[j] * (*_coupled[j])[_qp];
 	}
-	double numerator = _langmuir_coef[_lang_index]*_phi[_j][_qp] * (1.0 + sum - _langmuir_coef[_lang_index]*_coupled_i[_qp]);
+    double numerator = 0.0;
+    numerator = _langmuir_coef[_lang_index]*_phi[_j][_qp] * (1.0 + sum - _langmuir_coef[_lang_index]*_coupled_i[_qp]);
 	double denom = (1.0+sum)*(1.0+sum);
 	return _maxcap*numerator/denom;
 }
@@ -101,9 +104,11 @@ Real ExtendedLangmuirFunction::computeExtLangmuirOffJacobi(int i)
 	double sum = 0.0;
 	for (unsigned int j = 0; j<_coupled.size(); ++j)
 	{
-		sum = sum + _langmuir_coef[j] * (*_coupled[j])[_qp];
+        if ((*_coupled[j])[_qp] > 0.0)
+            sum = sum + _langmuir_coef[j] * (*_coupled[j])[_qp];
 	}
-	double numerator = -_langmuir_coef[_lang_index]*_coupled_i[_qp]*_phi[_j][_qp]*_langmuir_coef[i];
+    double numerator = 0.0;
+    numerator = -_langmuir_coef[_lang_index]*_coupled_i[_qp]*_phi[_j][_qp]*_langmuir_coef[i];
 	double denom = (1.0+sum)*(1.0+sum);
 	return _maxcap*numerator/denom;
 
