@@ -1,0 +1,7 @@
+[Tests]
+  [./lin_temp_tpd_coupled]
+    type = 'Exodiff'
+    input = 'TPD_150C.i'
+    exodiff = 'TPD_150C_out.e'
+  [../]
+[]

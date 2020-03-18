@@ -441,13 +441,12 @@
   l_tol = 1e-6
   l_max_its = 300
 
-  start_time = 225.0
-  end_time = 305.0
+  start_time = 250.0
+  end_time = 250.05
   dtmax = 2.0
 
   [./TimeStepper]
-	   type = SolutionTimeAdaptiveDT
-     #type = ConstantDT
+     type = ConstantDT
      dt = 0.01
   [../]
 [] #END Executioner
