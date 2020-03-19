@@ -1,0 +1,7 @@
+[Tests]
+  [./test_basic_step_input]
+    type = 'Exodiff'
+    input = 'const_vel_stepwiseBC.i'
+    exodiff = 'const_vel_stepwiseBC_out.e'
+  [../]
+[]
