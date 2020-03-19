@@ -323,6 +323,7 @@
 
     [./NH3_FluxIn]
       type = DGPoreConcFluxStepwiseBC
+#type = DGPoreDiffFluxLimitedStepwiseBC
       variable = NH3
       boundary = 'bottom'
       u_input = 1E-10
@@ -330,6 +331,9 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
+#Dx = Diff
+#Dy = Diff
+#Dz = Dz
       input_vals = '2.78862977563539E-05 1.40E-05'
       input_times = '2 16'
       time_spans = '0.25 0.25'
