@@ -1,0 +1,7 @@
+[Tests]
+  [./test_var_vel_stepinput_2d]
+    type = 'Exodiff'
+    input = '2d_stepinput_var_vel.i'
+    exodiff = '2d_stepinput_var_vel_out.e'
+  [../]
+[]

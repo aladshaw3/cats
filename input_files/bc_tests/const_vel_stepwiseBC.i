@@ -120,20 +120,26 @@
 [BCs]
 
 	[./u1_Flux]
-        type = DGFluxStepwiseBC
+        type = DGConcFluxStepwiseBC
         variable = u1
         boundary = 'left right'
         u_input = 1.0
+        ux = ux
+        uy = uy
+        uz = uz
         input_vals = '2 0 1 .5'
         input_times = '10 20 30 40'
         time_spans = '1 0 3 0'
     [../]
  
     [./u2_Flux]
-        type = DGFluxLimitedStepwiseBC
+        type = DGConcFluxLimitedStepwiseBC
         variable = u2
         boundary = 'left right'
         u_input = 0.0
+        ux = ux
+        uy = uy
+        uz = uz
         input_vals = '2 0 1 .5'
         input_times = '5 15 25 35'
         time_spans = '2 0 1 3'
