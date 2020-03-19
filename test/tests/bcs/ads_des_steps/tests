@@ -1,0 +1,7 @@
+[Tests]
+  [./real_test_adsorb_desorb_steps]
+    type = 'Exodiff'
+    input = 'breakthrough_150C.i'
+    exodiff = 'breakthrough_150C_out.e'
+  [../]
+[]

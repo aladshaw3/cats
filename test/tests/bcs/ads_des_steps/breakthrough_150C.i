@@ -15,7 +15,7 @@
 
     type = GeneratedMesh
     dim = 2
-    nx = 5
+    nx = 1
     ny = 20
     xmin = 0.0
     xmax = 2.0    #2cm radius
@@ -30,7 +30,7 @@
     [./NH3]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0
+        initial_condition = 1e-10
     [../]
 
     [./q1]
@@ -331,7 +331,7 @@
       uy = vel_y
       uz = vel_z
       input_vals = '2.78862977563539E-05 1.40E-05'
-      input_times = '2 16'
+      input_times = '2 4'
       time_spans = '0.25 0.25'
     [../]
     [./NH3_FluxOut]
@@ -428,7 +428,7 @@
   petsc_options_value = 'gmres asm lu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = bt
+  line_search = bt 
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-4
   nl_rel_step_tol = 1e-10
@@ -437,14 +437,13 @@
   l_tol = 1e-6
   l_max_its = 300
 
-  start_time = 0.0
-  end_time = 32.0
+  start_time = 2.0
+  end_time = 6.0
   dtmax = 0.5
 
   [./TimeStepper]
-	   type = SolutionTimeAdaptiveDT
-     #type = ConstantDT
-     dt = 0.01
+     type = ConstantDT
+     dt = 0.25
   [../]
 [] #END Executioner
 
