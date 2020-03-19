@@ -68,5 +68,6 @@ private:
     Real _end_time;             ///< End time for the linear change
     Real _end_value;            ///< Final value of the auxvariable after linearly changing
     Real _start_value;          ///< Start value of the auxvariable after linearly changing
+    bool _start_set;            ///< Boolean to denote when value starts
     
 };

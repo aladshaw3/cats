@@ -58,17 +58,25 @@ _end_value(getParam<Real>("end_value"))
 {
     if (_end_time <= _start_time)
         _end_time = _start_time*1.01;
+    _start_set = false;
 }
 
 Real LinearChangeInTime::computeValue()
 {
     Real value = _u[_qp];
     Real slope = 0.0;
-    if (_t < _start_time)
+    if (_t <= _start_time && _start_set == false)
+    {
         _start_value = _u[_qp];
+        _start_set = true;
+    }
     if (_t >= _start_time && _t <= _end_time)
+    {
         slope = (_end_value - _start_value)/(_end_time - _start_time);
-    value += slope*_dt;
+        value = _start_value + slope*(_t-_start_time);
+    }
+    if (_t >= _end_time)
+        value = _end_value;
     
     return value;
 }
