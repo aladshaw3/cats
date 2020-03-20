@@ -91,7 +91,7 @@
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 423.15
+      initial_condition = 598.15
   [../]
 
   [./Diff]
@@ -301,9 +301,9 @@
     [./temp_increase]
         type = LinearChangeInTime
         variable = temp
-        start_time = 227.425
-        end_time = 305.3
-        end_value = 809.5651714
+        start_time = 264.258333
+        end_time = 307.1
+        end_value = 810.2635011
         execute_on = 'initial timestep_end'
     [../]
 
@@ -320,8 +320,8 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_vals = '2.88105E-05    2.28698E-05    1.70674E-05    1.13344E-05    5.76691E-06    2.87521E-06    1.43838E-06    7.21421E-07    3.67254E-07    3.81105E-09'
-      input_times = '2.09166667    15.925    24.425    32.7583333    42.425    55.0916667    77.0916667    109.091667    154.925    225.425'
+      input_vals = '1.93266E-05    1.52404E-05    1.12875E-05    7.42333E-06    3.6972E-06    1.83066E-06    8.98961E-07    4.40208E-07    2.1482E-07    1.79148E-09'
+      input_times = '2.09166667    13.5916667    21.2583333    31.425    42.5916667    59.5916667    83.925    119.925    175.758333    262.258333'
       span_times = '0.5    0.5    0.5    0.5    0.5    0.5    0.5    0.5    0.5    0.5'
     [../]
     [./NH3_FluxOut]
@@ -434,7 +434,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 305.0
+  end_time = 308.0
   dtmax = 0.25
 
   [./TimeStepper]
