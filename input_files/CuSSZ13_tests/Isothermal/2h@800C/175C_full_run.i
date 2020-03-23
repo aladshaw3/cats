@@ -322,7 +322,7 @@
       uz = vel_z
       input_vals = '2.72375E-05    2.16644E-05    1.61667E-05    1.0687E-05    5.42158E-06    2.7117E-06    1.35443E-06    6.78873E-07    3.48116E-07    1.22871E-09'
       input_times = '2.09166667    15.425    23.5916667    31.0916667    40.7583333    55.425    74.925    103.591667    152.091667    226.425'
-      span_times = '0.5    0.5    0.5    0.5    0.5    0.5    0.5    0.5    0.5    0.5'
+      time_spans = '0.5    0.5    0.5    0.5    0.5    0.5    0.5    0.5    0.5    0.5'
     [../]
     [./NH3_FluxOut]
       type = DGPoreConcFluxBC
@@ -412,7 +412,7 @@
   [./SMP_PJFNK]
     type = SMP
     full = true
-    solve_type = newton   #default to newton, but use pjfnk if newton too slow
+    solve_type = pjfnk   #default to newton, but use pjfnk if newton too slow
   [../]
 [] #END Preconditioning
 
@@ -421,7 +421,7 @@
   scheme = implicit-euler
   petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres asm lu 100 NONZERO 2 1E-14 1E-12'
+  petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = bt
