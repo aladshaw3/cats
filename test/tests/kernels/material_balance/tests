@@ -1,0 +1,7 @@
+[Tests]
+  [./material_balances_test]
+    type = 'Exodiff'
+    input = 'material_bal_test.i'
+    exodiff = 'material_bal_test_out.e'
+  [../]
+[]
