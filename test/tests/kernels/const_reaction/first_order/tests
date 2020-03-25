@@ -1,0 +1,7 @@
+[Tests]
+  [./first_order_const]
+    type = 'Exodiff'
+    input = 'simple_react_test.i'
+    exodiff = 'simple_react_test_out.e'
+  [../]
+[]
