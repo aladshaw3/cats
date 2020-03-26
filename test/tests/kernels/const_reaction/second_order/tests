@@ -1,0 +1,7 @@
+[Tests]
+  [./second_order_const_coupled]
+    type = 'Exodiff'
+    input = '2ndOrder_react_test.i'
+    exodiff = '2ndOrder_react_test_out.e'
+  [../]
+[]

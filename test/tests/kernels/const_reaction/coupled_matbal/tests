@@ -1,0 +1,7 @@
+[Tests]
+  [./coupled_balance_react]
+    type = 'Exodiff'
+    input = 'coupled_react_matbal_test.i'
+    exodiff = 'coupled_react_matbal_test_out.e'
+  [../]
+[]
