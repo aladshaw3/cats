@@ -1,0 +1,7 @@
+[Tests]
+  [./chem_rxn_rate_breakthrough]
+    type = 'Exodiff'
+    input = 'breakthrough_150C_chem.i'
+    exodiff = 'breakthrough_150C_chem_out.e'
+  [../]
+[]

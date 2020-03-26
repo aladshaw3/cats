@@ -89,7 +89,7 @@ Real MaterialBalance::computeQpResidual()
     Real sum = 0.0;
     for (unsigned int i = 0; i<_coupled.size(); ++i)
     {
-        sum += _weights[i] * (*_coupled[i])[_qp];
+        sum += _weights[i] * ((*_coupled[i])[_qp]);
     }
     return (_coupled_total[_qp] - sum) * _test[_i][_qp];
 }

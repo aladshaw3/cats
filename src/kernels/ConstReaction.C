@@ -119,6 +119,7 @@ _main_var(coupled("this_variable"))
 
 Real ConstReaction::computeQpResidual()
 {
+    Real res = 0.0;
     Real react_prod = 1.0;
     Real prod_prod = 1.0;
     if (_reactants.size() == 0)
@@ -133,7 +134,8 @@ Real ConstReaction::computeQpResidual()
     {
         prod_prod = prod_prod * std::pow( (*_products[i])[_qp], _prod_stoich[i] );
     }
-    return -_scale*_forward_rate*react_prod*_test[_i][_qp] + _scale*_reverse_rate*prod_prod*_test[_i][_qp];
+    res = -_scale*_forward_rate*react_prod*_test[_i][_qp] + _scale*_reverse_rate*prod_prod*_test[_i][_qp];
+    return res;
 }
 
 Real ConstReaction::computeQpJacobian()
@@ -168,7 +170,6 @@ Real ConstReaction::computeQpJacobian()
         }
         jac += prod_prod*_scale*_reverse_rate*_prod_stoich[indexProd] * std::pow( (*_products[indexProd])[_qp], _prod_stoich[indexProd]-1.0 ) * _test[_i][_qp] * _phi[_j][_qp];
     }
-    
     return jac;
 }
 
@@ -191,11 +192,12 @@ Real ConstReaction::computeQpOffDiagJacobian(unsigned int jvar)
             break;
         }
     }
-    if (exists = false)
+    if (exists == false)
     {
         return 0.0;
     }
     
+    Real offjac = 0.0;
     Real react_prod = 1.0;
     Real prod_prod = 1.0;
     if (_reactants.size() == 0)
@@ -235,5 +237,7 @@ Real ConstReaction::computeQpOffDiagJacobian(unsigned int jvar)
     else
         prod_prod = prod_prod*_prod_stoich[pi] * std::pow( (*_products[pi])[_qp], _prod_stoich[pi]-1.0 ) * _test[_i][_qp] * _phi[_j][_qp];
     
-    return -_scale*_forward_rate*react_prod + _scale*_reverse_rate*prod_prod;
+    offjac = -_scale*_forward_rate*react_prod + _scale*_reverse_rate*prod_prod;
+    
+    return offjac;
 }
