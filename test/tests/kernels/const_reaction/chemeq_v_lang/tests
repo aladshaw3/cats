@@ -1,0 +1,7 @@
+[Tests]
+  [./chemical_equilibrium_test]
+    type = 'Exodiff'
+    input = 'chemeq_v_langmuir_test.i'
+    exodiff = 'chemeq_v_langmuir_test_out.e'
+  [../]
+[]
