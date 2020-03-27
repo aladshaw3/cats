@@ -72,7 +72,7 @@ Real CoupledSumFunction::computeQpResidual()
   Real sum = 0.0;
   for (unsigned int i = 0; i<_coupled.size(); ++i)
     sum += (*_coupled[i])[_qp];
-	return -_test[_i][_qp]*sum;
+  return -_test[_i][_qp]*sum;
 }
 
 Real CoupledSumFunction::computeQpJacobian()

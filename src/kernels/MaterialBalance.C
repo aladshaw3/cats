@@ -108,7 +108,7 @@ Real MaterialBalance::computeQpJacobian()
 
 Real MaterialBalance::computeQpOffDiagJacobian(unsigned int jvar)
 {
-    if (jvar == _coupled_var_total)
+    if (jvar == _coupled_var_total && jvar != _main_var)
     {
         return _phi[_j][_qp] * _test[_i][_qp];
     }

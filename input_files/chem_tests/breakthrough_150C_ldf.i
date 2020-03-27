@@ -1,11 +1,13 @@
 [GlobalParams]
   dg_scheme = nipg
   sigma = 10
+  Coefficient = 0.5
 [] #END GlobalParams
 
 [Problem]
 
     coord_type = RZ
+    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
 
 [] #END Problem
 
@@ -47,30 +49,6 @@
         order = FIRST
         family = MONOMIAL
         initial_condition = 0
-    [../]
- 
-    [./qH2O]
-        order = FIRST
-        family = MONOMIAL
-#initial_condition = 2.578975e-02
-    [../]
- 
-    [./S1]
-        order = FIRST
-        family = MONOMIAL
-#initial_condition = 2.578975e-02
-    [../]
-
-    [./S2]
-        order = FIRST
-        family = MONOMIAL
-#initial_condition = 0.03534
-    [../]
-
-    [./S3]
-        order = FIRST
-        family = MONOMIAL
-#initial_condition = 0.03963
     [../]
 
     [./qT]
@@ -185,71 +163,105 @@
         Dy = Diff
         Dz = Dz
     [../]
-## ------- NOTE: It is more computationally efficient to couple phase transfer 1-by-1 --------- ##
-#           The mass transfer kernels must be implemented carefully. Instantaneous equilibrium
-#           works fine, but does not institute mass transfer. So, site balances, material balances,
-#           and chemical reactions can be implemented without rate functions, so long as they do
-#           not need to couple with other species and force a form of mass transfer. When mass
-#           transfer occurs, each chemcial reaction must have a rate function AND each individual
-#           component that transfers the mass must have its own CoupledTimeDerivative for the
-#           variable that is transferring the mass. This is because of how MOOSE handles the
-#           coupling of time derivatives (i.e., mass transfer mechanisms), which relies on calling
-#           existing time derivative kernels for the species being coupled. 
+ 
     [./transfer_q1]
         type = CoupledPorePhaseTransfer
         variable = NH3
         coupled = q1
         porosity = pore
     [../]
-#    [./q1_rx_sink]  #   NH3 + S1 <-- --> q1
-#      type = ConstReaction
-#      variable = NH3
-#      this_variable = NH3
-#      forward_rate = 157554.199
-#      reverse_rate = 1.0
-#      scale = -1
-#      reactants = 'NH3 S1'
-#      reactant_stoich = '1 1'
-#      products = 'q1'
-#      product_stoich = '1'
-#    [../]
     [./transfer_q2]
         type = CoupledPorePhaseTransfer
         variable = NH3
         coupled = q2
         porosity = pore
     [../]
-#    [./q2_rx_sink]  #   NH3 + S2 <-- --> q2
-#      type = ConstReaction
-#      variable = NH3
-#      this_variable = NH3
-#      forward_rate = 215414.444
-#      reverse_rate = 0.010
-#      scale = -1
-#      reactants = 'NH3 S2'
-#      reactant_stoich = '1 1'
-#      products = 'q2'
-#      product_stoich = '1'
-#    [../]
     [./transfer_q3]
         type = CoupledPorePhaseTransfer
         variable = NH3
         coupled = q3
         porosity = pore
     [../]
-#    [./q3_rx_sink]  #   NH3 + S3 <-- --> q3
-#      type = ConstReaction
+#    [./transfer_qT]
+#      type = CoupledPorePhaseTransfer
 #      variable = NH3
-#      this_variable = NH3
-#      forward_rate = 1044803.1090
-#      reverse_rate = 0.0010
-#      scale = -1
-#      reactants = 'NH3 S3'
-#      reactant_stoich = '1 1'
-#      products = 'q3'
-#      product_stoich = '1'
+#      coupled = qT
+#      porosity = pore
 #    [../]
 
+    [./q1_dot]
+        type = CoefTimeDerivative
+        variable = q1
+    [../]
+    [./q1_rxn]
+      type = Reaction
+      variable = q1
+    [../]
+    [./q1_lang] #site 1
+      type = VarSiteDensityExtLangModel
+      variable = q1
+      coupled_site_density = w1
+      main_coupled = NH3
+      coupled_list = 'NH3 H2O'
+      enthalpies = '-60019.6 -25656.6'
+      entropies = '-42.4329 -5.24228'
+      coupled_temp = temp
+    [../]
+
+    [./q2_dot]
+        type = CoefTimeDerivative
+        variable = q2
+    [../]
+    [./q2_rxn]
+      type = Reaction
+      variable = q2
+    [../]
+    [./q2_lang] #site 2
+      type = VarSiteDensityExtLangModel
+      variable = q2
+     coupled_site_density = w2
+      main_coupled = NH3
+      coupled_list = 'NH3'
+      enthalpies = '-77077.9'
+      entropies = '-41.8576'
+      coupled_temp = temp
+    [../]
+
+    [./q3_dot]
+        type = CoefTimeDerivative
+        variable = q3
+    [../]
+    [./q3_rxn]
+      type = Reaction
+      variable = q3
+    [../]
+    [./q3_lang] #site 3
+      type = VarSiteDensityExtLangModel
+      variable = q3
+      coupled_site_density = w3
+      main_coupled = NH3
+      coupled_list = 'NH3'
+      enthalpies = '-78147'
+      entropies = '-12.1126'
+      coupled_temp = temp
+    [../]
+
+#    [./qT_res]
+#      type = Reaction
+#      variable = qT
+#    [../]
+#    [./qT_sum]
+#      type = CoupledSumFunction
+#      variable = qT
+#      coupled_list = 'q1 q2 q3'
+#    [../]
+ 
+## ------- NOTE: For some reason, this kernel is less efficient than the above 2-kernels -------- ##
+#               HOWEVER, it is only less efficient if coupling NH3 with the time derivative
+#               of qT. If instead, NH3 is coupled with each individual time derivative of q1, q2,
+#               and q3, then it has the same efficiency. There must be something in the way or
+#               order in which MOOSE does the coupling or constructs the preconditioner that
+#               causes this strange behavior...
     [./qT_calc]
       type = MaterialBalance
       variable = qT
@@ -258,100 +270,6 @@
       weights = '1 1 1'
       total_material = qT
     [../]
- 
-    [./S1_bal]
-      type = MaterialBalance
-      variable = S1
-      this_variable = S1
-      coupled_list = 'q1 S1 qH2O'
-      weights = '1 1 1'
-      total_material = w1
-    [../]
- 
-    [./S2_bal]
-      type = MaterialBalance
-      variable = S2
-      this_variable = S2
-      coupled_list = 'q2 S2'
-      weights = '1 1'
-      total_material = w2
-    [../]
- 
-    [./S3_bal]
-      type = MaterialBalance
-      variable = S3
-      this_variable = S3
-      coupled_list = 'q3 S3'
-      weights = '1 1'
-      total_material = w3
-    [../]
- 
-## ------- NOTE: If kinetic rates are appropriate, then converges very well (too fast = problems) --------- ##
-    [./q1_dot]
-       type = TimeDerivative
-       variable = q1
-    [../]
-    [./q1_rx]  #   NH3 + S1 <-- --> q1
-      type = ConstReaction
-      variable = q1
-      this_variable = q1
-      forward_rate = 157554.199
-      reverse_rate = 1.0
-      scale = 1.0
-      reactants = 'NH3 S1'
-      reactant_stoich = '1 1'
-      products = 'q1'
-      product_stoich = '1'
-    [../]
- 
-    [./q2_dot]
-       type = TimeDerivative
-       variable = q2
-    [../]
-    [./q2_rx]  #   NH3 + S2 <-- --> q2
-      type = ConstReaction
-      variable = q2
-      this_variable = q2
-      forward_rate = 107707.2
-      reverse_rate = 0.0050
-      scale = 1.0
-      reactants = 'NH3 S2'
-      reactant_stoich = '1 1'
-      products = 'q2'
-      product_stoich = '1'
-    [../]
- 
-    [./q3_dot]
-       type = TimeDerivative
-       variable = q3
-    [../]
-    [./q3_rx]  #   NH3 + S3 <-- --> q3
-      type = ConstReaction
-      variable = q3
-      this_variable = q3
-      forward_rate = 52240.1554
-      reverse_rate = 0.000050
-      scale = 1.0
-      reactants = 'NH3 S3'
-      reactant_stoich = '1 1'
-      products = 'q3'
-      product_stoich = '1'
-    [../]
- 
-## NOTE: If we do not have kernels for H2O mass transfer, then we do not need a time derivative here ------- ##
-    [./qH2O_rx]  #   H2O + S1 <-- --> qH2O
-      type = ConstReaction
-      variable = qH2O
-      this_variable = qH2O
-      forward_rate = 790.93684
-      reverse_rate = 1.0
-      scale = 1.0
-      reactants = 'H2O S1'
-      reactant_stoich = '1 1'
-      products = 'qH2O'
-      product_stoich = '1'
-    [../]
- 
 
 [] #END Kernels
 
@@ -426,24 +344,6 @@
         variable = NH3
         execute_on = 'initial timestep_end'
     [../]
- 
-    [./S1_avg]
-        type = ElementAverageValue
-        variable = S1
-        execute_on = 'initial timestep_end'
-    [../]
-
-    [./S2_avg]
-        type = ElementAverageValue
-        variable = S2
-        execute_on = 'initial timestep_end'
-    [../]
-
-    [./S3_avg]
-        type = ElementAverageValue
-        variable = S3
-        execute_on = 'initial timestep_end'
-    [../]
 
     [./q1_avg]
         type = ElementAverageValue
@@ -466,12 +366,6 @@
     [./qT_avg]
         type = ElementAverageValue
         variable = qT
-        execute_on = 'initial timestep_end'
-    [../]
-    
-    [./qWater]
-        type = ElementAverageValue
-        variable = qH2O
         execute_on = 'initial timestep_end'
     [../]
 
@@ -513,7 +407,7 @@
 [] #END Executioner
 
 [Outputs]
-  print_linear_residuals = false
+  print_linear_residuals = true
   exodus = true
   csv = true
 [] #END Outputs
