@@ -1,0 +1,7 @@
+[Tests]
+  [./coupled_equilibrium_rxn]
+    type = 'Exodiff'
+    input = '150C_breakthrough.i'
+    exodiff = '150C_breakthrough_out.e'
+  [../]
+[]
