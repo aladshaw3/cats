@@ -46,25 +46,25 @@
         initial_condition = 0
     [../]
  
-    [./qH2O]
-        order = FIRST
-        family = MONOMIAL
-    [../]
- 
-    [./S1]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./qH2O]
+         order = FIRST
+         family = MONOMIAL
+     [../]
+  
+     [./S1]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
-    [./S2]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./S2]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
-    [./S3]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./S3]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
     [./qT]
         order = FIRST
@@ -109,7 +109,7 @@
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 448.15
+      initial_condition = 423.15
   [../]
 
   [./Diff]
@@ -195,7 +195,7 @@
         coupled = q3
         porosity = pore
     [../]
- 
+
     [./q1_dot]
         type = TimeDerivative
         variable = q1
@@ -255,7 +255,7 @@
       products = 'q3'
       product_stoich = '1'
     [../]
-
+ 
     [./qH2O_rx]  #   H2O + S1 <-- --> qH2O
       type = EquilibriumReaction
       variable = qH2O
@@ -304,8 +304,6 @@
         weights = '1 1'
         total_material = w3
     [../]
-  
-    
 
 [] #END Kernels
 
@@ -335,8 +333,8 @@
     [./temp_increase]
         type = LinearChangeInTime
         variable = temp
-        start_time = 209.925
-        end_time = 282.75
+        start_time = 227.425
+        end_time = 305.3
         end_value = 809.5651714
         execute_on = 'initial timestep_end'
     [../]
@@ -354,8 +352,8 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_vals = '2.71851E-05    2.15632E-05    1.60997E-05    1.06384E-05    5.43622E-06    2.71679E-06    1.35751E-06    6.78678E-07    3.52792E-07    2.60859E-09'
-      input_times = '2.09166667    14.925    22.7583333    30.7583333    42.5916667    54.7583333    72.7583333    102.258333    142.591667    207.925'
+      input_vals = '2.88105E-05    2.28698E-05    1.70674E-05    1.13344E-05    5.76691E-06    2.87521E-06    1.43838E-06    7.21421E-07    3.67254E-07    3.81105E-09'
+      input_times = '2.09166667    15.925    24.425    32.7583333    42.425    55.0916667    77.0916667    109.091667    154.925    225.425'
       time_spans = '0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25'
     [../]
     [./NH3_FluxOut]
@@ -375,6 +373,12 @@
 [] #END Materials
 
 [Postprocessors]
+ 
+ [./qH2O]
+     type = ElementAverageValue
+     variable = qH2O
+     execute_on = 'initial timestep_end'
+ [../]
 
     [./NH3_out]
         type = SideAverageValue
@@ -448,7 +452,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 283.0
+ end_time = 1.0
   dtmax = 0.25
 
   [./TimeStepper]

@@ -201,11 +201,14 @@
         variable = q1
     [../]
     [./q1_rx]  #   NH3 + S1 <-- --> q1
-      type = ConstReaction
+      type = ArrheniusReaction
       variable = q1
       this_variable = q1
- forward_rate = 556500.8
- reverse_rate = 310.8
+      forward_activation_energy = 10504.91
+      forward_pre_exponential = 5001776.3
+      reverse_activation_energy = 70524.48
+      reverse_pre_exponential = 823311826.6
+      temperature = temp
       scale = 1.0
       reactants = 'NH3 S1'
       reactant_stoich = '1 1'
@@ -218,11 +221,14 @@
         variable = q2
     [../]
     [./q2_rx]  #   NH3 + S2 <-- --> q2
-      type = ConstReaction
+      type = ArrheniusReaction
       variable = q2
       this_variable = q2
- forward_rate = 275282.4048
- reverse_rate = 4.0
+      forward_activation_energy = 12564.39
+      forward_pre_exponential = 3929210.1
+      reverse_activation_energy = 89642.28
+      reverse_pre_exponential = 603528299.8
+      temperature = temp
       scale = 1.0
       reactants = 'NH3 S2'
       reactant_stoich = '1 1'
@@ -235,18 +241,21 @@
         variable = q3
     [../]
     [./q3_rx]  #   NH3 + S3 <-- --> q3
-      type = ConstReaction
+      type = ArrheniusReaction
       variable = q3
       this_variable = q3
- forward_rate = 123309.668
- reverse_rate = 0.04
+      forward_activation_energy = 11495.202
+      forward_pre_exponential = 1406318.7
+      reverse_activation_energy = 89642.22
+      reverse_pre_exponential = 6036320.22
+      temperature = temp
       scale = 1.0
       reactants = 'NH3 S3'
       reactant_stoich = '1 1'
       products = 'q3'
       product_stoich = '1'
     [../]
-
+ 
     [./qH2O_rx]  #   H2O + S1 <-- --> qH2O
       type = EquilibriumReaction
       variable = qH2O
@@ -438,7 +447,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 25.0
+  end_time = 317.0
   dtmax = 0.25
 
   [./TimeStepper]

@@ -1,0 +1,7 @@
+[Tests]
+  [./coupled_arrhenius_rxn]
+    type = 'Exodiff'
+    input = '150C_full.i'
+    exodiff = '150C_full_out.e'
+  [../]
+[]
