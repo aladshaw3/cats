@@ -373,12 +373,6 @@
 [] #END Materials
 
 [Postprocessors]
- 
- [./qH2O]
-     type = ElementAverageValue
-     variable = qH2O
-     execute_on = 'initial timestep_end'
- [../]
 
     [./NH3_out]
         type = SideAverageValue
