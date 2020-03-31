@@ -46,25 +46,25 @@
         initial_condition = 0
     [../]
  
-    [./qH2O]
-        order = FIRST
-        family = MONOMIAL
-    [../]
- 
-    [./S1]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./qH2O]
+         order = FIRST
+         family = MONOMIAL
+     [../]
+  
+     [./S1]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
-    [./S2]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./S2]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
-    [./S3]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./S3]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
     [./qT]
         order = FIRST
@@ -109,7 +109,7 @@
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 473.15
+      initial_condition = 423.15
   [../]
 
   [./Diff]
@@ -204,8 +204,8 @@
       type = ConstReaction
       variable = q1
       this_variable = q1
- forward_rate = 306742.1
-      reverse_rate = 12.0
+      forward_rate = 315108.4
+      reverse_rate = 2.0
       scale = 1.0
       reactants = 'NH3 S1'
       reactant_stoich = '1 1'
@@ -221,8 +221,8 @@
       type = ConstReaction
       variable = q2
       this_variable = q2
- forward_rate = 174472.25
-      reverse_rate = 0.0833333
+      forward_rate = 107707.2
+      reverse_rate = 0.0050
       scale = 1.0
       reactants = 'NH3 S2'
       reactant_stoich = '1 1'
@@ -238,15 +238,15 @@
       type = ConstReaction
       variable = q3
       this_variable = q3
- forward_rate = 81948.107
-      reverse_rate = 0.00083333
+      forward_rate = 52240.1554
+      reverse_rate = 0.000050
       scale = 1.0
       reactants = 'NH3 S3'
       reactant_stoich = '1 1'
       products = 'q3'
       product_stoich = '1'
     [../]
-
+ 
     [./qH2O_rx]  #   H2O + S1 <-- --> qH2O
       type = EquilibriumReaction
       variable = qH2O
@@ -296,7 +296,6 @@
         total_material = w3
     [../]
 
-
 [] #END Kernels
 
 [DGKernels]
@@ -325,9 +324,9 @@
     [./temp_increase]
         type = LinearChangeInTime
         variable = temp
-        start_time = 223.091667
-        end_time = 290.925
-        end_value = 809.1221135
+        start_time = 227.425
+        end_time = 305.3
+        end_value = 809.5651714
         execute_on = 'initial timestep_end'
     [../]
 
@@ -344,8 +343,8 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_vals = '2.56729E-05    2.03313E-05    1.5198E-05    1.00449E-05    5.12336E-06    2.56986E-06    1.28973E-06    6.56024E-07    3.34278E-07    3.00098E-09'
-      input_times = '2.09166667    16.925    25.2583333    31.925    40.0916667    53.2583333    71.2583333    102.425    148.258333    221.091667'
+      input_vals = '2.88105E-05    2.28698E-05    1.70674E-05    1.13344E-05    5.76691E-06    2.87521E-06    1.43838E-06    7.21421E-07    3.67254E-07    3.81105E-09'
+      input_times = '2.09166667    15.925    24.425    32.7583333    42.425    55.0916667    77.0916667    109.091667    154.925    225.425'
       time_spans = '0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25'
     [../]
     [./NH3_FluxOut]
@@ -365,6 +364,12 @@
 [] #END Materials
 
 [Postprocessors]
+ 
+ [./qH2O]
+     type = ElementAverageValue
+     variable = qH2O
+     execute_on = 'initial timestep_end'
+ [../]
 
     [./NH3_out]
         type = SideAverageValue
