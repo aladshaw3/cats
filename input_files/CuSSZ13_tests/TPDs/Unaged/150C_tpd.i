@@ -25,46 +25,46 @@
     [./NH3]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 1e-9
+        initial_condition = 3.67254E-07
     [../]
 
     [./q1]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0
+        initial_condition = 0.001349693
     [../]
 
     [./q2]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0
+        initial_condition = 0.031316359
     [../]
 
     [./q3]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0
-    [../]
-
-    [./qH2O]
-        order = FIRST
-        family = MONOMIAL
+        initial_condition = 0.039526
     [../]
  
-    [./S1]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./qH2O]
+         order = FIRST
+         family = MONOMIAL
+     [../]
+  
+     [./S1]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
-    [./S2]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./S2]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
-    [./S3]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./S3]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
     [./qT]
         order = FIRST
@@ -109,7 +109,7 @@
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 573.15
+      initial_condition = 423.15
   [../]
 
   [./Diff]
@@ -195,7 +195,7 @@
         coupled = q3
         porosity = pore
     [../]
- 
+
     [./q1_dot]
         type = TimeDerivative
         variable = q1
@@ -224,8 +224,8 @@
       type = ArrheniusEquilibriumReaction
       variable = q2
       this_variable = q2
-      forward_activation_energy = 12564.39
-      forward_pre_exponential = 3929210.1
+ forward_activation_energy = 125644.0
+ forward_pre_exponential = 3.578E20
       enthalpy = -77077.889
       entropy = -41.858
       temperature = temp
@@ -244,8 +244,8 @@
       type = ArrheniusEquilibriumReaction
       variable = q3
       this_variable = q3
-      forward_activation_energy = 11495.202
-      forward_pre_exponential = 1406318.7
+ forward_activation_energy = 114952.0
+ forward_pre_exponential = 8.309E18
       enthalpy = -78147.021
       entropy = -12.113
       temperature = temp
@@ -305,7 +305,6 @@
         total_material = w3
     [../]
 
-
 [] #END Kernels
 
 [DGKernels]
@@ -334,9 +333,9 @@
     [./temp_increase]
         type = LinearChangeInTime
         variable = temp
-        start_time = 268.591667
-        end_time = 316.425
-        end_value = 810.1158294
+        start_time = 227.425
+        end_time = 305.3
+        end_value = 809.5651714
         execute_on = 'initial timestep_end'
     [../]
 
@@ -353,8 +352,8 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_vals = '2.03057E-05    1.60424E-05    1.18705E-05    7.76132E-06    3.86517E-06    1.92208E-06    9.57902E-07    4.80659E-07    2.43069E-07    2.50142E-09'
-      input_times = '2.09166667    15.5916667    23.7583333    34.425    45.0916667    60.7583333    86.7583333    121.258333    180.925    266.591667'
+      input_vals = '2.88105E-05    2.28698E-05    1.70674E-05    1.13344E-05    5.76691E-06    2.87521E-06    1.43838E-06    7.21421E-07    3.67254E-07    3.81105E-09'
+      input_times = '2.09166667    15.925    24.425    32.7583333    42.425    55.0916667    77.0916667    109.091667    154.925    225.425'
       time_spans = '0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25'
     [../]
     [./NH3_FluxOut]
@@ -446,8 +445,8 @@
   l_tol = 1e-6
   l_max_its = 300
 
-  start_time = 0.0
-  end_time = 317.0
+  start_time = 225.425
+ end_time = 306.0
   dtmax = 0.25
 
   [./TimeStepper]

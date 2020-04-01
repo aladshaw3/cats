@@ -201,13 +201,13 @@
         variable = q1
     [../]
     [./q1_rx]  #   NH3 + S1 <-- --> q1
-      type = ArrheniusReaction
+      type = ArrheniusEquilibriumReaction
       variable = q1
       this_variable = q1
       forward_activation_energy = 10504.91
       forward_pre_exponential = 5001776.3
-      reverse_activation_energy = 70524.48
-      reverse_pre_exponential = 823311826.6
+      enthalpy = -60019.5678
+      entropy = -42.433
       temperature = temp
       scale = 1.0
       reactants = 'NH3 S1'
@@ -221,13 +221,13 @@
         variable = q2
     [../]
     [./q2_rx]  #   NH3 + S2 <-- --> q2
-      type = ArrheniusReaction
+      type = ArrheniusEquilibriumReaction
       variable = q2
       this_variable = q2
       forward_activation_energy = 12564.39
       forward_pre_exponential = 3929210.1
-      reverse_activation_energy = 89642.28
-      reverse_pre_exponential = 603528299.8
+      enthalpy = -77077.889
+      entropy = -41.858
       temperature = temp
       scale = 1.0
       reactants = 'NH3 S2'
@@ -241,13 +241,13 @@
         variable = q3
     [../]
     [./q3_rx]  #   NH3 + S3 <-- --> q3
-      type = ArrheniusReaction
+      type = ArrheniusEquilibriumReaction
       variable = q3
       this_variable = q3
       forward_activation_energy = 11495.202
       forward_pre_exponential = 1406318.7
-      reverse_activation_energy = 89642.22
-      reverse_pre_exponential = 6036320.22
+      enthalpy = -78147.021
+      entropy = -12.113
       temperature = temp
       scale = 1.0
       reactants = 'NH3 S3'
