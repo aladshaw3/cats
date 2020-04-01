@@ -1,19 +1,22 @@
 /*!
- *  \file ArrheniusReaction.h
- *  \brief Kernel for creating an Arrhenius reaction coupled with temperature
+ *  \file ArrheniusEquilibriumReaction.h
+ *  \brief Kernel for creating an Arrhenius/Equilibrium reaction coupled with temperature
  *  \details This file creates a standard MOOSE kernel for the coupling a set of non-linear variables to
- *            create an Arrhenius reaction coupled with temperature. This kernel has a list of reactants
+ *            create an Arrhenius/Equilibrium reaction coupled with temperature. This kernel has a list of reactants
  *            and a list of products, with corresponding lists for stoichiometric coefficients.
  *            The residual for this kernel is as follows
  *                      Res = - a*kf*prod(C_i, v_i) + a*kr*prod(C_j, v_j)
  *                      where a = scaling parameter, kf = forward rate, kr = reverse rate,
  *                      v_i's = stoichiometry, and C_i's = chemical species concentrations
- *                      kf = Af * T^Bf * exp(-Ef/R/T)
- *                      kr = Ar * T^Br * exp(-Er/R/T)
+ *                      kf = Af * T * exp(-Ef/R/T)
+ *                      kr = kf/K       where K = exp(-dH/R/T + dS/R)
+ *
+ *  \note   This kernel requires both a forward and reverse reaction set of variables and the beta parameters from the
+ *           typical Arrhenius expression are assumed 0. 
  *
  *
  *  \author Austin Ladshaw
- *  \date 03/31/2020
+ *  \date 04/01/2020
  *  \copyright This kernel was designed and built at Oak Ridge National
  *              Laboratory by Austin Ladshaw for research in catalyst
  *              performance for new vehicle technologies.
@@ -40,33 +43,26 @@
 
 #pragma once
 
-#include "ConstReaction.h"
+#include "ArrheniusReaction.h"
 
-#ifndef Rstd
-#define Rstd 8.3144621                        ///< Gas Constant in J/K/mol (or) L*kPa/K/mol (Standard Units)
-#endif
-
-/// ArrheniusReaction class object forward declarationss
-class ArrheniusReaction;
+/// ArrheniusEquilibriumReaction class object forward declarationss
+class ArrheniusEquilibriumReaction;
 
 template<>
-InputParameters validParams<ArrheniusReaction>();
+InputParameters validParams<ArrheniusEquilibriumReaction>();
 
-/// ArrheniusReaction class object inherits from ConstReaction object
+/// ArrheniusEquilibriumReaction class object inherits from ArrheniusReaction object
 /** This class object inherits from the Kernel object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
     The kernel interfaces the set of non-linear variables to create a kernel for an
-    Arrhenius reaction. */
-class ArrheniusReaction : public ConstReaction
+    Arrhenius reaction with equilibrium parameters to establish correct end values. */
+class ArrheniusEquilibriumReaction : public ArrheniusReaction
 {
 public:
     /// Required constructor for objects in MOOSE
-    ArrheniusReaction(const InputParameters & parameters);
+    ArrheniusEquilibriumReaction(const InputParameters & parameters);
 
 protected:
-    ///  Function to compute the rate constants
-    void calculateRateConstants();
-    
     /// Required residual function for standard kernels in MOOSE
     /** This function returns a residual contribution for this object.*/
     virtual Real computeQpResidual();
@@ -83,18 +79,13 @@ protected:
      cross coupling of the variables. */
     virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-    Real _act_energy_for;                           ///< Activation energy forward (J/mol)
-    Real _act_energy_rev;                           ///< Activation energy reverse (J/mol)
-    Real _pre_exp_for;                              ///< Pre-exponential factor forward (same units as kf)
-    Real _pre_exp_rev;                              ///< Pre-exponential factor reverse (same units as kr)
-    Real _beta_for;                                 ///< Temperature exponential forward (-)
-    Real _beta_rev;                                 ///< Temperature exponential reverse (-)
-    const VariableValue & _temp;                    ///< Coupled temperature variable (K)
-    const unsigned int _temp_var;                   ///< Variable identification for temperature
+    Real _enthalpy;                                ///< Reaction enthalpy (J/mol)
+    Real _entropy;                                 ///< Reaction entropy (J/K/mol)
    
 private:
 
 };
+
 
 
 

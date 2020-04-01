@@ -1,0 +1,7 @@
+[Tests]
+  [./coupled_arrhenius_equilibria]
+    type = 'Exodiff'
+    input = 'temp_coupled_arrhenius_equ.i'
+    exodiff = 'temp_coupled_arrhenius_equ_out.e'
+  [../]
+[]

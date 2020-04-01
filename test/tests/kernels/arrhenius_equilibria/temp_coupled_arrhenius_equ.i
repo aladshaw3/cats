@@ -11,7 +11,7 @@
 [Mesh]
     type = GeneratedMesh
     dim = 2
-    nx = 1
+    nx = 5
     ny = 20
     xmin = 0.0
     xmax = 2.0    #2cm radius
@@ -70,6 +70,12 @@
         order = FIRST
         family = MONOMIAL
     [../]
+	
+    [./temp]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 423.15
+    [../]
 
 [] #END Variables
 
@@ -104,12 +110,6 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 0.03963
-  [../]
-
-  [./temp]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 423.15
   [../]
 
   [./Diff]
@@ -305,6 +305,28 @@
         total_material = w3
     [../]
 
+    [./T_dot]
+        type = CoefTimeDerivative
+        variable = temp
+        Coefficient = 500
+    [../]
+    [./T_gadv]
+        type = GPoreConcAdvection
+        variable = temp
+        porosity = pore
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./T_gdiff]
+        type = GVarPoreDiffusion
+        variable = temp
+        porosity = pore
+        Dx = Diff
+        Dy = Diff
+        Dz = Dz
+    [../]
+
 [] #END Kernels
 
 [DGKernels]
@@ -326,18 +348,26 @@
         Dz = Dz
     [../]
 
+    [./T_dgadv]
+        type = DGPoreConcAdvection
+        variable = temp
+        porosity = pore
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./T_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = temp
+        porosity = pore
+        Dx = Diff
+        Dy = Diff
+        Dz = Dz
+    [../]
+
 [] #END DGKernels
 
 [AuxKernels]
- 
-    [./temp_increase]
-        type = LinearChangeInTime
-        variable = temp
-        start_time = 227.425
-        end_time = 305.3
-        end_value = 809.5651714
-        execute_on = 'initial timestep_end'
-    [../]
 
 [] #END AuxKernels
 
@@ -359,6 +389,26 @@
     [./NH3_FluxOut]
       type = DGPoreConcFluxBC
       variable = NH3
+      boundary = 'top'
+      porosity = pore
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+    [../]
+
+    [./T_FluxIn]
+      type = DGPoreConcFluxBC
+      variable = temp
+      boundary = 'bottom'
+      u_input = 453.15
+      porosity = pore
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+    [../]
+    [./T_FluxOut]
+      type = DGPoreConcFluxBC
+      variable = temp
       boundary = 'top'
       porosity = pore
       ux = vel_x
@@ -446,7 +496,7 @@
   l_max_its = 300
 
   start_time = 0.0
- end_time = 306.0
+  end_time = 1.5
   dtmax = 0.25
 
   [./TimeStepper]
@@ -456,7 +506,7 @@
 [] #END Executioner
 
 [Outputs]
-  print_linear_residuals = false
+  print_linear_residuals = true
   exodus = true
   csv = true
 [] #END Outputs
