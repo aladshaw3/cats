@@ -1,0 +1,7 @@
+[Tests]
+  [./basic_interface_transfer]
+    type = 'Exodiff'
+    input = 'coupled_value_coupled_flux_dot.i'
+    exodiff = 'coupled_value_coupled_flux_dot_out.e'
+  [../]
+[]

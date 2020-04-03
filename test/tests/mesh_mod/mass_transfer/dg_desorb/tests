@@ -1,0 +1,7 @@
+[Tests]
+  [./dg_interface_desorb]
+    type = 'Exodiff'
+    input = 'dg_coupled_bound_transfer_RZ_desorb.i'
+    exodiff = 'dg_coupled_bound_transfer_RZ_desorb_out.e'
+  [../]
+[]

@@ -1,0 +1,7 @@
+[Tests]
+  [./dg_interface_mass_transfer]
+    type = 'Exodiff'
+    input = 'dg_coupled_bound_transfer_RZ.i'
+    exodiff = 'dg_coupled_bound_transfer_RZ_out.e'
+  [../]
+[]

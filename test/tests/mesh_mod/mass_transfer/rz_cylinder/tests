@@ -1,0 +1,7 @@
+[Tests]
+  [./RZ_interface_mass_transfer]
+    type = 'Exodiff'
+    input = 'coupled_bound_transfer_RZ.i'
+    exodiff = 'coupled_bound_transfer_RZ_out.e'
+  [../]
+[]
