@@ -39,7 +39,7 @@
 
 #include "Kernel.h"
 
-/// MaterialBalance class object forward declarationss
+/// MaterialBalance class object forward declarations
 class MaterialBalance;
 
 template<>

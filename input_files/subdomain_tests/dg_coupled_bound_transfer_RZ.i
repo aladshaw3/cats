@@ -172,12 +172,11 @@
 #       and add a OffDiagJacobian (similar to DGConcentrationAdvection OffDiag)
 [InterfaceKernels]
   [./interface]
-    type = InterfaceReaction
+    type = InterfaceMassTransfer
     variable = u        #variable must be the variable in the master block
     neighbor_var = v    #neighbor_var must the the variable in the paired block
     boundary = master0_interface
-    kf = 1
-    kb = 1
+    transfer_rate = 1
   [../]
 []
 

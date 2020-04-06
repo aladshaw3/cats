@@ -48,7 +48,7 @@ template<>
 InputParameters validParams<GVarPoreDiffusion>()
 {
 	InputParameters params = validParams<GVariableDiffusion>();
-  params.addRequiredCoupledVar("porosity","Variable for the porosity of the domain/subdomain");
+    params.addRequiredCoupledVar("porosity","Variable for the porosity of the domain/subdomain");
 	return params;
 }
 
