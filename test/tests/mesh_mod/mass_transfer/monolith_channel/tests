@@ -1,0 +1,7 @@
+[Tests]
+  [./monolith_channel_wall_transfer]
+    type = 'Exodiff'
+    input = 'wall_mass_trans.i'
+    exodiff = 'wall_mass_trans_out.e'
+  [../]
+[]

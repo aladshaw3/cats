@@ -1,0 +1,7 @@
+[Tests]
+  [./mass_trans_to_pores]
+    type = 'Exodiff'
+    input = 'avg_mass_trans.i'
+    exodiff = 'avg_mass_trans_out.e'
+  [../]
+[]
