@@ -1,6 +1,7 @@
 [GlobalParams]
   dg_scheme = nipg
   sigma = 10
+  transfer_rate = 5757.541  #min^-1
 [] #END GlobalParams
 
 [Problem]
@@ -23,6 +24,12 @@
 
 ## ----- NOTE: Cross-Coupled Variables for Mass MUST have same order and family !!! ------- ##
     [./NH3]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-9
+    [../]
+ 
+    [./NH3w]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1e-9
@@ -87,6 +94,12 @@
       family = MONOMIAL
       initial_condition = 0.001337966847917
   [../]
+ 
+  [./H2Ow]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.001337966847917
+  [../]
 
   [./w1]
       order = FIRST
@@ -128,6 +141,16 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 0.3309
+  [../]
+
+  [./total_pore]
+# ew =~ 1/5
+# total_pore = ew* (1 - pore)
+# micro_pore_vol = 0.18 cm^3/g
+# assume ew = 0.2
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.13382
   [../]
 
   [./vel_x]
@@ -177,40 +200,57 @@
         Dy = Diff
         Dz = Dz
     [../]
+    [./NH3w_trans]
+        type = ConstMassTransfer
+        variable = NH3
+        coupled = NH3w
+    [../]
+ 
+    [./NH3w_dot]
+        type = VariableCoefTimeDerivative
+        variable = NH3w
+        coupled_coef = total_pore
+    [../]
+    [./NH3_trans]
+        type = ConstMassTransfer
+        variable = NH3w
+        coupled = NH3
+    [../]
     [./transfer_q1]
         type = CoupledPorePhaseTransfer
-        variable = NH3
+        variable = NH3w
         coupled = q1
         porosity = pore
     [../]
     [./transfer_q2]
         type = CoupledPorePhaseTransfer
-        variable = NH3
+        variable = NH3w
         coupled = q2
         porosity = pore
     [../]
     [./transfer_q3]
         type = CoupledPorePhaseTransfer
-        variable = NH3
+        variable = NH3w
         coupled = q3
         porosity = pore
     [../]
 
+#   NOTE: According to the Olsson paper, the activation energy for adsorption is 0.0
     [./q1_dot]
         type = TimeDerivative
         variable = q1
     [../]
-    [./q1_rx]  #   NH3 + S1 <-- --> q1
+    [./q1_rx]  #   NH3w + S1 <-- --> q1
       type = ArrheniusEquilibriumReaction
       variable = q1
       this_variable = q1
-      forward_activation_energy = 10504.91
-      forward_pre_exponential = 5001776.3
+      forward_activation_energy = 0
+      forward_pre_exponential = 250000
       enthalpy = -60019.5678
       entropy = -42.433
       temperature = temp
       scale = 1.0
-      reactants = 'NH3 S1'
+      reactants = 'NH3w S1'
       reactant_stoich = '1 1'
       products = 'q1'
       product_stoich = '1'
@@ -220,17 +260,17 @@
         type = TimeDerivative
         variable = q2
     [../]
-    [./q2_rx]  #   NH3 + S2 <-- --> q2
+    [./q2_rx]  #   NH3w + S2 <-- --> q2
       type = ArrheniusEquilibriumReaction
       variable = q2
       this_variable = q2
-      forward_activation_energy = 12564.39
-      forward_pre_exponential = 3929210.1
+      forward_activation_energy = 0
+      forward_pre_exponential = 60000
       enthalpy = -77077.889
       entropy = -41.858
       temperature = temp
       scale = 1.0
-      reactants = 'NH3 S2'
+      reactants = 'NH3w S2'
       reactant_stoich = '1 1'
       products = 'q2'
       product_stoich = '1'
@@ -240,30 +280,30 @@
         type = TimeDerivative
         variable = q3
     [../]
-    [./q3_rx]  #   NH3 + S3 <-- --> q3
+    [./q3_rx]  #   NH3w + S3 <-- --> q3
       type = ArrheniusEquilibriumReaction
       variable = q3
       this_variable = q3
-      forward_activation_energy = 11495.202
-      forward_pre_exponential = 1406318.7
+      forward_activation_energy = 0
+      forward_pre_exponential = 1200000
       enthalpy = -78147.021
       entropy = -12.113
       temperature = temp
       scale = 1.0
-      reactants = 'NH3 S3'
+      reactants = 'NH3w S3'
       reactant_stoich = '1 1'
       products = 'q3'
       product_stoich = '1'
     [../]
  
-    [./qH2O_rx]  #   H2O + S1 <-- --> qH2O
+    [./qH2O_rx]  #   H2Ow + S1 <-- --> qH2O
       type = EquilibriumReaction
       variable = qH2O
       this_variable = qH2O
       enthalpy = -25656.6
       entropy = -5.24228
       temperature = temp
-      reactants = 'H2O S1'
+      reactants = 'H2Ow S1'
       reactant_stoich = '1 1'
       products = 'qH2O'
       product_stoich = '1'
