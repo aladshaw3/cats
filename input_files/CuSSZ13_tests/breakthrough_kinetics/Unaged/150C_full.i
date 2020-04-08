@@ -104,19 +104,19 @@
   [./w1]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.05016
+      initial_condition = 0.05015
   [../]
 
   [./w2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.03534
+      initial_condition = 0.047485
   [../]
 
   [./w3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.03963
+      initial_condition = 0.027485
   [../]
 
   [./temp]
@@ -244,8 +244,8 @@
       type = ArrheniusEquilibriumReaction
       variable = q1
       this_variable = q1
-      forward_activation_energy = 0
-      forward_pre_exponential = 250000
+      forward_activation_energy = 6146
+      forward_pre_exponential = 1044382
       enthalpy = -60019.5678
       entropy = -42.433
       temperature = temp
@@ -264,10 +264,10 @@
       type = ArrheniusEquilibriumReaction
       variable = q2
       this_variable = q2
-      forward_activation_energy = 0
-      forward_pre_exponential = 60000
-      enthalpy = -77077.889
-      entropy = -41.858
+      forward_activation_energy = 7915
+      forward_pre_exponential = 754952
+enthalpy = -72243.1
+entropy = -30.4621
       temperature = temp
       scale = 1.0
       reactants = 'NH3w S2'
@@ -284,10 +284,10 @@
       type = ArrheniusEquilibriumReaction
       variable = q3
       this_variable = q3
-      forward_activation_energy = 0
-      forward_pre_exponential = 1200000
-      enthalpy = -78147.021
-      entropy = -12.113
+      forward_activation_energy = 8802
+      forward_pre_exponential = 2317009
+enthalpy = -107474
+entropy = -51.7696
       temperature = temp
       scale = 1.0
       reactants = 'NH3w S3'
@@ -373,7 +373,7 @@
     [./temp_increase]
         type = LinearChangeInTime
         variable = temp
-        start_time = 227.425
+        start_time = 225.425
         end_time = 305.3
         end_value = 809.5651714
         execute_on = 'initial timestep_end'
