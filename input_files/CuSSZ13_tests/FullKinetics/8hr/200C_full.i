@@ -52,7 +52,7 @@
         family = MONOMIAL
         initial_condition = 0
     [../]
-
+ 
     [./qH2O]
         order = FIRST
         family = MONOMIAL
@@ -77,7 +77,6 @@
         order = FIRST
         family = MONOMIAL
     [../]
-    
 
 [] #END Variables
 
@@ -105,25 +104,25 @@
   [./w1]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.05015
+      initial_condition = 0.04530
   [../]
 
   [./w2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.047485
+      initial_condition = 0.05839
   [../]
 
   [./w3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.027485
+      initial_condition = 0.009681
   [../]
 
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 498.15
+      initial_condition = 473.15
   [../]
 
   [./Diff]
@@ -143,7 +142,7 @@
       family = MONOMIAL
       initial_condition = 0.3309
   [../]
-
+ 
    [./total_pore]
  # ew =~ 1/5
  # total_pore = ew* (1 - pore)
@@ -153,7 +152,7 @@
        family = MONOMIAL
        initial_condition = 0.13382
    [../]
- 
+
   [./vel_x]
       order = FIRST
       family = LAGRANGE
@@ -346,6 +345,7 @@
          total_material = w3
      [../]
 
+
 [] #END Kernels
 
 [DGKernels]
@@ -374,9 +374,9 @@
     [./temp_increase]
         type = LinearChangeInTime
         variable = temp
-        start_time = 262.425
-        end_time = 327.3
-        end_value = 809.6340997
+        start_time = 243.925
+        end_time = 313.758333
+        end_value = 810.7080956
         execute_on = 'initial timestep_end'
     [../]
 
@@ -393,8 +393,8 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_vals = '2.44352E-05    1.93762E-05    1.44315E-05    9.56824E-06    4.9269E-06    2.46275E-06    1.22198E-06    6.15313E-07    3.12645E-07    3.38329E-09'
-      input_times = '2.09166667    19.2583333    26.5916667    33.425    42.425    60.2583333    83.0916667    120.591667    174.925    262.425'
+      input_vals = '2.54427E-05    2.02222E-05    1.51244E-05    1.00307E-05    5.09156E-06    2.55769E-06    1.28062E-06    6.4329E-07    3.25931E-07    2.02492E-10'
+      input_times = '2.09166667    17.925    25.0916667    32.5916667    41.2583333    53.0916667    70.925    104.591667    156.425    243.925'
       time_spans = '0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25'
     [../]
     [./NH3_FluxOut]
@@ -487,7 +487,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 328.0
+  end_time = 314.0
   dtmax = 0.25
 
   [./TimeStepper]
