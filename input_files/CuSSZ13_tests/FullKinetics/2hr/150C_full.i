@@ -104,19 +104,19 @@
   [./w1]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.04793
+      initial_condition = 0.0512748
   [../]
 
   [./w2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.05739
+      initial_condition = 0.0516403
   [../]
 
   [./w3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.01586
+      initial_condition = 0.0182629
   [../]
 
   [./temp]
@@ -244,10 +244,10 @@
       type = ArrheniusEquilibriumReaction
       variable = q1
       this_variable = q1
-      forward_activation_energy = 6146
-      forward_pre_exponential = 1044382
-      enthalpy = -60019.5678
-      entropy = -42.433
+      forward_activation_energy = 0
+      forward_pre_exponential = 250000
+      enthalpy = -54547.9
+      entropy = -29.9943
       temperature = temp
       scale = 1.0
       reactants = 'NH3w S1'
@@ -264,10 +264,10 @@
       type = ArrheniusEquilibriumReaction
       variable = q2
       this_variable = q2
-      forward_activation_energy = 7915
-      forward_pre_exponential = 754952
-      enthalpy = -72243.1
-      entropy = -30.4621
+      forward_activation_energy = 0
+      forward_pre_exponential = 350000
+      enthalpy = -78065.1
+      entropy = -41.0596
       temperature = temp
       scale = 1.0
       reactants = 'NH3w S2'
@@ -284,10 +284,10 @@
       type = ArrheniusEquilibriumReaction
       variable = q3
       this_variable = q3
-      forward_activation_energy = 13277
-      forward_pre_exponential = 51963054
-      enthalpy = -107474
-      entropy = -51.7696
+      forward_activation_energy = 0
+      forward_pre_exponential = 50000000
+      enthalpy = -91860.8
+      entropy = -28.9292
       temperature = temp
       scale = 1.0
       reactants = 'NH3w S3'
@@ -300,8 +300,8 @@
       type = EquilibriumReaction
       variable = qH2O
       this_variable = qH2O
-      enthalpy = -25656.6
-      entropy = -5.24228
+      enthalpy = -32099.1
+      entropy = -24.2494
       temperature = temp
       reactants = 'H2Ow S1'
       reactant_stoich = '1 1'

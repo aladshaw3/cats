@@ -105,19 +105,19 @@
   [./w1]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.05015
+      initial_condition = 0.052619
   [../]
 
   [./w2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.047485
+      initial_condition = 0.0462515
   [../]
 
   [./w3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.027485
+      initial_condition = 0.0262515
   [../]
 
   [./temp]
@@ -237,78 +237,78 @@
      [../]
 
  #   NOTE: According to the Olsson paper, the activation energy for adsorption is 0.0
-     [./q1_dot]
-         type = TimeDerivative
-         variable = q1
-     [../]
-     [./q1_rx]  #   NH3w + S1 <-- --> q1
-       type = ArrheniusEquilibriumReaction
-       variable = q1
-       this_variable = q1
-       forward_activation_energy = 6146
-       forward_pre_exponential = 1044382
-       enthalpy = -60019.5678
-       entropy = -42.433
-       temperature = temp
-       scale = 1.0
-       reactants = 'NH3w S1'
-       reactant_stoich = '1 1'
-       products = 'q1'
-       product_stoich = '1'
-     [../]
+    [./q1_dot]
+        type = TimeDerivative
+        variable = q1
+    [../]
+    [./q1_rx]  #   NH3w + S1 <-- --> q1
+      type = ArrheniusEquilibriumReaction
+      variable = q1
+      this_variable = q1
+      forward_activation_energy = 0
+      forward_pre_exponential = 250000
+      enthalpy = -54547.9
+      entropy = -29.9943
+      temperature = temp
+      scale = 1.0
+      reactants = 'NH3w S1'
+      reactant_stoich = '1 1'
+      products = 'q1'
+      product_stoich = '1'
+    [../]
 
-     [./q2_dot]
-         type = TimeDerivative
-         variable = q2
-     [../]
-     [./q2_rx]  #   NH3w + S2 <-- --> q2
-       type = ArrheniusEquilibriumReaction
-       variable = q2
-       this_variable = q2
-       forward_activation_energy = 7915
-       forward_pre_exponential = 754952
-       enthalpy = -72243.1
-       entropy = -30.4621
-       temperature = temp
-       scale = 1.0
-       reactants = 'NH3w S2'
-       reactant_stoich = '1 1'
-       products = 'q2'
-       product_stoich = '1'
-     [../]
+    [./q2_dot]
+        type = TimeDerivative
+        variable = q2
+    [../]
+    [./q2_rx]  #   NH3w + S2 <-- --> q2
+      type = ArrheniusEquilibriumReaction
+      variable = q2
+      this_variable = q2
+      forward_activation_energy = 0
+      forward_pre_exponential = 350000
+      enthalpy = -78065.1
+      entropy = -41.0596
+      temperature = temp
+      scale = 1.0
+      reactants = 'NH3w S2'
+      reactant_stoich = '1 1'
+      products = 'q2'
+      product_stoich = '1'
+    [../]
 
-     [./q3_dot]
-         type = TimeDerivative
-         variable = q3
-     [../]
-     [./q3_rx]  #   NH3w + S3 <-- --> q3
-       type = ArrheniusEquilibriumReaction
-       variable = q3
-       this_variable = q3
-       forward_activation_energy = 13277
-       forward_pre_exponential = 51963054
-       enthalpy = -107474
-       entropy = -51.7696
-       temperature = temp
-       scale = 1.0
-       reactants = 'NH3w S3'
-       reactant_stoich = '1 1'
-       products = 'q3'
-       product_stoich = '1'
-     [../]
-  
-     [./qH2O_rx]  #   H2Ow + S1 <-- --> qH2O
-       type = EquilibriumReaction
-       variable = qH2O
-       this_variable = qH2O
-       enthalpy = -25656.6
-       entropy = -5.24228
-       temperature = temp
-       reactants = 'H2Ow S1'
-       reactant_stoich = '1 1'
-       products = 'qH2O'
-       product_stoich = '1'
-     [../]
+    [./q3_dot]
+        type = TimeDerivative
+        variable = q3
+    [../]
+    [./q3_rx]  #   NH3w + S3 <-- --> q3
+      type = ArrheniusEquilibriumReaction
+      variable = q3
+      this_variable = q3
+      forward_activation_energy = 0
+      forward_pre_exponential = 50000000
+      enthalpy = -91860.8
+      entropy = -28.9292
+      temperature = temp
+      scale = 1.0
+      reactants = 'NH3w S3'
+      reactant_stoich = '1 1'
+      products = 'q3'
+      product_stoich = '1'
+    [../]
+ 
+    [./qH2O_rx]  #   H2Ow + S1 <-- --> qH2O
+      type = EquilibriumReaction
+      variable = qH2O
+      this_variable = qH2O
+      enthalpy = -32099.1
+      entropy = -24.2494
+      temperature = temp
+      reactants = 'H2Ow S1'
+      reactant_stoich = '1 1'
+      products = 'qH2O'
+      product_stoich = '1'
+    [../]
   
      [./qT_calc]
          type = MaterialBalance
