@@ -1,0 +1,7 @@
+[Tests]
+  [./micro_coupled_nodal_rxns]
+    type = 'Exodiff'
+    input = 'sphere_coupled.i'
+    exodiff = 'sphere_coupled_out.e'
+  [../]
+[]
