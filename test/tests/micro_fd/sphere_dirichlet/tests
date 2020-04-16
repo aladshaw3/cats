@@ -1,0 +1,7 @@
+[Tests]
+  [./micro_sphere_dirichlet]
+    type = 'Exodiff'
+    input = 'basic_sphere_dirichlet.i'
+    exodiff = 'basic_sphere_dirichlet_out.e'
+  [../]
+[]
