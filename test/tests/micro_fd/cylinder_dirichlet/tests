@@ -1,0 +1,7 @@
+[Tests]
+  [./micro_cylinder_dirichlet]
+    type = 'Exodiff'
+    input = 'basic_cylinder_dirichlet.i'
+    exodiff = 'basic_cylinder_dirichlet_out.e'
+  [../]
+[]

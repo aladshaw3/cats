@@ -1,0 +1,7 @@
+[Tests]
+  [./micro_cartesian_dirichlet]
+    type = 'Exodiff'
+    input = 'basic_cart_dirichlet.i'
+    exodiff = 'basic_cart_dirichlet_out.e'
+  [../]
+[]
