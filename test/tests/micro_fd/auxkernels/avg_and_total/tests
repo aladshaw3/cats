@@ -1,0 +1,7 @@
+[Tests]
+  [./micro_integrals_avg_n_total]
+    type = 'Exodiff'
+    input = 'basic_sphere_cauchy.i'
+    exodiff = 'basic_sphere_cauchy_out.e'
+  [../]
+[]

@@ -1,0 +1,7 @@
+[Tests]
+  [./micro_sphere_cauchy]
+    type = 'Exodiff'
+    input = 'basic_sphere_cauchy.i'
+    exodiff = 'basic_sphere_cauchy_out.e'
+  [../]
+[]
