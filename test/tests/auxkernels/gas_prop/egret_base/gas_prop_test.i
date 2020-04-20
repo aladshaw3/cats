@@ -20,19 +20,16 @@
 
 [Variables]
 
-    [./dP]
+    [./P]
         order = FIRST
         family = LAGRANGE
+        initial_condition = 101355
     [../]
 
 [] #END Variables
 
 [AuxVariables]
-    [./PT]
-        order = FIRST
-        family = MONOMIAL
-    [../]
- 
+
   [./pore]
       order = FIRST
       family = MONOMIAL
@@ -60,15 +57,20 @@
   [./dens]
      order = FIRST
      family = MONOMIAL
-     initial_condition = 0.6158   #kg/m^3
+#     initial_condition = 0.6158   #kg/m^3
   [../]
  
   [./vis]
      order = FIRST
      family = MONOMIAL
-     initial_condition = 2.93E-5   #kg/m/s
+#     initial_condition = 2.93E-5   #kg/m/s
   [../]
- 
+
+    [./cp]      #units: kJ/kg/K
+      order = FIRST
+      family = MONOMIAL
+   [../]
+   
   [./dia]
      order = FIRST
      family = MONOMIAL
@@ -78,7 +80,7 @@
     [./temp]
        order = FIRST
        family = MONOMIAL
-       initial_condition = 298   #K
+       initial_condition = 573   #K
     [../]
  
     [./O2]
@@ -99,7 +101,32 @@
         initial_condition = 2.87293E-05     #mol/L
     [../]
  
-    [./prop_test]
+    [./P_in]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 102000
+    [../]
+ 
+# Units --> m^/2
+    [./D_NH3]
+        order = FIRST
+        family = MONOMIAL
+    [../]
+ 
+ # Units --> m^/2
+    [./km_NH3]
+        order = FIRST
+        family = MONOMIAL
+    [../]
+ 
+    [./micro_pore]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.2
+    [../]
+ 
+ # Units --> m^/2
+    [./kme_NH3]
         order = FIRST
         family = MONOMIAL
     [../]
@@ -112,15 +139,16 @@
 
 [Kernels]
  
-    [./dP_ergun]
+    [./P_ergun]
         type = ErgunPressure
-        variable = dP
+        variable = P
         direction = 1
         porosity = pore
         hydraulic_diameter = dia
         velocity = vel_y
         viscosity = vis
         density = dens
+        inlet_pressure = P_in
     [../]
  
 [] #END Kernels
@@ -130,25 +158,12 @@
 [] #END DGKernels
 
 [AuxKernels]
-# Pressure calculated in Pa
-    [./ergun_press_y]
-        type = AuxErgunPressure
-        variable = PT
-        inlet_pressure = 102000
-        direction = 1
-        porosity = pore
-        hydraulic_diameter = dia
-        velocity = vel_y
-        viscosity = vis
-        density = dens
-        execute_on = 'initial timestep_end'
-    [../]
  
-    [./gas_prop_test]
-        type = GasPropertiesBase
-        variable = prop_test
+    [./vis_calc]
+        type = GasViscosity
+        variable = vis
         temperature = temp
-        pressure = PT
+        pressure = P
         hydraulic_diameter = dia
         ux = vel_x
         uy = vel_y
@@ -161,6 +176,103 @@
         spec_heat = '2.175 1.97 0.919'
         execute_on = 'initial timestep_end'
     [../]
+ 
+    [./dens_calc]
+        type = GasDensity
+        variable = dens
+        temperature = temp
+        pressure = P
+        hydraulic_diameter = dia
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./cp_calc]
+        type = GasSpecHeat
+        variable = cp
+        temperature = temp
+        pressure = P
+        hydraulic_diameter = dia
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./D_NH3_calc]
+        type = GasSpeciesDiffusion
+        variable = D_NH3
+        species_index = 0
+        temperature = temp
+        pressure = P
+        hydraulic_diameter = dia
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+#NOTE: This calculation is for actual film mass transfer rate (not the effective rate)
+    [./km_NH3_calc]
+        type = GasSpeciesMassTransCoef
+        variable = km_NH3
+        species_index = 0
+        temperature = temp
+        pressure = P
+        hydraulic_diameter = dia
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    #NOTE: This calculation is for effective film mass transfer rate (not the effective rate)
+    [./kme_NH3_calc]
+        type = GasSpeciesEffectiveTransferCoef
+        variable = kme_NH3
+        species_index = 0
+        micro_porosity = micro_pore
+        temperature = temp
+        pressure = P
+        hydraulic_diameter = dia
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
 
 [] #END AuxKernels
 
@@ -174,29 +286,53 @@
 
 [Postprocessors]
 
-    [./PT_out]
+    [./P_out]
         type = SideAverageValue
         boundary = 'top'
-        variable = PT
+        variable = P
         execute_on = 'initial timestep_end'
     [../]
  
-    [./dP_avg]
+    [./vis]
         type = ElementAverageValue
-        variable = dP
+        variable = vis
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./dens]
+        type = ElementAverageValue
+        variable = dens
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./cp]
+        type = ElementAverageValue
+        variable = cp
         execute_on = 'initial timestep_end'
     [../]
  
     [./D_NH3]
         type = ElementAverageValue
-        variable = prop_test
+        variable = D_NH3
         execute_on = 'initial timestep_end'
     [../]
  
-    [./PT_in]
+    [./km_NH3]
+        type = ElementAverageValue
+        variable = km_NH3
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./kme_NH3]
+        type = ElementAverageValue
+        variable = kme_NH3
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./P_in]
         type = SideAverageValue
         boundary = 'bottom'
-        variable = PT
+        variable = P
         execute_on = 'initial timestep_end'
     [../]
 

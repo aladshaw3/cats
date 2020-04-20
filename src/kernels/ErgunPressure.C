@@ -54,6 +54,7 @@ InputParameters validParams<ErgunPressure>()
     params.addRequiredCoupledVar("velocity","Name of the velocity variable in this gradient direction");
     params.addRequiredCoupledVar("viscosity","Name of the viscosity variable");
     params.addRequiredCoupledVar("density","Name of the density variable");
+    params.addRequiredCoupledVar("inlet_pressure","Name of the inlet pressure variable");
     return params;
 }
 
@@ -69,7 +70,9 @@ _vel_var(coupled("velocity")),
 _vis(coupledValue("viscosity")),
 _vis_var(coupled("viscosity")),
 _dens(coupledValue("density")),
-_dens_var(coupled("density"))
+_dens_var(coupled("density")),
+_press_in(coupledValue("inlet_pressure")),
+_press_in_var(coupled("inlet_pressure"))
 {
     if (_dir < 0 || _dir > 2)
     {
@@ -79,31 +82,20 @@ _dens_var(coupled("density"))
 
 Real ErgunPressure::computeQpResidual()
 {
-    /*
-    Real part1 = _grad_u[_qp](_dir)*_test[_i][_qp];
-    Real part2 = 150.0*_vis[_qp]*(1.0-_porosity[_qp])*(1.0-_porosity[_qp])*_porosity[_qp]*_vel[_qp]*_test[_i][_qp]/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
-    Real part3 = 1.75*(1.0-_porosity[_qp])*_char_len[_qp]*_dens[_qp]*_porosity[_qp]*_vel[_qp]*_porosity[_qp]*_vel[_qp]*_test[_i][_qp]/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
-    return -part1-part2-part3;
-     */
-    
-    
     Real part2 = 150.0*_vis[_qp]*(1.0-_porosity[_qp])*(1.0-_porosity[_qp])*_porosity[_qp]*_vel[_qp]*_test[_i][_qp]/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
     Real part3 = 1.75*(1.0-_porosity[_qp])*_char_len[_qp]*_dens[_qp]*_porosity[_qp]*_vel[_qp]*_porosity[_qp]*fabs(_vel[_qp])*_test[_i][_qp]/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
-    return -_u[_qp]*_test[_i][_qp]-part2-part3;
-     
+    
+    return _press_in[_qp]*_test[_i][_qp]-part2*_q_point[_qp](_dir)-part3*_q_point[_qp](_dir)-_u[_qp]*_test[_i][_qp];
 }
 
 Real ErgunPressure::computeQpJacobian()
 {
-    //return -_grad_phi[_j][_qp](_dir)*_test[_i][_qp];
-    
-
     return -_phi[_j][_qp]*_test[_i][_qp];
-    
 }
 
 Real ErgunPressure::computeQpOffDiagJacobian(unsigned int jvar)
 {
+    /** NOTE: This kernel is incomplete! */
     if (jvar == _porosity_var)
     {
         return 0.0;
@@ -121,6 +113,10 @@ Real ErgunPressure::computeQpOffDiagJacobian(unsigned int jvar)
         return 0.0;
     }
     if (jvar == _dens_var)
+    {
+        return 0.0;
+    }
+    if (jvar == _press_in_var)
     {
         return 0.0;
     }

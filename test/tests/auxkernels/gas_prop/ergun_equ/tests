@@ -1,7 +1,0 @@
-[Tests]
-  [./linear_ergun_expression]
-    type = 'Exodiff'
-    input = 'ergun_test.i'
-    exodiff = 'ergun_test_out.e'
-  [../]
-[]

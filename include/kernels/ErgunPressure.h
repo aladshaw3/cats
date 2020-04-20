@@ -87,6 +87,8 @@ protected:
     const unsigned int _vis_var;                    ///< Variable identification for the dynamic viscosity
     const VariableValue & _dens;                     ///< Variable for the density
     const unsigned int _dens_var;                    ///< Variable identification for the density
+    const VariableValue & _press_in;                 ///< Variable for the inlet pressure
+    const unsigned int _press_in_var;                ///< Variable identification for the inlet pressure
     
 private:
 

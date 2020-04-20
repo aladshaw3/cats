@@ -221,6 +221,7 @@ Real GasPropertiesBase::computeValue()
     prepareEgret();
     calculateAllProperties();
     
-    return _egret_dat.species_dat[0].molecular_diffusion;
+    //return _egret_dat.species_dat[0].molecular_diffusion;
+    return _egret_dat.total_dyn_vis/1000.0*100.0;
 }
 
