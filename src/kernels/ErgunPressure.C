@@ -1,6 +1,6 @@
 /*!
- *  \file AuxErgunPressure.h
- *    \brief AuxKernel kernel to compute pressure drop in system and total pressure
+ *  \file ErgunPressure.h
+ *    \brief Kernel kernel to compute pressure drop in system and total pressure
  *    \details This file is responsible for calculating the pressure drop in a reactor
  *              system using a linearized Ergun equation. User must provide the inlet
  *              pressure condition boundary condition and couple with a number of non-linear
@@ -39,27 +39,26 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "AuxErgunPressure.h"
+#include "ErgunPressure.h"
 
-registerMooseObject("catsApp", AuxErgunPressure);
+
+registerMooseObject("catsApp", ErgunPressure);
 
 template<>
-InputParameters validParams<AuxErgunPressure>()
+InputParameters validParams<ErgunPressure>()
 {
-    InputParameters params = validParams<AuxKernel>();
-    params.addRequiredParam< Real >("inlet_pressure","Known pressure at reactor inlet (Pa)");
+    InputParameters params = validParams<Kernel>();
     params.addRequiredParam< unsigned int >("direction","Direction that the Ergun gradient acts on (0=x, 1=y, 2=z)");
     params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");
-    params.addRequiredCoupledVar("hydraulic_diameter","Name of the hydraulic diameter variable (m)");
-    params.addRequiredCoupledVar("velocity","Name of the velocity variable in this gradient direction (m/s)");
-    params.addRequiredCoupledVar("viscosity","Name of the viscosity variable (kg/m/s)");
-    params.addRequiredCoupledVar("density","Name of the density variable (kg/m^3)");
+    params.addRequiredCoupledVar("hydraulic_diameter","Name of the hydraulic diameter variable");
+    params.addRequiredCoupledVar("velocity","Name of the velocity variable in this gradient direction");
+    params.addRequiredCoupledVar("viscosity","Name of the viscosity variable");
+    params.addRequiredCoupledVar("density","Name of the density variable");
     return params;
 }
 
-AuxErgunPressure::AuxErgunPressure(const InputParameters & parameters) :
-AuxKernel(parameters),
-_inlet_pressure(getParam<Real>("inlet_pressure")),
+ErgunPressure::ErgunPressure(const InputParameters & parameters)
+: Kernel(parameters),
 _dir(getParam<unsigned int>("direction")),
 _porosity(coupledValue("porosity")),
 _porosity_var(coupled("porosity")),
@@ -78,11 +77,54 @@ _dens_var(coupled("density"))
     }
 }
 
-Real AuxErgunPressure::computeValue()
+Real ErgunPressure::computeQpResidual()
 {
-    Real L = _q_point[_qp](_dir);
-    Real vis_term = 150.0*_vis[_qp]*(1.0-_porosity[_qp])*(1.0-_porosity[_qp])*_porosity[_qp]*_vel[_qp]/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
-    Real dens_term = 1.75*(1.0-_porosity[_qp])*_char_len[_qp]*_dens[_qp]*_porosity[_qp]*_vel[_qp]*_porosity[_qp]*fabs(_vel[_qp])/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
+    /*
+    Real part1 = _grad_u[_qp](_dir)*_test[_i][_qp];
+    Real part2 = 150.0*_vis[_qp]*(1.0-_porosity[_qp])*(1.0-_porosity[_qp])*_porosity[_qp]*_vel[_qp]*_test[_i][_qp]/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
+    Real part3 = 1.75*(1.0-_porosity[_qp])*_char_len[_qp]*_dens[_qp]*_porosity[_qp]*_vel[_qp]*_porosity[_qp]*_vel[_qp]*_test[_i][_qp]/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
+    return -part1-part2-part3;
+     */
     
-    return _inlet_pressure - (vis_term+dens_term)*L;
+    
+    Real part2 = 150.0*_vis[_qp]*(1.0-_porosity[_qp])*(1.0-_porosity[_qp])*_porosity[_qp]*_vel[_qp]*_test[_i][_qp]/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
+    Real part3 = 1.75*(1.0-_porosity[_qp])*_char_len[_qp]*_dens[_qp]*_porosity[_qp]*_vel[_qp]*_porosity[_qp]*fabs(_vel[_qp])*_test[_i][_qp]/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
+    return -_u[_qp]*_test[_i][_qp]-part2-part3;
+     
 }
+
+Real ErgunPressure::computeQpJacobian()
+{
+    //return -_grad_phi[_j][_qp](_dir)*_test[_i][_qp];
+    
+
+    return -_phi[_j][_qp]*_test[_i][_qp];
+    
+}
+
+Real ErgunPressure::computeQpOffDiagJacobian(unsigned int jvar)
+{
+    if (jvar == _porosity_var)
+    {
+        return 0.0;
+    }
+    if (jvar == _char_len_var)
+    {
+        return 0.0;
+    }
+    if (jvar == _vel_var)
+    {
+        return 0.0;
+    }
+    if (jvar == _vis_var)
+    {
+        return 0.0;
+    }
+    if (jvar == _dens_var)
+    {
+        return 0.0;
+    }
+    
+    return 0.0;
+}
+

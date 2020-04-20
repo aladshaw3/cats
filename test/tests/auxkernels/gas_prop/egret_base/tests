@@ -1,0 +1,7 @@
+[Tests]
+  [./egret_integration]
+    type = 'Exodiff'
+    input = 'gas_prop_test.i'
+    exodiff = 'gas_prop_test_out.e'
+  [../]
+[]

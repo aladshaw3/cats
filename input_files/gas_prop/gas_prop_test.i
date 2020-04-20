@@ -74,6 +74,35 @@
      family = MONOMIAL
      initial_condition = 0.000777   #m
   [../]
+ 
+    [./temp]
+       order = FIRST
+       family = MONOMIAL
+       initial_condition = 298   #K
+    [../]
+ 
+    [./O2]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 5.35186739166803E-05  #mol/L
+    [../]
+
+    [./H2O]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.001337966847917       #mol/L
+    [../]
+ 
+    [./NH3]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 2.87293E-05     #mol/L
+    [../]
+ 
+    [./prop_test]
+        order = FIRST
+        family = MONOMIAL
+    [../]
 
 [] #END AuxVariables
 
@@ -101,7 +130,7 @@
 [] #END DGKernels
 
 [AuxKernels]
- # Pressure calculated in Pa
+# Pressure calculated in Pa
     [./ergun_press_y]
         type = AuxErgunPressure
         variable = PT
@@ -112,6 +141,24 @@
         velocity = vel_y
         viscosity = vis
         density = dens
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./gas_prop_test]
+        type = GasPropertiesBase
+        variable = prop_test
+        temperature = temp
+        pressure = PT
+        hydraulic_diameter = dia
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
         execute_on = 'initial timestep_end'
     [../]
 
@@ -137,6 +184,12 @@
     [./dP_avg]
         type = ElementAverageValue
         variable = dP
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./D_NH3]
+        type = ElementAverageValue
+        variable = prop_test
         execute_on = 'initial timestep_end'
     [../]
  
