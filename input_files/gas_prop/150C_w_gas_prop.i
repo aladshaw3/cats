@@ -1,7 +1,12 @@
+# There is some issue with the moose methods that make forming solutions difficult
+#       Grid size, solve type, line search ==> impact solution when they shouldn't...
+
+# NOTE: Time step size is an important factor in the above issues; if problems occur, reduce time step
+
 [GlobalParams]
   dg_scheme = nipg
   sigma = 10
-  transfer_rate = 5757.541  #min^-1
+  av_ratio = 5145.04 #m^-1
 [] #END GlobalParams
 
 [Problem]
@@ -10,14 +15,15 @@
 [] #END Problem
 
 [Mesh]
+#NOTE: For some reason, changing the grid sizes hurts the solution (start with coarse grid)
     type = GeneratedMesh
     dim = 2
     nx = 1
     ny = 20
     xmin = 0.0
-    xmax = 2.0    #2cm radius
+    xmax = 0.01    #1cm radius (in m)
     ymin = 0.0
-    ymax = 5.0    #5cm length
+    ymax = 0.05    #5cm length (in m)
 [] # END Mesh
 
 [Variables]
@@ -125,16 +131,9 @@
       initial_condition = 423.15
   [../]
 
-  [./Diff]
+  [./Disp]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 0.0
-  [../]
- 
-  [./Dz]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 0.0
   [../]
 
   [./pore]
@@ -162,7 +161,7 @@
   [./vel_y]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 7555.15
+      initial_condition = 1.2592  #m/s
   [../]
 
   [./vel_z]
@@ -170,6 +169,54 @@
       family = LAGRANGE
       initial_condition = 0
   [../]
+
+  [./P_in]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 103400
+  [../]
+ 
+ # NOTE: MUST provide IC for pressure!!!
+    [./P]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 101300
+    [../]
+
+# Hydraulic diameter for the monolith channels
+  [./dia]
+     order = FIRST
+     family = MONOMIAL
+     initial_condition = 0.000777   #m
+  [../]
+ 
+   [./dens]
+      order = FIRST
+      family = MONOMIAL
+   [../]
+  
+   [./vis]
+      order = FIRST
+      family = MONOMIAL
+   [../]
+ 
+    [./micro_pore]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.2
+    [../]
+ 
+ # Units --> m^/2
+    [./kme_NH3]
+        order = FIRST
+        family = MONOMIAL
+    [../]
+ 
+    [./macro_dia]
+       order = FIRST
+       family = MONOMIAL
+       initial_condition = 0.02   #m
+    [../]
 
 [] #END AuxVariables
 
@@ -196,14 +243,15 @@
         type = GVarPoreDiffusion
         variable = NH3
         porosity = pore
-        Dx = Diff
-        Dy = Diff
-        Dz = Dz
+        Dx = Disp
+        Dy = Disp
+        Dz = Disp
     [../]
     [./NH3w_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = NH3
         coupled = NH3w
+        rate_variable = kme_NH3
     [../]
  
     [./NH3w_dot]
@@ -212,9 +260,10 @@
         coupled_coef = total_pore
     [../]
     [./NH3_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = NH3w
         coupled = NH3
+        rate_variable = kme_NH3
     [../]
     [./transfer_q1]
         type = CoupledPorePhaseTransfer
@@ -245,7 +294,7 @@
       variable = q1
       this_variable = q1
       forward_activation_energy = 0
-      forward_pre_exponential = 250000
+      forward_pre_exponential = 4166.67
       enthalpy = -54547.9
       entropy = -29.9943
       temperature = temp
@@ -265,7 +314,7 @@
       variable = q2
       this_variable = q2
       forward_activation_energy = 0
-      forward_pre_exponential = 350000
+      forward_pre_exponential = 5833.333
       enthalpy = -78065.1
       entropy = -41.0596
       temperature = temp
@@ -285,7 +334,7 @@
       variable = q3
       this_variable = q3
       forward_activation_energy = 0
-      forward_pre_exponential = 50000000
+      forward_pre_exponential = 833333.3
       enthalpy = -91860.8
       entropy = -28.9292
       temperature = temp
@@ -361,9 +410,9 @@
         type = DGVarPoreDiffusion
         variable = NH3
         porosity = pore
-        Dx = Diff
-        Dy = Diff
-        Dz = Dz
+        Dx = Disp
+        Dy = Disp
+        Dz = Disp
     [../]
 
 [] #END DGKernels
@@ -373,9 +422,115 @@
     [./temp_increase]
         type = LinearChangeInTime
         variable = temp
-        start_time = 225.425
-        end_time = 305.3
+        start_time = 13525.5
+        end_time = 18318
         end_value = 809.5651714
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./press_increase]
+        type = LinearChangeInTime
+        variable = P_in
+        start_time = 13525.5
+        end_time = 18318
+        end_value = 104200
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./P_ergun]
+        type = AuxErgunPressure
+        variable = P
+        direction = 1
+        porosity = pore
+        temperature = temp
+        # NOTE: Use inlet pressure for pressure variable in aux pressure kernel
+        pressure = P_in
+        hydraulic_diameter = dia
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./vis_calc]
+        type = GasViscosity
+        variable = vis
+        temperature = temp
+        pressure = P
+        hydraulic_diameter = dia
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./dens_calc]
+        type = GasDensity
+        variable = dens
+        temperature = temp
+        pressure = P
+        hydraulic_diameter = dia
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./kme_NH3_calc]
+        type = GasSpeciesEffectiveTransferCoef
+        variable = kme_NH3
+        species_index = 0
+        micro_porosity = micro_pore
+        temperature = temp
+        pressure = P
+        hydraulic_diameter = dia
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./Dz_NH3_calc]
+        type = GasSpeciesAxialDispersion
+        variable = Disp
+        species_index = 0
+        macroscale_diameter = macro_dia
+        temperature = temp
+        pressure = P
+        hydraulic_diameter = dia
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
         execute_on = 'initial timestep_end'
     [../]
 
@@ -393,8 +548,8 @@
       uy = vel_y
       uz = vel_z
       input_vals = '2.88105E-05    2.28698E-05    1.70674E-05    1.13344E-05    5.76691E-06    2.87521E-06    1.43838E-06    7.21421E-07    3.67254E-07    3.81105E-09'
-      input_times = '2.09166667    15.925    24.425    32.7583333    42.425    55.0916667    77.0916667    109.091667    154.925    225.425'
-      time_spans = '0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25'
+      input_times = '125.5    955.5    1465.5    1965.5    2545.5    3305.5    4625.5    6545.5    9295.5    13525.5'
+      time_spans = '15    15    15    15    15    15    15    15    15    15'
     [../]
     [./NH3_FluxOut]
       type = DGPoreConcFluxBC
@@ -446,24 +601,50 @@
         execute_on = 'initial timestep_end'
     [../]
 
-    [./total]
-        type = ElementAverageValue
-        variable = qT
-        execute_on = 'initial timestep_end'
-    [../]
+#    [./total]
+#        type = ElementAverageValue
+#        variable = qT
+#        execute_on = 'initial timestep_end'
+#    [../]
  
     [./temp_avg]
         type = ElementAverageValue
         variable = temp
         execute_on = 'initial timestep_end'
     [../]
+ 
+    [./P_in]
+        type = SideAverageValue
+        boundary = 'bottom'
+        variable = P
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./P_out]
+        type = SideAverageValue
+        boundary = 'top'
+        variable = P
+        execute_on = 'initial timestep_end'
+    [../]
 
+#    [./kme_NH3]
+#        type = ElementAverageValue
+#        variable = kme_NH3
+#        execute_on = 'initial timestep_end'
+#    [../]
+ 
+#    [./Dz_NH3]
+#        type = ElementAverageValue
+#        variable = Disp
+#        execute_on = 'initial timestep_end'
+#    [../]
 [] #END Postprocessors
 
 [Preconditioning]
   [./SMP_PJFNK]
     type = SMP
     full = true
+    #NOTE: For some reason, changing the solve_type option hurts the solution
     solve_type = pjfnk   #default to newton, but use pjfnk if newton too slow
   [../]
 [] #END Preconditioning
@@ -475,23 +656,24 @@
   petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
   petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
 
-  #NOTE: turning off line search can help converge for high Renolds number
+  #NOTE: LEAVE LINE_SEARCH ON (Use bt or l2)
+  #NOTE: For some reason, changing the line_search option hurts the solution
   line_search = bt
-  nl_rel_tol = 1e-6
-  nl_abs_tol = 1e-4
+  nl_rel_tol = 1e-8
+  nl_abs_tol = 1e-6
   nl_rel_step_tol = 1e-10
   nl_abs_step_tol = 1e-10
   nl_max_its = 10
-  l_tol = 1e-6
+  l_tol = 1e-8
   l_max_its = 300
 
   start_time = 0.0
- end_time = 306.0
-  dtmax = 0.25
+  end_time = 18360
+  dtmax = 1.5
 
   [./TimeStepper]
      type = ConstantDT
-     dt = 0.25
+     dt = 1.5
   [../]
 [] #END Executioner
 
@@ -499,4 +681,5 @@
   print_linear_residuals = false
   exodus = true
   csv = true
+  interval = 10   #Number of time steps to wait before writing output
 [] #END Outputs

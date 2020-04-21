@@ -48,6 +48,7 @@ template<>
 InputParameters validParams<ErgunPressure>()
 {
     InputParameters params = validParams<Kernel>();
+    params.addParam< Real >("scale_factor",1E-6,"Scaling factor for the residuals to improve convergence for dilute systems");
     params.addRequiredParam< unsigned int >("direction","Direction that the Ergun gradient acts on (0=x, 1=y, 2=z)");
     params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");
     params.addRequiredCoupledVar("hydraulic_diameter","Name of the hydraulic diameter variable");
@@ -60,6 +61,7 @@ InputParameters validParams<ErgunPressure>()
 
 ErgunPressure::ErgunPressure(const InputParameters & parameters)
 : Kernel(parameters),
+_scale_factor(getParam<Real>("scale_factor")),
 _dir(getParam<unsigned int>("direction")),
 _porosity(coupledValue("porosity")),
 _porosity_var(coupled("porosity")),
@@ -80,17 +82,18 @@ _press_in_var(coupled("inlet_pressure"))
     }
 }
 
+/// NOTE: We have to multiply the residual by factor 1e-6, otherwise it completely dominates the residuals!!!
 Real ErgunPressure::computeQpResidual()
 {
     Real part2 = 150.0*_vis[_qp]*(1.0-_porosity[_qp])*(1.0-_porosity[_qp])*_porosity[_qp]*_vel[_qp]*_test[_i][_qp]/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
     Real part3 = 1.75*(1.0-_porosity[_qp])*_char_len[_qp]*_dens[_qp]*_porosity[_qp]*_vel[_qp]*_porosity[_qp]*fabs(_vel[_qp])*_test[_i][_qp]/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
     
-    return _press_in[_qp]*_test[_i][_qp]-part2*_q_point[_qp](_dir)-part3*_q_point[_qp](_dir)-_u[_qp]*_test[_i][_qp];
+    return (_press_in[_qp]*_test[_i][_qp]-part2*_q_point[_qp](_dir)-part3*_q_point[_qp](_dir)-_u[_qp]*_test[_i][_qp])*_scale_factor;
 }
 
 Real ErgunPressure::computeQpJacobian()
 {
-    return -_phi[_j][_qp]*_test[_i][_qp];
+    return -_phi[_j][_qp]*_test[_i][_qp]*_scale_factor;
 }
 
 Real ErgunPressure::computeQpOffDiagJacobian(unsigned int jvar)

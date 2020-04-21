@@ -45,7 +45,7 @@
   [./vel_y]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0.416667 #m/s
+      initial_condition = 1.26 #m/s
   [../]
 
   [./vel_z]
@@ -66,7 +66,7 @@
 #     initial_condition = 2.93E-5   #kg/m/s
   [../]
 
-    [./cp]      #units: kJ/kg/K
+    [./cp]      #units: J/kg/K
       order = FIRST
       family = MONOMIAL
    [../]
@@ -76,6 +76,12 @@
      family = MONOMIAL
      initial_condition = 0.000777   #m
   [../]
+ 
+    [./macro_dia]
+       order = FIRST
+       family = MONOMIAL
+       initial_condition = 0.02   #m
+    [../]
  
     [./temp]
        order = FIRST
@@ -104,11 +110,17 @@
     [./P_in]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 102000
+        initial_condition = 102300
     [../]
  
 # Units --> m^/2
     [./D_NH3]
+        order = FIRST
+        family = MONOMIAL
+    [../]
+ 
+ # Units --> m^/2
+    [./Dz_NH3]
         order = FIRST
         family = MONOMIAL
     [../]
@@ -232,6 +244,26 @@
         execute_on = 'initial timestep_end'
     [../]
  
+    [./Dz_NH3_calc]
+        type = GasSpeciesAxialDispersion
+        variable = Dz_NH3
+        species_index = 0
+        macroscale_diameter = macro_dia
+        temperature = temp
+        pressure = P
+        hydraulic_diameter = dia
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
 #NOTE: This calculation is for actual film mass transfer rate (not the effective rate)
     [./km_NH3_calc]
         type = GasSpeciesMassTransCoef
@@ -314,6 +346,12 @@
     [./D_NH3]
         type = ElementAverageValue
         variable = D_NH3
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./Dz_NH3]
+        type = ElementAverageValue
+        variable = Dz_NH3
         execute_on = 'initial timestep_end'
     [../]
  

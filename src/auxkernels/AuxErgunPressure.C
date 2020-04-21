@@ -46,31 +46,17 @@ registerMooseObject("catsApp", AuxErgunPressure);
 template<>
 InputParameters validParams<AuxErgunPressure>()
 {
-    InputParameters params = validParams<AuxKernel>();
-    params.addRequiredParam< Real >("inlet_pressure","Known pressure at reactor inlet (Pa)");
+    InputParameters params = validParams<GasPropertiesBase>();
     params.addRequiredParam< unsigned int >("direction","Direction that the Ergun gradient acts on (0=x, 1=y, 2=z)");
     params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");
-    params.addRequiredCoupledVar("hydraulic_diameter","Name of the hydraulic diameter variable (m)");
-    params.addRequiredCoupledVar("velocity","Name of the velocity variable in this gradient direction (m/s)");
-    params.addRequiredCoupledVar("viscosity","Name of the viscosity variable (kg/m/s)");
-    params.addRequiredCoupledVar("density","Name of the density variable (kg/m^3)");
     return params;
 }
 
 AuxErgunPressure::AuxErgunPressure(const InputParameters & parameters) :
-AuxKernel(parameters),
-_inlet_pressure(getParam<Real>("inlet_pressure")),
+GasPropertiesBase(parameters),
 _dir(getParam<unsigned int>("direction")),
 _porosity(coupledValue("porosity")),
-_porosity_var(coupled("porosity")),
-_char_len(coupledValue("hydraulic_diameter")),
-_char_len_var(coupled("hydraulic_diameter")),
-_vel(coupledValue("velocity")),
-_vel_var(coupled("velocity")),
-_vis(coupledValue("viscosity")),
-_vis_var(coupled("viscosity")),
-_dens(coupledValue("density")),
-_dens_var(coupled("density"))
+_porosity_var(coupled("porosity"))
 {
     if (_dir < 0 || _dir > 2)
     {
@@ -80,9 +66,28 @@ _dens_var(coupled("density"))
 
 Real AuxErgunPressure::computeValue()
 {
-    Real L = _q_point[_qp](_dir);
-    Real vis_term = 150.0*_vis[_qp]*(1.0-_porosity[_qp])*(1.0-_porosity[_qp])*_porosity[_qp]*_vel[_qp]/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
-    Real dens_term = 1.75*(1.0-_porosity[_qp])*_char_len[_qp]*_dens[_qp]*_porosity[_qp]*_vel[_qp]*_porosity[_qp]*fabs(_vel[_qp])/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
+    prepareEgret();
+    calculateAllProperties();
     
-    return _inlet_pressure - (vis_term+dens_term)*L;
+    Real vis = _egret_dat.total_dyn_vis/1000.0*100.0;
+    Real dens = _egret_dat.total_density/1000.0*100.0*100.0*100.0;
+    Real vel = 0.0;
+    if (_dir == 0)
+    {
+        vel = _velx[_qp];
+    }
+    if (_dir == 1)
+    {
+        vel = _vely[_qp];
+    }
+    if (_dir == 2)
+    {
+        vel = _velz[_qp];
+    }
+    
+    Real L = _q_point[_qp](_dir);
+    Real vis_term = 150.0*vis*(1.0-_porosity[_qp])*(1.0-_porosity[_qp])*_porosity[_qp]*vel/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
+    Real dens_term = 1.75*(1.0-_porosity[_qp])*_char_len[_qp]*dens*_porosity[_qp]*vel*_porosity[_qp]*fabs(vel)/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
+    
+    return _press[_qp] - (vis_term+dens_term)*L;
 }

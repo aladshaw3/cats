@@ -76,6 +76,7 @@ protected:
      cross coupling of the variables. */
     virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
+    Real _scale_factor;                             ///< Scaling factor for the residuals (useful to ensure convergence for dilute systems)
     unsigned int _dir;                              ///< Direction of the Ergun gradient for pressure (0 = x, 1 = y, 2 = z)
     const VariableValue & _porosity;                ///< Variable for the porosity
     const unsigned int _porosity_var;               ///< Variable identification for the porosity

@@ -1,7 +1,7 @@
 /*!
  *  \file GasSpecHeat.h
  *    \brief AuxKernel kernel to compute the gas specific heat
- *    \details This file is responsible for calculating the gas specific heat in kJ/kg/K
+ *    \details This file is responsible for calculating the gas specific heat in J/kg/K
  *
  *
  *  \author Austin Ladshaw
@@ -56,7 +56,7 @@ Real GasSpecHeat::computeValue()
     prepareEgret();
     calculateAllProperties();
     
-    return _egret_dat.total_specific_heat;
+    return _egret_dat.total_specific_heat*1000.0;
 }
 
 

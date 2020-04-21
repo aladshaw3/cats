@@ -1,17 +1,11 @@
 /*!
- *  \file AuxErgunPressure.h
- *    \brief AuxKernel kernel to compute pressure drop in system and total pressure
- *    \details This file is responsible for calculating the pressure drop in a reactor
- *              system using a linearized Ergun equation. User must provide the inlet
- *              pressure condition boundary condition and couple with a number of non-linear
- *              or auxillary variables for viscosity, density, velocity, porosity, and
- *              hydraulic diameter.
+ *  \file GasSpeciesAxialDispersion.h
+ *    \brief AuxKernel kernel to compute the axial dispersion for a given gas species
+ *    \details This file is responsible for calculating the axial dispersion in m^2/s
  *
- *  \note This kernel provides a residual for pressure drop in a specific direction. User must
- *          provide the velocity component corresponding to the given direction.
  *
  *  \author Austin Ladshaw
- *  \date 04/20/2020
+ *  \date 04/21/2020
  *  \copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Austin Ladshaw for PhD research in the area
  *             of adsorption and surface science and was developed for use
@@ -43,21 +37,21 @@
 
 #include "GasPropertiesBase.h"
 
-/// AuxErgunPressure class object forward declarations
-class AuxErgunPressure;
+/// GasSpeciesAxialDispersion class object forward declarations
+class GasSpeciesAxialDispersion;
 
 template<>
-InputParameters validParams<AuxErgunPressure>();
+InputParameters validParams<GasSpeciesAxialDispersion>();
 
-/// AuxErgunPressure class object inherits from GasPropertiesBase object
+/// GasSpeciesAxialDispersion class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
-    The kernel interfaces the set of non-linear variables to the Ergun Equation.  */
-class AuxErgunPressure : public GasPropertiesBase
+    The kernel interfaces the set of non-linear variables to the kinetic theory of gases.  */
+class GasSpeciesAxialDispersion : public GasPropertiesBase
 {
 public:
     /// Required constructor for objects in MOOSE
-    AuxErgunPressure(const InputParameters & parameters);
+    GasSpeciesAxialDispersion(const InputParameters & parameters);
 
 protected:
     /// Required MOOSE function override
@@ -65,12 +59,14 @@ protected:
         system pressure is needed. You are required to override this function for any inherited
         AuxKernel. */
     virtual Real computeValue() override;
-
-    unsigned int _dir;                              ///< Direction of the Ergun gradient for pressure (0 = x, 1 = y, 2 = z)
-    const VariableValue & _porosity;                ///< Variable for the porosity
-    const unsigned int _porosity_var;               ///< Variable identification for the porosity
+    
+    unsigned int _index;                                 ///< Index of the gas species to which the dispersion belongs
+    const VariableValue & _column_dia;                   ///< Variable for the column diameter
+    const unsigned int _column_dia_var;                  ///< Variable identification for the column diameter
     
 private:
 
 };
+
+
 

@@ -114,6 +114,7 @@ _SpecHeat(getParam<std::vector<Real> >("spec_heat"))
 void GasPropertiesBase::prepareEgret()
 {
     int success = 0;
+    _egret_dat.CheckMolefractions = false;
     std::vector<Real> partials;
     partials.resize(_gases.size());
     Real total = 0.0;
