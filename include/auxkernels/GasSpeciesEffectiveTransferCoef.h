@@ -35,7 +35,7 @@
 
 #pragma once
 
-#include "GasSpeciesEffectiveTransferCoef.h"
+#include "GasPropertiesBase.h"
 
 /// GasSpeciesEffectiveTransferCoef class object forward declarations
 class GasSpeciesEffectiveTransferCoef;

@@ -1,7 +1,7 @@
 /*!
- *  \file GasSpeciesAxialDispersion.h
- *    \brief AuxKernel kernel to compute the axial dispersion for a given gas species
- *    \details This file is responsible for calculating the axial dispersion in m^2/s
+ *  \file GasThermalConductivity.h
+ *    \brief AuxKernel kernel to compute the gas phase thermal conductivity
+ *    \details This file is responsible for calculating the gas thermal conductivity in W/m/K
  *
  *
  *  \author Austin Ladshaw
@@ -33,40 +33,42 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#pragma once
+#include "GasThermalConductivity.h"
 
-#include "GasPropertiesBase.h"
-
-/// GasSpeciesAxialDispersion class object forward declarations
-class GasSpeciesAxialDispersion;
+registerMooseObject("catsApp", GasThermalConductivity);
 
 template<>
-InputParameters validParams<GasSpeciesAxialDispersion>();
-
-/// GasSpeciesAxialDispersion class object inherits from GasPropertiesBase object
-/** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
-    All public and protected members of this class are required function overrides.
-    The kernel interfaces the set of non-linear variables to the kinetic theory of gases.  */
-class GasSpeciesAxialDispersion : public GasPropertiesBase
+InputParameters validParams<GasThermalConductivity>()
 {
-public:
-    /// Required constructor for objects in MOOSE
-    GasSpeciesAxialDispersion(const InputParameters & parameters);
-
-protected:
-    /// Required MOOSE function override
-    /** This is the function that is called by the MOOSE framework when a calculation of the total
-        system pressure is needed. You are required to override this function for any inherited
-        AuxKernel. */
-    virtual Real computeValue() override;
+    InputParameters params = validParams<GasPropertiesBase>();
+    params.addParam< Real >("heat_cap_ratio",1.4,"Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
     
-    unsigned int _index;                                 ///< Index of the gas species to which the dispersion belongs
-    const VariableValue & _column_dia;                   ///< Variable for the column diameter (m)
-    const unsigned int _column_dia_var;                  ///< Variable identification for the column diameter
+    return params;
+}
+
+GasThermalConductivity::GasThermalConductivity(const InputParameters & parameters) :
+GasPropertiesBase(parameters),
+_Cp_Cv_ratio(getParam< Real >("heat_cap_ratio"))
+{
+    // Check the bounds of the correction factor (typical values: 1.3 - 1.6)
+    if (_Cp_Cv_ratio < 0.56)
+    {
+        _Cp_Cv_ratio = 0.56;
+    }
+    if (_Cp_Cv_ratio > 1.67)
+    {
+        _Cp_Cv_ratio = 1.67;
+    }
+}
+
+Real GasThermalConductivity::computeValue()
+{
+    prepareEgret();
+    calculateAllProperties();
+    Real Cv = _egret_dat.total_specific_heat*1000.0/_Cp_Cv_ratio;
+    Real mu = _egret_dat.total_dyn_vis/1000.0*100.0;
+    Real f = 0.25*(9.0*_Cp_Cv_ratio - 5.0);
     
-private:
-
-};
-
-
+    return f*mu*Cv;
+}
 

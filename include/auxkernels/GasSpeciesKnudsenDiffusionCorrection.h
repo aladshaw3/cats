@@ -1,7 +1,7 @@
 /*!
- *  \file GasSpeciesAxialDispersion.h
- *    \brief AuxKernel kernel to compute the axial dispersion for a given gas species
- *    \details This file is responsible for calculating the axial dispersion in m^2/s
+ *  \file GasSpeciesKnudsenDiffusionCorrection.h
+ *    \brief AuxKernel kernel to compute the effective pore diffusivity with Knudsen correction for the micro-scale
+ *    \details This file is responsible for calculating the effective pore diffusion in m^2/s
  *
  *
  *  \author Austin Ladshaw
@@ -37,21 +37,21 @@
 
 #include "GasPropertiesBase.h"
 
-/// GasSpeciesAxialDispersion class object forward declarations
-class GasSpeciesAxialDispersion;
+/// GasSpeciesKnudsenDiffusionCorrection class object forward declarations
+class GasSpeciesKnudsenDiffusionCorrection;
 
 template<>
-InputParameters validParams<GasSpeciesAxialDispersion>();
+InputParameters validParams<GasSpeciesKnudsenDiffusionCorrection>();
 
-/// GasSpeciesAxialDispersion class object inherits from GasPropertiesBase object
+/// GasSpeciesKnudsenDiffusionCorrection class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
     The kernel interfaces the set of non-linear variables to the kinetic theory of gases.  */
-class GasSpeciesAxialDispersion : public GasPropertiesBase
+class GasSpeciesKnudsenDiffusionCorrection : public GasPropertiesBase
 {
 public:
     /// Required constructor for objects in MOOSE
-    GasSpeciesAxialDispersion(const InputParameters & parameters);
+    GasSpeciesKnudsenDiffusionCorrection(const InputParameters & parameters);
 
 protected:
     /// Required MOOSE function override
@@ -60,13 +60,18 @@ protected:
         AuxKernel. */
     virtual Real computeValue() override;
     
-    unsigned int _index;                                 ///< Index of the gas species to which the dispersion belongs
-    const VariableValue & _column_dia;                   ///< Variable for the column diameter (m)
-    const unsigned int _column_dia_var;                  ///< Variable identification for the column diameter
+    unsigned int _index;            ///< Index of the gas species to which the diffusion belongs
+    const VariableValue & _porosity;                ///< Variable for the particle/washcoat porosity
+    const unsigned int _porosity_var;               ///< Variable identification for the particle/washcoat porosity
+    const VariableValue & _pore_rad;                ///< Variable for the micro-pore radius (m)
+    const unsigned int _pore_rad_var;               ///< Variable identification for the micro-pore radius
     
 private:
 
 };
+
+
+
 
 
 

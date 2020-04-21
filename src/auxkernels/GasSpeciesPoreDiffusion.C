@@ -1,7 +1,7 @@
 /*!
- *  \file GasSpeciesAxialDispersion.h
- *    \brief AuxKernel kernel to compute the axial dispersion for a given gas species
- *    \details This file is responsible for calculating the axial dispersion in m^2/s
+ *  \file GasSpeciesPoreDiffusion.h
+ *    \brief AuxKernel kernel to compute the pore diffusivity for the micro-scale
+ *    \details This file is responsible for calculating the pore diffusion in m^2/s
  *
  *
  *  \author Austin Ladshaw
@@ -33,40 +33,35 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#pragma once
+#include "GasSpeciesPoreDiffusion.h"
 
-#include "GasPropertiesBase.h"
-
-/// GasSpeciesAxialDispersion class object forward declarations
-class GasSpeciesAxialDispersion;
+registerMooseObject("catsApp", GasSpeciesPoreDiffusion);
 
 template<>
-InputParameters validParams<GasSpeciesAxialDispersion>();
-
-/// GasSpeciesAxialDispersion class object inherits from GasPropertiesBase object
-/** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
-    All public and protected members of this class are required function overrides.
-    The kernel interfaces the set of non-linear variables to the kinetic theory of gases.  */
-class GasSpeciesAxialDispersion : public GasPropertiesBase
+InputParameters validParams<GasSpeciesPoreDiffusion>()
 {
-public:
-    /// Required constructor for objects in MOOSE
-    GasSpeciesAxialDispersion(const InputParameters & parameters);
+    InputParameters params = validParams<GasPropertiesBase>();
+    params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
+    params.addRequiredCoupledVar("micro_porosity","Name of the micro-porosity variable");
+    return params;
+}
 
-protected:
-    /// Required MOOSE function override
-    /** This is the function that is called by the MOOSE framework when a calculation of the total
-        system pressure is needed. You are required to override this function for any inherited
-        AuxKernel. */
-    virtual Real computeValue() override;
+GasSpeciesPoreDiffusion::GasSpeciesPoreDiffusion(const InputParameters & parameters) :
+GasPropertiesBase(parameters),
+_index(getParam< unsigned int >("species_index")),
+_porosity(coupledValue("micro_porosity")),
+_porosity_var(coupled("micro_porosity"))
+{
+    if (_index > _gases.size())
+    {
+        moose::internal::mooseErrorRaw("Index out of bounds!");
+    }
+}
+
+Real GasSpeciesPoreDiffusion::computeValue()
+{
+    prepareEgret();
+    calculateAllProperties();
     
-    unsigned int _index;                                 ///< Index of the gas species to which the dispersion belongs
-    const VariableValue & _column_dia;                   ///< Variable for the column diameter (m)
-    const unsigned int _column_dia_var;                  ///< Variable identification for the column diameter
-    
-private:
-
-};
-
-
-
+    return _egret_dat.species_dat[_index].molecular_diffusion*_porosity[_qp]*_porosity[_qp]/100.0/100.0;
+}

@@ -1,7 +1,7 @@
 /*!
- *  \file GasSpeciesAxialDispersion.h
- *    \brief AuxKernel kernel to compute the axial dispersion for a given gas species
- *    \details This file is responsible for calculating the axial dispersion in m^2/s
+ *  \file GasThermalConductivity.h
+ *    \brief AuxKernel kernel to compute the gas phase thermal conductivity
+ *    \details This file is responsible for calculating the gas thermal conductivity in W/m/K
  *
  *
  *  \author Austin Ladshaw
@@ -37,21 +37,21 @@
 
 #include "GasPropertiesBase.h"
 
-/// GasSpeciesAxialDispersion class object forward declarations
-class GasSpeciesAxialDispersion;
+/// GasThermalConductivity class object forward declarations
+class GasThermalConductivity;
 
 template<>
-InputParameters validParams<GasSpeciesAxialDispersion>();
+InputParameters validParams<GasThermalConductivity>();
 
-/// GasSpeciesAxialDispersion class object inherits from GasPropertiesBase object
+/// GasThermalConductivity class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
     The kernel interfaces the set of non-linear variables to the kinetic theory of gases.  */
-class GasSpeciesAxialDispersion : public GasPropertiesBase
+class GasThermalConductivity : public GasPropertiesBase
 {
 public:
     /// Required constructor for objects in MOOSE
-    GasSpeciesAxialDispersion(const InputParameters & parameters);
+    GasThermalConductivity(const InputParameters & parameters);
 
 protected:
     /// Required MOOSE function override
@@ -60,13 +60,8 @@ protected:
         AuxKernel. */
     virtual Real computeValue() override;
     
-    unsigned int _index;                                 ///< Index of the gas species to which the dispersion belongs
-    const VariableValue & _column_dia;                   ///< Variable for the column diameter (m)
-    const unsigned int _column_dia_var;                  ///< Variable identification for the column diameter
+    Real _Cp_Cv_ratio;            ///< Value for the ratio of Cp to Cv for the gas (assumed = 1.4 if not given)
     
 private:
 
 };
-
-
-

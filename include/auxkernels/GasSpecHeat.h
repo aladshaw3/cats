@@ -1,7 +1,7 @@
 /*!
  *  \file GasSpecHeat.h
- *    \brief AuxKernel kernel to compute the gas specific heat
- *    \details This file is responsible for calculating the gas specific heat in J/kg/K
+ *    \brief AuxKernel kernel to compute the gas specific heat (Cp)
+ *    \details This file is responsible for calculating the gas specific heat (Cp) in J/kg/K
  *
  *
  *  \author Austin Ladshaw

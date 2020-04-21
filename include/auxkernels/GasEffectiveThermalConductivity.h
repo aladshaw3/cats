@@ -1,7 +1,7 @@
 /*!
- *  \file GasSpeciesAxialDispersion.h
- *    \brief AuxKernel kernel to compute the axial dispersion for a given gas species
- *    \details This file is responsible for calculating the axial dispersion in m^2/s
+ *  \file GasEffectiveThermalConductivity.h
+ *    \brief AuxKernel kernel to compute the effective thermal conductivity of gases in a packed column
+ *    \details This file is responsible for calculating the effective gas thermal conductivity in W/m/K
  *
  *
  *  \author Austin Ladshaw
@@ -37,21 +37,21 @@
 
 #include "GasPropertiesBase.h"
 
-/// GasSpeciesAxialDispersion class object forward declarations
-class GasSpeciesAxialDispersion;
+/// GasEffectiveThermalConductivity class object forward declarations
+class GasEffectiveThermalConductivity;
 
 template<>
-InputParameters validParams<GasSpeciesAxialDispersion>();
+InputParameters validParams<GasEffectiveThermalConductivity>();
 
-/// GasSpeciesAxialDispersion class object inherits from GasPropertiesBase object
+/// GasEffectiveThermalConductivity class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
     The kernel interfaces the set of non-linear variables to the kinetic theory of gases.  */
-class GasSpeciesAxialDispersion : public GasPropertiesBase
+class GasEffectiveThermalConductivity : public GasPropertiesBase
 {
 public:
     /// Required constructor for objects in MOOSE
-    GasSpeciesAxialDispersion(const InputParameters & parameters);
+    GasEffectiveThermalConductivity(const InputParameters & parameters);
 
 protected:
     /// Required MOOSE function override
@@ -60,13 +60,13 @@ protected:
         AuxKernel. */
     virtual Real computeValue() override;
     
-    unsigned int _index;                                 ///< Index of the gas species to which the dispersion belongs
+    Real _Cp_Cv_ratio;            ///< Value for the ratio of Cp to Cv for the gas (assumed = 1.4 if not given)
     const VariableValue & _column_dia;                   ///< Variable for the column diameter (m)
     const unsigned int _column_dia_var;                  ///< Variable identification for the column diameter
+    const VariableValue & _porosity;                ///< Variable for the porosity
+    const unsigned int _porosity_var;               ///< Variable identification for the porosity
     
 private:
 
 };
-
-
 
