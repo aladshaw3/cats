@@ -1,0 +1,7 @@
+[Tests]
+  [./fully_coupled_column_test]
+    type = 'Exodiff'
+    input = '150C_w_gas_prop.i'
+    exodiff = '150C_w_gas_prop_out.e'
+  [../]
+[]

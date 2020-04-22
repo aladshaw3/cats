@@ -403,6 +403,7 @@
       product_stoich = '1'
     [../]
  
+# ERRORS observered were actually caused by the MaterialBalance kernel (which allowed negative site densities)
     [./qT_calc]
         type = MaterialBalance
         variable = qT
@@ -594,7 +595,7 @@
       uz = vel_z
       input_vals = '2.88105E-05    2.28698E-05    1.70674E-05    1.13344E-05    5.76691E-06    2.87521E-06    1.43838E-06    7.21421E-07    3.67254E-07    3.81105E-09'
       input_times = '125.5    955.5    1465.5    1965.5    2545.5    3305.5    4625.5    6545.5    9295.5    13525.5'
-time_spans = '15    15    15    15    15    15    15    15    15    15'
+      time_spans = '15    15    15    15    15    15    15    15    15    15'
     [../]
     [./NH3_FluxOut]
       type = DGPoreConcFluxBC
@@ -645,6 +646,12 @@ time_spans = '15    15    15    15    15    15    15    15    15    15'
         variable = q3
         execute_on = 'initial timestep_end'
     [../]
+
+#    [./S3]
+#        type = ElementAverageValue
+#        variable = S3
+#        execute_on = 'initial timestep_end'
+#    [../]
 
 #    [./total]
 #        type = ElementAverageValue
@@ -714,11 +721,11 @@ time_spans = '15    15    15    15    15    15    15    15    15    15'
 
   start_time = 0.0
   end_time = 18360
-dtmax = 16
+  dtmax = 15
 
   [./TimeStepper]
      type = ConstantDT
-dt = 16
+     dt = 15
   [../]
 [] #END Executioner
 

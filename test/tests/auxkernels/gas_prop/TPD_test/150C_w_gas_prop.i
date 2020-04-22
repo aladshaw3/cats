@@ -19,7 +19,7 @@
     type = GeneratedMesh
     dim = 2
     nx = 1
-    ny = 20
+    ny = 10
     xmin = 0.0
     xmax = 0.01    #1cm radius (in m)
     ymin = 0.0
@@ -670,13 +670,13 @@
   l_tol = 1e-8
   l_max_its = 300
 
-  start_time = 0.0
-  end_time = 18360
-  dtmax = 15
+  start_time = 130.0
+  end_time = 230
+  dtmax = 10
 
   [./TimeStepper]
      type = ConstantDT
-     dt = 15
+     dt = 10
   [../]
 [] #END Executioner
 

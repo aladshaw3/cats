@@ -116,6 +116,7 @@ Real DGPoreConcFluxStepwiseBC::newInputValue(Real time)
             }
         }
     }
+    
     return val;
 }
 
