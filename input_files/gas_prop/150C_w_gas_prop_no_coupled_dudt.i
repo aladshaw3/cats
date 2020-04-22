@@ -265,23 +265,68 @@
         coupled = NH3
         rate_variable = kme_NH3
     [../]
-    [./transfer_q1]
-        type = CoupledPorePhaseTransfer
-        variable = NH3w
-        coupled = q1
-        porosity = pore
+#    [./transfer_q1]
+#        type = CoupledPorePhaseTransfer
+#        variable = NH3w
+#        coupled = q1
+#        porosity = pore
+#    [../]
+    [./transfer_q1]  #   NH3w + S1 <-- --> q1
+      type = ArrheniusEquilibriumReaction
+      variable = NH3w
+      this_variable = NH3w
+      forward_activation_energy = 0
+      forward_pre_exponential = 4166.67
+      enthalpy = -54547.9
+      entropy = -29.9943
+      temperature = temp
+      scale = -0.6691               #(1-pore)
+      reactants = 'NH3w S1'
+      reactant_stoich = '1 1'
+      products = 'q1'
+      product_stoich = '1'
     [../]
-    [./transfer_q2]
-        type = CoupledPorePhaseTransfer
-        variable = NH3w
-        coupled = q2
-        porosity = pore
+#    [./transfer_q2]
+#        type = CoupledPorePhaseTransfer
+#        variable = NH3w
+#        coupled = q2
+#        porosity = pore
+#    [../]
+    [./transfer_q2]  #   NH3w + S2 <-- --> q2
+      type = ArrheniusEquilibriumReaction
+      variable = NH3w
+      this_variable = NH3w
+      forward_activation_energy = 0
+      forward_pre_exponential = 5833.333
+      enthalpy = -78065.1
+      entropy = -41.0596
+      temperature = temp
+      scale = -0.6691               #(1-pore)
+      reactants = 'NH3w S2'
+      reactant_stoich = '1 1'
+      products = 'q2'
+      product_stoich = '1'
     [../]
-    [./transfer_q3]
-        type = CoupledPorePhaseTransfer
-        variable = NH3w
-        coupled = q3
-        porosity = pore
+#    [./transfer_q3]
+#        type = CoupledPorePhaseTransfer
+#        variable = NH3w
+#        coupled = q3
+#        porosity = pore
+#    [../]
+    [./transfer_q3]  #   NH3w + S3 <-- --> q3
+      type = ArrheniusEquilibriumReaction
+      variable = NH3w
+      this_variable = NH3w
+      forward_activation_energy = 0
+      forward_pre_exponential = 833333.3
+      enthalpy = -91860.8
+      entropy = -28.9292
+      temperature = temp
+      scale = -0.6691               #(1-pore)
+      reactants = 'NH3w S3'
+      reactant_stoich = '1 1'
+      products = 'q3'
+      product_stoich = '1'
     [../]
 
 #   NOTE: According to the Olsson paper, the activation energy for adsorption is 0.0
@@ -538,8 +583,6 @@
 
 [BCs]
 
-# --------------- NOTE: THERE IS AN ERROR IN THE STEPWISE BC KERNEL!!! -----------------
-#   Error occurs only occassionally when choosing a time_step equal to the time_spans
     [./NH3_FluxIn]
       type = DGPoreConcFluxStepwiseBC
       variable = NH3
@@ -551,7 +594,7 @@
       uz = vel_z
       input_vals = '2.88105E-05    2.28698E-05    1.70674E-05    1.13344E-05    5.76691E-06    2.87521E-06    1.43838E-06    7.21421E-07    3.67254E-07    3.81105E-09'
       input_times = '125.5    955.5    1465.5    1965.5    2545.5    3305.5    4625.5    6545.5    9295.5    13525.5'
-      time_spans = '15    15    15    15    15    15    15    15    15    15'
+time_spans = '15    15    15    15    15    15    15    15    15    15'
     [../]
     [./NH3_FluxOut]
       type = DGPoreConcFluxBC
@@ -671,11 +714,11 @@
 
   start_time = 0.0
   end_time = 18360
-  dtmax = 16
+dtmax = 16
 
   [./TimeStepper]
      type = ConstantDT
-     dt = 16
+dt = 16
   [../]
 [] #END Executioner
 
