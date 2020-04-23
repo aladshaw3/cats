@@ -41,12 +41,21 @@
 
 registerMooseObject("catsApp", CoupledPorePhaseTransfer);
 
+/*
 template<>
 InputParameters validParams<CoupledPorePhaseTransfer>()
 {
 	InputParameters params = validParams<CoupledCoeffTimeDerivative>();
 	params.addRequiredCoupledVar("porosity","Variable for the porosity of the domain/subdomain");
 	return params;
+}
+ */
+
+InputParameters CoupledPorePhaseTransfer::validParams()
+{
+    InputParameters params = CoupledCoeffTimeDerivative::validParams();
+    params.addRequiredCoupledVar("porosity","Variable for the porosity of the domain/subdomain");
+    return params;
 }
 
 CoupledPorePhaseTransfer::CoupledPorePhaseTransfer(const InputParameters & parameters)
@@ -61,7 +70,7 @@ Real CoupledPorePhaseTransfer::computeQpResidual()
   if (_gaining == true)
     _time_coef = -(1.0-_porosity[_qp]);
   else
-    _time_coef = (1.0-_porosity[_qp]);
+    {_time_coef = (1.0-_porosity[_qp]);}
 
 	return CoupledCoeffTimeDerivative::computeQpResidual();
 }
@@ -76,15 +85,17 @@ Real CoupledPorePhaseTransfer::computeQpOffDiagJacobian(unsigned int jvar)
   if (_gaining == true)
     _time_coef = -(1.0-_porosity[_qp]);
   else
-    _time_coef = (1.0-_porosity[_qp]);
+    {_time_coef = (1.0-_porosity[_qp]);}
 
 	if (jvar == _coupled_var)
 		return CoupledCoeffTimeDerivative::computeQpOffDiagJacobian(jvar);
   if (jvar == _porosity_var)
+  {
     if (_gaining == true)
-      return _phi[_j][_qp]*_coupled_dot[_qp]*_test[_i][_qp];
+        {return _phi[_j][_qp]*_coupled_dot[_qp]*_test[_i][_qp];}
     else
-      return _phi[_j][_qp]*_coupled_dot[_qp]*_test[_i][_qp];
+        {return _phi[_j][_qp]*_coupled_dot[_qp]*_test[_i][_qp];}
+  }
 
 	return 0.0;
 }

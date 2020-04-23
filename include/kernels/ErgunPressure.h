@@ -44,10 +44,10 @@
 #include "Kernel.h"
 
 /// ErgunPressure class object forward declarations
-class ErgunPressure;
+//class ErgunPressure;
 
-template<>
-InputParameters validParams<ErgunPressure>();
+//template<>
+//InputParameters validParams<ErgunPressure>();
 
 /// MaterialBalance class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -56,6 +56,9 @@ InputParameters validParams<ErgunPressure>();
 class ErgunPressure : public Kernel
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     ErgunPressure(const InputParameters & parameters);
 

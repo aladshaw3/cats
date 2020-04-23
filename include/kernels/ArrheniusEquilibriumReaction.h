@@ -46,10 +46,10 @@
 #include "ArrheniusReaction.h"
 
 /// ArrheniusEquilibriumReaction class object forward declarationss
-class ArrheniusEquilibriumReaction;
+//class ArrheniusEquilibriumReaction;
 
-template<>
-InputParameters validParams<ArrheniusEquilibriumReaction>();
+//template<>
+//InputParameters validParams<ArrheniusEquilibriumReaction>();
 
 /// ArrheniusEquilibriumReaction class object inherits from ArrheniusReaction object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -59,6 +59,9 @@ InputParameters validParams<ArrheniusEquilibriumReaction>();
 class ArrheniusEquilibriumReaction : public ArrheniusReaction
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     ArrheniusEquilibriumReaction(const InputParameters & parameters);
 

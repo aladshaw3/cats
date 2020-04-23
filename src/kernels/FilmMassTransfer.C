@@ -41,10 +41,20 @@
 
 registerMooseObject("catsApp", FilmMassTransfer);
 
+/*
 template<>
 InputParameters validParams<FilmMassTransfer>()
 {
     InputParameters params = validParams<ConstMassTransfer>();
+    params.addParam< Real >("av_ratio",1.0,"Area to volume ratio at which mass transfer occurs");
+    params.addRequiredCoupledVar("rate_variable","Name of the coupled rate variable");
+    return params;
+}
+ */
+
+InputParameters FilmMassTransfer::validParams()
+{
+    InputParameters params = ConstMassTransfer::validParams();
     params.addParam< Real >("av_ratio",1.0,"Area to volume ratio at which mass transfer occurs");
     params.addRequiredCoupledVar("rate_variable","Name of the coupled rate variable");
     return params;

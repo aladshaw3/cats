@@ -43,10 +43,26 @@
 
 registerMooseObject("catsApp", ConstReaction);
 
+/*
 template<>
 InputParameters validParams<ConstReaction>()
 {
     InputParameters params = validParams<Kernel>();
+    params.addParam< std::vector<Real> >("reactant_stoich","List of stoichiometry for reactants");
+    params.addParam< std::vector<Real> >("product_stoich","List of stoichiometry for products");
+    params.addParam< Real >("forward_rate",0.0,"Forward rate constant");
+    params.addParam< Real >("reverse_rate",0.0,"Reverse rate constant");
+    params.addParam< Real >("scale",1.0,"Scaling parameter for this reaction");
+    params.addRequiredCoupledVar("reactants","List of names of the reactant variables");
+    params.addRequiredCoupledVar("products","List of names of the product variables");
+    params.addRequiredCoupledVar("this_variable","Name of this variable the kernel acts on");
+    return params;
+}
+ */
+
+InputParameters ConstReaction::validParams()
+{
+    InputParameters params = Kernel::validParams();
     params.addParam< std::vector<Real> >("reactant_stoich","List of stoichiometry for reactants");
     params.addParam< std::vector<Real> >("product_stoich","List of stoichiometry for products");
     params.addParam< Real >("forward_rate",0.0,"Forward rate constant");

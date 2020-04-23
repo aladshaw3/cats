@@ -36,10 +36,10 @@
 #include "Kernel.h"
 
 /// MicroscaleCoupledCoefTimeDerivative class object forward declarationss
-class MicroscaleCoupledCoefTimeDerivative;
+//class MicroscaleCoupledCoefTimeDerivative;
 
-template<>
-InputParameters validParams<MicroscaleCoupledCoefTimeDerivative>();
+//template<>
+//InputParameters validParams<MicroscaleCoupledCoefTimeDerivative>();
 
 /// MicroscaleCoupledCoefTimeDerivative class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -50,6 +50,9 @@ InputParameters validParams<MicroscaleCoupledCoefTimeDerivative>();
 class MicroscaleCoupledCoefTimeDerivative : public Kernel
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     MicroscaleCoupledCoefTimeDerivative(const InputParameters & parameters);
     

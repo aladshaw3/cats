@@ -43,10 +43,10 @@
 #include "Kernel.h"
 
 /// GAnisotropicDiffusion class object forward declarations
-class GAnisotropicDiffusion;
+//class GAnisotropicDiffusion;
 
-template<>
-InputParameters validParams<GAnisotropicDiffusion>();
+//template<>
+//InputParameters validParams<GAnisotropicDiffusion>();
 
 /// GAnisotropicDiffusion class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -60,6 +60,9 @@ InputParameters validParams<GAnisotropicDiffusion>();
 class GAnisotropicDiffusion : public Kernel
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
 	/// Required constructor for objects in MOOSE
 	GAnisotropicDiffusion(const InputParameters & parameters);
 

@@ -39,10 +39,20 @@
 
 registerMooseObject("catsApp", ConstMassTransfer);
 
+/*
 template<>
 InputParameters validParams<ConstMassTransfer>()
 {
     InputParameters params = validParams<Kernel>();
+    params.addParam< Real >("transfer_rate",1.0,"Mass/energy transfer coefficient");
+    params.addRequiredCoupledVar("coupled","Name of the coupled variable");
+    return params;
+}
+ */
+
+InputParameters ConstMassTransfer::validParams()
+{
+    InputParameters params = Kernel::validParams();
     params.addParam< Real >("transfer_rate",1.0,"Mass/energy transfer coefficient");
     params.addRequiredCoupledVar("coupled","Name of the coupled variable");
     return params;

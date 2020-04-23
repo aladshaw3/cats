@@ -40,10 +40,10 @@
 #include "GVariableDiffusion.h"
 
 /// GVarPoreDiffusion class object forward declarations
-class GVarPoreDiffusion;
+//class GVarPoreDiffusion;
 
-template<>
-InputParameters validParams<GVarPoreDiffusion>();
+//template<>
+//InputParameters validParams<GVarPoreDiffusion>();
 
 /// GVarPoreDiffusion class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -57,6 +57,9 @@ InputParameters validParams<GVarPoreDiffusion>();
 class GVarPoreDiffusion : public GVariableDiffusion
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
 	/// Required constructor for objects in MOOSE
 	GVarPoreDiffusion(const InputParameters & parameters);
 

@@ -47,10 +47,10 @@
 #endif
 
 /// ArrheniusReaction class object forward declarationss
-class ArrheniusReaction;
+//class ArrheniusReaction;
 
-template<>
-InputParameters validParams<ArrheniusReaction>();
+//template<>
+//InputParameters validParams<ArrheniusReaction>();
 
 /// ArrheniusReaction class object inherits from ConstReaction object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -60,6 +60,9 @@ InputParameters validParams<ArrheniusReaction>();
 class ArrheniusReaction : public ConstReaction
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     ArrheniusReaction(const InputParameters & parameters);
 

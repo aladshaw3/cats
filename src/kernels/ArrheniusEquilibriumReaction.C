@@ -45,10 +45,20 @@
 
 registerMooseObject("catsApp", ArrheniusEquilibriumReaction);
 
+/*
 template<>
 InputParameters validParams<ArrheniusEquilibriumReaction>()
 {
     InputParameters params = validParams<ArrheniusReaction>();
+    params.addParam< Real >("enthalpy",0.0,"Reaction enthalpy (J/mol)");
+    params.addParam< Real >("entropy",0.0,"Reaction entropy (J/K/mol)");
+    return params;
+}
+ */
+
+InputParameters ArrheniusEquilibriumReaction::validParams()
+{
+    InputParameters params = ArrheniusReaction::validParams();
     params.addParam< Real >("enthalpy",0.0,"Reaction enthalpy (J/mol)");
     params.addParam< Real >("entropy",0.0,"Reaction entropy (J/K/mol)");
     return params;

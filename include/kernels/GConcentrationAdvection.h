@@ -40,10 +40,10 @@
 #include "GAdvection.h"
 
 /// GConcentrationAdvection class object forward declarations
-class GConcentrationAdvection;
+//class GConcentrationAdvection;
 
-template<>
-InputParameters validParams<GConcentrationAdvection>();
+//template<>
+//InputParameters validParams<GConcentrationAdvection>();
 
 /// GConcentrationAdvection class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -57,6 +57,9 @@ InputParameters validParams<GConcentrationAdvection>();
 class GConcentrationAdvection : public GAdvection
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
 	/// Required constructor for objects in MOOSE
 	GConcentrationAdvection(const InputParameters & parameters);
 

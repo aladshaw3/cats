@@ -42,10 +42,21 @@
 
 registerMooseObject("catsApp", EquilibriumReaction);
 
+/*
 template<>
 InputParameters validParams<EquilibriumReaction>()
 {
     InputParameters params = validParams<ConstReaction>();
+    params.addParam< Real >("enthalpy",0.0,"Reaction enthalpy (J/mol)");
+    params.addParam< Real >("entropy",0.0,"Reaction entropy (J/K/mol)");
+    params.addRequiredCoupledVar("temperature","Name of the coupled temperature variable (K)");
+    return params;
+}
+ */
+
+InputParameters EquilibriumReaction::validParams()
+{
+    InputParameters params = ConstReaction::validParams();
     params.addParam< Real >("enthalpy",0.0,"Reaction enthalpy (J/mol)");
     params.addParam< Real >("entropy",0.0,"Reaction entropy (J/K/mol)");
     params.addRequiredCoupledVar("temperature","Name of the coupled temperature variable (K)");

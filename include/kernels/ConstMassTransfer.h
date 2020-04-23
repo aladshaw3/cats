@@ -40,10 +40,10 @@
 #include "Kernel.h"
 
 /// ConstMassTransfer class object forward declarationss
-class ConstMassTransfer;
+//class ConstMassTransfer;
 
-template<>
-InputParameters validParams<ConstMassTransfer>();
+//template<>
+//InputParameters validParams<ConstMassTransfer>();
 
 /// ConstMassTransfer class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -53,6 +53,9 @@ InputParameters validParams<ConstMassTransfer>();
 class ConstMassTransfer : public Kernel
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     ConstMassTransfer(const InputParameters & parameters);
 

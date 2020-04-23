@@ -36,10 +36,10 @@
 #include "Kernel.h"
 
 /// MicroscaleDiffusionInnerBC class object forward declarationss
-class MicroscaleDiffusionInnerBC;
+//class MicroscaleDiffusionInnerBC;
 
-template<>
-InputParameters validParams<MicroscaleDiffusionInnerBC>();
+//template<>
+//InputParameters validParams<MicroscaleDiffusionInnerBC>();
 
 /// MicroscaleDiffusion class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -50,6 +50,9 @@ InputParameters validParams<MicroscaleDiffusionInnerBC>();
 class MicroscaleDiffusionInnerBC : public Kernel
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     MicroscaleDiffusionInnerBC(const InputParameters & parameters);
     

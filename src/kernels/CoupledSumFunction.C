@@ -44,12 +44,21 @@
 
 registerMooseObject("catsApp", CoupledSumFunction);
 
+/*
 template<>
 InputParameters validParams<CoupledSumFunction>()
 {
 	InputParameters params = validParams<Kernel>();
 	params.addRequiredCoupledVar("coupled_list","List of names of the variables being coupled");
 	return params;
+}
+ */
+
+InputParameters CoupledSumFunction::validParams()
+{
+    InputParameters params = Kernel::validParams();
+    params.addRequiredCoupledVar("coupled_list","List of names of the variables being coupled");
+    return params;
 }
 
 CoupledSumFunction::CoupledSumFunction(const InputParameters & parameters)

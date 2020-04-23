@@ -43,10 +43,10 @@
 #include "Kernel.h"
 
 /// ConstReaction class object forward declarationss
-class ConstReaction;
+//class ConstReaction;
 
-template<>
-InputParameters validParams<ConstReaction>();
+//template<>
+//InputParameters validParams<ConstReaction>();
 
 /// ConstReaction class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -56,6 +56,9 @@ InputParameters validParams<ConstReaction>();
 class ConstReaction : public Kernel
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     ConstReaction(const InputParameters & parameters);
 

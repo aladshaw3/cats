@@ -44,10 +44,26 @@
 
 registerMooseObject("catsApp", ErgunPressure);
 
+/*
 template<>
 InputParameters validParams<ErgunPressure>()
 {
     InputParameters params = validParams<Kernel>();
+    params.addParam< Real >("scale_factor",1E-6,"Scaling factor for the residuals to improve convergence for dilute systems");
+    params.addRequiredParam< unsigned int >("direction","Direction that the Ergun gradient acts on (0=x, 1=y, 2=z)");
+    params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");
+    params.addRequiredCoupledVar("hydraulic_diameter","Name of the hydraulic diameter variable");
+    params.addRequiredCoupledVar("velocity","Name of the velocity variable in this gradient direction");
+    params.addRequiredCoupledVar("viscosity","Name of the viscosity variable");
+    params.addRequiredCoupledVar("density","Name of the density variable");
+    params.addRequiredCoupledVar("inlet_pressure","Name of the inlet pressure variable");
+    return params;
+}
+ */
+
+InputParameters ErgunPressure::validParams()
+{
+    InputParameters params = Kernel::validParams();
     params.addParam< Real >("scale_factor",1E-6,"Scaling factor for the residuals to improve convergence for dilute systems");
     params.addRequiredParam< unsigned int >("direction","Direction that the Ergun gradient acts on (0=x, 1=y, 2=z)");
     params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");

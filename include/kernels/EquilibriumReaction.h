@@ -51,10 +51,10 @@
 #endif
 
 /// EquilibriumReaction class object forward declarationss
-class EquilibriumReaction;
+//class EquilibriumReaction;
 
-template<>
-InputParameters validParams<EquilibriumReaction>();
+//template<>
+//InputParameters validParams<EquilibriumReaction>();
 
 /// EquilibriumReaction class object inherits from ConstReaction object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -64,6 +64,9 @@ InputParameters validParams<EquilibriumReaction>();
 class EquilibriumReaction : public ConstReaction
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     EquilibriumReaction(const InputParameters & parameters);
 

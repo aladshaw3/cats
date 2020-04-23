@@ -42,10 +42,10 @@
 #include "CoupledCoeffTimeDerivative.h"
 
 /// CoupledPorePhaseTransfer class object forward declarationss
-class CoupledPorePhaseTransfer;
+//class CoupledPorePhaseTransfer;
 
-template<>
-InputParameters validParams<CoupledPorePhaseTransfer>();
+//template<>
+//InputParameters validParams<CoupledPorePhaseTransfer>();
 
 /// CoupledCoeffTimeDerivative class object inherits from CoupledCoeffTimeDerivative object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -55,6 +55,9 @@ InputParameters validParams<CoupledPorePhaseTransfer>();
 class CoupledPorePhaseTransfer : public CoupledCoeffTimeDerivative
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
 	/// Required constructor for objects in MOOSE
 	CoupledPorePhaseTransfer(const InputParameters & parameters);
 

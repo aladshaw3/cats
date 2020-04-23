@@ -39,10 +39,10 @@
 #include "Kernel.h"
 
 /// CoupledCoeffTimeDerivative class object forward declarationss
-class CoupledCoeffTimeDerivative;
+//class CoupledCoeffTimeDerivative;
 
-template<>
-InputParameters validParams<CoupledCoeffTimeDerivative>();
+//template<>
+//InputParameters validParams<CoupledCoeffTimeDerivative>();
 
 /// CoupledCoeffTimeDerivative class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -52,6 +52,9 @@ InputParameters validParams<CoupledCoeffTimeDerivative>();
 class CoupledCoeffTimeDerivative : public Kernel
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
 	/// Required constructor for objects in MOOSE
 	CoupledCoeffTimeDerivative(const InputParameters & parameters);
 	

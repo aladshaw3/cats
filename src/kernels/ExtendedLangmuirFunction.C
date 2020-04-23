@@ -42,6 +42,7 @@
 
 registerMooseObject("catsApp", ExtendedLangmuirFunction);
 
+/*
 template<>
 InputParameters validParams<ExtendedLangmuirFunction>()
 {
@@ -52,7 +53,18 @@ InputParameters validParams<ExtendedLangmuirFunction>()
 	params.addRequiredCoupledVar("main_coupled","Name of the primary variable being coupled");
 	return params;
 }
+*/
 
+InputParameters ExtendedLangmuirFunction::validParams()
+{
+    InputParameters params = Kernel::validParams();
+    params.addParam<Real>("site_density",0.0,"Maximum Capacity for Langmuir Function of this sorption site (mol/L)");
+    params.addParam< std::vector<Real> >("langmuir_coeff","Coefficient for the langmuir function (L/mol)");
+    params.addRequiredCoupledVar("coupled_list","List of names of the variables being coupled");
+    params.addRequiredCoupledVar("main_coupled","Name of the primary variable being coupled");
+    return params;
+}
+ 
 ExtendedLangmuirFunction::ExtendedLangmuirFunction(const InputParameters & parameters)
 : Kernel(parameters),
 _maxcap(getParam<Real>("site_density")),

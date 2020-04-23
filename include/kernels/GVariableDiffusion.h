@@ -40,10 +40,10 @@
 #include "GAnisotropicDiffusion.h"
 
 /// GVariableDiffusion class object forward declarations
-class GVariableDiffusion;
+//class GVariableDiffusion;
 
-template<>
-InputParameters validParams<GVariableDiffusion>();
+//template<>
+//InputParameters validParams<GVariableDiffusion>();
 
 /// GVariableDiffusion class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -57,6 +57,9 @@ InputParameters validParams<GVariableDiffusion>();
 class GVariableDiffusion : public GAnisotropicDiffusion
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
 	/// Required constructor for objects in MOOSE
 	GVariableDiffusion(const InputParameters & parameters);
 

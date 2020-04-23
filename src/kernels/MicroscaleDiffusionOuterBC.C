@@ -35,10 +35,27 @@
 
 registerMooseObject("catsApp", MicroscaleDiffusionOuterBC);
 
+/*
 template<>
 InputParameters validParams<MicroscaleDiffusionOuterBC>()
 {
     InputParameters params = validParams<Kernel>();
+    params.addParam<Real>("diffusion_const",1.0,"[Global] Diffusion constant in the microscale");
+    params.addParam<Real>("transfer_const",1.0,"Mass transfer constant between micro- and macro-scales");
+    params.addRequiredParam<Real>("micro_length","[Global] Total length of the microscale");
+    params.addRequiredParam<unsigned int>("node_id","This variable's node id in the microscale");
+    params.addRequiredParam<unsigned int>("num_nodes","[Global] Total number of nodes in microscale");
+    params.addRequiredParam<unsigned int>("coord_id","[Global] Enum: 0 = cartesian, 1 = r-cylindrical, 2 = r-spherical");
+    
+    params.addRequiredCoupledVar("macro_variable","Variable for macroscale problem (i.e., actual mesh)");
+    params.addRequiredCoupledVar("lower_neighbor","Variable for lower neighbor");
+    return params;
+}
+ */
+
+InputParameters MicroscaleDiffusionOuterBC::validParams()
+{
+    InputParameters params = Kernel::validParams();
     params.addParam<Real>("diffusion_const",1.0,"[Global] Diffusion constant in the microscale");
     params.addParam<Real>("transfer_const",1.0,"Mass transfer constant between micro- and macro-scales");
     params.addRequiredParam<Real>("micro_length","[Global] Total length of the microscale");

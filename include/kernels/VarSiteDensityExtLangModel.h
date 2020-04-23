@@ -44,10 +44,10 @@
 #include "ExtendedLangmuirModel.h"
 
 /// VarSiteDensityExtLangModel class object forward declarationss
-class VarSiteDensityExtLangModel;
+//class VarSiteDensityExtLangModel;
 
-template<>
-InputParameters validParams<VarSiteDensityExtLangModel>();
+//template<>
+//InputParameters validParams<VarSiteDensityExtLangModel>();
 
 /// VarSiteDensityExtLangModel class object inherits from ExtendedLangmuirModel object
 /** This class object inherits from the CoupledExtendedLangmuirFunction object in the MOOSE framework.
@@ -57,6 +57,9 @@ InputParameters validParams<VarSiteDensityExtLangModel>();
 class VarSiteDensityExtLangModel : public ExtendedLangmuirModel
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
 	/// Required constructor for objects in MOOSE
 	VarSiteDensityExtLangModel(const InputParameters & parameters);
 

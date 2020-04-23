@@ -35,10 +35,24 @@
 
 registerMooseObject("catsApp", MicroscaleCoupledCoefTimeDerivative);
 
+/*
 template<>
 InputParameters validParams<MicroscaleCoupledCoefTimeDerivative>()
 {
     InputParameters params = validParams<Kernel>();
+    params.addParam<Real>("nodal_time_coef",1.0,"Time coefficient at the current node in the microscale");
+    params.addRequiredParam<Real>("micro_length","[Global] Total length of the microscale");
+    params.addRequiredParam<unsigned int>("node_id","This variable's node id in the microscale");
+    params.addRequiredParam<unsigned int>("num_nodes","[Global] Total number of nodes in microscale");
+    params.addRequiredParam<unsigned int>("coord_id","[Global] Enum: 0 = cartesian, 1 = r-cylindrical, 2 = r-spherical");
+    params.addRequiredCoupledVar("coupled_at_node","Name of the variable being coupled at the given microscale node");
+    return params;
+}
+ */
+
+InputParameters MicroscaleCoupledCoefTimeDerivative::validParams()
+{
+    InputParameters params = Kernel::validParams();
     params.addParam<Real>("nodal_time_coef",1.0,"Time coefficient at the current node in the microscale");
     params.addRequiredParam<Real>("micro_length","[Global] Total length of the microscale");
     params.addRequiredParam<unsigned int>("node_id","This variable's node id in the microscale");

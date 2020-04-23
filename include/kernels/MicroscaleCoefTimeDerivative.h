@@ -36,10 +36,10 @@
 #include "TimeDerivative.h"
 
 /// MicroscaleCoefTimeDerivative class object forward declarationss
-class MicroscaleCoefTimeDerivative;
+//class MicroscaleCoefTimeDerivative;
 
-template<>
-InputParameters validParams<MicroscaleCoefTimeDerivative>();
+//template<>
+//InputParameters validParams<MicroscaleCoefTimeDerivative>();
 
 /// MicroscaleCoefTimeDerivative class object inherits from TimeDerivative object
 /** This class object inherits from the TimeDerivative object in the MOOSE framework.
@@ -50,6 +50,9 @@ InputParameters validParams<MicroscaleCoefTimeDerivative>();
 class MicroscaleCoefTimeDerivative : public TimeDerivative
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     MicroscaleCoefTimeDerivative(const InputParameters & parameters);
     

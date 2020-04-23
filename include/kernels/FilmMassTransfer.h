@@ -42,10 +42,10 @@
 #include "ConstMassTransfer.h"
 
 /// FilmMassTransfer class object forward declarationss
-class FilmMassTransfer;
+//class FilmMassTransfer;
 
-template<>
-InputParameters validParams<FilmMassTransfer>();
+//template<>
+//InputParameters validParams<FilmMassTransfer>();
 
 /// FilmMassTransfer class object inherits from ConstMassTransfer object
 /** This class object inherits from the ConstMassTransfer object in the MOOSE framework.
@@ -55,6 +55,9 @@ InputParameters validParams<FilmMassTransfer>();
 class FilmMassTransfer : public ConstMassTransfer
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     FilmMassTransfer(const InputParameters & parameters);
 

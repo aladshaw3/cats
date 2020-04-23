@@ -40,10 +40,22 @@
 
 registerMooseObject("catsApp", MaterialBalance);
 
+/*
 template<>
 InputParameters validParams<MaterialBalance>()
 {
     InputParameters params = validParams<Kernel>();
+    params.addParam< std::vector<Real> >("weights","List of weights for variables in the balance");
+    params.addRequiredCoupledVar("coupled_list","List of names of the variables being coupled");
+    params.addRequiredCoupledVar("total_material","Name of variable for total material");
+    params.addRequiredCoupledVar("this_variable","Name of this variable the kernel acts on");
+    return params;
+}
+ */
+
+InputParameters MaterialBalance::validParams()
+{
+    InputParameters params = Kernel::validParams();
     params.addParam< std::vector<Real> >("weights","List of weights for variables in the balance");
     params.addRequiredCoupledVar("coupled_list","List of names of the variables being coupled");
     params.addRequiredCoupledVar("total_material","Name of variable for total material");

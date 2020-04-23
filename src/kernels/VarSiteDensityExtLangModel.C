@@ -43,12 +43,21 @@
 
 registerMooseObject("catsApp", VarSiteDensityExtLangModel);
 
+/*
 template<>
 InputParameters validParams<VarSiteDensityExtLangModel>()
 {
 	InputParameters params = validParams<ExtendedLangmuirModel>();
 	params.addRequiredCoupledVar("coupled_site_density","Name of the coupled site density variable (mol/L)");
 	return params;
+}
+ */
+
+InputParameters VarSiteDensityExtLangModel::validParams()
+{
+    InputParameters params = ExtendedLangmuirModel::validParams();
+    params.addRequiredCoupledVar("coupled_site_density","Name of the coupled site density variable (mol/L)");
+    return params;
 }
 
 VarSiteDensityExtLangModel::VarSiteDensityExtLangModel(const InputParameters & parameters)

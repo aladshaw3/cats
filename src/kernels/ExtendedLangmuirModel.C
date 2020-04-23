@@ -43,6 +43,7 @@
 
 registerMooseObject("catsApp", ExtendedLangmuirModel);
 
+/*
 template<>
 InputParameters validParams<ExtendedLangmuirModel>()
 {
@@ -51,6 +52,16 @@ InputParameters validParams<ExtendedLangmuirModel>()
 	params.addParam< std::vector<Real> >("entropies","Entropies for the Langmuir Coefficients (J/K/mol)");
 	params.addRequiredCoupledVar("coupled_temp","Name of the coupled temperature variable");
 	return params;
+}
+ */
+
+InputParameters ExtendedLangmuirModel::validParams()
+{
+    InputParameters params = ExtendedLangmuirFunction::validParams();
+    params.addParam< std::vector<Real> >("enthalpies","Enthalpies for the Langmuir Coefficients (J/mol)");
+    params.addParam< std::vector<Real> >("entropies","Entropies for the Langmuir Coefficients (J/K/mol)");
+    params.addRequiredCoupledVar("coupled_temp","Name of the coupled temperature variable");
+    return params;
 }
 
 ExtendedLangmuirModel::ExtendedLangmuirModel(const InputParameters & parameters)

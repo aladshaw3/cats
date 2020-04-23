@@ -53,10 +53,10 @@
 #endif
 
 /// ExtendedLangmuirModel class object forward declarationss
-class ExtendedLangmuirModel;
+//class ExtendedLangmuirModel;
 
-template<>
-InputParameters validParams<ExtendedLangmuirModel>();
+//template<>
+//InputParameters validParams<ExtendedLangmuirModel>();
 
 /// ExtendedLangmuirModel class object inherits from ExtendedLangmuirFunction object
 /** This class object inherits from the CoupledExtendedLangmuirFunction object in the MOOSE framework.
@@ -66,6 +66,9 @@ InputParameters validParams<ExtendedLangmuirModel>();
 class ExtendedLangmuirModel : public ExtendedLangmuirFunction
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
 	/// Required constructor for objects in MOOSE
 	ExtendedLangmuirModel(const InputParameters & parameters);
 
