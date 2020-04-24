@@ -38,10 +38,10 @@
 #include "GasPropertiesBase.h"
 
 /// GasEffectiveThermalConductivity class object forward declarations
-class GasEffectiveThermalConductivity;
+//class GasEffectiveThermalConductivity;
 
-template<>
-InputParameters validParams<GasEffectiveThermalConductivity>();
+//template<>
+//InputParameters validParams<GasEffectiveThermalConductivity>();
 
 /// GasEffectiveThermalConductivity class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
@@ -50,6 +50,9 @@ InputParameters validParams<GasEffectiveThermalConductivity>();
 class GasEffectiveThermalConductivity : public GasPropertiesBase
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     GasEffectiveThermalConductivity(const InputParameters & parameters);
 

@@ -35,10 +35,19 @@
 
 registerMooseObject("catsApp", MicroscaleIntegralAvg);
 
+/*
 template<>
 InputParameters validParams<MicroscaleIntegralAvg>()
 {
     InputParameters params = validParams<MicroscaleIntegralTotal>();
+    
+    return params;
+}
+ */
+
+InputParameters MicroscaleIntegralAvg::validParams()
+{
+    InputParameters params = MicroscaleIntegralTotal::validParams();
     
     return params;
 }

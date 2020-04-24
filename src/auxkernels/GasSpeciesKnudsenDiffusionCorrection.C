@@ -37,10 +37,21 @@
 
 registerMooseObject("catsApp", GasSpeciesKnudsenDiffusionCorrection);
 
+/*
 template<>
 InputParameters validParams<GasSpeciesKnudsenDiffusionCorrection>()
 {
     InputParameters params = validParams<GasPropertiesBase>();
+    params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
+    params.addRequiredCoupledVar("micro_porosity","Name of the micro-porosity variable");
+    params.addRequiredCoupledVar("micro_pore_radius","Name of the micro-pore radius variable (m)");
+    return params;
+}
+ */
+
+InputParameters GasSpeciesKnudsenDiffusionCorrection::validParams()
+{
+    InputParameters params = GasPropertiesBase::validParams();
     params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
     params.addRequiredCoupledVar("micro_porosity","Name of the micro-porosity variable");
     params.addRequiredCoupledVar("micro_pore_radius","Name of the micro-pore radius variable (m)");

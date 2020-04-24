@@ -43,10 +43,20 @@
 
 registerMooseObject("catsApp", AuxErgunPressure);
 
+/*
 template<>
 InputParameters validParams<AuxErgunPressure>()
 {
     InputParameters params = validParams<GasPropertiesBase>();
+    params.addRequiredParam< unsigned int >("direction","Direction that the Ergun gradient acts on (0=x, 1=y, 2=z)");
+    params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");
+    return params;
+}
+ */
+
+InputParameters AuxErgunPressure::validParams()
+{
+    InputParameters params = GasPropertiesBase::validParams();
     params.addRequiredParam< unsigned int >("direction","Direction that the Ergun gradient acts on (0=x, 1=y, 2=z)");
     params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");
     return params;

@@ -38,10 +38,10 @@
 #include "GasPropertiesBase.h"
 
 /// GasSpeciesDiffusion class object forward declarations
-class GasSpeciesDiffusion;
+//class GasSpeciesDiffusion;
 
-template<>
-InputParameters validParams<GasSpeciesDiffusion>();
+//template<>
+//InputParameters validParams<GasSpeciesDiffusion>();
 
 /// GasSpeciesDiffusion class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
@@ -50,6 +50,9 @@ InputParameters validParams<GasSpeciesDiffusion>();
 class GasSpeciesDiffusion : public GasPropertiesBase
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     GasSpeciesDiffusion(const InputParameters & parameters);
 

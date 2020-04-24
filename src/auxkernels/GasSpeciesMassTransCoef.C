@@ -37,10 +37,19 @@
 
 registerMooseObject("catsApp", GasSpeciesMassTransCoef);
 
+/*
 template<>
 InputParameters validParams<GasSpeciesMassTransCoef>()
 {
     InputParameters params = validParams<GasPropertiesBase>();
+    params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
+    return params;
+}
+ */
+
+InputParameters GasSpeciesMassTransCoef::validParams()
+{
+    InputParameters params = GasPropertiesBase::validParams();
     params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
     return params;
 }

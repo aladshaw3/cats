@@ -37,10 +37,20 @@
 
 registerMooseObject("catsApp", GasSpeciesPoreDiffusion);
 
+/*
 template<>
 InputParameters validParams<GasSpeciesPoreDiffusion>()
 {
     InputParameters params = validParams<GasPropertiesBase>();
+    params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
+    params.addRequiredCoupledVar("micro_porosity","Name of the micro-porosity variable");
+    return params;
+}
+ */
+
+InputParameters GasSpeciesPoreDiffusion::validParams()
+{
+    InputParameters params = GasPropertiesBase::validParams();
     params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
     params.addRequiredCoupledVar("micro_porosity","Name of the micro-porosity variable");
     return params;

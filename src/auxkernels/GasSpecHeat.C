@@ -37,10 +37,19 @@
 
 registerMooseObject("catsApp", GasSpecHeat);
 
+/*
 template<>
 InputParameters validParams<GasSpecHeat>()
 {
     InputParameters params = validParams<GasPropertiesBase>();
+    
+    return params;
+}
+ */
+
+InputParameters GasSpecHeat::validParams()
+{
+    InputParameters params = GasPropertiesBase::validParams();
     
     return params;
 }

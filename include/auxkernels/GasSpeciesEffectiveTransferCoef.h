@@ -38,10 +38,10 @@
 #include "GasPropertiesBase.h"
 
 /// GasSpeciesEffectiveTransferCoef class object forward declarations
-class GasSpeciesEffectiveTransferCoef;
+//class GasSpeciesEffectiveTransferCoef;
 
-template<>
-InputParameters validParams<GasSpeciesEffectiveTransferCoef>();
+//template<>
+//InputParameters validParams<GasSpeciesEffectiveTransferCoef>();
 
 /// GasSpeciesEffectiveTransferCoef class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
@@ -50,6 +50,9 @@ InputParameters validParams<GasSpeciesEffectiveTransferCoef>();
 class GasSpeciesEffectiveTransferCoef : public GasPropertiesBase
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     GasSpeciesEffectiveTransferCoef(const InputParameters & parameters);
 

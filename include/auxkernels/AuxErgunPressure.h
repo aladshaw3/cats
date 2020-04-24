@@ -44,10 +44,10 @@
 #include "GasPropertiesBase.h"
 
 /// AuxErgunPressure class object forward declarations
-class AuxErgunPressure;
+//class AuxErgunPressure;
 
-template<>
-InputParameters validParams<AuxErgunPressure>();
+//template<>
+//InputParameters validParams<AuxErgunPressure>();
 
 /// AuxErgunPressure class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
@@ -56,6 +56,9 @@ InputParameters validParams<AuxErgunPressure>();
 class AuxErgunPressure : public GasPropertiesBase
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     AuxErgunPressure(const InputParameters & parameters);
 

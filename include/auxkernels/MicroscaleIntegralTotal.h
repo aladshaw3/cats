@@ -37,10 +37,10 @@
 
 
 /// MicroscaleIntegralTotal class object forward declaration
-class MicroscaleIntegralTotal;
+//class MicroscaleIntegralTotal;
 
-template<>
-InputParameters validParams<MicroscaleIntegralTotal>();
+//template<>
+//InputParameters validParams<MicroscaleIntegralTotal>();
 
 /// MicroscaleIntegralTotal class inherits from AuxKernel
 /** This class object creates an AuxKernel for use in the MOOSE framework. The AuxKernel will
@@ -48,6 +48,9 @@ InputParameters validParams<MicroscaleIntegralTotal>();
 class MicroscaleIntegralTotal : public AuxKernel
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Standard MOOSE public constructor
     MicroscaleIntegralTotal(const InputParameters & parameters);
     

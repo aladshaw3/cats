@@ -42,10 +42,10 @@
 
 
 /// LinearChangeInTime class object forward declaration
-class LinearChangeInTime;
+//class LinearChangeInTime;
 
-template<>
-InputParameters validParams<LinearChangeInTime>();
+//template<>
+//InputParameters validParams<LinearChangeInTime>();
 
 /// LinearChangeInTime class inherits from AuxKernel
 /** This class object creates an AuxKernel for use in the MOOSE framework. The AuxKernel will
@@ -53,6 +53,9 @@ InputParameters validParams<LinearChangeInTime>();
 class LinearChangeInTime : public AuxKernel
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Standard MOOSE public constructor
     LinearChangeInTime(const InputParameters & parameters);
     

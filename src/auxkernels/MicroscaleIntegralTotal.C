@@ -35,10 +35,24 @@
 
 registerMooseObject("catsApp", MicroscaleIntegralTotal);
 
+/*
 template<>
 InputParameters validParams<MicroscaleIntegralTotal>()
 {
     InputParameters params = validParams<AuxKernel>();
+    params.addParam<Real>("space_factor",1.0,"if coord_id = 0, then this is x-sec area, if coord_id = 1, then this is cylinder length, if coord_id = 2, then this is 1.0");
+    params.addRequiredParam<Real>("micro_length","[Global] Total length of the microscale");
+    params.addRequiredParam<unsigned int>("num_nodes","[Global] Total number of nodes in microscale");
+    params.addRequiredParam<unsigned int>("coord_id","[Global] Enum: 0 = cartesian, 1 = r-cylindrical, 2 = r-spherical");
+    params.addRequiredCoupledVar("micro_vars","List of names of the microscale variables");
+    params.addRequiredParam<unsigned int>("first_node","Node id for the first micro_var in the above list. WARNING: The micro_vars list must be in asscending order!!!");
+    return params;
+}
+ */
+
+InputParameters MicroscaleIntegralTotal::validParams()
+{
+    InputParameters params = AuxKernel::validParams();
     params.addParam<Real>("space_factor",1.0,"if coord_id = 0, then this is x-sec area, if coord_id = 1, then this is cylinder length, if coord_id = 2, then this is 1.0");
     params.addRequiredParam<Real>("micro_length","[Global] Total length of the microscale");
     params.addRequiredParam<unsigned int>("num_nodes","[Global] Total number of nodes in microscale");

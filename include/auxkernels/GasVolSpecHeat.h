@@ -38,10 +38,10 @@
 #include "GasPropertiesBase.h"
 
 /// GasVolSpecHeat class object forward declarations
-class GasVolSpecHeat;
+//class GasVolSpecHeat;
 
-template<>
-InputParameters validParams<GasVolSpecHeat>();
+//template<>
+//InputParameters validParams<GasVolSpecHeat>();
 
 /// GasVolSpecHeat class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
@@ -50,6 +50,9 @@ InputParameters validParams<GasVolSpecHeat>();
 class GasVolSpecHeat : public GasPropertiesBase
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     GasVolSpecHeat(const InputParameters & parameters);
 

@@ -40,10 +40,10 @@
 #include "egret.h"
 
 /// GasPropertiesBase class object forward declarations
-class GasPropertiesBase;
+//class GasPropertiesBase;
 
-template<>
-InputParameters validParams<GasPropertiesBase>();
+//template<>
+//InputParameters validParams<GasPropertiesBase>();
 
 /// GasPropertiesBase class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
@@ -52,6 +52,9 @@ InputParameters validParams<GasPropertiesBase>();
 class GasPropertiesBase : public AuxKernel
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     GasPropertiesBase(const InputParameters & parameters);
 

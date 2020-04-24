@@ -38,10 +38,10 @@
 #include "GasPropertiesBase.h"
 
 /// GasSpeciesKnudsenDiffusionCorrection class object forward declarations
-class GasSpeciesKnudsenDiffusionCorrection;
+//class GasSpeciesKnudsenDiffusionCorrection;
 
-template<>
-InputParameters validParams<GasSpeciesKnudsenDiffusionCorrection>();
+//template<>
+//InputParameters validParams<GasSpeciesKnudsenDiffusionCorrection>();
 
 /// GasSpeciesKnudsenDiffusionCorrection class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
@@ -50,6 +50,9 @@ InputParameters validParams<GasSpeciesKnudsenDiffusionCorrection>();
 class GasSpeciesKnudsenDiffusionCorrection : public GasPropertiesBase
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for objects in MOOSE
     GasSpeciesKnudsenDiffusionCorrection(const InputParameters & parameters);
 

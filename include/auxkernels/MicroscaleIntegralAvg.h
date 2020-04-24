@@ -37,10 +37,10 @@
 
 
 /// MicroscaleIntegralAvg class object forward declaration
-class MicroscaleIntegralAvg;
+//class MicroscaleIntegralAvg;
 
-template<>
-InputParameters validParams<MicroscaleIntegralAvg>();
+//template<>
+//InputParameters validParams<MicroscaleIntegralAvg>();
 
 /// MicroscaleIntegralAvg class inherits from MicroscaleIntegralTotal
 /** This class object creates an MicroscaleIntegralTotal for use in the MOOSE framework. The AuxKernel will
@@ -48,6 +48,9 @@ InputParameters validParams<MicroscaleIntegralAvg>();
 class MicroscaleIntegralAvg : public MicroscaleIntegralTotal
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Standard MOOSE public constructor
     MicroscaleIntegralAvg(const InputParameters & parameters);
     

@@ -38,10 +38,31 @@
 
 registerMooseObject("catsApp", GasPropertiesBase);
 
+/*
 template<>
 InputParameters validParams<GasPropertiesBase>()
 {
     InputParameters params = validParams<AuxKernel>();
+    params.addRequiredCoupledVar("gases","List of names of the gas species variables (mol/L)");
+    params.addRequiredCoupledVar("pressure","Pressure variable for the domain (Pa)");
+    params.addRequiredCoupledVar("temperature","Temperature variable for the domain (K)");
+    params.addRequiredCoupledVar("ux","Variable for velocity in x-direction (m/s)");
+    params.addRequiredCoupledVar("uy","Variable for velocity in y-direction (m/s)");
+    params.addRequiredCoupledVar("uz","Variable for velocity in z-direction (m/s)");
+    params.addRequiredCoupledVar("hydraulic_diameter","Name of the hydraulic diameter variable (m)");
+    
+    params.addParam< std::vector<Real> >("molar_weights","List of molecular weights (g/mol)");
+    params.addParam< std::vector<Real> >("sutherland_temp","List of Sutherland's reference temperatures (K)");
+    params.addParam< std::vector<Real> >("sutherland_const","List of Sutherland's constants (K)");
+    params.addParam< std::vector<Real> >("sutherland_vis","List of Sutherland's reference viscosities (g/cm/s)");
+    params.addParam< std::vector<Real> >("spec_heat","List of specific heats (J/g/K)");
+    return params;
+}
+ */
+
+InputParameters GasPropertiesBase::validParams()
+{
+    InputParameters params = AuxKernel::validParams();
     params.addRequiredCoupledVar("gases","List of names of the gas species variables (mol/L)");
     params.addRequiredCoupledVar("pressure","Pressure variable for the domain (Pa)");
     params.addRequiredCoupledVar("temperature","Temperature variable for the domain (K)");

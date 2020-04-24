@@ -37,10 +37,20 @@
 
 registerMooseObject("catsApp", GasThermalConductivity);
 
+/*
 template<>
 InputParameters validParams<GasThermalConductivity>()
 {
     InputParameters params = validParams<GasPropertiesBase>();
+    params.addParam< Real >("heat_cap_ratio",1.4,"Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
+    
+    return params;
+}
+ */
+
+InputParameters GasThermalConductivity::validParams()
+{
+    InputParameters params = GasPropertiesBase::validParams();
     params.addParam< Real >("heat_cap_ratio",1.4,"Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
     
     return params;
