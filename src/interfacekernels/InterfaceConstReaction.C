@@ -43,10 +43,20 @@
 
 registerMooseObject("catsApp", InterfaceConstReaction);
 
+/*
 template<>
 InputParameters validParams<InterfaceConstReaction>()
 {
     InputParameters params = validParams<InterfaceKernel>();
+    params.addParam< Real >("variable_rate",1.0,"Forward reaction rate coefficient");
+    params.addParam< Real >("neighbor_rate",1.0,"Reverse reaction rate coefficient");
+    return params;
+}
+ */
+
+InputParameters InterfaceConstReaction::validParams()
+{
+    InputParameters params = InterfaceKernel::validParams();
     params.addParam< Real >("variable_rate",1.0,"Forward reaction rate coefficient");
     params.addParam< Real >("neighbor_rate",1.0,"Reverse reaction rate coefficient");
     return params;
