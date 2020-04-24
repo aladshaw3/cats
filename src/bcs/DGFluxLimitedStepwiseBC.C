@@ -71,10 +71,21 @@
  */
 registerMooseObject("catsApp", DGFluxLimitedStepwiseBC);
 
+/*
 template<>
 InputParameters validParams<DGFluxLimitedStepwiseBC>()
 {
     InputParameters params = validParams<DGFluxLimitedBC>();
+    params.addParam< std::vector<Real> >("input_vals","Values for u_input at corresponding times");
+    params.addParam< std::vector<Real> >("input_times","Time values at which to update u_input");
+    params.addParam< std::vector<Real> >("time_spans","Amount of time it takes to go from one input to the next");
+    return params;
+}
+ */
+
+InputParameters DGFluxLimitedStepwiseBC::validParams()
+{
+    InputParameters params = DGFluxLimitedBC::validParams();
     params.addParam< std::vector<Real> >("input_vals","Values for u_input at corresponding times");
     params.addParam< std::vector<Real> >("input_times","Time values at which to update u_input");
     params.addParam< std::vector<Real> >("time_spans","Amount of time it takes to go from one input to the next");

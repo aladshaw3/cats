@@ -68,10 +68,10 @@
 #include "DGConcentrationFluxLimitedBC.h"
 
 /// DGVarVelDiffFluxLimitedBC class object forward declaration
-class DGVarVelDiffFluxLimitedBC;
+//class DGVarVelDiffFluxLimitedBC;
 
-template<>
-InputParameters validParams<DGVarVelDiffFluxLimitedBC>();
+//template<>
+//InputParameters validParams<DGVarVelDiffFluxLimitedBC>();
 
 /// DGVarVelDiffFluxLimitedBC class object inherits from IntegratedBC object
 /** This class object inherits from the IntegratedBC object.
@@ -79,6 +79,9 @@ InputParameters validParams<DGVarVelDiffFluxLimitedBC>();
 class DGVarVelDiffFluxLimitedBC : public DGConcentrationFluxLimitedBC
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
 	/// Required constructor for BC objects in MOOSE
 	DGVarVelDiffFluxLimitedBC(const InputParameters & parameters);
 

@@ -43,10 +43,10 @@
 #include "DGConcentrationFluxBC.h"
 
 /// DGPoreConcFluxBC class object forward declaration
-class DGPoreConcFluxBC;
+//class DGPoreConcFluxBC;
 
-template<>
-InputParameters validParams<DGPoreConcFluxBC>();
+//template<>
+//InputParameters validParams<DGPoreConcFluxBC>();
 
 /// DGPoreConcFluxBC class object inherits from IntegratedBC object
 /** This class object inherits from the IntegratedBC object.
@@ -56,6 +56,9 @@ InputParameters validParams<DGPoreConcFluxBC>();
 class DGPoreConcFluxBC : public DGConcentrationFluxBC
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
 	/// Required constructor for BC objects in MOOSE
 	DGPoreConcFluxBC(const InputParameters & parameters);
 

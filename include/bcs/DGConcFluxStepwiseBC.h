@@ -50,10 +50,10 @@
 #include "DGConcentrationFluxBC.h"
 
 /// DGConcFluxStepwiseBC class object forward declaration
-class DGConcFluxStepwiseBC;
+//class DGConcFluxStepwiseBC;
 
-template<>
-InputParameters validParams<DGConcFluxStepwiseBC>();
+//template<>
+//InputParameters validParams<DGConcFluxStepwiseBC>();
 
 /// DGConcFluxStepwiseBC class object inherits from DGConcentrationFluxBC object
 /** This class object inherits from the DGConcentrationFluxBC object.
@@ -63,6 +63,9 @@ InputParameters validParams<DGConcFluxStepwiseBC>();
 class DGConcFluxStepwiseBC : public DGConcentrationFluxBC
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for BC objects in MOOSE
     DGConcFluxStepwiseBC(const InputParameters & parameters);
 

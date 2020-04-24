@@ -72,10 +72,10 @@
 #include "DGVarVelDiffFluxLimitedBC.h"
 
 /// DGVarVelDiffFluxLimitedStepwiseBC class object forward declaration
-class DGVarVelDiffFluxLimitedStepwiseBC;
+//class DGVarVelDiffFluxLimitedStepwiseBC;
 
-template<>
-InputParameters validParams<DGVarVelDiffFluxLimitedStepwiseBC>();
+//template<>
+//InputParameters validParams<DGVarVelDiffFluxLimitedStepwiseBC>();
 
 /// DGVarVelDiffFluxLimitedStepwiseBC class object inherits from DGVarVelDiffFluxLimitedBC object
 /** This class object inherits from the DGVarVelDiffFluxLimitedBC object.
@@ -83,6 +83,9 @@ InputParameters validParams<DGVarVelDiffFluxLimitedStepwiseBC>();
 class DGVarVelDiffFluxLimitedStepwiseBC : public DGVarVelDiffFluxLimitedBC
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for BC objects in MOOSE
     DGVarVelDiffFluxLimitedStepwiseBC(const InputParameters & parameters);
 

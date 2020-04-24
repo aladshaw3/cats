@@ -72,10 +72,10 @@
 #include "DGPoreDiffFluxLimitedBC.h"
 
 /// DGPoreDiffFluxLimitedStepwiseBC class object forward declaration
-class DGPoreDiffFluxLimitedStepwiseBC;
+//class DGPoreDiffFluxLimitedStepwiseBC;
 
-template<>
-InputParameters validParams<DGPoreDiffFluxLimitedStepwiseBC>();
+//template<>
+//InputParameters validParams<DGPoreDiffFluxLimitedStepwiseBC>();
 
 /// DGPoreDiffFluxLimitedStepwiseBC class object inherits from DGPoreDiffFluxLimitedBC object
 /** This class object inherits from the DGPoreDiffFluxLimitedBC object.
@@ -83,6 +83,9 @@ InputParameters validParams<DGPoreDiffFluxLimitedStepwiseBC>();
 class DGPoreDiffFluxLimitedStepwiseBC : public DGPoreDiffFluxLimitedBC
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for BC objects in MOOSE
     DGPoreDiffFluxLimitedStepwiseBC(const InputParameters & parameters);
 

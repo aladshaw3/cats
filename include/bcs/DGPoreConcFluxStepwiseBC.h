@@ -47,10 +47,10 @@
 #include "DGPoreConcFluxBC.h"
 
 /// DGPoreConcFluxStepwiseBC class object forward declaration
-class DGPoreConcFluxStepwiseBC;
+//class DGPoreConcFluxStepwiseBC;
 
-template<>
-InputParameters validParams<DGPoreConcFluxStepwiseBC>();
+//template<>
+//InputParameters validParams<DGPoreConcFluxStepwiseBC>();
 
 /// DGPoreConcFluxStepwiseBC class object inherits from DGPoreConcFluxBC object
 /** This class object inherits from the DGPoreConcFluxBC object.
@@ -60,6 +60,9 @@ InputParameters validParams<DGPoreConcFluxStepwiseBC>();
 class DGPoreConcFluxStepwiseBC : public DGPoreConcFluxBC
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
     /// Required constructor for BC objects in MOOSE
     DGPoreConcFluxStepwiseBC(const InputParameters & parameters);
 
