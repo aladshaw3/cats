@@ -71,13 +71,14 @@
  */
 registerMooseObject("catsApp", DGAnisotropicDiffusion);
 
+/*
 template<>
 InputParameters validParams<DGAnisotropicDiffusion>()
 {
 	InputParameters params = validParams<DGKernel>();
 	params.addParam<Real>("sigma", 10.0, "sigma penalty value (>=0 for NIPG, but >0 for others)");
 	MooseEnum dgscheme("sipg iipg nipg", "nipg");
-  params.addParam<MooseEnum>("dg_scheme", dgscheme, "DG scheme options: nipg, iipg, sipg");
+    params.addParam<MooseEnum>("dg_scheme", dgscheme, "DG scheme options: nipg, iipg, sipg");
 	params.addParam<Real>("Dxx",0,"xx-component of diffusion tensor");
 	params.addParam<Real>("Dxy",0,"xy-component of diffusion tensor");
 	params.addParam<Real>("Dxz",0,"xz-component of diffusion tensor");
@@ -88,6 +89,25 @@ InputParameters validParams<DGAnisotropicDiffusion>()
 	params.addParam<Real>("Dzy",0,"zy-component of diffusion tensor");
 	params.addParam<Real>("Dzz",0,"zz-component of diffusion tensor");
 	return params;
+}
+ */
+
+InputParameters DGAnisotropicDiffusion::validParams()
+{
+    InputParameters params = DGKernel::validParams();
+    params.addParam<Real>("sigma", 10.0, "sigma penalty value (>=0 for NIPG, but >0 for others)");
+    MooseEnum dgscheme("sipg iipg nipg", "nipg");
+    params.addParam<MooseEnum>("dg_scheme", dgscheme, "DG scheme options: nipg, iipg, sipg");
+    params.addParam<Real>("Dxx",0,"xx-component of diffusion tensor");
+    params.addParam<Real>("Dxy",0,"xy-component of diffusion tensor");
+    params.addParam<Real>("Dxz",0,"xz-component of diffusion tensor");
+    params.addParam<Real>("Dyx",0,"yx-component of diffusion tensor");
+    params.addParam<Real>("Dyy",0,"yy-component of diffusion tensor");
+    params.addParam<Real>("Dyz",0,"yz-component of diffusion tensor");
+    params.addParam<Real>("Dzx",0,"zx-component of diffusion tensor");
+    params.addParam<Real>("Dzy",0,"zy-component of diffusion tensor");
+    params.addParam<Real>("Dzz",0,"zz-component of diffusion tensor");
+    return params;
 }
 
 DGAnisotropicDiffusion::DGAnisotropicDiffusion(const InputParameters & parameters) :

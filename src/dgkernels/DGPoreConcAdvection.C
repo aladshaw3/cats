@@ -45,12 +45,21 @@
  */
 registerMooseObject("catsApp", DGPoreConcAdvection);
 
+/*
 template<>
 InputParameters validParams<DGPoreConcAdvection>()
 {
 	InputParameters params = validParams<DGConcentrationAdvection>();
-  params.addRequiredCoupledVar("porosity","Variable for the porosity of the domain/subdomain");
+    params.addRequiredCoupledVar("porosity","Variable for the porosity of the domain/subdomain");
 	return params;
+}
+ */
+
+InputParameters DGPoreConcAdvection::validParams()
+{
+    InputParameters params = DGConcentrationAdvection::validParams();
+    params.addRequiredCoupledVar("porosity","Variable for the porosity of the domain/subdomain");
+    return params;
 }
 
 DGPoreConcAdvection::DGPoreConcAdvection(const InputParameters & parameters) :

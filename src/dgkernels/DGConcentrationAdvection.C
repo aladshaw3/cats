@@ -48,6 +48,7 @@
  */
 registerMooseObject("catsApp", DGConcentrationAdvection);
 
+/*
 template<>
 InputParameters validParams<DGConcentrationAdvection>()
 {
@@ -56,6 +57,16 @@ InputParameters validParams<DGConcentrationAdvection>()
 	params.addRequiredCoupledVar("uy","Variable for velocity in y-direction");
 	params.addRequiredCoupledVar("uz","Variable for velocity in z-direction");
 	return params;
+}
+ */
+
+InputParameters DGConcentrationAdvection::validParams()
+{
+    InputParameters params = DGAdvection::validParams();
+    params.addRequiredCoupledVar("ux","Variable for velocity in x-direction");
+    params.addRequiredCoupledVar("uy","Variable for velocity in y-direction");
+    params.addRequiredCoupledVar("uz","Variable for velocity in z-direction");
+    return params;
 }
 
 DGConcentrationAdvection::DGConcentrationAdvection(const InputParameters & parameters) :

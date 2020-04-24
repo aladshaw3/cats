@@ -62,10 +62,10 @@
 #include "DGAnisotropicDiffusion.h"
 
 /// DGVariableDiffusion class object forward declarations
-class DGVariableDiffusion;
+//class DGVariableDiffusion;
 
-template<>
-InputParameters validParams<DGVariableDiffusion>();
+//template<>
+//InputParameters validParams<DGVariableDiffusion>();
 
 /// DGVariableDiffusion class object inherits from DGKernel object
 /** This class object inherits from the DGKernel object in the MOOSE framework.
@@ -79,6 +79,9 @@ InputParameters validParams<DGVariableDiffusion>();
 class DGVariableDiffusion : public DGAnisotropicDiffusion
 {
 public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
+    
 	/// Required constructor for objects in MOOSE
 	DGVariableDiffusion(const InputParameters & parameters);
 
@@ -86,18 +89,20 @@ protected:
 	/// Required residual function for DG kernels in MOOSE
 	/** This function returns a residual contribution for this object.*/
 	virtual Real computeQpResidual(Moose::DGResidualType type) override;
+    
 	/// Required Jacobian function for DG kernels in MOOSE
 	/** This function returns a Jacobian contribution for this object. The Jacobian being
 		computed is the associated diagonal element in the overall Jacobian matrix for the
 		system and is used in preconditioning of the linear sub-problem. */
 	virtual Real computeQpJacobian(Moose::DGJacobianType type) override;
-  /// Not required, but recomended function for DG kernels in MOOSE
-  /** This function returns an off-diagonal jacobian contribution for this object. The jacobian
-  being computed will be associated with the variables coupled to this object and not the
-  main coupled variable itself. */
-  virtual Real computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar) override;
+    
+    /// Not required, but recomended function for DG kernels in MOOSE
+    /** This function returns an off-diagonal jacobian contribution for this object. The jacobian
+     being computed will be associated with the variables coupled to this object and not the
+     main coupled variable itself. */
+    virtual Real computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar) override;
 
-  const VariableValue & _Dx;			///< Diffusion in the x-direction
+    const VariableValue & _Dx;			///< Diffusion in the x-direction
 	const VariableValue & _Dy;			///< Diffusion in the y-direction
 	const VariableValue & _Dz;			///< Diffusion in the z-direction
 

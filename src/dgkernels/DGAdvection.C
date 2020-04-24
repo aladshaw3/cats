@@ -53,6 +53,7 @@
  */
 registerMooseObject("catsApp", DGAdvection);
 
+/*
 template<>
 InputParameters validParams<DGAdvection>()
 {
@@ -61,6 +62,16 @@ InputParameters validParams<DGAdvection>()
 	params.addParam<Real>("vy",0,"y-component of velocity vector");
 	params.addParam<Real>("vz",0,"z-component of velocity vector");
 	return params;
+}
+ */
+
+InputParameters DGAdvection::validParams()
+{
+    InputParameters params = DGKernel::validParams();
+    params.addParam<Real>("vx",0,"x-component of velocity vector");
+    params.addParam<Real>("vy",0,"y-component of velocity vector");
+    params.addParam<Real>("vz",0,"z-component of velocity vector");
+    return params;
 }
 
 DGAdvection::DGAdvection(const InputParameters & parameters) :
