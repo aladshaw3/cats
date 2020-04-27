@@ -177,7 +177,26 @@
         order = FIRST
         family = MONOMIAL
     [../]
+ 
+ # Units --> W/m/K
+    [./K_s]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 11.9
+    [../]
+ 
+ # Units --> W/m^2/K
+    [./hs]
+        order = FIRST
+        family = MONOMIAL
+    [../]
 
+ [./dp]
+    order = FIRST
+    family = MONOMIAL
+    initial_condition = 5.09E-4   #m
+ [../]
+ 
 [] #END AuxVariables
 
 [ICs]
@@ -446,6 +465,25 @@
         execute_on = 'initial timestep_end'
     [../]
  
+    [./hs_calc]
+        type = GasSolidHeatTransCoef
+        variable = hs
+        temperature = temp
+        pressure = P
+        hydraulic_diameter = dp
+        solid_conductivity = K_s
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
 
 [] #END AuxKernels
 
@@ -544,6 +582,13 @@
         type = SideAverageValue
         boundary = 'bottom'
         variable = K_eff
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./hs]
+        type = SideAverageValue
+        boundary = 'bottom'
+        variable = hs
         execute_on = 'initial timestep_end'
     [../]
  
