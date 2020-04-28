@@ -1,0 +1,7 @@
+[Tests]
+  [./auxkernels_and_tempflow]
+    type = 'Exodiff'
+    input = 'PBR_demo.i'
+    exodiff = 'PBR_demo_out.e'
+  [../]
+[]

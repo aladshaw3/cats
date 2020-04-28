@@ -63,7 +63,7 @@ InputParameters validParams<GasPropertiesBase>()
 InputParameters GasPropertiesBase::validParams()
 {
     InputParameters params = AuxKernel::validParams();
-    params.addRequiredCoupledVar("gases","List of names of the gas species variables (mol/L)");
+    params.addRequiredCoupledVar("gases","List of names of the gas species variables (mol/m^3)");
     params.addRequiredCoupledVar("pressure","Pressure variable for the domain (Pa)");
     params.addRequiredCoupledVar("temperature","Temperature variable for the domain (K)");
     params.addRequiredCoupledVar("ux","Variable for velocity in x-direction (m/s)");
