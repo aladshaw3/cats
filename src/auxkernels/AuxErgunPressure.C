@@ -58,7 +58,10 @@ InputParameters AuxErgunPressure::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
     params.addRequiredParam< unsigned int >("direction","Direction that the Ergun gradient acts on (0=x, 1=y, 2=z)");
+    params.addParam< bool >("is_inlet_press",true,"If true, calculation assumes given pressure is inlet pressure. If false, calculation assumes given pressure is outlet pressure.");
     params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");
+    params.addParam< Real >("start_point",0.0,"Starting distance for pressure drop (m)");
+    params.addParam< Real >("end_point",-1.0,"Ending distance for pressure drop (m)");
     return params;
 }
 
@@ -66,11 +69,19 @@ AuxErgunPressure::AuxErgunPressure(const InputParameters & parameters) :
 GasPropertiesBase(parameters),
 _dir(getParam<unsigned int>("direction")),
 _porosity(coupledValue("porosity")),
-_porosity_var(coupled("porosity"))
+_porosity_var(coupled("porosity")),
+_start(getParam<Real>("start_point")),
+_end(getParam<Real>("end_point")),
+_inlet(getParam<bool>("is_inlet_press"))
 {
     if (_dir < 0 || _dir > 2)
     {
         moose::internal::mooseErrorRaw("Invalid direction for pressure gradient!");
+    }
+    
+    if (_inlet == false && _end == -1.0)
+    {
+        moose::internal::mooseErrorRaw("Must provide an end_point if given pressure is not inlet pressure!");
     }
 }
 
@@ -95,9 +106,16 @@ Real AuxErgunPressure::computeValue()
         vel = _velz[_qp];
     }
     
-    Real L = _q_point[_qp](_dir);
+    Real z = _q_point[_qp](_dir);
     Real vis_term = 150.0*vis*(1.0-_porosity[_qp])*(1.0-_porosity[_qp])*_porosity[_qp]*vel/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
     Real dens_term = 1.75*(1.0-_porosity[_qp])*_char_len[_qp]*dens*_porosity[_qp]*vel*_porosity[_qp]*fabs(vel)/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
     
-    return _press[_qp] - (vis_term+dens_term)*L;
+    if (_inlet == true)
+    {
+        return _press[_qp] - (vis_term+dens_term)*(z-_start);
+    }
+    else
+    {
+        return _press[_qp] + (vis_term+dens_term)*(_end-z);
+    }
 }

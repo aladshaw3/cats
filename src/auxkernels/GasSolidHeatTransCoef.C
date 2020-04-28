@@ -53,7 +53,7 @@ InputParameters GasSolidHeatTransCoef::validParams()
     InputParameters params = GasPropertiesBase::validParams();
     params.addParam< Real >("heat_cap_ratio",1.4,"Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
     params.addRequiredCoupledVar("solid_conductivity","Name of the solids thermal conductivity variable (W/m/K)");
-    
+    params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");
     return params;
 }
 
@@ -61,7 +61,9 @@ GasSolidHeatTransCoef::GasSolidHeatTransCoef(const InputParameters & parameters)
 GasPropertiesBase(parameters),
 _Cp_Cv_ratio(getParam< Real >("heat_cap_ratio")),
 _solid_cond(coupledValue("solid_conductivity")),
-_solid_cond_var(coupled("solid_conductivity"))
+_solid_cond_var(coupled("solid_conductivity")),
+_porosity(coupledValue("porosity")),
+_porosity_var(coupled("porosity"))
 {
     // Check the bounds of the correction factor (typical values: 1.3 - 1.6)
     if (_Cp_Cv_ratio < 0.56)
@@ -84,7 +86,7 @@ Real GasSolidHeatTransCoef::computeValue()
     Real Kg = f*mu*Cv;
     
     Real Pr = (_egret_dat.total_dyn_vis/1000.0*100.0)*(_egret_dat.total_specific_heat*1000.0)/Kg;
-    Real Re = ReNum(_egret_dat.velocity,_char_len[_qp]*100.0,_egret_dat.kinematic_viscosity);
+    Real Re = ReNum(_egret_dat.velocity*_porosity[_qp],_char_len[_qp]*100.0,_egret_dat.kinematic_viscosity);
     
     return FilmMTCoeff(_solid_cond[_qp],_char_len[_qp],Re,Pr)/500.0;
     //Note: FilmMTCoeff is same function for heat transfer with a correction factor

@@ -66,6 +66,8 @@ protected:
     Real _Cp_Cv_ratio;            ///< Value for the ratio of Cp to Cv for the gas (assumed = 1.4 if not given)
     const VariableValue & _solid_cond;                ///< Variable for the solid thermal conductivity (W/m/K)
     const unsigned int _solid_cond_var;               ///< Variable identification for the solid thermal conductivity
+    const VariableValue & _porosity;                ///< Variable for the porosity
+    const unsigned int _porosity_var;               ///< Variable identification for the porosity
     
 private:
 

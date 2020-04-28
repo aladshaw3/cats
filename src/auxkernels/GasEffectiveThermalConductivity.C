@@ -86,13 +86,13 @@ Real GasEffectiveThermalConductivity::computeValue()
     Real f = 0.25*(9.0*_Cp_Cv_ratio - 5.0);
     Real Kg = f*mu*Cv;
     Real Pr = (_egret_dat.total_dyn_vis/1000.0*100.0)*(_egret_dat.total_specific_heat*1000.0)/Kg;
-    Real Re = ReNum(_egret_dat.velocity,_column_dia[_qp]*100.0,_egret_dat.kinematic_viscosity);
+    Real Re = ReNum(_egret_dat.velocity*_porosity[_qp],_column_dia[_qp]*100.0,_egret_dat.kinematic_viscosity);
     Real first = (0.73*_porosity[_qp])/Re/Pr;
     Real second = (0.5 / (1.0 + ((9.7*_porosity[_qp])/Re/Pr)) );
-    Real Pe = (1.0 / (first+second) )*25.0;
+    Real Pe = (1.0 / (first+second) )*10.0;
     Real vel = _egret_dat.velocity/100.0;
     Real den = _egret_dat.total_density/1000.0*100.0*100.0*100.0;
     Real h = (_egret_dat.total_specific_heat*1000.0);
     
-    return _column_dia[_qp]*vel*den*h/Pe;
+    return _column_dia[_qp]*vel*_porosity[_qp]*den*h/Pe;
 }

@@ -472,6 +472,7 @@
         pressure = P
         hydraulic_diameter = dp
         solid_conductivity = K_s
+        porosity = pore
         ux = vel_x
         uy = vel_y
         uz = vel_z
