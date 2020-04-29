@@ -1,0 +1,7 @@
+[Tests]
+  [./wall_heating_bc]
+    type = 'Exodiff'
+    input = 'wall_heating.i'
+    exodiff = 'wall_heating_out.e'
+  [../]
+[]
