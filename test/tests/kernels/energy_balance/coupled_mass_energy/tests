@@ -1,0 +1,7 @@
+[Tests]
+  [./coupled_mass_energy_basic_test]
+    type = 'Exodiff'
+    input = 'PBR_demo.i'
+    exodiff = 'PBR_demo_out.e'
+  [../]
+[]

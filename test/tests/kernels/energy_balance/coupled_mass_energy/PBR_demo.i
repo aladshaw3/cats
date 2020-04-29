@@ -795,12 +795,11 @@
     l_max_its = 300
 
     start_time = 0.0
-    end_time = 30000
+    end_time = 0.4
     dtmax = 10
 
     [./TimeStepper]
-#        type = ConstantDT
-        type = SolutionTimeAdaptiveDT
+        type = ConstantDT
         dt = 0.1
     [../]
 [] #END Executioner
@@ -809,6 +808,6 @@
     print_linear_residuals = true
     exodus = true
     csv = true
-    interval = 20   #Number of time steps to wait before writing output
+    interval = 1   #Number of time steps to wait before writing output
 [] #END Outputs
 
