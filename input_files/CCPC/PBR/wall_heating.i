@@ -32,8 +32,8 @@
 [Mesh]
     type = GeneratedMesh
     dim = 2
-    nx = 5
-    ny = 10
+    nx = 10
+    ny = 2
     xmin = 0.0
     xmax = 0.0725    # m radius
     ymin = 0.0
@@ -113,7 +113,7 @@
     [./flow_rate]
         order = FIRST
         family = LAGRANGE       #Must be LAGRANGE if vel_y is also LAGRANGE
-        initial_condition = 0.018599  #m^3/s
+        initial_condition = 0  #m^3/s
     [../]
  
     [./x_sec]
@@ -132,8 +132,7 @@
     [./vel_y]
         order = FIRST
         family = LAGRANGE
-        # This is now being calculated from AuxAvgLinearVelocity
-        #initial_condition = 2.5769 #m/s
+        #initial_condition = 2.5769 #m/s        # This is now being calculated from AuxAvgLinearVelocity
     [../]
 
     [./vel_z]
@@ -221,7 +220,7 @@
     [./Ke]
         order = FIRST
         family = MONOMIAL
-#initial_condition = .5
+ initial_condition = .5
     [../]
  
     [./cpg]
@@ -252,6 +251,7 @@
     [./De_O2]
         order = FIRST
         family = MONOMIAL
+ initial_condition = 0.001
     [../]
  
     [./De_CO2]
@@ -447,18 +447,18 @@
         uz = vel_z
     [../]
  
-    [./Keff_calc]
-        type = GasEffectiveThermalConductivity
-        variable = Ke
-        temperature = T
-        pressure = P
-        hydraulic_diameter = dp
-        macroscale_diameter = d_bed
-        porosity = eps
-        ux = vel_x
-        uy = vel_y
-        uz = vel_z
-    [../]
+#    [./Keff_calc]
+#        type = GasEffectiveThermalConductivity
+#        variable = Ke
+#        temperature = T
+#        pressure = P
+#        hydraulic_diameter = dp
+#        macroscale_diameter = d_bed
+#        porosity = eps
+#        ux = vel_x
+#        uy = vel_y
+#        uz = vel_z
+#    [../]
  
     [./cp_calc]
         type = GasSpecHeat
@@ -521,18 +521,18 @@
         uz = vel_z
     [../]
  
-    [./De_O2_calc]
-        type = GasSpeciesAxialDispersion
-        variable = De_O2
-        species_index = 1
-        macroscale_diameter = d_bed
-        temperature = T
-        pressure = P
-        hydraulic_diameter = dp
-        ux = vel_x
-        uy = vel_y
-        uz = vel_z
-    [../]
+#    [./De_O2_calc]
+#        type = GasSpeciesAxialDispersion
+#        variable = De_O2
+#        species_index = 1
+#        macroscale_diameter = d_bed
+#        temperature = T
+#        pressure = P
+#        hydraulic_diameter = dp
+#        ux = vel_x
+#        uy = vel_y
+#        uz = vel_z
+#    [../]
  
     [./De_CO2_calc]
         type = GasSpeciesAxialDispersion
@@ -575,7 +575,7 @@
         uy = vel_y
         uz = vel_z
     [../]
-    [./T_FluxOut]
+   [./T_FluxOut]
         type = DGHeatFluxBC
         variable = T
         boundary = 'top'
@@ -587,37 +587,49 @@
         uz = vel_z
     [../]
  
-# Need to add same kernel with variable wall temperature 
     [./T_WallFluxIn]
-        type = DGWallHeatFluxBC
+        type = DGFluxLimitedBC
         variable = T
         u_input = 573.15
         boundary = 'right'
-        hw = hw
-        Kx = Ke
-        Ky = Ke
-        Kz = Ke
+        vx = 0
+        vy = 0
+        vz = 0
+ Dxx = .5
+ Dyy = .5
     [../]
  
-    [./O2_FluxIn]
-        type = DGPoreConcFluxBC
-        variable = O2
-        boundary = 'bottom'
-        u_input = 0.13433
-        porosity = eps
-        ux = vel_x
-        uy = vel_y
-        uz = vel_z
-    [../]
-    [./O2_FluxOut]
-        type = DGPoreConcFluxBC
-        variable = O2
-        boundary = 'top'
-        porosity = eps
-        ux = vel_x
-        uy = vel_y
-        uz = vel_z
-    [../]
+#    [./O2_FluxIn]
+#        type = DGPoreConcFluxBC
+#        variable = O2
+#        boundary = 'bottom'
+#        u_input = 0.13433
+#        porosity = eps
+#        ux = vel_x
+#        uy = vel_y
+#        uz = vel_z
+#    [../]
+#    [./O2_FluxOut]
+#        type = DGPoreConcFluxBC
+#        variable = O2
+#        boundary = 'top'
+#        porosity = eps
+#        ux = vel_x
+#        uy = vel_y
+#        uz = vel_z
+#    [../]
+ 
+     [./O2_FluxIn]
+         type = DGFluxLimitedBC
+         variable = O2
+         boundary = 'right left'
+         u_input = 0.13433
+        vx = 0
+         vy = 0
+         vz = 0
+        Dxx = 0.001
+        Dyy = 0.001
+     [../]
 
 [] #END BCs
 
@@ -626,51 +638,29 @@
 [] #END Materials
 
 [Postprocessors]
-    [./P_out]
-        type = SideAverageValue
-        boundary = 'top'
-        variable = P
-        execute_on = 'initial timestep_end'
-    [../]
  
-    [./P_in]
-        type = SideAverageValue
-        boundary = 'bottom'
-        variable = P
-        execute_on = 'initial timestep_end'
-    [../]
- 
-    [./T_out]
-        type = SideAverageValue
-        boundary = 'top'
+    [./T_avg]
+        type = ElementAverageValue
         variable = T
         execute_on = 'initial timestep_end'
     [../]
  
-    [./T_in]
-        type = SideAverageValue
-        boundary = 'bottom'
-        variable = T
-        execute_on = 'initial timestep_end'
-    [../]
- 
-    [./T_inner_wall]
+    [./T_wall]
         type = SideAverageValue
         boundary = 'right'
         variable = T
         execute_on = 'initial timestep_end'
     [../]
  
-    [./O2_out]
-        type = SideAverageValue
-        boundary = 'top'
+    [./O2_avg]
+        type = ElementAverageValue
         variable = O2
         execute_on = 'initial timestep_end'
     [../]
  
     [./O2_in]
         type = SideAverageValue
-        boundary = 'bottom'
+        boundary = 'right'
         variable = O2
         execute_on = 'initial timestep_end'
     [../]

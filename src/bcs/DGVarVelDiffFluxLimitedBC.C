@@ -87,7 +87,7 @@ InputParameters validParams<DGVarVelDiffFluxLimitedBC>()
 InputParameters DGVarVelDiffFluxLimitedBC::validParams()
 {
     InputParameters params = DGConcentrationFluxLimitedBC::validParams();
-  params.addRequiredCoupledVar("Dx","Variable for diffusion in x-direction");
+    params.addRequiredCoupledVar("Dx","Variable for diffusion in x-direction");
     params.addRequiredCoupledVar("Dy","Variable for diffusion in y-direction");
     params.addRequiredCoupledVar("Dz","Variable for diffusion in z-direction");
     return params;

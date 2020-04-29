@@ -225,6 +225,8 @@ void GasPropertiesBase::calculateAllProperties()
     //      vel (cm/s)
     //      dh (cm)
     Real vel_mag = sqrt(_velx[_qp]*_velx[_qp] + _vely[_qp]*_vely[_qp] + _velz[_qp]*_velz[_qp]);
+    if (vel_mag <= 1.0E-8)
+        vel_mag = 1.0E-8;
     
     int success = set_variables(_press[_qp]/1000.0, _temp[_qp], vel_mag*100.0, _char_len[_qp]*100.0, _mole_frac, &_egret_dat);
     if (success != 0)

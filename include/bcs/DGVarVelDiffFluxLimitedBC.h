@@ -102,7 +102,7 @@ protected:
   main coupled variable itself. */
   virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-  const VariableValue & _Dx;			///< Diffusion in the x-direction
+    const VariableValue & _Dx;			///< Diffusion in the x-direction
 	const VariableValue & _Dy;			///< Diffusion in the y-direction
 	const VariableValue & _Dz;			///< Diffusion in the z-direction
 
