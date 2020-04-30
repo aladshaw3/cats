@@ -504,7 +504,7 @@
         type = GasDensity
         variable = rho
         temperature = T
-        pressure = P_o          #Provide the reference pressure here
+        pressure = P          #Provide the reference pressure here
         hydraulic_diameter = dp
         ux = vel_x
         uy = vel_y

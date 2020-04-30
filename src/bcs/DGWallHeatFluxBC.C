@@ -92,81 +92,84 @@ _Kz_var(coupled("Kz"))
 
 Real DGWallHeatFluxBC::computeQpResidual()
 {
-    _Diffusion(0,0) = _Kx[_qp]/_hw[_qp];
+    _Diffusion(0,0) = _Kx[_qp];
     _Diffusion(0,1) = 0.0;
     _Diffusion(0,2) = 0.0;
 
     _Diffusion(1,0) = 0.0;
-    _Diffusion(1,1) = _Ky[_qp]/_hw[_qp];
+    _Diffusion(1,1) = _Ky[_qp];
     _Diffusion(1,2) = 0.0;
 
     _Diffusion(2,0) = 0.0;
     _Diffusion(2,1) = 0.0;
-    _Diffusion(2,2) = _Kz[_qp]/_hw[_qp];
+    _Diffusion(2,2) = _Kz[_qp];
     
     Real r = 0;
 
     const unsigned int elem_b_order = static_cast<unsigned int> (_var.order());
     const double h_elem = _current_elem->volume()/_current_side_elem->volume() * 1./std::pow(elem_b_order, 2.);
-    
+        
+    r -= _test[_i][_qp]*_hw[_qp]*(_u[_qp] - _u_input);
     r += _epsilon * (_u[_qp] - _u_input) * _Diffusion * _grad_test[_i][_qp] * _normals[_qp];
     r += _sigma/h_elem * (_u[_qp] - _u_input) * _test[_i][_qp];
     r -= (_Diffusion * _grad_u[_qp] * _normals[_qp] * _test[_i][_qp]);
-
+    
     return r;
 }
 
 Real DGWallHeatFluxBC::computeQpJacobian()
 {
-    _Diffusion(0,0) = _Kx[_qp]/_hw[_qp];
+    _Diffusion(0,0) = _Kx[_qp];
     _Diffusion(0,1) = 0.0;
     _Diffusion(0,2) = 0.0;
 
     _Diffusion(1,0) = 0.0;
-    _Diffusion(1,1) = _Ky[_qp]/_hw[_qp];
+    _Diffusion(1,1) = _Ky[_qp];
     _Diffusion(1,2) = 0.0;
 
     _Diffusion(2,0) = 0.0;
     _Diffusion(2,1) = 0.0;
-    _Diffusion(2,2) = _Kz[_qp]/_hw[_qp];
+    _Diffusion(2,2) = _Kz[_qp];
     
     Real jac = 0;
 
     const unsigned int elem_b_order = static_cast<unsigned int> (_var.order());
     const double h_elem = _current_elem->volume()/_current_side_elem->volume() * 1./std::pow(elem_b_order, 2.);
-
+    
+    jac -= _test[_i][_qp]*_hw[_qp]*_phi[_j][_qp];
     jac += _epsilon * _phi[_j][_qp] * _Diffusion * _grad_test[_i][_qp] * _normals[_qp];
     jac += _sigma/h_elem * _phi[_j][_qp] * _test[_i][_qp];
     jac -= (_Diffusion * _grad_phi[_j][_qp] * _normals[_qp] * _test[_i][_qp]);
-
+    
     return jac;
 }
 
 Real DGWallHeatFluxBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
-     _Diffusion(0,0) = _Kx[_qp]/_hw[_qp];
+     _Diffusion(0,0) = _Kx[_qp];
      _Diffusion(0,1) = 0.0;
      _Diffusion(0,2) = 0.0;
 
      _Diffusion(1,0) = 0.0;
-     _Diffusion(1,1) = _Ky[_qp]/_hw[_qp];
+     _Diffusion(1,1) = _Ky[_qp];
      _Diffusion(1,2) = 0.0;
 
      _Diffusion(2,0) = 0.0;
      _Diffusion(2,1) = 0.0;
-     _Diffusion(2,2) = _Kz[_qp]/_hw[_qp];
+     _Diffusion(2,2) = _Kz[_qp];
 
     Real r = 0;
-    
+        
     if (jvar == _hw_var)
     {
+        r -= _test[_i][_qp]*_phi[_j][_qp]*(_u[_qp] - _u_input);
         return r;
     }
 
     if (jvar == _Kx_var)
     {
         r += _epsilon * (_u[_qp] - _u_input) * _phi[_j][_qp] * _grad_test[_i][_qp](0) * _normals[_qp](0);
-        r -= (_phi[_j][_qp]/_hw[_qp] * _grad_u[_qp](0) * _normals[_qp](0) * _test[_i][_qp]);
+        r -= (_phi[_j][_qp] * _grad_u[_qp](0) * _normals[_qp](0) * _test[_i][_qp]);
         return r;
     }
 
@@ -174,14 +177,14 @@ Real DGWallHeatFluxBC::computeQpOffDiagJacobian(unsigned int jvar)
     {
 
         r += _epsilon * (_u[_qp] - _u_input) * _phi[_j][_qp] * _grad_test[_i][_qp](1) * _normals[_qp](1);
-        r -= (_phi[_j][_qp]/_hw[_qp] * _grad_u[_qp](1) * _normals[_qp](1) * _test[_i][_qp]);
+        r -= (_phi[_j][_qp] * _grad_u[_qp](1) * _normals[_qp](1) * _test[_i][_qp]);
         return r;
     }
 
     if (jvar == _Kz_var)
     {
         r += _epsilon * (_u[_qp] - _u_input) * _phi[_j][_qp] * _grad_test[_i][_qp](2) * _normals[_qp](2);
-        r -= (_phi[_j][_qp]/_hw[_qp] * _grad_u[_qp](2) * _normals[_qp](2) * _test[_i][_qp]);
+        r -= (_phi[_j][_qp] * _grad_u[_qp](2) * _normals[_qp](2) * _test[_i][_qp]);
         return r;
     }
 

@@ -593,9 +593,9 @@
         u_input = 573.15
         boundary = 'right'
         hw = hw
-        Kx = Ke
-        Ky = Ke
-        Kz = Ke
+        Kx = 0
+        Ky = 0
+        Kz = 0
     [../]
  
 #    [./T_WallFluxIn]

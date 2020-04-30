@@ -34,8 +34,8 @@
     dim = 2
 #    nx = 10
 #    ny = 20
-    nx = 5
-    ny = 10
+    nx = 10
+    ny = 20
     xmin = 0.0
     xmax = 0.0725    # m radius
     ymin = 0.0
@@ -47,14 +47,16 @@
     [./qc]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 4.01E-4
+        initial_condition = 4.01E-4        #Avg qc
+#        initial_condition = 8.89E-4     #Max qc
+#        initial_condition = 1.359E-4       #Min qc
     [../]
  
     # O2 in pore-spaces (mol/m^3)
     [./O2p]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.0    #mol/m^3
+        initial_condition = 1e-9    #mol/m^3
     [../]
  
     # Gas phase temperature
@@ -75,7 +77,7 @@
     [./O2]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0    #mol/m^3
+        initial_condition = 1e-9    #mol/m^3
     [../]
 
 [] #END Variables
@@ -324,9 +326,10 @@
     [./Ts_gdiff]
         type = GVariableDiffusion
         variable = Ts
-        Dx = Ks
-        Dy = Ks
-        Dz = Ks
+        # Ks*(1-eps)
+        Dx = 6.7
+        Dy = 6.7
+        Dz = 6.7
     [../]
     [./T_trans]
         type = FilmMassTransfer
@@ -449,9 +452,10 @@
     [./Ts_dgdiff]
         type = DGVariableDiffusion
         variable = Ts
-        Dx = Ks
-        Dy = Ks
-        Dz = Ks
+        # Ks*(1-eps)
+        Dx = 6.7
+        Dy = 6.7
+        Dz = 6.7
     [../]
  
     [./O2_dgadv]
@@ -504,7 +508,7 @@
         type = GasDensity
         variable = rho
         temperature = T
-        pressure = P_o          #Provide the reference pressure here
+        pressure = P          #Provide the reference pressure here (maybe not when all physics are in place?)
         hydraulic_diameter = dp
         ux = vel_x
         uy = vel_y
@@ -681,20 +685,24 @@
         u_input = 573.15
         boundary = 'right'
         hw = hw
-        Kx = Ks
-        Ky = Ks
-        Kz = Ks
+        # Ks*(1-eps)
+        Kx = 6.7
+        Ky = 6.7
+        Kz = 6.7
     [../]
  
     [./O2_FluxIn]
-        type = DGPoreConcFluxBC
+        type = DGPoreConcFluxStepwiseBC
         variable = O2
         boundary = 'bottom'
-        u_input = 0.13433
+        u_input = 1e-9
         porosity = eps
         ux = vel_x
         uy = vel_y
         uz = vel_z
+        input_vals = '0.13433'
+        input_times = '2000'
+        time_spans = '1500'
     [../]
     [./O2_FluxOut]
         type = DGPoreConcFluxBC
@@ -779,7 +787,7 @@
 
 [Executioner]
     type = Transient
-    scheme = implicit-euler
+    scheme = bdf2
     petsc_options = '-snes_converged_reason'
     petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
     petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
@@ -795,13 +803,13 @@
     l_max_its = 300
 
     start_time = 0.0
-    end_time = 30000
-    dtmax = 10
+    end_time = 35000
+    dtmax = 30
 
     [./TimeStepper]
 #        type = ConstantDT
         type = SolutionTimeAdaptiveDT
-        dt = 0.1
+        dt = 2
     [../]
 [] #END Executioner
 
@@ -809,6 +817,6 @@
     print_linear_residuals = true
     exodus = true
     csv = true
-    interval = 20   #Number of time steps to wait before writing output
+    interval = 10   #Number of time steps to wait before writing output
 [] #END Outputs
 
