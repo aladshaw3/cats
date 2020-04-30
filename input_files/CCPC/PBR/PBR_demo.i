@@ -23,6 +23,13 @@
     #   Ao = 11797  m^-1
   
 [] #END GlobalParams
+ 
+[Functions]
+    [./qc_ic]
+        type = ParsedFunction
+        value = 4.01E-4*-1.8779*exp(1.8779*y/0.1346)/(1-exp(1.8779))
+    [../]
+[]
 
 [Problem]
     #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
@@ -34,8 +41,8 @@
     dim = 2
 #    nx = 10
 #    ny = 20
-    nx = 10
-    ny = 20
+    nx = 5
+    ny = 10
     xmin = 0.0
     xmax = 0.0725    # m radius
     ymin = 0.0
@@ -47,13 +54,24 @@
     [./qc]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 4.01E-4        #Avg qc
+#        initial_condition = 4.01E-4        #Avg qc
 #        initial_condition = 8.89E-4     #Max qc
 #        initial_condition = 1.359E-4       #Min qc
+        [./InitialCondition]
+            type = FunctionIC
+            function = qc_ic
+        [../]
     [../]
  
     # O2 in pore-spaces (mol/m^3)
     [./O2p]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-9    #mol/m^3
+    [../]
+ 
+    # CO2 in pore-spaces (mol/m^3)
+    [./CO2p]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1e-9    #mol/m^3
@@ -79,6 +97,13 @@
         family = MONOMIAL
         initial_condition = 1e-9    #mol/m^3
     [../]
+ 
+    # Bulk gas concentration for CO2
+    [./CO2]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-9    #mol/m^3
+    [../]
 
 [] #END Variables
 
@@ -90,23 +115,10 @@
         initial_condition = 16.497    #mol/m^3
     [../]
  
-    # CO2 in pore-spaces (mol/m^3)
-    [./CO2p]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 0    #mol/m^3
-    [../]
- 
     [./N2]
         order = FIRST
         family = MONOMIAL
         initial_condition = 16.497    #mol/m^3
-    [../]
- 
-    [./CO2]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 0    #mol/m^3
     [../]
  
 # Reference or inlet/outlet terms (vary in time, but not in space)
@@ -428,6 +440,59 @@
         product_stoich = '1'
     [../]
  
+    [./CO2_dot]
+        type = VariableCoefTimeDerivative
+        variable = CO2
+        coupled_coef = eps
+    [../]
+    [./CO2_gadv]
+        type = GPoreConcAdvection
+        variable = CO2
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./CO2_gdiff]
+        type = GVarPoreDiffusion
+        variable = CO2
+        porosity = eps
+        Dx = De_CO2
+        Dy = De_CO2
+        Dz = De_CO2
+    [../]
+    [./CO2p_trans]
+        type = FilmMassTransfer
+        variable = CO2
+        coupled = CO2p
+        rate_variable = kme_CO2
+        av_ratio = 11797
+    [../]
+ 
+    [./CO2p_dot]
+        type = VariableCoefTimeDerivative
+        variable = CO2p
+        coupled_coef = 0.333        #eps_s*(1-eps)
+    [../]
+    [./CO2_trans]
+        type = FilmMassTransfer
+        variable = CO2p
+        coupled = CO2
+        rate_variable = kme_CO2
+        av_ratio = 11797
+    [../]
+    [./CO2p_rx]  #   qc + O2p --> CO2p
+        type = ArrheniusReaction
+        variable = CO2p
+        this_variable = CO2p
+        temperature = Ts
+        scale = 48604163       #(1-eps)*As*1
+        reactants = 'qc O2p'
+        reactant_stoich = '1 1'
+        products = 'CO2p'
+        product_stoich = '1'
+    [../]
+ 
 [] #END Kernels
 
 [DGKernels]
@@ -473,6 +538,23 @@
         Dx = De_O2
         Dy = De_O2
         Dz = De_O2
+    [../]
+ 
+    [./CO2_dgadv]
+        type = DGPoreConcAdvection
+        variable = CO2
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./CO2_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = CO2
+        porosity = eps
+        Dx = De_CO2
+        Dy = De_CO2
+        Dz = De_CO2
     [../]
 [] #END DGKernels
 
@@ -713,6 +795,26 @@
         uy = vel_y
         uz = vel_z
     [../]
+ 
+    [./CO2_FluxIn]
+        type = DGPoreConcFluxBC
+        variable = CO2
+        boundary = 'bottom'
+        u_input = 1e-9
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./CO2_FluxOut]
+        type = DGPoreConcFluxBC
+        variable = CO2
+        boundary = 'top'
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
 
 [] #END BCs
 
@@ -749,9 +851,17 @@
         execute_on = 'initial timestep_end'
     [../]
  
-    [./Ts_avg]
-        type = ElementAverageValue
+    [./Ts_in]
+        type = SideAverageValue
         variable = Ts
+        boundary = 'bottom'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./Ts_out]
+        type = SideAverageValue
+        variable = Ts
+        boundary = 'top'
         execute_on = 'initial timestep_end'
     [../]
  
@@ -772,6 +882,20 @@
         type = SideAverageValue
         boundary = 'bottom'
         variable = O2
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./CO2_out]
+        type = SideAverageValue
+        boundary = 'top'
+        variable = CO2
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./CO2_in]
+        type = SideAverageValue
+        boundary = 'bottom'
+        variable = CO2
         execute_on = 'initial timestep_end'
     [../]
 
