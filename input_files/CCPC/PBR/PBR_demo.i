@@ -42,7 +42,7 @@
 #    nx = 10
 #    ny = 20
     nx = 5
-    ny = 10
+    ny = 30
     xmin = 0.0
     xmax = 0.0725    # m radius
     ymin = 0.0
@@ -224,6 +224,7 @@
     [./rho]
         order = FIRST
         family = MONOMIAL
+ initial_condition = 0.45
     [../]
  
     [./P]
@@ -239,7 +240,7 @@
     [./Ke]
         order = FIRST
         family = MONOMIAL
-#initial_condition = .5
+ initial_condition = 6.7          #W/m/K
     [../]
  
     [./cpg]
@@ -339,9 +340,9 @@
         type = GVariableDiffusion
         variable = Ts
         # Ks*(1-eps)
-        Dx = 6.7
-        Dy = 6.7
-        Dz = 6.7
+        Dx = Ks
+        Dy = Ks
+        Dz = Ks
     [../]
     [./T_trans]
         type = FilmMassTransfer
@@ -518,9 +519,9 @@
         type = DGVariableDiffusion
         variable = Ts
         # Ks*(1-eps)
-        Dx = 6.7
-        Dy = 6.7
-        Dz = 6.7
+        Dx = Ks
+        Dy = Ks
+        Dz = Ks
     [../]
  
     [./O2_dgadv]
@@ -589,8 +590,8 @@
     [./dens_calc]
         type = GasDensity
         variable = rho
-        temperature = T
-        pressure = P          #Provide the reference pressure here (maybe not when all physics are in place?)
+        temperature = 723
+        pressure = 103000          #Provide the reference pressure here (maybe not when all physics are in place?)
         hydraulic_diameter = dp
         ux = vel_x
         uy = vel_y
@@ -608,18 +609,18 @@
         uz = vel_z
     [../]
  
-    [./Keff_calc]
-        type = GasEffectiveThermalConductivity
-        variable = Ke
-        temperature = T
-        pressure = P
-        hydraulic_diameter = dp
-        macroscale_diameter = d_bed
-        porosity = eps
-        ux = vel_x
-        uy = vel_y
-        uz = vel_z
-    [../]
+#    [./Keff_calc]
+#        type = GasEffectiveThermalConductivity
+#        variable = Ke
+#        temperature = T
+#        pressure = P
+#        hydraulic_diameter = dp
+#        macroscale_diameter = d_bed
+#        porosity = eps
+#        ux = vel_x
+#        uy = vel_y
+#        uz = vel_z
+#    [../]
  
     [./cp_calc]
         type = GasSpecHeat
@@ -755,9 +756,6 @@
         u_input = 573.15
         boundary = 'right'
         hw = hw
-        Kx = Ke
-        Ky = Ke
-        Kz = Ke
     [../]
  
 # Need to add same kernel with variable wall temperature
@@ -767,10 +765,6 @@
         u_input = 573.15
         boundary = 'right'
         hw = hw
-        # Ks*(1-eps)
-        Kx = 6.7
-        Ky = 6.7
-        Kz = 6.7
     [../]
  
     [./O2_FluxIn]

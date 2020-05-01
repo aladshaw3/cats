@@ -2,31 +2,9 @@
  *  \file DGWallHeatFluxBC.h
  *    \brief Boundary Condition kernel to for heat flux caused by a wall
  *    \details This file creates a boundary condition kernel to account for heat loss or
- *          gained from a wall. The user must supply a coupled variable for the conductivity
- *          and heat transfer coefficient at the wall. The wall temperature is assumed constant
+ *          gained from a wall. The user must supply a coupled variable for the
+ *          heat transfer coefficient at the wall. The wall temperature is assumed constant
  *          in this case. Inherit from this kernel to add variable wall temperature.
- *
- *
- *      The DG method for diffusion involves 2 correction parameters:
- *
- *          (1) sigma - penalty term that should be >= 0 [if too large, it may cause errors]
- *          (2) epsilon - integer term with values of either -1, 0, or 1
- *
- *      Different values for epsilon result in slightly different discretizations:
- *
- *          (1) epsilon = -1   ==>   Symmetric Interior Penalty Galerkin (SIPG)
- *                                   Very efficient for symmetric problems, but may only
- *                                   converge if sigma is high.
- *          (2) epsilon = 0    ==>   Incomplete Interior Penalty Galerkin (IIPG)
- *                                   Works well for non-symmetic, well posed problems, but
- *                                   only converges under same sigma values as SIPG.
- *          (3) epsilon = 1    ==>   Non-symmetric Interior Penalty Galerking (NIPG)
- *                                   Most stable and easily convergable method that can
- *                                   work for symmetic and non-symmetric systems. Much
- *                                   less dependent on sigma values for convergence.
- *
- *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic equations:
- *                    Theory and Implementation, SIAM, Houston, TX, 2008.
  *
  *    \author Austin Ladshaw
  *    \date 04/29/2020
@@ -59,12 +37,12 @@
 
 #pragma once
 
-#include "DGFluxLimitedBC.h"
+#include "IntegratedBC.h"
 
-/// DGWallHeatFluxBC class object inherits from DGFluxLimitedBC object
-/** This class object inherits from the DGFluxLimitedBC object.
+/// DGWallHeatFluxBC class object inherits from IntegratedBC object
+/** This class object inherits from the IntegratedBC object.
     All public and protected members of this class are required function overrides.  */
-class DGWallHeatFluxBC : public DGFluxLimitedBC
+class DGWallHeatFluxBC : public IntegratedBC
 {
 public:
     /// Required new syntax for InputParameters
@@ -92,14 +70,9 @@ protected:
     
     const VariableValue & _hw;            ///< Variable for Heat transfer coefficient
     const unsigned int _hw_var;           ///< Variable identification for hw
-
-    const VariableValue & _Kx;            ///< Conductivity in the x-direction
-    const VariableValue & _Ky;            ///< Conductivity in the y-direction
-    const VariableValue & _Kz;            ///< Conductivity in the z-direction
-
-    const unsigned int _Kx_var;                    ///< Variable identification for Kx
-    const unsigned int _Ky_var;                    ///< Variable identification for Ky
-    const unsigned int _Kz_var;                    ///< Variable identification for Kz
+    
+    /// Value of the non-linear variable at the input of the boundary
+    Real _u_input;
 
 private:
 

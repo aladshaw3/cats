@@ -593,42 +593,7 @@
         u_input = 573.15
         boundary = 'right'
         hw = hw
-        Kx = 0
-        Ky = 0
-        Kz = 0
     [../]
- 
-#    [./T_WallFluxIn]
-#        type = DGFluxLimitedBC
-#        variable = T
-#        u_input = 573.15
-#        boundary = 'right'
-#        vx = 0
-#        vy = 0
-#        vz = 0
-# Dxx = .5
-# Dyy = .5
-#    [../]
- 
-#    [./O2_FluxIn]
-#        type = DGPoreConcFluxBC
-#        variable = O2
-#        boundary = 'bottom'
-#        u_input = 0.13433
-#        porosity = eps
-#        ux = vel_x
-#        uy = vel_y
-#        uz = vel_z
-#    [../]
-#    [./O2_FluxOut]
-#        type = DGPoreConcFluxBC
-#        variable = O2
-#        boundary = 'top'
-#        porosity = eps
-#        ux = vel_x
-#        uy = vel_y
-#        uz = vel_z
-#    [../]
  
      [./O2_FluxIn]
          type = DGFluxLimitedBC

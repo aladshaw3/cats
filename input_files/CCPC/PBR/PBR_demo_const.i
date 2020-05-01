@@ -772,9 +772,6 @@
         u_input = 573.15
         boundary = 'right'
         hw = hw
-        Kx = Ke
-        Ky = Ke
-        Kz = Ke
     [../]
  
 # Need to add same kernel with variable wall temperature
@@ -784,10 +781,6 @@
 #        u_input = 573.15
 #        boundary = 'right'
 #        hw = hw
-#        # Ks*(1-eps)
-#        Kx = 6.7
-#        Ky = 6.7
-#        Kz = 6.7
 #    [../]
  
     [./O2_FluxIn]

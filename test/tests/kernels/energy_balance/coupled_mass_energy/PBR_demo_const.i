@@ -23,6 +23,13 @@
     #   Ao = 11797  m^-1
   
 [] #END GlobalParams
+ 
+[Functions]
+    [./qc_ic]
+        type = ParsedFunction
+        value = 4.01E-4*-1.8779*exp(1.8779*y/0.1346)/(1-exp(1.8779))
+    [../]
+[]
 
 [Problem]
     #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
@@ -32,8 +39,6 @@
 [Mesh]
     type = GeneratedMesh
     dim = 2
-#    nx = 10
-#    ny = 20
     nx = 5
     ny = 10
     xmin = 0.0
@@ -47,14 +52,27 @@
     [./qc]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 4.01E-4
+#        initial_condition = 4.01E-4        #Avg qc
+#        initial_condition = 8.89E-4     #Max qc
+#        initial_condition = 1.359E-4       #Min qc
+        [./InitialCondition]
+            type = FunctionIC
+            function = qc_ic
+        [../]
     [../]
  
     # O2 in pore-spaces (mol/m^3)
     [./O2p]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.0    #mol/m^3
+        initial_condition = 1e-9    #mol/m^3
+    [../]
+ 
+    # CO2 in pore-spaces (mol/m^3)
+    [./CO2p]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-9    #mol/m^3
     [../]
  
     # Gas phase temperature
@@ -75,7 +93,14 @@
     [./O2]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0    #mol/m^3
+        initial_condition = 1e-9    #mol/m^3
+    [../]
+ 
+    # Bulk gas concentration for CO2
+    [./CO2]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-9    #mol/m^3
     [../]
 
 [] #END Variables
@@ -88,23 +113,10 @@
         initial_condition = 16.497    #mol/m^3
     [../]
  
-    # CO2 in pore-spaces (mol/m^3)
-    [./CO2p]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 0    #mol/m^3
-    [../]
- 
     [./N2]
         order = FIRST
         family = MONOMIAL
         initial_condition = 16.497    #mol/m^3
-    [../]
- 
-    [./CO2]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 0    #mol/m^3
     [../]
  
 # Reference or inlet/outlet terms (vary in time, but not in space)
@@ -210,6 +222,7 @@
     [./rho]
         order = FIRST
         family = MONOMIAL
+        initial_condition = 0.45       #kg/m^3
     [../]
  
     [./P]
@@ -225,12 +238,13 @@
     [./Ke]
         order = FIRST
         family = MONOMIAL
-#initial_condition = .5
+ initial_condition = 6.7          #W/m/K
     [../]
  
     [./cpg]
         order = FIRST
         family = MONOMIAL
+        initial_condition = 1040       #J/kg/K
     [../]
  
     [./km_O2]
@@ -284,9 +298,13 @@
     [./T_dot]
         type = HeatAccumulation
         variable = T
-        specific_heat = cpg
-        porosity = eps
-        density = rho
+#        specific_heat = cpg
+#        porosity = eps
+#        density = rho
+ 
+        specific_heat = 612257
+       porosity = 1
+       density = 1
     [../]
     [./T_gadv]
         type = GHeatAdvection
@@ -305,12 +323,23 @@
         Dy = Ke
         Dz = Ke
     [../]
-    [./Ts_trans]
-        type = FilmMassTransfer
+#    [./Ts_trans]
+#        type = FilmMassTransfer
+#        variable = T
+#        coupled = Ts
+#        rate_variable = hs
+#        av_ratio = 11797
+#    [../]
+    [./T_rx]  #   qc + O2p --> CO2p
+        type = ArrheniusReaction
         variable = T
-        coupled = Ts
-        rate_variable = hs
-        av_ratio = 11797
+        this_variable = T
+        temperature = T
+ scale = 1.92E13  #As*DH*(1-eps)
+        reactants = 'qc O2p'
+        reactant_stoich = '1 1'
+        products = 'CO2p'
+        product_stoich = '1'
     [../]
  
 # Kernels for solid-phase temperature
@@ -321,20 +350,21 @@
         porosity = 1.0
         density = rho_s
     [../]
-    [./Ts_gdiff]
-        type = GVariableDiffusion
-        variable = Ts
-        Dx = Ks
-        Dy = Ks
-        Dz = Ks
-    [../]
-    [./T_trans]
-        type = FilmMassTransfer
-        variable = Ts
-        coupled = T
-        rate_variable = hs
-        av_ratio = 11797
-    [../]
+#    [./Ts_gdiff]
+#        type = GVariableDiffusion
+#        variable = Ts
+#        # Ks*(1-eps)
+#        Dx = 6.7
+#        Dy = 6.7
+#        Dz = 6.7
+#    [../]
+#    [./T_trans]
+#        type = FilmMassTransfer
+#        variable = Ts
+#        coupled = T
+#        rate_variable = hs
+#        av_ratio = 11797
+#    [../]
 # Placeholder for heat of reaction kernel (do mass balances first - Coupling impacts the heat up)
 #    [./Ts_rxn]
 #        type = CoupledCoeffTimeDerivative
@@ -342,17 +372,17 @@
 #        coupled = qc
 #        time_coeff = 3.41E13 #3.41E13     #8.6346E7*-3.95E5*-1
 #    [../]
-    [./Ts_rx]  #   qc + O2p --> CO2p
-        type = ArrheniusReaction
-        variable = Ts
-        this_variable = Ts
-        temperature = Ts
-        scale = 3.41E13
-        reactants = 'qc O2p'
-        reactant_stoich = '1 1'
-        products = 'CO2p'
-        product_stoich = '1'
-    [../]
+#    [./Ts_rx]  #   qc + O2p --> CO2p
+#        type = ArrheniusReaction
+#        variable = Ts
+#        this_variable = Ts
+#        temperature = Ts
+#        scale = 3.41E13
+#        reactants = 'qc O2p'
+#        reactant_stoich = '1 1'
+#        products = 'CO2p'
+#        product_stoich = '1'
+#    [../]
     
  
 # Kernels for surface reaction
@@ -364,7 +394,7 @@
         type = ArrheniusReaction
         variable = qc
         this_variable = qc
-        temperature = Ts
+        temperature = T
         scale = -1.0
         reactants = 'qc O2p'
         reactant_stoich = '1 1'
@@ -417,8 +447,61 @@
         type = ArrheniusReaction
         variable = O2p
         this_variable = O2p
-        temperature = Ts
+        temperature = T
         scale = -48604163       #(1-eps)*As*-1
+        reactants = 'qc O2p'
+        reactant_stoich = '1 1'
+        products = 'CO2p'
+        product_stoich = '1'
+    [../]
+ 
+    [./CO2_dot]
+        type = VariableCoefTimeDerivative
+        variable = CO2
+        coupled_coef = eps
+    [../]
+    [./CO2_gadv]
+        type = GPoreConcAdvection
+        variable = CO2
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./CO2_gdiff]
+        type = GVarPoreDiffusion
+        variable = CO2
+        porosity = eps
+        Dx = De_CO2
+        Dy = De_CO2
+        Dz = De_CO2
+    [../]
+    [./CO2p_trans]
+        type = FilmMassTransfer
+        variable = CO2
+        coupled = CO2p
+        rate_variable = kme_CO2
+        av_ratio = 11797
+    [../]
+ 
+    [./CO2p_dot]
+        type = VariableCoefTimeDerivative
+        variable = CO2p
+        coupled_coef = 0.333        #eps_s*(1-eps)
+    [../]
+    [./CO2_trans]
+        type = FilmMassTransfer
+        variable = CO2p
+        coupled = CO2
+        rate_variable = kme_CO2
+        av_ratio = 11797
+    [../]
+    [./CO2p_rx]  #   qc + O2p --> CO2p
+        type = ArrheniusReaction
+        variable = CO2p
+        this_variable = CO2p
+        temperature = T
+        scale = 48604163       #(1-eps)*As*1
         reactants = 'qc O2p'
         reactant_stoich = '1 1'
         products = 'CO2p'
@@ -446,13 +529,14 @@
         Dz = Ke
     [../]
  
-    [./Ts_dgdiff]
-        type = DGVariableDiffusion
-        variable = Ts
-        Dx = Ks
-        Dy = Ks
-        Dz = Ks
-    [../]
+#    [./Ts_dgdiff]
+#        type = DGVariableDiffusion
+#        variable = Ts
+#        # Ks*(1-eps)
+#        Dx = 6.7
+#        Dy = 6.7
+#        Dz = 6.7
+#    [../]
  
     [./O2_dgadv]
         type = DGPoreConcAdvection
@@ -469,6 +553,23 @@
         Dx = De_O2
         Dy = De_O2
         Dz = De_O2
+    [../]
+ 
+    [./CO2_dgadv]
+        type = DGPoreConcAdvection
+        variable = CO2
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./CO2_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = CO2
+        porosity = eps
+        Dx = De_CO2
+        Dy = De_CO2
+        Dz = De_CO2
     [../]
 [] #END DGKernels
 
@@ -500,16 +601,16 @@
 # NOTE: Should change the density calculation to use ErgunPressure (inlet) with system T and concentrations
 #       Alternatively, just use AuxAvgGasDensity with reference pressure and system T with concentrations
 #       OR, just use this function, but provide the reference/inlet/outlet pressure variable
-    [./dens_calc]
-        type = GasDensity
-        variable = rho
-        temperature = T
-        pressure = P          #Provide the reference pressure here
-        hydraulic_diameter = dp
-        ux = vel_x
-        uy = vel_y
-        uz = vel_z
-    [../]
+#    [./dens_calc]
+#        type = GasDensity
+#        variable = rho
+#        temperature = T
+#        pressure = P          #Provide the reference pressure here (maybe not when all physics are in place?)
+#        hydraulic_diameter = dp
+#        ux = vel_x
+#        uy = vel_y
+#        uz = vel_z
+#    [../]
  
     [./vis_calc]
         type = GasViscosity
@@ -522,29 +623,29 @@
         uz = vel_z
     [../]
  
-    [./Keff_calc]
-        type = GasEffectiveThermalConductivity
-        variable = Ke
-        temperature = T
-        pressure = P
-        hydraulic_diameter = dp
-        macroscale_diameter = d_bed
-        porosity = eps
-        ux = vel_x
-        uy = vel_y
-        uz = vel_z
-    [../]
+#    [./Keff_calc]
+#        type = GasEffectiveThermalConductivity
+#        variable = Ke
+#        temperature = T
+#        pressure = P
+#        hydraulic_diameter = dp
+#        macroscale_diameter = d_bed
+#        porosity = eps
+#        ux = vel_x
+#        uy = vel_y
+#        uz = vel_z
+#    [../]
  
-    [./cp_calc]
-        type = GasSpecHeat
-        variable = cpg
-        temperature = T
-        pressure = P
-        hydraulic_diameter = dp
-        ux = vel_x
-        uy = vel_y
-        uz = vel_z
-    [../]
+#    [./cp_calc]
+#        type = GasSpecHeat
+#        variable = cpg
+#        temperature = T
+#        pressure = P
+#        hydraulic_diameter = dp
+#        ux = vel_x
+#        uy = vel_y
+#        uz = vel_z
+#    [../]
  
     [./km_O2_calc]
         type = GasSpeciesMassTransCoef
@@ -669,36 +770,53 @@
         u_input = 573.15
         boundary = 'right'
         hw = hw
-        Kx = Ke
-        Ky = Ke
-        Kz = Ke
     [../]
  
 # Need to add same kernel with variable wall temperature
-    [./Ts_WallFluxIn]
-        type = DGWallHeatFluxBC
-        variable = Ts
-        u_input = 573.15
-        boundary = 'right'
-        hw = hw
-        Kx = Ks
-        Ky = Ks
-        Kz = Ks
-    [../]
+#    [./Ts_WallFluxIn]
+#        type = DGWallHeatFluxBC
+#        variable = Ts
+#        u_input = 573.15
+#        boundary = 'right'
+#        hw = hw
+#    [../]
  
     [./O2_FluxIn]
-        type = DGPoreConcFluxBC
+        type = DGPoreConcFluxStepwiseBC
         variable = O2
         boundary = 'bottom'
-        u_input = 0.13433
+        u_input = 1e-9
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        input_vals = '0.13433'
+        input_times = '2000'
+        time_spans = '1500'
+    [../]
+    [./O2_FluxOut]
+        type = DGPoreConcFluxBC
+        variable = O2
+        boundary = 'top'
         porosity = eps
         ux = vel_x
         uy = vel_y
         uz = vel_z
     [../]
-    [./O2_FluxOut]
+ 
+    [./CO2_FluxIn]
         type = DGPoreConcFluxBC
-        variable = O2
+        variable = CO2
+        boundary = 'bottom'
+        u_input = 1e-9
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./CO2_FluxOut]
+        type = DGPoreConcFluxBC
+        variable = CO2
         boundary = 'top'
         porosity = eps
         ux = vel_x
@@ -741,9 +859,9 @@
         execute_on = 'initial timestep_end'
     [../]
  
-    [./Ts_avg]
+    [./T_avg]
         type = ElementAverageValue
-        variable = Ts
+        variable = T
         execute_on = 'initial timestep_end'
     [../]
  
@@ -764,6 +882,20 @@
         type = SideAverageValue
         boundary = 'bottom'
         variable = O2
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./CO2_out]
+        type = SideAverageValue
+        boundary = 'top'
+        variable = CO2
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./CO2_in]
+        type = SideAverageValue
+        boundary = 'bottom'
+        variable = CO2
         execute_on = 'initial timestep_end'
     [../]
 
@@ -795,12 +927,12 @@
     l_max_its = 300
 
     start_time = 0.0
-    end_time = 0.4
-    dtmax = 10
+    end_time = 500
+    dtmax = 100
 
     [./TimeStepper]
         type = ConstantDT
-        dt = 0.1
+        dt = 100
     [../]
 [] #END Executioner
 
