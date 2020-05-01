@@ -114,7 +114,8 @@ Real DGWallHeatFluxBC::computeQpResidual()
     r += _sigma/h_elem * (_u[_qp] - _u_input) * _test[_i][_qp];
     r -= (_Diffusion * _grad_u[_qp] * _normals[_qp] * _test[_i][_qp]);
     
-    return r;
+    //return r;
+    return _test[_i][_qp]*_hw[_qp]*(_u[_qp] - _u_input);
 }
 
 Real DGWallHeatFluxBC::computeQpJacobian()
@@ -141,7 +142,8 @@ Real DGWallHeatFluxBC::computeQpJacobian()
     jac += _sigma/h_elem * _phi[_j][_qp] * _test[_i][_qp];
     jac -= (_Diffusion * _grad_phi[_j][_qp] * _normals[_qp] * _test[_i][_qp]);
     
-    return jac;
+    //return jac;
+    return _test[_i][_qp]*_hw[_qp]*_phi[_j][_qp];
 }
 
 Real DGWallHeatFluxBC::computeQpOffDiagJacobian(unsigned int jvar)
