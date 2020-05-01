@@ -41,8 +41,8 @@
     dim = 2
 #    nx = 10
 #    ny = 20
-    nx = 5
-    ny = 10
+    nx = 10
+    ny = 20
     xmin = 0.0
     xmax = 0.0725    # m radius
     ymin = 0.0
@@ -240,7 +240,7 @@
     [./Ke]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 9          #W/m/K
+ initial_condition = 6.7          #W/m/K
     [../]
  
     [./cpg]
@@ -337,7 +337,7 @@
         variable = T
         this_variable = T
         temperature = T
- scale = 1.7E13  #3.41E13
+ scale = 1.92E13  #As*DH*(1-eps)
         reactants = 'qc O2p'
         reactant_stoich = '1 1'
         products = 'CO2p'
