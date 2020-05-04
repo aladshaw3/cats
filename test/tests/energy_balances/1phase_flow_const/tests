@@ -1,0 +1,7 @@
+[Tests]
+  [./1phase_consts]
+    type = 'Exodiff'
+    input = 'fluid_energy.i'
+    exodiff = 'fluid_energy_out.e'
+  [../]
+[]
