@@ -21,6 +21,7 @@
     #   dH = -3.95E5 J/mol
     #   As = 8.6346E7   m^-1
     #   Ao = 11797  m^-1
+#       Ao*(1-eps) = 6640.5
   
 [] #END GlobalParams
  
@@ -430,7 +431,7 @@
         variable = O2
         coupled = O2p
         rate_variable = kme_O2
-        av_ratio = 11797
+        av_ratio = 6640.5
     [../]
  
     [./O2p_dot]
@@ -443,7 +444,7 @@
         variable = O2p
         coupled = O2
         rate_variable = kme_O2
-        av_ratio = 11797
+        av_ratio = 6640.5
     [../]
     [./O2p_rx]  #   qc + O2p --> CO2p
         type = ArrheniusReaction
@@ -483,7 +484,7 @@
         variable = CO2
         coupled = CO2p
         rate_variable = kme_CO2
-        av_ratio = 11797
+        av_ratio = 6640.5
     [../]
  
     [./CO2p_dot]
@@ -496,7 +497,7 @@
         variable = CO2p
         coupled = CO2
         rate_variable = kme_CO2
-        av_ratio = 11797
+        av_ratio = 6640.5
     [../]
     [./CO2p_rx]  #   qc + O2p --> CO2p
         type = ArrheniusReaction

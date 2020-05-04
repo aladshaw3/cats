@@ -255,7 +255,7 @@ Real DGVarPoreDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, un
             _grad_test_neighbor[_i][_qp] * _normals[_qp];
         break;
     }
-    return r* _porosity[_qp];
+    return r* _phi[_j][_qp];
   }
 
   return 0.0;
