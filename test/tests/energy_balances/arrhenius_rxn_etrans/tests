@@ -1,0 +1,7 @@
+[Tests]
+  [./rxn_energy_trans_basic_arrhenius]
+    type = 'Exodiff'
+    input = '2phase_energy_rxn.i'
+    exodiff = '2phase_energy_rxn_out.e'
+  [../]
+[]
