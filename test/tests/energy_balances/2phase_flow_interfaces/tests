@@ -1,0 +1,7 @@
+[Tests]
+  [./2phase_interface_transfer]
+    type = 'Exodiff'
+    input = '2phase_energy_subdomains.i'
+    exodiff = '2phase_energy_subdomains_out.e'
+  [../]
+[]
