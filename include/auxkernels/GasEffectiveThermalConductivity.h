@@ -1,6 +1,6 @@
 /*!
  *  \file GasEffectiveThermalConductivity.h
- *    \brief AuxKernel kernel to compute the effective thermal conductivity of gases in a packed column
+ *    \brief AuxKernel kernel to compute the effective thermal conductivity the fluid/solid matrix in a packed column
  *    \details This file is responsible for calculating the effective gas thermal conductivity in W/m/K
  *
  *
@@ -64,8 +64,8 @@ protected:
     virtual Real computeValue() override;
     
     Real _Cp_Cv_ratio;            ///< Value for the ratio of Cp to Cv for the gas (assumed = 1.4 if not given)
-    const VariableValue & _column_dia;                   ///< Variable for the column diameter (m)
-    const unsigned int _column_dia_var;                  ///< Variable identification for the column diameter
+    const VariableValue & _solid_cond;              ///< Variable for the solids thermal conductivity (W/m/K)
+    const unsigned int _solid_cond_var;             ///< Variable identification for the solids thermal conductivity
     const VariableValue & _porosity;                ///< Variable for the porosity
     const unsigned int _porosity_var;               ///< Variable identification for the porosity
     

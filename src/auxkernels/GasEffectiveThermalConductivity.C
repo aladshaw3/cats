@@ -1,6 +1,6 @@
 /*!
  *  \file GasEffectiveThermalConductivity.h
- *    \brief AuxKernel kernel to compute the effective thermal conductivity of gases in a packed column
+ *    \brief AuxKernel kernel to compute the effective thermal conductivity of the fluid/solid matrix in a packed column
  *    \details This file is responsible for calculating the effective gas thermal conductivity in W/m/K
  *
  *
@@ -53,7 +53,7 @@ InputParameters GasEffectiveThermalConductivity::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
     params.addParam< Real >("heat_cap_ratio",1.4,"Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
-    params.addRequiredCoupledVar("macroscale_diameter","Name of the macrocale column diameter variable (m)");
+    params.addRequiredCoupledVar("solid_conductivity","Name of the solid thermal conductivity variable (W/m/K)");
     params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");
     return params;
 }
@@ -61,8 +61,8 @@ InputParameters GasEffectiveThermalConductivity::validParams()
 GasEffectiveThermalConductivity::GasEffectiveThermalConductivity(const InputParameters & parameters) :
 GasPropertiesBase(parameters),
 _Cp_Cv_ratio(getParam< Real >("heat_cap_ratio")),
-_column_dia(coupledValue("macroscale_diameter")),
-_column_dia_var(coupled("macroscale_diameter")),
+_solid_cond(coupledValue("solid_conductivity")),
+_solid_cond_var(coupled("solid_conductivity")),
 _porosity(coupledValue("porosity")),
 _porosity_var(coupled("porosity"))
 {
@@ -85,14 +85,6 @@ Real GasEffectiveThermalConductivity::computeValue()
     Real mu = _egret_dat.total_dyn_vis/1000.0*100.0;
     Real f = 0.25*(9.0*_Cp_Cv_ratio - 5.0);
     Real Kg = f*mu*Cv;
-    Real Pr = (_egret_dat.total_dyn_vis/1000.0*100.0)*(_egret_dat.total_specific_heat*1000.0)/Kg;
-    Real Re = ReNum(_egret_dat.velocity*_porosity[_qp],_column_dia[_qp]*100.0,_egret_dat.kinematic_viscosity);
-    Real first = (0.73*_porosity[_qp])/Re/Pr;
-    Real second = (0.5 / (1.0 + ((9.7*_porosity[_qp])/Re/Pr)) );
-    Real Pe = (1.0 / (first+second) )*10.0;
-    Real vel = _egret_dat.velocity/100.0;
-    Real den = _egret_dat.total_density/1000.0*100.0*100.0*100.0;
-    Real h = (_egret_dat.total_specific_heat*1000.0);
     
-    return _column_dia[_qp]*vel*_porosity[_qp]*den*h/Pe;
+    return (1.0-_porosity[_qp])*_solid_cond[_qp] + _porosity[_qp]*Kg;
 }

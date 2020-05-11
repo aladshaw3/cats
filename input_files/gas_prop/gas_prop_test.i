@@ -20,15 +20,21 @@
 
 [Variables]
 
-    [./P]
+    [./u]
         order = FIRST
         family = LAGRANGE
-        initial_condition = 101355
+        initial_condition = 1
     [../]
 
 [] #END Variables
 
 [AuxVariables]
+ 
+ [./P]
+     order = FIRST
+     family = MONOMIAL
+     initial_condition = 101355
+ [../]
 
   [./pore]
       order = FIRST
@@ -205,16 +211,9 @@
 
 [Kernels]
  
-    [./P_ergun]
-        type = ErgunPressure
-        variable = P
-        direction = 1
-        porosity = pore
-        hydraulic_diameter = dia
-        velocity = vel_y
-        viscosity = vis
-        density = dens
-        inlet_pressure = P_in
+    [./u]
+        type = TimeDerivative
+        variable = u
     [../]
  
 [] #END Kernels
@@ -224,6 +223,29 @@
 [] #END DGKernels
 
 [AuxKernels]
+    [./P_ergun]
+        type = AuxErgunPressure
+        variable = P
+        direction = 1
+        porosity = pore
+        temperature = temp
+        # NOTE: Use inlet/outlet pressure for pressure variable in aux pressure kernel
+        pressure = P_in
+        is_inlet_press = true
+        start_point = 0
+        end_point = 0.05
+        hydraulic_diameter = dia
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        gases = 'NH3 H2O O2'
+        molar_weights = '17.031 18 32'
+        sutherland_temp = '293.17 292.25 298.16'
+        sutherland_const = '370 784.72 127'
+        sutherland_vis = '0.0000982 0.001043 0.0002018'
+        spec_heat = '2.175 1.97 0.919'
+        execute_on = 'initial timestep_end'
+    [../]
  
     [./vis_calc]
         type = GasViscosity
@@ -383,7 +405,7 @@
         temperature = temp
         pressure = P
         hydraulic_diameter = dia
-        macroscale_diameter = macro_dia
+        solid_conductivity = K_s
         porosity = pore
         ux = vel_x
         uy = vel_y
