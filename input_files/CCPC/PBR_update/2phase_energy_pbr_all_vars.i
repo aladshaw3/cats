@@ -10,6 +10,21 @@
     forward_pre_exponential = 25        #m^3/mol/s
     reverse_activation_energy = 0   #J/mol
     reverse_pre_exponential = 0     #m^3/mol/s
+
+    # All AuxKernels for GasProperties use same gases
+    gases = 'N2 O2 CO2'
+    molar_weights = '28 32 44'
+    sutherland_temp = '300.55 292.25 293.15'
+    sutherland_const = '111 127 240'
+    sutherland_vis = '0.0001781 0.0002018 0.000148'
+    spec_heat = '1.04 0.919 0.846'
+    execute_on = 'initial timestep_end'
+ 
+    # Other Constants
+    #   dH = -3.95E5 J/mol
+    #   As = 8.6346E7   m^-1
+    #   Ao = 11797  m^-1
+    #   Ao*(1-eps) = 6640.5
   
 [] #END GlobalParams
 
@@ -32,7 +47,10 @@
 [Functions]
      [./qc_ic]
          type = ParsedFunction
-         value = 4.01E-4*-1.8779*exp(1.8779*y/0.1346)/(1-exp(1.8779))
+        value = 4.01E-4*-1.8779*exp(1.8779*y/0.1346)/(1-exp(1.8779))
+#        value = 4.01E-4        #Avg qc
+#        value = 8.89E-4     #Max qc
+#        value = 1.359E-4       #Min qc
      [../]
 []
 
@@ -110,6 +128,13 @@
         family = MONOMIAL
         initial_condition = 1e-9    #mol/m^3
     [../]
+
+# System density as a non-linear variable
+    [./rho]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.45       #kg/m^3  (works is 0.9 const - actually should be ~0.45)
+    [../]
 []
  
 [AuxVariables]
@@ -125,6 +150,25 @@
         family = MONOMIAL
         initial_condition = 16.497    #mol/m^3
     [../]
+
+# Reference or inlet/outlet terms (vary in time, but not in space)
+   [./P_o]     # Reference pressure (and inlet/outlet pressure) for average constant density
+       order = FIRST
+       family = MONOMIAL
+       initial_condition = 90000    #Pa
+   [../]
+
+   [./flow_rate]
+       order = FIRST
+       family = LAGRANGE       #Must be LAGRANGE if vel_y is also LAGRANGE
+       initial_condition = 0.02025  #m^3/s  AVG FLOW RATE
+   [../]
+
+   [./x_sec]
+      order = FIRST
+      family = LAGRANGE        #Must be LAGRANGE if vel_y is also LAGRANGE
+      initial_condition = 0.016513   #m^2
+   [../]
  
     [./vel_x]
         order = FIRST
@@ -132,6 +176,7 @@
         initial_condition = 0
     [../]
 
+# ---------- TO BE CALCULATED --------------
     [./vel_y]
         order = FIRST
         family = LAGRANGE
@@ -156,9 +201,10 @@
         initial_condition = 11.9       #W/m/K
     [../]
  
+    # MUST BE LAGRANGE IF USED TO CALCULATE vel_y (which is also LAGRANGE)
     [./eps]
         order = FIRST
-        family = MONOMIAL
+        family = LAGRANGE
         initial_condition = 0.4371          #volume bulk voids / total volumes
     [../]
  
@@ -173,12 +219,13 @@
         family = MONOMIAL
         initial_condition = 0.5916          #volume of solid pores / solid volume
     [../]
- 
-    [./rho]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 0.90       #kg/m^3
-    [../]
+
+# This may need to move to the kernel system (not AuxKernel)
+#    [./rho]
+#        order = FIRST
+#        family = MONOMIAL
+#        initial_condition = 0.9       #kg/m^3  (works is 0.9 const - actually should be ~0.45)
+#    [../]
  
     [./rho_s]
         order = FIRST
@@ -221,6 +268,55 @@
         family = MONOMIAL
         initial_condition = 11797       #m^-1
     [../]
+
+    [./dp]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 5.09E-4    #m
+    [../]
+
+    [./d_bed]
+       order = FIRST
+       family = MONOMIAL
+       initial_condition = 0.1450   #m
+    [../]
+
+    [./rp]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1.37E-8       #m
+    [../]
+
+# ---- USE AUXKERNELS TO CALCULATE -------
+   [./P]
+       order = FIRST
+       family = MONOMIAL
+   [../]
+
+   [./mu]
+       order = FIRST
+       family = MONOMIAL
+   [../]
+
+   [./kme_O2]
+       order = FIRST
+       family = MONOMIAL
+   [../]
+
+   [./kme_CO2]
+       order = FIRST
+       family = MONOMIAL
+   [../]
+
+   [./De_O2]
+       order = FIRST
+       family = MONOMIAL
+   [../]
+
+   [./De_CO2]
+       order = FIRST
+       family = MONOMIAL
+   [../]
  
 []
 
@@ -266,7 +362,7 @@
         type = GPhaseThermalConductivity
         variable = Es
         temperature = Ts
-        volume_frac = 0.333  #s_frac = (1-eps)  ==>  s_frac*eps_s = 0.333
+        volume_frac = s_frac  #s_frac = (1-eps)  ==>  s_frac*eps_s = 0.333
         Dx = Ks
         Dy = Ks
         Dz = Ks
@@ -302,6 +398,16 @@
         volume_frac = eps
         density = rho
     [../]
+
+# Create a kernel for density using ideal gas law
+    [./rho_calc]
+        type = PhaseTemperature
+        variable = rho
+        energy = P   #Avg Pressure (~96800)
+        specific_heat = Tf
+        volume_frac = 1
+        density = 296.9  #unit conv.
+    [../]
  
     [./Ts_calc]
         type = PhaseTemperature
@@ -329,15 +435,15 @@
         type = GVarPoreDiffusion
         variable = O2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = De_O2
+        Dy = De_O2
+        Dz = De_O2
     [../]
     [./O2p_trans]
         type = FilmMassTransfer
         variable = O2
         coupled = O2p
-rate_variable = 0.1
+        rate_variable = kme_O2
         av_ratio = 6640.5
     [../]
  
@@ -367,7 +473,7 @@ rate_variable = 0.1
         type = FilmMassTransfer
         variable = O2p
         coupled = O2
-rate_variable = 0.1
+        rate_variable = kme_O2
         av_ratio = 6640.5
     [../]
     [./O2p_rx]  #   qc + O2p --> CO2p
@@ -399,15 +505,15 @@ rate_variable = 0.1
         type = GVarPoreDiffusion
         variable = CO2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = De_CO2
+        Dy = De_CO2
+        Dz = De_CO2
     [../]
     [./CO2p_trans]
         type = FilmMassTransfer
         variable = CO2
         coupled = CO2p
-rate_variable = 0.1
+        rate_variable = kme_CO2
         av_ratio = 6640.5
     [../]
  
@@ -420,7 +526,7 @@ rate_variable = 0.1
         type = FilmMassTransfer
         variable = CO2p
         coupled = CO2
-rate_variable = 0.1
+        rate_variable = kme_CO2
         av_ratio = 6640.5
     [../]
     [./CO2p_rx]  #   qc + O2p --> CO2p
@@ -459,7 +565,7 @@ rate_variable = 0.1
         type = DGPhaseThermalConductivity
         variable = Es
         temperature = Ts
-        volume_frac = 0.333  #s_frac = (1-eps)  ==>  s_frac*eps_s = 0.333
+        volume_frac = s_frac  #s_frac = (1-eps)  ==>  s_frac*eps_s = 0.333
         Dx = Ks
         Dy = Ks
         Dz = Ks
@@ -477,9 +583,9 @@ rate_variable = 0.1
         type = DGVarPoreDiffusion
         variable = O2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = De_O2
+        Dy = De_O2
+        Dz = De_O2
     [../]
  
     [./CO2_dgadv]
@@ -494,11 +600,136 @@ rate_variable = 0.1
         type = DGVarPoreDiffusion
         variable = CO2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = De_CO2
+        Dy = De_CO2
+        Dz = De_CO2
     [../]
  
+[]
+
+
+[AuxKernels]
+    [./vel_y_calc]
+        type = AuxAvgLinearVelocity
+        variable = vel_y
+        porosity = eps
+        flow_rate = flow_rate
+        xsec_area = x_sec
+    [../]
+ 
+    [./P_ergun]
+        type = AuxErgunPressure
+        variable = P
+        direction = 1
+        porosity = eps
+        temperature = Tf
+        # NOTE: Use inlet/outlet pressure for pressure variable in aux pressure kernel
+        pressure = P_o
+        is_inlet_press = false
+        start_point = 0
+        end_point = 0.1346
+        hydraulic_diameter = dp
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+
+# NOTE: Hard to tell if this is working or not. Density variations are causing huge swings in temperature.
+#    [./dens_calc]
+#        type = GasDensity
+#        variable = rho
+#        temperature = Tf
+#        pressure = P
+#        hydraulic_diameter = dp
+#        ux = vel_x
+#        uy = vel_y
+#        uz = vel_z
+#    [../]
+
+    [./Kg_calc]
+        type = GasThermalConductivity
+        variable = Kg
+        temperature = Tf
+        pressure = P
+        hydraulic_diameter = dp
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+
+    [./vis_calc]
+        type = GasViscosity
+        variable = mu
+        temperature = Tf
+        pressure = P
+        hydraulic_diameter = dp
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+
+    [./cp_calc]
+        type = GasSpecHeat
+        variable = cpg
+        temperature = Tf
+        pressure = P
+        hydraulic_diameter = dp
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+
+    [./kme_O2_calc]
+        type = GasSpeciesEffectiveTransferCoef
+        variable = kme_O2
+        species_index = 1
+        micro_porosity = eps_s
+        temperature = Tf
+        pressure = P
+        hydraulic_diameter = dp
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+
+    [./kme_CO2_calc]
+        type = GasSpeciesEffectiveTransferCoef
+        variable = kme_CO2
+        species_index = 2
+        micro_porosity = eps_s
+        temperature = Tf
+        pressure = P
+        hydraulic_diameter = dp
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+
+   [./De_O2_calc]
+       type = GasSpeciesAxialDispersion
+       variable = De_O2
+       species_index = 1
+       macroscale_diameter = d_bed
+       temperature = Tf
+       pressure = P
+       hydraulic_diameter = dp
+       ux = vel_x
+       uy = vel_y
+       uz = vel_z
+   [../]
+
+   [./De_CO2_calc]
+       type = GasSpeciesAxialDispersion
+       variable = De_CO2
+       species_index = 2
+       macroscale_diameter = d_bed
+       temperature = Tf
+       pressure = P
+       hydraulic_diameter = dp
+       ux = vel_x
+       uy = vel_y
+       uz = vel_z
+   [../]
 []
 
 [BCs]
@@ -532,7 +763,7 @@ rate_variable = 0.1
         transfer_coef = hw
         wall_temp = Tw
         temperature = Ts
-        area_frac = s_frac
+        area_frac = s_frac   #s_frac = (1-eps)  ==>  s_frac*eps_s = 0.333
     [../]
  
     [./O2_FluxIn]
@@ -580,7 +811,21 @@ rate_variable = 0.1
 
 []
 
-[Postprocessors] 
+[Postprocessors]
+   [./P_out]
+       type = SideAverageValue
+       boundary = 'top'
+       variable = P
+       execute_on = 'initial timestep_end'
+   [../]
+
+   [./P_in]
+       type = SideAverageValue
+       boundary = 'bottom'
+       variable = P
+       execute_on = 'initial timestep_end'
+   [../]
+
     [./T_out]
         type = SideAverageValue
         boundary = 'top'
@@ -668,7 +913,7 @@ rate_variable = 0.1
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 35000
+  end_time = 30000
   dtmax = 30
 
   [./TimeStepper]
