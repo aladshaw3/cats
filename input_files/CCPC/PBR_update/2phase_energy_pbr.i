@@ -171,7 +171,7 @@
     [./rho]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.45       #kg/m^3
+        initial_condition = 0.9       #kg/m^3
     [../]
  
     [./rho_s]
@@ -183,7 +183,7 @@
     [./cpg]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 1000       #J/kg/K
+        initial_condition = 1100       #J/kg/K
     [../]
  
     [./cps]
@@ -195,7 +195,7 @@
     [./hw]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 50       #W/m^2/K
+        initial_condition = 40       #W/m^2/K
     [../]
  
     [./Tw]
@@ -207,7 +207,7 @@
     [./hs]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 25       #W/m^2/K
+        initial_condition = 20       #W/m^2/K
     [../]
  
     [./Ao]
@@ -331,7 +331,7 @@
         type = FilmMassTransfer
         variable = O2
         coupled = O2p
-        rate_variable = 1
+rate_variable = 0.1
         av_ratio = 6640.5
     [../]
  
@@ -361,7 +361,7 @@
         type = FilmMassTransfer
         variable = O2p
         coupled = O2
-        rate_variable = 1
+rate_variable = 0.1
         av_ratio = 6640.5
     [../]
     [./O2p_rx]  #   qc + O2p --> CO2p
@@ -401,7 +401,7 @@
         type = FilmMassTransfer
         variable = CO2
         coupled = CO2p
-        rate_variable = 1
+rate_variable = 0.1
         av_ratio = 6640.5
     [../]
  
@@ -414,7 +414,7 @@
         type = FilmMassTransfer
         variable = CO2p
         coupled = CO2
-        rate_variable = 1
+rate_variable = 0.1
         av_ratio = 6640.5
     [../]
     [./CO2p_rx]  #   qc + O2p --> CO2p
@@ -588,6 +588,12 @@
         variable = Tf
         execute_on = 'initial timestep_end'
     [../]
+
+    [./T_avg]
+        type = ElementAverageValue
+        variable = Tf
+        execute_on = 'initial timestep_end'
+    [../]
  
     [./Ts_avg]
         type = ElementAverageValue
@@ -595,11 +601,11 @@
         execute_on = 'initial timestep_end'
     [../]
  
-    [./qc_avg]
-        type = ElementAverageValue
-        variable = qc
-        execute_on = 'initial timestep_end'
-    [../]
+#    [./qc_avg]
+#        type = ElementAverageValue
+#        variable = qc
+#        execute_on = 'initial timestep_end'
+#    [../]
 
     [./O2_out]
         type = SideAverageValue
@@ -646,7 +652,7 @@
   petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = bt
+  line_search = none
   nl_rel_tol = 1e-8
   nl_abs_tol = 1e-6
   nl_rel_step_tol = 1e-10
