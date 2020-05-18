@@ -1,0 +1,7 @@
+[Tests]
+  [./micro_coupled_ads_conserv]
+    type = 'Exodiff'
+    input = 'mass_trans_with_micro.i'
+    exodiff = 'mass_trans_with_micro_out.e'
+  [../]
+[]
