@@ -1,0 +1,7 @@
+[Tests]
+  [./packed_bed_demo_var_dens]
+    type = 'Exodiff'
+    input = '2phase_energy_pbr_all_vars.i'
+    exodiff = '2phase_energy_pbr_all_vars_out.e'
+  [../]
+[]

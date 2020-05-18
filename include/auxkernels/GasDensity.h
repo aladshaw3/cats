@@ -37,12 +37,6 @@
 
 #include "GasPropertiesBase.h"
 
-/// GasDensity class object forward declarations
-//class GasDensity;
-
-//template<>
-//InputParameters validParams<GasDensity>();
-
 /// GasDensity class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -62,6 +56,10 @@ protected:
         system pressure is needed. You are required to override this function for any inherited
         AuxKernel. */
     virtual Real computeValue() override;
+    
+    const VariableValue & _carrier_gas;            ///< Variable for the carrier gas concentration (mol/m^3)
+    const unsigned int _carrier_gas_var;           ///< Variable identification for the carrier gas
+    Real _MW_cg;                                   ///< Molecular wieght for the carrier gas (g/mol)
     
 private:
 

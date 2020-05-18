@@ -37,25 +37,19 @@
 
 registerMooseObject("catsApp", GasDensity);
 
-/*
-template<>
-InputParameters validParams<GasDensity>()
-{
-    InputParameters params = validParams<GasPropertiesBase>();
-    
-    return params;
-}
- */
-
 InputParameters GasDensity::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
-    
+    params.addCoupledVar("carrier_gas",0,"Concentration for the carrier gas (mol/m^3)");
+    params.addParam< Real >("carrier_gas_mw",0,"Molecular weight for the carrier gas (g/mol)");
     return params;
 }
 
 GasDensity::GasDensity(const InputParameters & parameters) :
-GasPropertiesBase(parameters)
+GasPropertiesBase(parameters),
+_carrier_gas(coupledValue("carrier_gas")),
+_carrier_gas_var(coupled("carrier_gas")),
+_MW_cg(getParam< Real >("carrier_gas_mw"))
 {
 
 }
@@ -65,7 +59,18 @@ Real GasDensity::computeValue()
     prepareEgret();
     calculateAllProperties();
     
-    return _egret_dat.total_density/1000.0*100.0*100.0*100.0;
+    Real total = 0.0;
+    for (unsigned int i = 0; i<_gases.size(); ++i)
+    {
+        if ((*_gases[i])[_qp] > 0.0)
+        {
+            total+=(*_gases[i])[_qp]*_MW[i];
+        }
+    }
+    if (_carrier_gas[_qp] > 0)
+        total+=_carrier_gas[_qp]*_MW_cg;
+    
+    return total/1000.0;
 }
 
 

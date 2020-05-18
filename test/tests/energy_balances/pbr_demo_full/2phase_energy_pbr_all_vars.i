@@ -238,7 +238,7 @@
     [./rho]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.9       #kg/m^3  ( double check comsol calculations )
+        initial_condition = 0.9       
     [../]
  
     [./rho_s]
@@ -917,12 +917,12 @@
   l_tol = 1e-6
   l_max_its = 300
 
-  start_time = 0.0
-  end_time = 30000
+  start_time = 2000.0
+  end_time = 2010
   dtmax = 30
 
   [./TimeStepper]
-     type = SolutionTimeAdaptiveDT
+     type = ConstantDT
      dt = 2
   [../]
 [] #END Executioner
@@ -931,6 +931,6 @@
     print_linear_residuals = true
     exodus = true
     csv = true
-    interval = 10   #Number of time steps to wait before writing output
+    interval = 1   #Number of time steps to wait before writing output
 [] #END Outputs
 
