@@ -96,6 +96,13 @@ protected:
     
     std::vector<double> _mole_frac;                   ///< Store calculated molefractions
     
+    const VariableValue & _carrier_gas;            ///< Variable for the carrier gas concentration (mol/m^3)
+    const unsigned int _carrier_gas_var;           ///< Variable identification for the carrier gas
+    Real _MW_cg;                                   ///< Molecular wieght for the carrier gas (g/mol)
+    
+    bool _is_ideal_gas;                            ///< Boolean to determine whether or not to consider gas ideal
+    Real _total_conc;                              ///< Total molar concentration (mol/m^3)
+    
     MIXED_GAS _egret_dat;                           ///< EGRET data structure
     
 private:

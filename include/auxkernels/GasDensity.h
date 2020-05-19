@@ -57,10 +57,6 @@ protected:
         AuxKernel. */
     virtual Real computeValue() override;
     
-    const VariableValue & _carrier_gas;            ///< Variable for the carrier gas concentration (mol/m^3)
-    const unsigned int _carrier_gas_var;           ///< Variable identification for the carrier gas
-    Real _MW_cg;                                   ///< Molecular wieght for the carrier gas (g/mol)
-    
 private:
 
 };

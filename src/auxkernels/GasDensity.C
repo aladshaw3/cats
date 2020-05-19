@@ -40,16 +40,12 @@ registerMooseObject("catsApp", GasDensity);
 InputParameters GasDensity::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
-    params.addCoupledVar("carrier_gas",0,"Concentration for the carrier gas (mol/m^3)");
-    params.addParam< Real >("carrier_gas_mw",0,"Molecular weight for the carrier gas (g/mol)");
+    
     return params;
 }
 
 GasDensity::GasDensity(const InputParameters & parameters) :
-GasPropertiesBase(parameters),
-_carrier_gas(coupledValue("carrier_gas")),
-_carrier_gas_var(coupled("carrier_gas")),
-_MW_cg(getParam< Real >("carrier_gas_mw"))
+GasPropertiesBase(parameters)
 {
 
 }

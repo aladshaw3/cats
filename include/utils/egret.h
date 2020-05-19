@@ -164,7 +164,7 @@ int set_variables(double PT, double T, double us, double L, std::vector<double> 
 	to predict and approximate several properties of the mixed gas phase that might be necessary
 	when running any gas dynamical simulation. This includes mass and energy transfer equations,
 	as well as adsorption kinetics in porous adsorbents. */
-int calculate_properties(MIXED_GAS *gas_dat);
+int calculate_properties(MIXED_GAS *gas_dat, bool is_ideal_gas, double CT);
 
 /// Function runs a series of tests for the EGRET file
 /** The test looks at a standard air with 5 primary species of interest and calculates

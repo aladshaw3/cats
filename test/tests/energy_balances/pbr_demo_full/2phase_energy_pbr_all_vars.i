@@ -19,6 +19,11 @@
     sutherland_vis = '0.0001781 0.0002018 0.000148'
     spec_heat = '1.04 0.919 0.846'
     execute_on = 'initial timestep_end'
+
+    # newer options
+    carrier_gas = N2
+    carrier_gas_mw = 28
+    is_ideal_gas = false
  
     # Other Constants
     #   dH = -3.95E5 J/mol

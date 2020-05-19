@@ -1,4 +1,7 @@
 [GlobalParams]
+    carrier_gas = 30.0   #mol/m^3
+    carrier_gas_mw = 28.8
+    is_ideal_gas = false
   
 [] #END GlobalParams
 

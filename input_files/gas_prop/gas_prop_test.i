@@ -1,4 +1,7 @@
 [GlobalParams]
+#carrier_gas = 30.0   #mol/m^3
+#carrier_gas_mw = 28.8
+#is_ideal_gas = true
   
 [] #END GlobalParams
 
@@ -103,19 +106,19 @@
     [./O2]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 5.35186739166803E-05  #mol/L
+        initial_condition = 5.35186739166803E-02  #mol/m^3
     [../]
 
     [./H2O]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.001337966847917       #mol/L
+        initial_condition = 1.337966847917       #mol/m^3
     [../]
  
     [./NH3]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 2.87293E-05     #mol/L
+        initial_condition = 2.87293E-02     #mol/m^3
     [../]
  
     [./P_in]

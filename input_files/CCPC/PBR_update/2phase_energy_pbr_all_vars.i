@@ -19,6 +19,11 @@
     sutherland_vis = '0.0001781 0.0002018 0.000148'
     spec_heat = '1.04 0.919 0.846'
     execute_on = 'initial timestep_end'
+
+    # newer options
+    carrier_gas = N2
+    carrier_gas_mw = 28
+    is_ideal_gas = false
  
     # Other Constants
     #   dH = -3.95E5 J/mol
@@ -641,8 +646,6 @@
     [./dens_calc]
         type = GasDensity
         variable = rho
-        carrier_gas = N2
-        carrier_gas_mw = 28
         temperature = Tf
         pressure = P
         hydraulic_diameter = dp
@@ -870,9 +873,8 @@
         execute_on = 'initial timestep_end'
     [../]
  
-    [./O2_in]
-        type = SideAverageValue
-        boundary = 'bottom'
+    [./O2_inside]
+        type = ElementAverageValue
         variable = O2
         execute_on = 'initial timestep_end'
     [../]
@@ -890,9 +892,8 @@
         execute_on = 'initial timestep_end'
     [../]
  
-    [./CO2_in]
-        type = SideAverageValue
-        boundary = 'bottom'
+    [./CO2_inside]
+        type = ElementAverageValue
         variable = CO2
         execute_on = 'initial timestep_end'
     [../]
