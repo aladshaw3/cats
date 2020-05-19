@@ -36,8 +36,8 @@
 [Mesh]
     type = GeneratedMesh
     dim = 2
-    nx = 5
-    ny = 10
+    nx = 10
+    ny = 20
     xmin = 0.0
     xmax = 0.0725    # m radius
     ymin = 0.0
@@ -845,23 +845,23 @@
         execute_on = 'initial timestep_end'
     [../]
 
-#    [./T_avg]
-#        type = ElementAverageValue
-#        variable = Tf
-#        execute_on = 'initial timestep_end'
-#    [../]
+    [./T_avg]
+        type = ElementAverageValue
+        variable = Tf
+        execute_on = 'initial timestep_end'
+    [../]
  
-#    [./Ts_avg]
-#        type = ElementAverageValue
-#        variable = Ts
-#        execute_on = 'initial timestep_end'
-#    [../]
+    [./Ts_avg]
+        type = ElementAverageValue
+        variable = Ts
+        execute_on = 'initial timestep_end'
+    [../]
  
-#    [./qc_avg]
-#        type = ElementAverageValue
-#        variable = qc
-#        execute_on = 'initial timestep_end'
-#    [../]
+    [./qc_avg]
+        type = ElementAverageValue
+        variable = qc
+        execute_on = 'initial timestep_end'
+    [../]
 
     [./O2_out]
         type = SideAverageValue
@@ -876,6 +876,12 @@
         variable = O2
         execute_on = 'initial timestep_end'
     [../]
+
+    [./O2p_avg]
+        type = ElementAverageValue
+        variable = O2p
+        execute_on = 'initial timestep_end'
+    [../]
  
     [./CO2_out]
         type = SideAverageValue
@@ -888,6 +894,12 @@
         type = SideAverageValue
         boundary = 'bottom'
         variable = CO2
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./CO2p_avg]
+        type = ElementAverageValue
+        variable = CO2p
         execute_on = 'initial timestep_end'
     [../]
 []

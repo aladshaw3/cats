@@ -240,6 +240,12 @@
         variable = C
         execute_on = 'initial timestep_end'
     [../]
+ 
+    [./C_avg]
+        type = ElementAverageValue
+        variable = C
+        execute_on = 'initial timestep_end'
+    [../]
 
     [./q_avg]
         type = ElementAverageValue
