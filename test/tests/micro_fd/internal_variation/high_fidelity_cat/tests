@@ -1,0 +1,7 @@
+[Tests]
+  [./high_fidelity_interal_catalysis]
+    type = 'Exodiff'
+    input = 'cat_var_site_dens_smalldt.i'
+    exodiff = 'cat_var_site_dens_smalldt_out.e'
+  [../]
+[]
