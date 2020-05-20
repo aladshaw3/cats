@@ -1,0 +1,7 @@
+[Tests]
+  [./high_fidelity_interal_conc]
+    type = 'Exodiff'
+    input = 'ads_var_site_dens_smalldt.i'
+    exodiff = 'ads_var_site_dens_smalldt_out.e'
+  [../]
+[]
