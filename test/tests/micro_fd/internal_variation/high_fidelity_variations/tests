@@ -1,0 +1,7 @@
+[Tests]
+  [./micro_fdfe_var_coef_mb]
+    type = 'Exodiff'
+    input = 'ads_var_all_smalldt.i'
+    exodiff = 'ads_var_all_smalldt_out.e'
+  [../]
+[]
