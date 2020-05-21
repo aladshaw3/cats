@@ -79,6 +79,7 @@ Real MicroscaleVariableDiffusionOuterBC::computeQpJacobian()
     
     return MicroscaleDiffusionOuterBC::computeQpJacobian();
 }
+
 Real MicroscaleVariableDiffusionOuterBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
     _current_diff = _current_diffusion[_qp];
@@ -86,6 +87,10 @@ Real MicroscaleVariableDiffusionOuterBC::computeQpOffDiagJacobian(unsigned int j
     _lower_diff = _lower_diffusion[_qp];
     _trans_const = _mass_trans[_qp];
     
+    if (jvar == _macro_var)
+    {
+        return MicroscaleDiffusionOuterBC::computeQpOffDiagJacobian(jvar);
+    }
     if (jvar == _lower_var)
     {
         return MicroscaleDiffusionOuterBC::computeQpOffDiagJacobian(jvar);
@@ -93,18 +98,15 @@ Real MicroscaleVariableDiffusionOuterBC::computeQpOffDiagJacobian(unsigned int j
     
     if (jvar == _current_diff_var)
     {
-        //Placeholder for now
-        return 0.0;
+        return _test[_i][_qp]*( (_rd_lm1/_dr/_dr/2.0) + (_rd_lp1/_dr/_dr) )*_phi[_j][_qp]*(_u[_qp] - _lower_neighbor[_qp]);
     }
     if (jvar == _mass_trans_var)
     {
-        //Placeholder for now
-        return 0.0;
+        return _test[_i][_qp]*( (_rd_lp1*2.0/_dr) )*_phi[_j][_qp]*(_u[_qp] - _macro_variable[_qp]);
     }
     if (jvar == _lower_diff_var)
     {
-        //Placeholder for now
-        return 0.0;
+        return _test[_i][_qp]*( (_rd_lm1/_dr/_dr/2.0) )*_phi[_j][_qp]*(_u[_qp] - _lower_neighbor[_qp]);
     }
     
     return 0.0;

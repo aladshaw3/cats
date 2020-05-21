@@ -142,6 +142,7 @@ Real MicroscaleDiffusion::computeQpJacobian()
     calculateFluxes();
     return _test[_i][_qp]*_flux_upper*_phi[_j][_qp] + _test[_i][_qp]*_flux_lower*_phi[_j][_qp];
 }
+
 Real MicroscaleDiffusion::computeQpOffDiagJacobian(unsigned int jvar)
 {
     calculateFluxes();

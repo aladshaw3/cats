@@ -73,6 +73,7 @@ Real MicroscaleVariableDiffusionInnerBC::computeQpJacobian()
     
     return MicroscaleDiffusionInnerBC::computeQpJacobian();
 }
+
 Real MicroscaleVariableDiffusionInnerBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
     _current_diff = _current_diffusion[_qp];
@@ -86,13 +87,11 @@ Real MicroscaleVariableDiffusionInnerBC::computeQpOffDiagJacobian(unsigned int j
     
     if (jvar == _current_diff_var)
     {
-        //Placeholder for now
-        return 0.0;
+        return _test[_i][_qp]*( (_rd_lp1/_dr/_dr/2.0) + (_rd_lm1/_dr/_dr) )*_phi[_j][_qp]*(_u[_qp] - _upper_neighbor[_qp]);
     }
     if (jvar == _upper_diff_var)
     {
-        //Placeholder for now
-        return 0.0;
+        return _test[_i][_qp]*( (_rd_lp1/_dr/_dr/2.0) )*_phi[_j][_qp]*(_u[_qp] - _upper_neighbor[_qp]);
     }
     
     return 0.0;

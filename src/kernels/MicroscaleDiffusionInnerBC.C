@@ -142,6 +142,7 @@ Real MicroscaleDiffusionInnerBC::computeQpJacobian()
     calculateFluxes();
     return _test[_i][_qp]*(_flux_upper+_flux_lower)*_phi[_j][_qp];
 }
+
 Real MicroscaleDiffusionInnerBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
     calculateFluxes();
