@@ -106,8 +106,8 @@ protected:
     const VariableValue & _upper_neighbor;    ///< Coupled variable for the upper neighbor
     const unsigned int _upper_var;            ///< Variable identification for the upper neighbor
     
-    const VariableValue & _lower_neighbor;    ///< Coupled variable for the upper neighbor
-    const unsigned int _lower_var;            ///< Variable identification for the upper neighbor
+    const VariableValue & _lower_neighbor;    ///< Coupled variable for the lower neighbor
+    const unsigned int _lower_var;            ///< Variable identification for the lower neighbor
     
 private:
 

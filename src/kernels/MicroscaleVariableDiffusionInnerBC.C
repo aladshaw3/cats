@@ -1,0 +1,99 @@
+/*!
+ *  \file MicroscaleVariableDiffusionInnerBC.h
+ *    \brief Microscale no flux diffusion BC with variable diffusion coefficients
+ *    \details This file creates a custom MOOSE kernel for the inner diffusion BC at the microscale
+ *              of a fictious mesh with variable diffusion coefficients. Each node may have a different
+ *              diffusivity and thus must have a different variable.
+ *
+ *  \author Austin Ladshaw
+ *    \date 05/21/2020
+ *    \copyright This kernel was designed and built at Oak Ridge National
+ *              Laboratory by Austin Ladshaw for research in catalyst
+ *              performance for new vehicle technologies.
+ *
+ *               Austin Ladshaw does not claim any ownership or copyright to the
+ *               MOOSE framework in which these kernels are constructed, only
+ *               the kernels themselves. The MOOSE framework copyright is held
+ *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
+ */
+
+/****************************************************************/
+/*               DO NOT MODIFY THIS HEADER                      */
+/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
+/*                                                              */
+/*           (c) 2010 Battelle Energy Alliance, LLC             */
+/*                   ALL RIGHTS RESERVED                        */
+/*                                                              */
+/*          Prepared by Battelle Energy Alliance, LLC           */
+/*            Under Contract No. DE-AC07-05ID14517              */
+/*            With the U. S. Department of Energy               */
+/*                                                              */
+/*            See COPYRIGHT for full restrictions               */
+/****************************************************************/
+
+#include "MicroscaleVariableDiffusionInnerBC.h"
+
+registerMooseObject("catsApp", MicroscaleVariableDiffusionInnerBC);
+
+InputParameters MicroscaleVariableDiffusionInnerBC::validParams()
+{
+    InputParameters params = MicroscaleDiffusionInnerBC::validParams();
+    params.addRequiredCoupledVar("current_diff","Variable for this diffusion coefficient");
+    params.addRequiredCoupledVar("upper_diff","Variable for upper diffusion coefficient");
+    
+    return params;
+}
+
+MicroscaleVariableDiffusionInnerBC::MicroscaleVariableDiffusionInnerBC(const InputParameters & parameters)
+: MicroscaleDiffusionInnerBC(parameters),
+
+_current_diffusion(coupledValue("current_diff")),
+_current_diff_var(coupled("current_diff")),
+
+_upper_diffusion(coupledValue("upper_diff")),
+_upper_diff_var(coupled("upper_diff"))
+{
+    
+}
+
+Real MicroscaleVariableDiffusionInnerBC::computeQpResidual()
+{
+    _current_diff = _current_diffusion[_qp];
+    _upper_diff = _upper_diffusion[_qp];
+    _lower_diff = _current_diffusion[_qp];
+    
+    return MicroscaleDiffusionInnerBC::computeQpResidual();
+}
+
+Real MicroscaleVariableDiffusionInnerBC::computeQpJacobian()
+{
+    _current_diff = _current_diffusion[_qp];
+    _upper_diff = _upper_diffusion[_qp];
+    _lower_diff = _current_diffusion[_qp];
+    
+    return MicroscaleDiffusionInnerBC::computeQpJacobian();
+}
+Real MicroscaleVariableDiffusionInnerBC::computeQpOffDiagJacobian(unsigned int jvar)
+{
+    _current_diff = _current_diffusion[_qp];
+    _upper_diff = _upper_diffusion[_qp];
+    _lower_diff = _current_diffusion[_qp];
+    
+    if (jvar == _upper_var)
+    {
+        return MicroscaleDiffusionInnerBC::computeQpOffDiagJacobian(jvar);
+    }
+    
+    if (jvar == _current_diff_var)
+    {
+        //Placeholder for now
+        return 0.0;
+    }
+    if (jvar == _upper_diff_var)
+    {
+        //Placeholder for now
+        return 0.0;
+    }
+    
+    return 0.0;
+}
