@@ -1,0 +1,7 @@
+[Tests]
+  [./test_monolith_conversion_and_solve]
+    type = 'Exodiff'
+    input = 'reading_file.i'
+    exodiff = 'reading_file_out.e'
+  [../]
+[]
