@@ -46,7 +46,6 @@ InputParameters InitialPhaseEnergy::validParams()
 {
     InputParameters params = InitialCondition::validParams();
     params.addRequiredCoupledVar("specific_heat","Variable for specific heat (J/kg/K)");
-    params.addRequiredCoupledVar("volume_frac","Variable for volume fraction (-)");
     params.addRequiredCoupledVar("density","Variable for density (kg/m^3)");
     params.addRequiredCoupledVar("temperature","Variable for temperature (K)");
     return params;
@@ -58,8 +57,6 @@ _density(coupledValue("density")),
 _density_var(coupled("density")),
 _specheat(coupledValue("specific_heat")),
 _specheat_var(coupled("specific_heat")),
-_volfrac(coupledValue("volume_frac")),
-_volfrac_var(coupled("volume_frac")),
 _temp(coupledValue("temperature")),
 _temp_var(coupled("temperature"))
 {
@@ -68,5 +65,5 @@ _temp_var(coupled("temperature"))
 
 Real InitialPhaseEnergy::value(const Point & /*p*/)
 {
-    return _volfrac[_qp]*_density[_qp]*_specheat[_qp]*_temp[_qp];
+    return _density[_qp]*_specheat[_qp]*_temp[_qp];
 }

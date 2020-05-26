@@ -29,7 +29,6 @@
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = 1000
-            volume_frac = 1
             density = 1
             temperature = Tf
         [../]
@@ -101,7 +100,6 @@
         variable = Tf
         energy = Ef
         specific_heat = 1000
-        volume_frac = 1
         density = 1
     [../]
  

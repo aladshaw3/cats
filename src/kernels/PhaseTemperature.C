@@ -41,7 +41,6 @@ InputParameters PhaseTemperature::validParams()
 {
     InputParameters params = Kernel::validParams();
     params.addRequiredCoupledVar("specific_heat","Variable for specific heat (J/kg/K)");
-    params.addRequiredCoupledVar("volume_frac","Variable for volume fraction (-)");
     params.addRequiredCoupledVar("density","Variable for density (kg/m^3)");
     params.addRequiredCoupledVar("energy","Variable for energy density (J/m^3)");
     return params;
@@ -54,21 +53,19 @@ _energy_var(coupled("energy")),
 _density(coupledValue("density")),
 _density_var(coupled("density")),
 _specheat(coupledValue("specific_heat")),
-_specheat_var(coupled("specific_heat")),
-_volfrac(coupledValue("volume_frac")),
-_volfrac_var(coupled("volume_frac"))
+_specheat_var(coupled("specific_heat"))
 {
 
 }
 
 Real PhaseTemperature::computeQpResidual()
 {
-    return _volfrac[_qp]*_density[_qp]*_specheat[_qp]*_u[_qp]*_test[_i][_qp] - _energy[_qp]*_test[_i][_qp];
+    return _density[_qp]*_specheat[_qp]*_u[_qp]*_test[_i][_qp] - _energy[_qp]*_test[_i][_qp];
 }
 
 Real PhaseTemperature::computeQpJacobian()
 {
-    return _volfrac[_qp]*_density[_qp]*_specheat[_qp]*_phi[_j][_qp]*_test[_i][_qp];
+    return _density[_qp]*_specheat[_qp]*_phi[_j][_qp]*_test[_i][_qp];
 }
 
 Real PhaseTemperature::computeQpOffDiagJacobian(unsigned int jvar)
@@ -79,15 +76,11 @@ Real PhaseTemperature::computeQpOffDiagJacobian(unsigned int jvar)
     }
     if (jvar == _density_var)
     {
-        return _volfrac[_qp]*_phi[_j][_qp]*_specheat[_qp]*_u[_qp]*_test[_i][_qp];
+        return _phi[_j][_qp]*_specheat[_qp]*_u[_qp]*_test[_i][_qp];
     }
     if (jvar == _specheat_var)
     {
-        return _volfrac[_qp]*_density[_qp]*_phi[_j][_qp]*_u[_qp]*_test[_i][_qp];
-    }
-    if (jvar == _volfrac_var)
-    {
-        return _phi[_j][_qp]*_density[_qp]*_specheat[_qp]*_u[_qp]*_test[_i][_qp];
+        return _density[_qp]*_phi[_j][_qp]*_u[_qp]*_test[_i][_qp];
     }
     
     return 0.0;

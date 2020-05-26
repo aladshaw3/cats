@@ -78,7 +78,7 @@ Real DGFlowEnergyFluxBC::computeQpResidual()
     _velocity(0)=_ux[_qp];
     _velocity(1)=_uy[_qp];
     _velocity(2)=_uz[_qp];
-    _u_input = _inlet_temp[_qp]*_porosity[_qp]*_density[_qp]*_specheat[_qp];
+    _u_input = _inlet_temp[_qp]*_density[_qp]*_specheat[_qp];
 
     Real r = 0;
 

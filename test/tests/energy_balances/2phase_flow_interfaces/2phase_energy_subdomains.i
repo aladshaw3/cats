@@ -57,7 +57,6 @@
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = cpg
-            volume_frac = 1
             density = rho
             temperature = Tf
         [../]
@@ -71,7 +70,6 @@
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = cps
-            volume_frac = 1
             density = rho_s
             temperature = Ts
         [../]
@@ -257,7 +255,6 @@
         variable = Tf
         energy = Ef
         specific_heat = cpg
-        volume_frac = 1
         density = rho
         block = 0
     [../]
@@ -267,7 +264,6 @@
         variable = Ts
         energy = Es
         specific_heat = cps
-        volume_frac = 1
         density = rho_s
         block = 1
     [../]

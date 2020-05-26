@@ -20,9 +20,9 @@
     spec_heat = '1.04 0.919 0.846'
     execute_on = 'initial timestep_end'
 
-    # newer options
-    carrier_gas = N2
-    carrier_gas_mw = 28
+    # newer options (Do not use if given in list of gases)
+#    carrier_gas = N2
+#    carrier_gas_mw = 28
     is_ideal_gas = false
  
     # Other Constants
@@ -72,7 +72,6 @@
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = cpg
-            volume_frac = eps
             density = rho
             temperature = Tf
         [../]
@@ -84,7 +83,6 @@
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = cps
-            volume_frac = s_frac
             density = rho_s
             temperature = Ts
         [../]
@@ -414,7 +412,6 @@
         variable = Tf
         energy = Ef
         specific_heat = cpg
-        volume_frac = eps
         density = rho
     [../]
  
@@ -423,7 +420,6 @@
         variable = Ts
         energy = Es
         specific_heat = cps
-        volume_frac = s_frac
         density = rho_s
     [../]
  
@@ -646,8 +642,6 @@
     [./dens_calc]
         type = GasDensity
         variable = rho
-        carrier_gas = N2
-        carrier_gas_mw = 28
         temperature = Tf
         pressure = P
         hydraulic_diameter = dp

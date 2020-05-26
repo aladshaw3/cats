@@ -23,8 +23,7 @@
     # newer options
 #    carrier_gas = N2
 #    carrier_gas_mw = 28
-    is_ideal_gas = true
-#NOTE: We get an error if ideal gas == false and no carrier given
+    is_ideal_gas = false   #Should generally choose false for higher accuracy 
  
     # Other Constants
     #   dH = -3.95E5 J/mol
@@ -76,7 +75,6 @@
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = cpg
-            volume_frac = eps
             density = rho
             temperature = Tf
         [../]
@@ -88,7 +86,6 @@
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = cps
-            volume_frac = s_frac
             density = rho_s
             temperature = Ts
         [../]
@@ -418,7 +415,6 @@ initial_condition = 0.45       #kg/m^3  ( double check comsol calculations )
         variable = Tf
         energy = Ef
         specific_heat = cpg
-        volume_frac = eps
         density = rho
     [../]
  
@@ -427,7 +423,6 @@ initial_condition = 0.45       #kg/m^3  ( double check comsol calculations )
         variable = Ts
         energy = Es
         specific_heat = cps
-        volume_frac = s_frac
         density = rho_s
     [../]
  

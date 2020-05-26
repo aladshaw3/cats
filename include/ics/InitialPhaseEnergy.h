@@ -64,8 +64,6 @@ protected:
     const unsigned int _density_var;             ///< Variable identification for the density
     const VariableValue & _specheat;              ///< Variable for the specific heat (J/kg/K)
     const unsigned int _specheat_var;             ///< Variable identification for the specific heat
-    const VariableValue & _volfrac;              ///< Variable for the volume fraction of the phase
-    const unsigned int _volfrac_var;             ///< Variable identification for the volume fraction
     const VariableValue & _temp;              ///< Variable for the temperature of the phase (K)
     const unsigned int _temp_var;             ///< Variable identification for the temperature
 
