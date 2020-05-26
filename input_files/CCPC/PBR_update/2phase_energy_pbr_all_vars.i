@@ -21,9 +21,10 @@
     execute_on = 'initial timestep_end'
 
     # newer options
-    carrier_gas = N2
-    carrier_gas_mw = 28
+#    carrier_gas = N2
+#    carrier_gas_mw = 28
     is_ideal_gas = false
+#NOTE: We get an error if ideal gas == false and no carrier given
  
     # Other Constants
     #   dH = -3.95E5 J/mol
@@ -41,8 +42,8 @@
 [Mesh]
     type = GeneratedMesh
     dim = 2
-    nx = 10
-    ny = 20
+    nx = 5
+    ny = 10
     xmin = 0.0
     xmax = 0.0725    # m radius
     ymin = 0.0
@@ -857,6 +858,48 @@
     [./Ts_avg]
         type = ElementAverageValue
         variable = Ts
+        execute_on = 'initial timestep_end'
+    [../]
+
+   [./rho_out]
+       type = SideAverageValue
+       boundary = 'top'
+       variable = rho
+       execute_on = 'initial timestep_end'
+   [../]
+
+   [./rho_in]
+       type = SideAverageValue
+       boundary = 'bottom'
+       variable = rho
+       execute_on = 'initial timestep_end'
+   [../]
+
+    [./v_out]
+        type = SideAverageValue
+        boundary = 'top'
+        variable = vel_y
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./v_in]
+        type = SideAverageValue
+        boundary = 'bottom'
+        variable = vel_y
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./cpg_out]
+        type = SideAverageValue
+        boundary = 'top'
+        variable = cpg
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./cpg_in]
+        type = SideAverageValue
+        boundary = 'bottom'
+        variable = cpg
         execute_on = 'initial timestep_end'
     [../]
  

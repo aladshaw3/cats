@@ -312,7 +312,7 @@ void GasPropertiesBase::calculateAllProperties()
     {
         moose::internal::mooseErrorRaw("Egret has encountered an error!");
     }
-    success = calculate_properties(&_egret_dat, true, _total_conc/1000.0);
+    success = calculate_properties(&_egret_dat, _is_ideal_gas, _total_conc/1000.0);
     if (success != 0)
     {
         moose::internal::mooseErrorRaw("Egret has encountered an error!");
