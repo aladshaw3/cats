@@ -7,7 +7,8 @@
   #   .unv file MUST HAVE specific boundary names in it
     [./mesh_file]
         type = FileMeshGenerator
-        file = MonolithChannel_v0-Converted.unv
+#file = MonolithChannel_v0-Converted.unv
+        file = MonolithChannel_v0.msh
     [../]
   #The above file contains the following block and boundary names
   #boundary_name = 'inlet outlet washcoat_walls'
@@ -198,12 +199,15 @@
 []
  
  [InterfaceKernels]
+#This kernel is never getting invoked
     [./interface_kernel]
-        type = InterfaceMassTransfer
+        type = InterfaceReaction
+        kb = 1
+        kf = 1
         variable = C        #variable must be the variable in the master block
         neighbor_var = Cw    #neighbor_var must the the variable in the paired block
  
-#boundary = interface  #<-- MOOSE Claims the boundary doesn't exist?
+#boundary = 'interface'  #<-- MOOSE Claims the boundary doesn't exist?
         boundary = 'channel_washcoat_interface'
         transfer_rate = 2
     [../]
