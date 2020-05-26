@@ -136,7 +136,7 @@ int calculate_properties(MIXED_GAS *gas_dat, bool is_ideal_gas, double CT)
                         muT_sum = muT_sum + (gas_dat->molefraction[j]/Dp_ij(gas_dat->binary_diffusion(i,j),gas_dat->total_pressure));
                     }
                 }
-                if (Dm_sum == 0.0 || gas_dat->molefraction[i] >= 1.0)
+                if (Dm_sum < 1e-8 || gas_dat->molefraction[i] >= 1.0)
                     gas_dat->species_dat[i].molecular_diffusion = gas_dat->binary_diffusion(i,i);
                 else
                     gas_dat->species_dat[i].molecular_diffusion = (1.0 - gas_dat->molefraction[i]) / Dm_sum;
@@ -190,7 +190,7 @@ int calculate_properties(MIXED_GAS *gas_dat, bool is_ideal_gas, double CT)
                 //-----------------------------------------------------------------
                 gas_dat->species_dat[i].density = gas_dat->molefraction[i]*gas_dat->species_dat[i].molecular_weight*CT/1000.0;
                 gas_dat->species_dat[i].dynamic_viscosity = Mu(gas_dat->species_dat[i].Sutherland_Viscosity, gas_dat->species_dat[i].Sutherland_Temp, gas_dat->species_dat[i].Sutherland_Const, gas_dat->gas_temperature);
-            
+                            
                 //Inner Loop for Binary Diffusion Tensor
                 for (int j=0; j<=i; j++)
                 {
@@ -200,14 +200,20 @@ int calculate_properties(MIXED_GAS *gas_dat, bool is_ideal_gas, double CT)
                     else
                     {
                         //Calculate upper triangular portion
-                        gas_dat->binary_diffusion.edit(i, j, D_ij(gas_dat->species_dat[i].molecular_weight, gas_dat->species_dat[j].molecular_weight, gas_dat->species_dat[i].density, gas_dat->species_dat[j].density, gas_dat->species_dat[i].dynamic_viscosity, gas_dat->species_dat[j].dynamic_viscosity));
-                    
+                        gas_dat->binary_diffusion.edit(i, j, D_ij(gas_dat->species_dat[i].molecular_weight, gas_dat->species_dat[j].molecular_weight, (gas_dat->species_dat[i].density), (gas_dat->species_dat[j].density), gas_dat->species_dat[i].dynamic_viscosity, gas_dat->species_dat[j].dynamic_viscosity));
+                                                                     
                         //Enforce symmetry of the matrix
                         gas_dat->binary_diffusion.edit(j, i, gas_dat->binary_diffusion(i,j));
+                                            
+                    }
                     
+                    if (isnan(gas_dat->binary_diffusion(i,j)) || isinf(gas_dat->binary_diffusion(i,j)) )
+                    {
+                        gas_dat->binary_diffusion.edit(i, j, 1);
+                        gas_dat->binary_diffusion.edit(j, i, gas_dat->binary_diffusion(i,j));
                     }
                 }
-            
+                            
                 //Additive Properties
                 gas_dat->total_molecular_weight = gas_dat->total_molecular_weight + (gas_dat->molefraction[i]*gas_dat->species_dat[i].molecular_weight);
                 gas_dat->total_specific_heat = gas_dat->total_specific_heat + (gas_dat->molefraction[i]*gas_dat->species_dat[i].specific_heat);
@@ -233,7 +239,7 @@ int calculate_properties(MIXED_GAS *gas_dat, bool is_ideal_gas, double CT)
                         muT_sum = muT_sum + (gas_dat->molefraction[j]/Dp_ij(gas_dat->binary_diffusion(i,j),gas_dat->total_pressure));
                     }
                 }
-                if (Dm_sum == 0.0 || gas_dat->molefraction[i] >= 1.0)
+                if (Dm_sum < 1e-8 || gas_dat->molefraction[i] >= 1.0)
                     gas_dat->species_dat[i].molecular_diffusion = gas_dat->binary_diffusion(i,i);
                 else
                     gas_dat->species_dat[i].molecular_diffusion = (1.0 - gas_dat->molefraction[i]) / Dm_sum;

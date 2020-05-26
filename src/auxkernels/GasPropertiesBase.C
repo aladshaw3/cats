@@ -261,7 +261,7 @@ void GasPropertiesBase::prepareEgret()
             }
             else
             {
-                _mole_frac[i] = 1e-14;
+                _mole_frac[i] = 1e-6;
             }
         }
         if (_carrier_gas[_qp] > 0)
@@ -270,7 +270,7 @@ void GasPropertiesBase::prepareEgret()
         }
         else
         {
-            _mole_frac[_gases.size()] = 1e-14;
+            _mole_frac[_gases.size()] = 1e-6;
         }
         
         success = initialize_data(_gases.size()+1, &_egret_dat);

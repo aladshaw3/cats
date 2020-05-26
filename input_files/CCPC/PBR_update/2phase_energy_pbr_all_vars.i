@@ -23,7 +23,7 @@
     # newer options
 #    carrier_gas = N2
 #    carrier_gas_mw = 28
-    is_ideal_gas = false
+    is_ideal_gas = true
 #NOTE: We get an error if ideal gas == false and no carrier given
  
     # Other Constants
@@ -60,9 +60,12 @@
      [../]
 
     [./v_ic]
-#m/s  avg - superficial velocity (low 2.5769 - high 3.17)
+#m/s  avg - superficial velocity (low 2.334 - high 2.4925) ?
         type = ParsedFunction
-        value = '2.71 + 0.2*(y/0.1346)'
+#value = '2.334 + 0.1585*(y/0.1346)'
+#value = '2.334 + 0.1585*(1/2)'
+#value = '2.334'
+        value = '2.5'
     [../]
 []
 
@@ -185,11 +188,11 @@
     [./vel_y]
         order = FIRST
         family = LAGRANGE
-        initial_condition = 2.806 #m/s  avg - superficial velocity (low 2.5769 - high 3.17)
-#        [./InitialCondition]
-#            type = FunctionIC
-#            function = v_ic
-#        [../]
+#        initial_condition = 2.806 #m/s  avg - superficial velocity (low 2.5769 - high 3.17)
+        [./InitialCondition]
+            type = FunctionIC
+            function = v_ic
+        [../]
     [../]
 
     [./vel_z]
@@ -244,7 +247,7 @@
     [./rho]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.9       #kg/m^3  ( double check comsol calculations )
+initial_condition = 0.45       #kg/m^3  ( double check comsol calculations )
     [../]
  
     [./rho_s]
@@ -619,13 +622,13 @@
 
 
 [AuxKernels]
-    [./vel_y_calc]
-        type = AuxAvgLinearVelocity
-        variable = vel_y
-        porosity = eps
-        flow_rate = flow_rate
-        xsec_area = x_sec
-    [../]
+#    [./vel_y_calc]
+#        type = AuxAvgLinearVelocity
+#        variable = vel_y
+#        porosity = eps
+#        flow_rate = flow_rate
+#        xsec_area = x_sec
+#    [../]
  
     [./P_ergun]
         type = AuxErgunPressure
@@ -784,7 +787,7 @@
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        input_vals = '0.13433'
+        input_vals = '0.148'
         input_times = '2000'
         time_spans = '1500'
     [../]
@@ -849,15 +852,69 @@
         execute_on = 'initial timestep_end'
     [../]
 
+    [./T_wall_f]
+        type = SideAverageValue
+        boundary = 'right'
+        variable = Tf
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./T_wall_s]
+        type = SideAverageValue
+        boundary = 'right'
+        variable = Ts
+        execute_on = 'initial timestep_end'
+    [../]
+
+   [./Ef_out]
+       type = SideAverageValue
+       boundary = 'top'
+       variable = Ef
+       execute_on = 'initial timestep_end'
+   [../]
+
+   [./Ef_in]
+       type = SideAverageValue
+       boundary = 'bottom'
+       variable = Ef
+       execute_on = 'initial timestep_end'
+   [../]
+
+    [./Ef_wall]
+        type = SideAverageValue
+        boundary = 'right'
+        variable = Ef
+        execute_on = 'initial timestep_end'
+    [../]
+
     [./T_avg]
         type = ElementAverageValue
         variable = Tf
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./Ef_avg]
+        type = ElementAverageValue
+        variable = Ef
         execute_on = 'initial timestep_end'
     [../]
  
     [./Ts_avg]
         type = ElementAverageValue
         variable = Ts
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./Es_avg]
+        type = ElementAverageValue
+        variable = Es
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./Es_wall]
+        type = SideAverageValue
+        boundary = 'right'
+        variable = Es
         execute_on = 'initial timestep_end'
     [../]
 
