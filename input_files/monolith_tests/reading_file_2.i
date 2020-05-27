@@ -7,38 +7,21 @@
   #   .unv file MUST HAVE specific boundary names in it
     [./mesh_file]
         type = FileMeshGenerator
-#file = MonolithChannel_v0-Converted.unv
-#        file = MonolithChannel_v1.msh
-        file = MonolithChannel_v1-Converted.unv
+        file = MonolithChannel_v2_2.msh
     [../]
   #The above file contains the following block and boundary names
   #boundary_name = 'inlet outlet washcoat_walls'
   #block_name = 'washcoat channel'
-  #interface_name = 'real_interface'   <-- Why doesn't MOOSE read this boundary?
- 
-# NOTE: The 'channel_washcoat_interface' boundary is somehow not valid for C
- 
+  
  
 # NOTE: Although we created a sideset in the file, that didn't get interpreted as an interface
-#    [./interface_set]
-#        type = SideSetsBetweenSubdomainsGenerator
-#        input = mesh_file
-#        master_block = 'channel'
-#        paired_block = 'washcoat'
-#        new_boundary = 'interface'
-#    [../]
- 
-#    [./break_boundary]
-#        input = interface_set
-#        type = BreakBoundaryOnSubdomainGenerator
-#    [../]
- 
-#     [./interface_set]
-#         type = SideSetsAroundSubdomainGenerator
-#         input = mesh_file
-#         block = 'channel washcoat'
-#         new_boundary = 'interface'
-#     [../]
+    [./interface_set]
+        type = SideSetsBetweenSubdomainsGenerator
+        input = mesh_file
+        master_block = 'channel'
+        paired_block = 'washcoat'
+        new_boundary = 'real_interface'
+    [../]
  
  
 []
@@ -220,15 +203,15 @@ block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface a
 #        vz = 0
 #    [../]
  
-#     [./C_test]
-#         type = DGFluxLimitedBC
-#         variable = C        #NOT SURE WHAT THIS DOES FOR C... Segfault if C not on washcoat...
-#         boundary = 'real_interface'
-#         u_input = 1.0
-#         vx = 0
-#         vy = 0
-#         vz = 0
-#     [../]
+     [./C_test]
+         type = DGFluxLimitedBC
+         variable = C        #NOT SURE WHAT THIS DOES FOR C... Segfault if C not on washcoat...
+         boundary = 'real_interface'
+         u_input = 1.0
+         vx = 0
+         vy = 0
+         vz = 0
+     [../]
 []
  
  [InterfaceKernels]
@@ -258,12 +241,12 @@ block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface a
         execute_on = 'initial timestep_end'
     [../]
  
-    [./Cw_wall]
-        type = SideAverageValue
-        boundary = 'real_interface'
-        variable = Cw
-        execute_on = 'initial timestep_end'
-    [../]
+#    [./Cw_wall]
+#        type = SideAverageValue
+#        boundary = 0
+#        variable = Cw
+#        execute_on = 'initial timestep_end'
+#    [../]
  
     [./Cw_avg]
         type = ElementAverageValue

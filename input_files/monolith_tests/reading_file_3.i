@@ -7,38 +7,10 @@
   #   .unv file MUST HAVE specific boundary names in it
     [./mesh_file]
         type = FileMeshGenerator
-#file = MonolithChannel_v0-Converted.unv
-#        file = MonolithChannel_v1.msh
-        file = MonolithChannel_v1-Converted.unv
+        file = MonolithChannel_v2_old_format_wBC.msh
     [../]
-  #The above file contains the following block and boundary names
+  #The above file contains the following boundary names
   #boundary_name = 'inlet outlet washcoat_walls'
-  #block_name = 'washcoat channel'
-  #interface_name = 'real_interface'   <-- Why doesn't MOOSE read this boundary?
- 
-# NOTE: The 'channel_washcoat_interface' boundary is somehow not valid for C
- 
- 
-# NOTE: Although we created a sideset in the file, that didn't get interpreted as an interface
-#    [./interface_set]
-#        type = SideSetsBetweenSubdomainsGenerator
-#        input = mesh_file
-#        master_block = 'channel'
-#        paired_block = 'washcoat'
-#        new_boundary = 'interface'
-#    [../]
- 
-#    [./break_boundary]
-#        input = interface_set
-#        type = BreakBoundaryOnSubdomainGenerator
-#    [../]
- 
-#     [./interface_set]
-#         type = SideSetsAroundSubdomainGenerator
-#         input = mesh_file
-#         block = 'channel washcoat'
-#         new_boundary = 'interface'
-#     [../]
  
  
 []
@@ -49,13 +21,13 @@
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.0
-block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface as part of channel!
+#block = 'channel'
     [../]
     [./Cw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.0
-        block = 'washcoat'
+#block = 'washcoat'
     [../]
 []
 
@@ -65,42 +37,42 @@ block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface a
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
-        block = 'channel'
+#block = 'channel'
     [../]
  
     [./vel_y]
         order = FIRST
         family = LAGRANGE
         initial_condition = 2
-        block = 'channel'
+#block = 'channel'
     [../]
 
 	[./vel_z]
         order = FIRST
         family = LAGRANGE
 		initial_condition = 0
-        block = 'channel'
+#block = 'channel'
 	[../]
  
     [./Diff]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.25
-        block = 'channel'
+#block = 'channel'
     [../]
  
     [./Dw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.01
-        block = 'washcoat'
+#block = 'washcoat'
     [../]
  
     [./ew]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.20
-        block = 'washcoat'
+#block = 'washcoat'
     [../]
 
 [] #END AuxVariables
@@ -112,7 +84,7 @@ block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface a
         type = CoefTimeDerivative
         variable = C
         Coefficient = 1.0
-        block = 'channel'
+#block = 'channel'
     [../]
     [./C_gadv]
         type = GPoreConcAdvection
@@ -121,7 +93,7 @@ block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface a
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        block = 'channel'
+#block = 'channel'
     [../]
     [./C_gdiff]
         type = GVarPoreDiffusion
@@ -130,7 +102,7 @@ block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface a
         Dx = Diff
         Dy = Diff
         Dz = Diff
-        block = 'channel'
+#block = 'channel'
     [../]
  
     #Mass conservation in washcoat kernels
@@ -138,7 +110,7 @@ block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface a
           type = VariableCoefTimeDerivative
           variable = Cw
           coupled_coef = ew
-          block = 'washcoat'
+#block = 'washcoat'
       [../]
       [./Cw_gdiff]
           type = GVarPoreDiffusion
@@ -147,7 +119,7 @@ block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface a
           Dx = Dw
           Dy = Dw
           Dz = Dw
-          block = 'washcoat'
+#block = 'washcoat'
       [../]
 
 []
@@ -161,7 +133,7 @@ block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface a
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        block = 'channel'
+#block = 'channel'
     [../]
     [./C_dgdiff]
         type = DGVarPoreDiffusion
@@ -170,7 +142,7 @@ block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface a
         Dx = Diff
         Dy = Diff
         Dz = Diff
-        block = 'channel'
+#block = 'channel'
     [../]
  
     [./Cw_dgdiff]
@@ -180,7 +152,7 @@ block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface a
         Dx = Dw
         Dy = Dw
         Dz = Dw
-        block = 'washcoat'
+#block = 'washcoat'
     [../]
 
 [] #END DGKernels
@@ -200,35 +172,23 @@ block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface a
     [./C_FluxOut]
         type = DGConcentrationFluxBC
         variable = C
-        boundary = 'outlet'
+        boundary = 'outlet washcoat_walls'
         u_input = 0.0
         ux = vel_x
         uy = vel_y
         uz = vel_z
     [../]
  
-    # C and Cw are not defined on channel_washcoat_interface
+     [./Cw_test]
+         type = DGFluxLimitedBC
+         variable = Cw
+         boundary = 'washcoat_walls'
+         u_input = 1.0
+         vx = 0
+         vy = 0
+         vz = 0
+     [../]
  
-# NOTE: This will run if given Cw, but Segfault if given C
-#    [./Cw_test]
-#        type = DGFluxLimitedBC
-#        variable = Cw        #NOT SURE WHAT THIS DOES FOR C... Segfault if C not on washcoat...
-#        boundary = 'real_interface'
-#        u_input = 1.0
-#        vx = 0
-#        vy = 0
-#        vz = 0
-#    [../]
- 
-#     [./C_test]
-#         type = DGFluxLimitedBC
-#         variable = C        #NOT SURE WHAT THIS DOES FOR C... Segfault if C not on washcoat...
-#         boundary = 'real_interface'
-#         u_input = 1.0
-#         vx = 0
-#         vy = 0
-#         vz = 0
-#     [../]
 []
  
  [InterfaceKernels]
@@ -258,17 +218,10 @@ block = 'channel'      #Problem: MOOSE does not see channel_washcoat_interface a
         execute_on = 'initial timestep_end'
     [../]
  
-    [./Cw_wall]
-        type = SideAverageValue
-        boundary = 'real_interface'
-        variable = Cw
-        execute_on = 'initial timestep_end'
-    [../]
- 
-    [./Cw_avg]
+    [./C_avg]
         type = ElementAverageValue
-        variable = Cw
-        block = 'washcoat'
+        variable = C
+#block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
 []

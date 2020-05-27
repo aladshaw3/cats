@@ -18,8 +18,8 @@
    [gen] #block = 0
         type = GeneratedMeshGenerator
         dim = 2
-        nx = 10
-        ny = 40
+        nx = 5
+        ny = 20
         xmin = 0.0
         xmax = 0.2    #0.2 radius of single channel
         ymin = 0.0
@@ -29,7 +29,7 @@
       [./subdomain1]
         input = gen
         type = SubdomainBoundingBoxGenerator
-        bottom_left = '0.15 0 0'
+        bottom_left = '0.14 0 0'
         top_right = '0.2 5 0'
         block_id = 1
       [../]
@@ -264,6 +264,7 @@
 [] #END DGKernels
  
 [InterfaceKernels]
+# If I reverse C and Cw, this kernel does not get invoked
    [./interface]
      type = InterfaceMassTransfer
      variable = C        #variable must be the variable in the master block
@@ -298,6 +299,18 @@
       uy = vel_y
       uz = vel_z
     [../]
+ 
+ 
+# This will run if given C, but Segfault if given Cw
+#        [./Cw_test]
+#            type = DGFluxLimitedBC
+#            variable = C
+#            boundary = 'master0_interface'
+#            u_input = 1.0
+#            vx = 0
+#            vy = 0
+#            vz = 0
+#        [../]
 
 [] #END BCs
 
@@ -326,6 +339,14 @@
         variable = Cw
         execute_on = 'initial timestep_end'
         block = 1
+    [../]
+ 
+#NOTE: Cw does not actually exist on master0_interface
+    [./C_int]
+        type = SideAverageValue
+        boundary = 'master0_interface'
+        variable = C
+        execute_on = 'initial timestep_end'
     [../]
 
 [] #END Postprocessors
