@@ -1,17 +1,17 @@
 [Mesh]
-  file = gmsh_mesh.msh
+  file = Test_Composite.msh
 []
 
 [Variables]
   [./C]
-    block = 6
+    block = inner_surf
     order = FIRST
     family = MONOMIAL
     initial_condition = 0.0
   [../]
 
   [./Cw]
-    block = 5
+    block = outer_surf
     order = FIRST
     family = MONOMIAL
     initial_condition = 0.0
@@ -24,7 +24,7 @@
         type = CoefTimeDerivative
         variable = C
         Coefficient = 1.0
-        block = 6
+        block = inner_surf
     [../]
     [./C_gdiff]
         type = GVarPoreDiffusion
@@ -33,7 +33,7 @@
         Dx = 1
         Dy = 1
         Dz = 1
-        block = 6
+        block = inner_surf
     [../]
  
     #Mass conservation in washcoat kernels
@@ -41,7 +41,7 @@
           type = VariableCoefTimeDerivative
           variable = Cw
           coupled_coef = 0.2
-          block = 5
+          block = outer_surf
       [../]
       [./Cw_gdiff]
           type = GVarPoreDiffusion
@@ -50,7 +50,7 @@
           Dx = 0.2
           Dy = 0.2
           Dz = 0.2
-          block = 5
+          block = outer_surf
       [../]
   
 []
@@ -64,7 +64,7 @@
          Dx = 1
          Dy = 1
          Dz = 1
-         block = 6
+         block = inner_surf
      [../]
   
      [./Cw_dgdiff]
@@ -74,42 +74,32 @@
          Dx = 0.2
          Dy = 0.2
          Dz = 0.2
-         block = 5
+         block = outer_surf
      [../]
 
  [] #END DGKernels
 
 [InterfaceKernels]
     [./interface]
-        type = InterfaceReaction
-          kb = 1
-          kf = 1
-           variable = C        #variable must be the variable in the master block
-           neighbor_var = Cw    #neighbor_var must the the variable in the paired block
-        boundary = '1 2'
+        type = InterfaceMassTransfer
+        variable = C        #variable must be the variable in the master block
+        neighbor_var = Cw    #neighbor_var must the the variable in the paired block
+        boundary = inner_bound
+        transfer_rate = 1
     [../]
 []
 
 [BCs]
-        [./C_test]
-            type = DGFluxLimitedBC
-            variable = C
-            boundary = 4
-            u_input = 1.0
-            vx = 0
-            vy = 0
-            vz = 0
-        [../]
      
-    #     [./Cw_test]
-    #         type = DGFluxLimitedBC
-    #         variable = Cw        
-    #         boundary = 3
-    #         u_input = 1.0
-    #         vx = 0
-    #         vy = 0
-    #         vz = 0
-    #     [../]
+         [./Cw_test]
+             type = DGFluxLimitedBC
+             variable = Cw
+             boundary = outer_bound
+             u_input = 1.0
+             vx = 0
+             vy = 0
+             vz = 0
+         [../]
 []
 
 [Postprocessors]

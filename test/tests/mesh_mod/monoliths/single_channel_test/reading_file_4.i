@@ -1,18 +1,18 @@
 [GlobalParams]
-  
-[]
+
+ []
 
 [Mesh]
-  #FileMeshGenerator automatically assigns boundary names from the .unv file
-  #   .unv file MUST HAVE specific boundary names in it
-    [./obstruct_file]
+  #FileMeshGenerator automatically assigns boundary names from the .msh file
+#   .msh file MUST HAVE specific boundary names in it (use msh format 4.1)
+    [./mesh_file]
         type = FileMeshGenerator
-        file = MonolithChannel_v0-Converted.unv
+        file = Monolith_Composite.msh
     [../]
-  #The above file contains the following block and boundary names
-  #boundary_name = 'inlet outlet washcoat_walls'
+  #The above file contains the following boundary names
+  #boundary_name = 'inlet outlet washcoat_walls interface wash_in wash_out'
   #block_name = 'washcoat channel'
-  #interface_name = 'channel_washcoat_interface'
+ 
 []
 
 #Use MONOMIAL for DG and LAGRANGE for non-DG
@@ -57,8 +57,22 @@
     [./Diff]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.1
+        initial_condition = 0.25
         block = 'channel'
+    [../]
+ 
+    [./Dw]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.01
+        block = 'washcoat'
+    [../]
+ 
+    [./ew]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.20
+        block = 'washcoat'
     [../]
 
 [] #END AuxVariables
@@ -79,6 +93,7 @@
         ux = vel_x
         uy = vel_y
         uz = vel_z
+        block = 'channel'
     [../]
     [./C_gdiff]
         type = GVarPoreDiffusion
@@ -87,13 +102,23 @@
         Dx = Diff
         Dy = Diff
         Dz = Diff
+        block = 'channel'
     [../]
  
     #Mass conservation in washcoat kernels
       [./Cw_dot]
-          type = CoefTimeDerivative
+          type = VariableCoefTimeDerivative
           variable = Cw
-          Coefficient = 1.0
+          coupled_coef = ew
+          block = 'washcoat'
+      [../]
+      [./Cw_gdiff]
+          type = GVarPoreDiffusion
+          variable = Cw
+          porosity = ew
+          Dx = Dw
+          Dy = Dw
+          Dz = Dw
           block = 'washcoat'
       [../]
 
@@ -108,6 +133,7 @@
         ux = vel_x
         uy = vel_y
         uz = vel_z
+        block = 'channel'
     [../]
     [./C_dgdiff]
         type = DGVarPoreDiffusion
@@ -116,6 +142,17 @@
         Dx = Diff
         Dy = Diff
         Dz = Diff
+        block = 'channel'
+    [../]
+ 
+    [./Cw_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = Cw
+        porosity = ew
+        Dx = Dw
+        Dy = Dw
+        Dz = Dw
+        block = 'washcoat'
     [../]
 
 [] #END DGKernels
@@ -131,6 +168,7 @@
 		uz = vel_z
     [../]
 
+# C and Cw are not defined on channel_washcoat_interface
     [./C_FluxOut]
         type = DGConcentrationFluxBC
         variable = C
@@ -140,7 +178,19 @@
         uy = vel_y
         uz = vel_z
     [../]
+ 
 []
+ 
+ [InterfaceKernels]
+#This kernel is never getting invoked
+    [./interface_kernel]
+        type = InterfaceMassTransfer
+        variable = C        #variable must be the variable in the master block
+        neighbor_var = Cw    #neighbor_var must the the variable in the paired block
+        boundary = 'interface'
+        transfer_rate = 2
+    [../]
+ [] #END InterfaceKernels
  
 [Postprocessors]
 
@@ -151,10 +201,48 @@
         execute_on = 'initial timestep_end'
     [../]
  
+    [./C_avg]
+        type = ElementAverageValue
+        variable = C
+        block = 'channel'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
     [./Cw_avg]
         type = ElementAverageValue
         variable = Cw
         block = 'washcoat'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./ew_avg]
+        type = ElementAverageValue
+        variable = ew
+        block = 'washcoat'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./volume_washcoat]
+        type = VolumePostprocessor
+        block = 'washcoat'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./volume_channel]
+        type = VolumePostprocessor
+        block = 'channel'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./xsec_area_channel]
+        type = AreaPostprocessor
+        boundary = 'outlet'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./xsec_area_washcoat]
+        type = AreaPostprocessor
+        boundary = 'wash_out'
         execute_on = 'initial timestep_end'
     [../]
 []
@@ -189,7 +277,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 0.1
+  end_time = 0.2
   dtmax = 0.5
 
   [./TimeStepper]

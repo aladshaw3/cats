@@ -3,8 +3,8 @@
  []
 
 [Mesh]
-  #FileMeshGenerator automatically assigns boundary names from the .unv file
-  #   .unv file MUST HAVE specific boundary names in it
+  #FileMeshGenerator automatically assigns boundary names from the .msh file
+#   .msh file MUST HAVE specific boundary names in it (use msh format 4.1)
     [./mesh_file]
         type = FileMeshGenerator
         file = Monolith_Composite.msh

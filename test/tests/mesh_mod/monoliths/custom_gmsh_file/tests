@@ -1,0 +1,7 @@
+[Tests]
+  [./test_reading_custom_gmsh]
+    type = 'Exodiff'
+    input = 'gmsh_test2.i'
+    exodiff = 'gmsh_test2_out.e'
+  [../]
+[]
