@@ -7,7 +7,7 @@
 #   .msh file MUST HAVE specific boundary names in it (use msh format 4.1)
     [./mesh_file]
         type = FileMeshGenerator
-        file = Monolith_Composite.msh
+        file = Monolith_Composite_Updated.msh
     [../]
   #The above file contains the following boundary names
   #boundary_name = 'inlet outlet washcoat_walls interface wash_in wash_out'
@@ -349,13 +349,13 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 10
+  end_time = 15
   dtmax = 0.5
 
   [./TimeStepper]
 #	type = SolutionTimeAdaptiveDT
     type = ConstantDT
-    dt = 0.1
+    dt = 0.15
   [../]
 []
 
