@@ -1,0 +1,7 @@
+[Tests]
+  [./test_monolith_ads_balance]
+    type = 'Exodiff'
+    input = 'ads_mass_balance.i'
+    exodiff = 'ads_mass_balance_out.e'
+  [../]
+[]
