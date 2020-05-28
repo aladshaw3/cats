@@ -201,10 +201,48 @@
         execute_on = 'initial timestep_end'
     [../]
  
+    [./C_avg]
+        type = ElementAverageValue
+        variable = C
+        block = 'channel'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
     [./Cw_avg]
         type = ElementAverageValue
         variable = Cw
         block = 'washcoat'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./ew_avg]
+        type = ElementAverageValue
+        variable = ew
+        block = 'washcoat'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./volume_washcoat]
+        type = VolumePostprocessor
+        block = 'washcoat'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./volume_channel]
+        type = VolumePostprocessor
+        block = 'channel'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./xsec_area_channel]
+        type = AreaPostprocessor
+        boundary = 'outlet'
+        execute_on = 'initial timestep_end'
+    [../]
+ 
+    [./xsec_area_washcoat]
+        type = AreaPostprocessor
+        boundary = 'wash_out'
         execute_on = 'initial timestep_end'
     [../]
 []
