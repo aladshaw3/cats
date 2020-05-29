@@ -558,7 +558,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 10
+  end_time = 0.3
   dtmax = 0.5
 
   [./TimeStepper]

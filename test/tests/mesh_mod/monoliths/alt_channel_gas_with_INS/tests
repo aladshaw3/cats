@@ -1,0 +1,7 @@
+[Tests]
+  [./single_channel_w_gap_and_INS_alt_BCs]
+    type = 'Exodiff'
+    input = '2DChannel_Gap_MB.i'
+    exodiff = '2DChannel_Gap_MB_out.e'
+  [../]
+[]
