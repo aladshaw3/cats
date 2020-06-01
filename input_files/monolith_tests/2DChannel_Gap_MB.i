@@ -362,6 +362,17 @@
         value = 2
     [../]
 
+#    [./y_inlet_const]
+#      type = INSNormalFlowBC
+#      variable = vel_y
+#      boundary = 'inlet'
+#      u_dot_n = -2
+#      direction = 1
+#      ux = vel_x
+#      uy = vel_y
+#      uz = vel_z
+#    [../]
+
     [./z_no_slip]
       type = PenaltyDirichletBC
       variable = vel_z
@@ -413,28 +424,6 @@
 #      boundary = 'inlet'
 #        value = 2.3
 #      penalty = 1
-#    [../]
-
-
-# Check on this. May only be for compressible NS
-#
-#       May need to create our own custom version of this
-#
-#    [./y_inlet_const]
-#      type = NSPenalizedNormalFlowBC  --> May want to check this out or switch to using NS based module stuff
-#      variable = vel_y
-#      boundary = 'inlet'
-#        specified_udotn = -2.0
-#       penalty = 100
-#        rho = 1.225e-6
-#        rhoE = 0
-#        rhou = 0
-#        vel_x = vel_x
-#        vel_y = vel_y
-#        vel_z = vel_z
-#        fluid_properties = ideal_gas
-#        rhov = 0
-#        rhow = 0
 #    [../]
 
 []
