@@ -3,7 +3,7 @@
  *    \brief Boundary Condition kernel for usage with INS module to specify the flow normal to the boundary
  *    \details This file creates a boundary condition kernel to produce residuals and jacobians for a flow
  *              that is normal to a given boundary. Can be used for outflow or inflow. User must given this
- *              condition for all velocity components.
+ *              condition for all velocity components that apply at that boundary. 
  *    \author Austin Ladshaw
  *    \date 06/01/2020
  *    \copyright This kernel was designed and built at the Georgia Institute

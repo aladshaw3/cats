@@ -1,0 +1,7 @@
+[Tests]
+  [./test_INS_normal_flow_bcs]
+    type = 'Exodiff'
+    input = '2DChannel_Gap_lead.i'
+    exodiff = '2DChannel_Gap_lead_out.e'
+  [../]
+[]
