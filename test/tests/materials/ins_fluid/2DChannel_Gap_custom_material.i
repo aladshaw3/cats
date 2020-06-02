@@ -40,33 +40,15 @@
     convective_term = true        #whether or not to include advective/convective term
     transient_term = true            #whether or not to include time derivative in supg correction (sometimes needed)
 
-# Below are the variables to set the names of the material properties for mu and rho
-#       The INS system REQUIRES a material property for both of these. Thus, you are
-#       required to provide a GenericConstantMaterial or a Custom Material file for
-#       these properties.
-
-#   Next update: Create a material property object to calculate these
-    mu_name = 'mu'
-    rho_name = 'rho'
  []
 
 [Materials]
-#NOTE: Every block in the mesh requires a Material
-
-#NEED to make sure all our units agree with each other
-  [./const]
-    type = GenericConstantMaterial
-    block = 'washcoat channel'
-    prop_names = 'rho mu'
-    #              kg/m^3  kg/m/s     # MUST USE THESE UNITS FOR REAL ANALYSIS
-    #prop_values = '1.225  1.81E-5'   #VALUES FOR AIR  (All my dimensions are in cm)
-
-# NOTE: viscosity below was choosen such that we get the correct ratio of density to viscosity
-#       In future, always use meters for distance. This means you need to change the dimensions
-#       in the mesh files, which were done in cm.
-    #               kg/cm^3 kg/cm/time
-    prop_values = '1.225e-6  1.81E-11'   #VALUES FOR AIR (viscosity choosen to given correct ratio)
-  [../]
+    [./ins_material]
+        type = INSFluid
+        block = 'washcoat channel'
+        density = rho
+        viscosity = mu
+    [../]
 []
 
 [Mesh]
@@ -92,6 +74,11 @@
      #value = a*z^2 + b*z + c    solve for a, b, and c
      value = '-2623.5*z^2 + 333.19*z - 7.0788'
    [../]
+
+    [./dens_func]
+        type = ParsedFunction
+        value = '1.225e-6 - 0.225e-6*(y/5)'
+    [../]
  []
 
 #Use MONOMIAL for DG and LAGRANGE for non-DG
@@ -137,6 +124,7 @@
        block = 'channel'
    [../]
 
+# NOTE: This is NOT the actual pressure in the system. It is only dynamic pressure...
     [./p]
       order = FIRST
       family = LAGRANGE
@@ -173,6 +161,25 @@
         family = MONOMIAL
         initial_condition = 0.20
         block = 'washcoat'
+    [../]
+
+# NOTE: We are REQUIRED to have rho for both washcoat and channel due to the materials system
+    [./rho]
+        order = FIRST
+        family = MONOMIAL
+        #initial_condition = 1.225e-6  #kg/cm^3  (should be kg/m^3)
+        [./InitialCondition]
+            type = FunctionIC
+            function = dens_func
+        [../]
+        block = 'washcoat channel'
+    [../]
+# NOTE: We are REQUIRED to have rho for both washcoat and channel due to the materials system
+    [./mu]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1.81E-11   #Units are choosen to maintain correct rho/mu ratio (unrealistic)
+        block = 'washcoat channel'
     [../]
  
     [./S_max]
@@ -285,7 +292,7 @@
       block = 'channel'
     [../]
     [./z_momentum_space]
-      type = INSMomentumLaplaceForm
+      type = INSMomentumTractionForm  #INSMomentumTractionForm or INSMomentumLaplaceForm
       variable = vel_z
       u = vel_x
       v = vel_y
@@ -302,7 +309,7 @@
       block = 'channel'
     [../]
     [./y_momentum_space]
-      type = INSMomentumLaplaceForm
+      type = INSMomentumTractionForm  #INSMomentumTractionForm or INSMomentumLaplaceForm
       variable = vel_y
       u = vel_x
       v = vel_y
@@ -381,18 +388,8 @@
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        penalty = 1e6
+        penalty = 1e6  #This term should be larger than the no_slip terms
     [../]
-
-#NOTE: This is still the best option for INS module. Use dirichlet BC at inlets and Penalty at walls
-#    [./y_inlet_const]
-#        type = DirichletBC
-#        variable = vel_y
-#        boundary = 'inlet'
-#        value = 1.15        #This is the average velocity at the inlet which is wider than the channel
-#        # Avg velocity = Q/A
-#    [../]
-
 
 # This is a weaker form of a Dirichlet BC that may be more appropriate
     [./z_no_slip]
@@ -400,14 +397,14 @@
       variable = vel_z
       boundary = 'inner_walls'
       value = 0.0
-        penalty = 10000
+        penalty = 1000
     [../]
     [./y_no_slip]
       type = PenaltyDirichletBC
       variable = vel_y
       boundary = 'inner_walls'
       value = 0.0
-        penalty = 10000
+        penalty = 1000
     [../]
 
 []
@@ -424,6 +421,24 @@
  [] #END InterfaceKernels
  
 [Postprocessors]
+
+   [./Q_enter]
+       type = VolumetricFlowRate
+       boundary = 'inlet'
+       vel_x = vel_x
+       vel_y = vel_y
+       vel_z = vel_z
+       execute_on = 'initial timestep_end'
+   [../]
+
+   [./Q_exit]
+       type = VolumetricFlowRate
+       boundary = 'outlet'
+       vel_x = vel_x
+       vel_y = vel_y
+       vel_z = vel_z
+       execute_on = 'initial timestep_end'
+   [../]
  
     [./vy_enter]
         type = SideAverageValue
@@ -537,7 +552,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 10
+  end_time = 0.3
   dtmax = 0.5
 
 # As the mesh becomes more complex, may need to cut time steps

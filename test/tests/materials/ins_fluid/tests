@@ -1,0 +1,7 @@
+[Tests]
+  [./custom_ins_material_test]
+    type = Exodiff
+    input = 2DChannel_Gap_custom_material.i
+    exodiff = 2DChannel_Gap_custom_material_out.e
+  [../]
+[]
