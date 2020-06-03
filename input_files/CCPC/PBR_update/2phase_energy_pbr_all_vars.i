@@ -1011,9 +1011,21 @@ initial_condition = 0.45       #kg/m^3  ( double check comsol calculations )
 [Executioner]
   type = Transient
   scheme = implicit-euler
-  petsc_options = '-snes_converged_reason'
-  petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
+    petsc_options = '-snes_converged_reason'
+    petsc_options_iname ='-ksp_type -ksp_gmres_restart -pc_type -sub_pc_type'
+  #petsc_options_value = 'gmres 300 asm lu'
+      petsc_options_value = 'gmres 300 asm lu'
+
+  # NOTE: gcr also has a -ksp_gcr_restart option (should override)
+  #-ksp_type options: gcr cgs bcgs gmres
+
+  #-pc_type options: asm bjacobi gasm
+  #-sub_pc_type:  lu   (NOTE: This is the only option that was found to work efficiently)
+#       ilu asm bjacobi gasm (these also work, but not if including Navier-Stokes)
+
+  # NOTE: Run the command line code suffixed with -log_view to get stats of the solve
+  #           If the problem is very large (i.e., many DOF) and if significant time
+  #           is spent in KSPSolve, then GPU acceleration may be viable.
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
@@ -1025,7 +1037,7 @@ initial_condition = 0.45       #kg/m^3  ( double check comsol calculations )
   l_tol = 1e-6
   l_max_its = 300
 
-  start_time = 0.0
+  start_time = 2000.0
   end_time = 30000
   dtmax = 30
 

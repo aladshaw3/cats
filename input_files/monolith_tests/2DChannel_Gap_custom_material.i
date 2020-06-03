@@ -45,7 +45,7 @@
 [Materials]
     [./ins_material]
         type = INSFluid
-        block = 'washcoat channel'
+#block = 'washcoat channel'
         density = rho
         viscosity = mu
     [../]
@@ -172,14 +172,14 @@
             type = FunctionIC
             function = dens_func
         [../]
-        block = 'washcoat channel'
+#block = 'washcoat channel'
     [../]
 # NOTE: We are REQUIRED to have rho for both washcoat and channel due to the materials system
     [./mu]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1.81E-11   #Units are choosen to maintain correct rho/mu ratio (unrealistic)
-        block = 'washcoat channel'
+#block = 'washcoat channel'
     [../]
  
     [./S_max]
@@ -530,21 +530,42 @@
   [./SMP_PJFNK]
     type = SMP
     full = true
-    solve_type = pjfnk
   [../]
+
+#  [./FDP_PJFNK]
+#    type = FDP
+#    full = true
+#  [../]
 []
 
 [Executioner]
   type = Transient
-  scheme = implicit-euler
+  scheme = bdf2
+  solve_type = pjfnk
   petsc_options = '-snes_converged_reason'
-  petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres asm lu 100 NONZERO 2 1E-14 1E-12'
+#petsc_options_iname ='-ksp_type -ksp_gmres_restart -pc_type -sub_pc_type'
+#petsc_options_value = 'gmres 300 asm lu'
+#petsc_options_value = 'bcgs 300 bjacobi lu'
+
+petsc_options_iname ='-ksp_type -ksp_gmres_restart -pc_type -sub_pc_type'
+petsc_options_value = 'bcgs 300 bjacobi lu'
+
+# NOTE: gcr also has a -ksp_gcr_restart option (should override)
+#-ksp_type options: gcr cgs bcgs gmres
+
+#-pc_type options: asm bjacobi gasm
+#-sub_pc_type:  lu   (NOTE: This is the only option that was found to work efficiently)
+
+# -snes_max_it:  Max nonlinear iterations (do not need! because given below as a MOOSE option)
+
+# NOTE: Run the command line code suffixed with -log_view to get stats of the solve
+#           If the problem is very large (i.e., many DOF) and if significant time
+#           is spent in KSPSolve, then GPU acceleration may be viable.
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
-  nl_rel_tol = 1e-6
-  nl_abs_tol = 1e-4
+  nl_rel_tol = 1e-8
+  nl_abs_tol = 1e-6
   nl_rel_step_tol = 1e-10
   nl_abs_step_tol = 1e-10
   nl_max_its = 10
@@ -552,7 +573,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 10
+end_time = 1.0
   dtmax = 0.5
 
 # As the mesh becomes more complex, may need to cut time steps
