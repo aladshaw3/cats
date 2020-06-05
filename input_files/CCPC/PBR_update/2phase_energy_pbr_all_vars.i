@@ -1004,7 +1004,7 @@ initial_condition = 0.45       #kg/m^3  ( double check comsol calculations )
   [./SMP_PJFNK]
     type = SMP
     full = true
-    solve_type = pjfnk   #default to newton, but use pjfnk if newton too slow
+    solve_type = pjfnk
   [../]
 [] #END Preconditioning
 
@@ -1013,8 +1013,7 @@ initial_condition = 0.45       #kg/m^3  ( double check comsol calculations )
   scheme = implicit-euler
     petsc_options = '-snes_converged_reason'
     petsc_options_iname ='-ksp_type -ksp_gmres_restart -pc_type -sub_pc_type'
-  #petsc_options_value = 'gmres 300 asm lu'
-      petsc_options_value = 'gmres 300 asm lu'
+    petsc_options_value = 'gmres 300 asm lu'
 
   # NOTE: gcr also has a -ksp_gcr_restart option (should override)
   #-ksp_type options: gcr cgs bcgs gmres
@@ -1037,7 +1036,7 @@ initial_condition = 0.45       #kg/m^3  ( double check comsol calculations )
   l_tol = 1e-6
   l_max_its = 300
 
-  start_time = 2000.0
+  start_time = 0.0
   end_time = 30000
   dtmax = 30
 
