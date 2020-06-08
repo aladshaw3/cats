@@ -127,7 +127,7 @@
         coupled = Cp
         rate_variable = k_eps
         # Area to volume ratio: Ao
-        av_ratio = 500
+        av_ratio = 5000
     [../]
 
  # Conservation of mass for Cp
@@ -142,7 +142,7 @@
         coupled = C
         rate_variable = k
         # Area to volume ratio: Ao
-        av_ratio = 500
+        av_ratio = 5000
     [../]
     [./ads_q]
       type = CoupledCoeffTimeDerivative
@@ -257,7 +257,7 @@
 
     line_search = none
     nl_rel_tol = 1e-8
-    nl_abs_tol = 1e-6
+    nl_abs_tol = 1e-8
     nl_rel_step_tol = 1e-12
     nl_abs_step_tol = 1e-12
     nl_max_its = 10
