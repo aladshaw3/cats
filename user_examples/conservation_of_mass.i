@@ -1,39 +1,28 @@
-[GlobalParams]
-  dg_scheme = nipg
-  sigma = 10
-[] #END GlobalParams
-
 [Problem]
-
     coord_type = RZ
-    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
-
 [] #END Problem
 
 [Mesh]
-
- [./my_mesh]
-    type = GeneratedMeshGenerator
-    dim = 2
-    nx = 1
-    ny = 20
-    xmin = 0.0
-    xmax = 2.0    #2cm radius
-    ymin = 0.0
-    ymax = 5.0    #5cm length
- [../]
-
+    [./my_mesh]
+        type = GeneratedMeshGenerator
+        dim = 2
+        nx = 5
+        ny = 20
+        xmin = 0.0
+        xmax = 0.05
+        ymin = 0.0
+        ymax = 0.1
+    [../]
 [] # END Mesh
 
 [Variables]
-
     [./C]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0
     [../]
 
-    [./Cw]
+    [./Cp]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
@@ -50,27 +39,56 @@
         family = LAGRANGE
         initial_condition = 1
     [../]
-
 [] #END Variables
 
 [AuxVariables]
-
-  [./Diff]
-    order = FIRST
-    family = LAGRANGE
-    initial_condition = 0.01
-  [../]
-
-  [./pore]
+  [./eps]
       order = FIRST
       family = LAGRANGE
       initial_condition = 0.5
   [../]
  
-  [./wash_pore]
+  [./vel_x]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0.25   #   ew * (1 - e)
+      initial_condition = 0
+  [../]
+
+  [./vel_y]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 3
+  [../]
+
+  [./vel_z]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0
+  [../]
+ 
+  [./D]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 2.5E-5
+  [../]
+ 
+  [./k]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 1
+  [../]
+ 
+  [./k_eps]
+    # Represents (1 - eps)*k
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.5
+  [../]
+ 
+  [./eps_p]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0.25
   [../]
  
   [./S_max]
@@ -78,42 +96,19 @@
     family = LAGRANGE
     initial_condition = 1
   [../]
-
-  [./vel_x]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 0
-  [../]
-
-  [./vel_y]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 2
-  [../]
-
-  [./vel_z]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 0
-  [../]
-
 [] #END AuxVariables
 
-[ICs]
-
-[] #END ICs
-
 [Kernels]
-
+# Conservation of mass for C
     [./C_dot]
         type = VariableCoefTimeDerivative
         variable = C
-        coupled_coef = pore
+        coupled_coef = eps
     [../]
     [./C_gadv]
         type = GPoreConcAdvection
         variable = C
-        porosity = pore
+        porosity = eps
         ux = vel_x
         uy = vel_y
         uz = vel_z
@@ -121,56 +116,61 @@
     [./C_gdiff]
         type = GVarPoreDiffusion
         variable = C
-        porosity = pore
-        Dx = Diff
-        Dy = Diff
-        Dz = Diff
+        porosity = eps
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
-    [./Cw_trans]
+    [./C_trans_Cp]
         type = FilmMassTransfer
         variable = C
-        coupled = Cw
-        rate_variable = 0.1
-        av_ratio = 500          #(1-pore)*Ao  with Ao = 1000 cm^-1
+        coupled = Cp
+        rate_variable = k_eps
+        # Area to volume ratio: Ao
+        av_ratio = 500
     [../]
 
-    [./Cw_dot]
+ # Conservation of mass for Cp
+    [./Cp_dot]
         type = VariableCoefTimeDerivative
-        variable = Cw
-        coupled_coef = wash_pore
+        variable = Cp
+        coupled_coef = eps_p
     [../]
-    [./C_trans]
+    [./Cp_trans_C]
         type = FilmMassTransfer
-        variable = Cw
+        variable = Cp
         coupled = C
-        rate_variable = 0.1
-        av_ratio = 500           #(1-pore)*Ao  with Ao = 1000 cm^-1
+        rate_variable = k
+        # Area to volume ratio: Ao
+        av_ratio = 500
     [../]
-    [./transfer_q]
-      type = CoupledPorePhaseTransfer
-      variable = Cw
+    [./ads_q]
+      type = CoupledCoeffTimeDerivative
+      variable = Cp
       coupled = q
-      porosity = pore
+      time_coeff = 1500
     [../]
  
+ # Conservation of mass for q
     [./q_dot]
         type = TimeDerivative
         variable = q
     [../]
-    [./q_rxn]  #   Cw + S <-- --> q
+    [./q_rxn]  #   Cp + S <-- --> q
         type = ConstReaction
         variable = q
         this_variable = q
         forward_rate = 2.0
         reverse_rate = 0.5
         scale = 1.0
-        reactants = 'Cw S'
+        reactants = 'Cp S'
         reactant_stoich = '1 1'
         products = 'q'
         product_stoich = '1'
     [../]
  
-    [./mat_bal]
+ # Conservation of mass for S
+    [./S_bal]
       type = MaterialBalance
       variable = S
       this_variable = S
@@ -186,7 +186,7 @@
     [./C_dgadv]
         type = DGPoreConcAdvection
         variable = C
-        porosity = pore
+        porosity = eps
         ux = vel_x
         uy = vel_y
         uz = vel_z
@@ -194,26 +194,22 @@
     [./C_dgdiff]
         type = DGVarPoreDiffusion
         variable = C
-        porosity = pore
-        Dx = Diff
-        Dy = Diff
-        Dz = Diff
+        porosity = eps
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
 
 [] #END DGKernels
 
-[AuxKernels]
-
-[] #END AuxKernels
 
 [BCs]
-
     [./C_FluxIn]
       type = DGPoreConcFluxBC
       variable = C
       boundary = 'bottom'
       u_input = 1.0
-      porosity = pore
+      porosity = eps
       ux = vel_x
       uy = vel_y
       uz = vel_z
@@ -221,86 +217,67 @@
     [./C_FluxOut]
       type = DGPoreConcFluxBC
       variable = C
-      boundary = 'top left right'
-      porosity = pore
+      boundary = 'top'
+      porosity = eps
       ux = vel_x
       uy = vel_y
       uz = vel_z
     [../]
-
 [] #END BCs
 
-[Materials]
-
-[] #END Materials
 
 [Postprocessors]
-
     [./C_exit]
         type = SideAverageValue
         boundary = 'top'
         variable = C
         execute_on = 'initial timestep_end'
     [../]
- 
-    [./C_avg]
-        type = ElementAverageValue
-        variable = C
-        execute_on = 'initial timestep_end'
-    [../]
-
     [./q_avg]
         type = ElementAverageValue
         variable = q
         execute_on = 'initial timestep_end'
     [../]
-
-    [./Cw_avg]
-        type = ElementAverageValue
-        variable = Cw
-        execute_on = 'initial timestep_end'
-    [../]
-
 [] #END Postprocessors
 
 [Preconditioning]
-  [./SMP_PJFNK]
-    type = SMP
-    full = true
-    solve_type = pjfnk   #default to newton, but use pjfnk if newton too slow
-  [../]
+    [./SMP_PJFNK]
+        type = SMP
+        full = true
+    [../]
 [] #END Preconditioning
 
 [Executioner]
-  type = Transient
-  scheme = implicit-euler
-  petsc_options = '-snes_converged_reason'
-  petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
+    type = Transient
+    scheme = bdf2
+    solve_type = pjfnk
+    petsc_options = '-snes_converged_reason'
+    petsc_options_iname ='-ksp_type -pc_type -sub_pc_type'
+    petsc_options_value = 'bcgs bjacobi lu'
 
-  #NOTE: turning off line search can help converge for high Renolds number
-  line_search = none
-  nl_rel_tol = 1e-6
-  nl_abs_tol = 1e-4
-  nl_rel_step_tol = 1e-10
-  nl_abs_step_tol = 1e-10
-  nl_max_its = 10
-  l_tol = 1e-6
-  l_max_its = 300
+    line_search = none
+    nl_rel_tol = 1e-8
+    nl_abs_tol = 1e-6
+    nl_rel_step_tol = 1e-12
+    nl_abs_step_tol = 1e-12
+    nl_max_its = 10
+    l_tol = 1e-6
+    l_max_its = 300
 
-  start_time = 0.0
-  end_time = 10.0
-  dtmax = 0.5
+    start_time = 0.0
+    end_time = 80.0
+    dtmax = 0.5
 
-  [./TimeStepper]
-     type = ConstantDT
-     dt = 0.1
-  [../]
+    [./TimeStepper]
+        type = ConstantDT
+        dt = 0.2
+    [../]
  
 [] #END Executioner
 
 [Outputs]
-  print_linear_residuals = true
-  exodus = true
-  csv = true
+    print_linear_residuals = true
+    exodus = true
+    csv = true
+    interval = 10
 [] #END Outputs
