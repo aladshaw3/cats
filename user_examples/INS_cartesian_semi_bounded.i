@@ -16,7 +16,7 @@
 
 [GlobalParams]
 # Below are the parameters for the MOOSE Navier-Stokes methods
-    gravity = '0 -9.8 0'             #gravity accel for body force (should be in m/s/s)
+    gravity = '0 -9.8 0'          #gravity accel for body force (should be in m/s/s)
     integrate_p_by_parts = true   #how to include the pressure gradient term
     supg = true                   #activates SUPG stabilization
     pspg = true                   #activates PSPG stabilization for pressure term
@@ -28,7 +28,7 @@
  []
 
 [Problem]
-    #coord_type = RZ
+    
 [] #END Problem
 
 [Mesh]
@@ -148,11 +148,11 @@
      [../]
 
  # No slip in x direction applies to both the left and right boundary
-# We need the vel_x to be zero at both the wall and the axis of symmetry. 
+# We need the vel_x to be zero at both the wall and the axis of symmetry.
      [./x_no_slip]
         type = PenaltyDirichletBC
         variable = vel_x
-        boundary = 'left right'
+        boundary = 'right'
         value = 0.0
         penalty = 1000
      [../]
@@ -170,9 +170,20 @@
 #   we want the solution to be symmetric across this boundary. We do not include
 #   vel_x as this type of boundary because the velocity in x should be zero here for symmetry.
     [./y_center]
-       type = ImplicitNeumannBC
+       type = NeumannBC
        variable = vel_y
        boundary = 'left'
+       value = 0
+    [../]
+# The open boundary is normal to the x-axis, thus there should be no upward or downward velocity
+#   in the x-direction at this boundary. That prevents the increase or decrease in volumetric
+#   flux at the open flow boundaries.
+    [./x_center]
+       type = PenaltyDirichletBC
+       variable = vel_x
+       boundary = 'left'
+       value = 0.0
+       penalty = 1000
     [../]
     
 [] #END BCs

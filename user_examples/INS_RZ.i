@@ -28,16 +28,16 @@
  []
 
 [Problem]
-    
+    coord_type = RZ     #Transforms the x-direction to radius and y-direction to length
 [] #END Problem
 
 [Mesh]
     [./my_mesh]
         type = GeneratedMeshGenerator
         dim = 2
-        nx = 10
+        nx = 5
         ny = 20
-        xmin = -0.05
+        xmin = 0
         xmax = 0.05
         ymin = 0.0
         ymax = 0.1
@@ -87,7 +87,7 @@
 [Kernels]
     #Continuity Equ
     [./mass]
-        type = INSMass
+        type = INSMassRZ
         variable = p
         u = vel_x
         v = vel_y
@@ -101,7 +101,7 @@
         variable = vel_x
     [../]
     [./x_momentum_space]
-        type = INSMomentumLaplaceForm  #INSMomentumTractionForm or INSMomentumLaplaceForm
+        type = INSMomentumLaplaceFormRZ  #INSMomentumTractionFormRZ or INSMomentumLaplaceFormRZ
         variable = vel_x
         u = vel_x
         v = vel_y
@@ -116,7 +116,7 @@
         variable = vel_y
     [../]
     [./y_momentum_space]
-        type = INSMomentumLaplaceForm  #INSMomentumTractionForm or INSMomentumLaplaceForm
+        type = INSMomentumLaplaceFormRZ  #INSMomentumTractionFormRZ or INSMomentumLaplaceFormRZ
         variable = vel_y
         u = vel_x
         v = vel_y
@@ -147,7 +147,9 @@
          penalty = 1e6  #This term should be larger than the no_slip terms
      [../]
 
- # This is a weaker form of a Dirichlet BC that may be more appropriate
+# No slip in x direction applies to both the left and right boundary
+# We need the vel_x to be zero at both the wall and the axis of symmetry.
+# Thus, we apply this condition to the left and right boundaries
      [./x_no_slip]
         type = PenaltyDirichletBC
         variable = vel_x
@@ -155,10 +157,11 @@
         value = 0.0
         penalty = 1000
      [../]
+# No slip in y direction applies to only the wall boundary (i.e., right)
      [./y_no_slip]
         type = PenaltyDirichletBC
         variable = vel_y
-        boundary = 'left right'
+        boundary = 'right'
         value = 0.0
         penalty = 1000
      [../]
