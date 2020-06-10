@@ -11,8 +11,9 @@
 # Finally, the alpha parameter controls the amount of stabilization.
 # For PSPG, decreasing alpha leads to increased accuracy but may induce
 # spurious oscillations in the pressure field. Some numerical experiments
-# suggest that alpha between .1 and 1 may be optimal for accuracy and
-# robustness.
+# suggest that alpha between .1 and 2 may be optimal for accuracy and
+# robustness. The default value is 1, so keep that value as is for
+# most cases.
 
 [GlobalParams]
 # Below are the parameters for the MOOSE Navier-Stokes methods
@@ -20,7 +21,7 @@
     integrate_p_by_parts = true   #how to include the pressure gradient term
     supg = true                   #activates SUPG stabilization
     pspg = true                   #activates PSPG stabilization for pressure term
-    alpha = 0.1                   #stabilization multiplicative correction factor
+    alpha = 1                     #stabilization multiplicative correction factor
     laplace = true                #whether or not viscous term is in laplace form
     convective_term = true        #whether or not to include advective/convective term
     transient_term = true         #whether or not to include time derivative in supg correction
@@ -224,7 +225,7 @@
     l_max_its = 300
 
     start_time = 0.0
-    end_time = 80.0
+    end_time = 10.0
     dtmax = 0.5
 
     [./TimeStepper]

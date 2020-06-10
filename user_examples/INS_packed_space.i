@@ -29,26 +29,21 @@
  []
 
 [Problem]
-    coord_type = RZ     #Transforms the x-direction to radius and y-direction to length
+    
 [] #END Problem
 
 [Mesh]
     [./my_mesh]
-        type = GeneratedMeshGenerator
-        dim = 2
-        nx = 5
-        ny = 20
-        xmin = 0
-        xmax = 0.05
-        ymin = 0.0
-        ymax = 0.1
+        type = FileMeshGenerator
+        file = packed_space.msh
+    # Boundaries:   walls inlet outlet
     [../]
 [] # END Mesh
 
  [Materials]
      [./ins_material]
          type = INSFluid
-         density = 1.2
+         density = 1.13
          viscosity = 2.25E-5
      [../]
  []
@@ -64,7 +59,7 @@
     [./vel_y]
         order = FIRST
         family = LAGRANGE
-        initial_condition = 3
+        initial_condition = 0
     [../]
  
     [./p]
@@ -88,7 +83,7 @@
 [Kernels]
     #Continuity Equ
     [./mass]
-        type = INSMassRZ
+        type = INSMass
         variable = p
         u = vel_x
         v = vel_y
@@ -102,7 +97,7 @@
         variable = vel_x
     [../]
     [./x_momentum_space]
-        type = INSMomentumLaplaceFormRZ  #INSMomentumTractionFormRZ or INSMomentumLaplaceFormRZ
+        type = INSMomentumLaplaceForm  #INSMomentumTractionForm or INSMomentumLaplaceForm
         variable = vel_x
         u = vel_x
         v = vel_y
@@ -117,7 +112,7 @@
         variable = vel_y
     [../]
     [./y_momentum_space]
-        type = INSMomentumLaplaceFormRZ  #INSMomentumTractionFormRZ or INSMomentumLaplaceFormRZ
+        type = INSMomentumLaplaceForm  #INSMomentumTractionForm or INSMomentumLaplaceForm
         variable = vel_y
         u = vel_x
         v = vel_y
@@ -139,7 +134,7 @@
          type = INSNormalFlowBC
          variable = vel_y
          direction = 1
-         boundary = 'bottom'
+         boundary = 'inlet'
          u_dot_n = -3
          # NOTE: The negative value denotes that this is an inlet
          ux = vel_x
@@ -147,22 +142,32 @@
          uz = vel_z
          penalty = 1e6  #This term should be larger than the no_slip terms
      [../]
+# Enforces same flux at exit
+    [./y_outlet_const]
+        type = INSNormalFlowBC
+        variable = vel_y
+        direction = 1
+        boundary = 'outlet'
+        u_dot_n = 3
+        # NOTE: The negative value denotes that this is an inlet
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        penalty = 1e6  #This term should be larger than the no_slip terms
+    [../]
 
-# No slip in x direction applies to both the left and right boundary
-# We need the vel_x to be zero at both the wall and the axis of symmetry.
-# Thus, we apply this condition to the left and right boundaries
+ # This is a weaker form of a Dirichlet BC that may be more appropriate
      [./x_no_slip]
         type = PenaltyDirichletBC
         variable = vel_x
-        boundary = 'left right'
+        boundary = 'walls'
         value = 0.0
         penalty = 1000
      [../]
-# No slip in y direction applies to only the wall boundary (i.e., right)
      [./y_no_slip]
         type = PenaltyDirichletBC
         variable = vel_y
-        boundary = 'right'
+        boundary = 'walls'
         value = 0.0
         penalty = 1000
      [../]
@@ -173,7 +178,7 @@
 [Postprocessors]
     [./Q_enter]
         type = VolumetricFlowRate
-        boundary = 'bottom'
+        boundary = 'inlet'
         vel_x = vel_x
         vel_y = vel_y
         vel_z = vel_z
@@ -182,7 +187,7 @@
 
     [./Q_exit]
         type = VolumetricFlowRate
-        boundary = 'top'
+        boundary = 'outlet'
         vel_x = vel_x
         vel_y = vel_y
         vel_z = vel_z
@@ -191,13 +196,13 @@
  
     [./vy_exit]
         type = SideAverageValue
-        boundary = 'top'
+        boundary = 'outlet'
         variable = vel_y
         execute_on = 'initial timestep_end'
     [../]
     [./vy_enter]
         type = SideAverageValue
-        boundary = 'bottom'
+        boundary = 'inlet'
         variable = vel_y
         execute_on = 'initial timestep_end'
     [../]
@@ -212,7 +217,7 @@
 
 [Executioner]
     type = Transient
-    scheme = bdf2
+    scheme = implicit-euler
     solve_type = newton
     petsc_options = '-snes_converged_reason'
     petsc_options_iname ='-ksp_type -pc_type -sub_pc_type'
@@ -232,7 +237,7 @@
     dtmax = 0.5
 
     [./TimeStepper]
-        type = ConstantDT
+        type = SolutionTimeAdaptiveDT
         dt = 0.02
     [../]
  
@@ -242,5 +247,5 @@
     print_linear_residuals = true
     exodus = true
     csv = true
-    interval = 10
+    interval = 1
 [] #END Outputs

@@ -29,7 +29,7 @@
     integrate_p_by_parts = true   #how to include the pressure gradient term
     supg = true                   #activates SUPG stabilization
     pspg = true                   #activates PSPG stabilization for pressure term
-    alpha = 0.1                   #stabilization multiplicative correction factor
+    alpha = 1                     #stabilization multiplicative correction factor
     laplace = true                #whether or not viscous term is in laplace form
     convective_term = true        #whether or not to include advective/convective term
     transient_term = true         #whether or not to include time derivative in supg correction
@@ -597,12 +597,12 @@
         value = 0.0
         penalty = 1000
      [../]
-# Full slip in y direction applies to only the wall boundary (i.e., right)
+# No slip in y direction applies to only the wall boundary (i.e., right)
      [./y_no_slip]
         type = PenaltyDirichletBC
         variable = vel_y
         boundary = 'right'
-        value = 3
+        value = 0.0
         penalty = 1000
      [../]
     
@@ -816,7 +816,7 @@
     petsc_options_iname ='-ksp_type -ksp_gmres_restart -pc_type -sub_pc_type'
     petsc_options_value = 'gmres 300 bjacobi lu'
 
-    line_search = none
+    line_search = bt
     nl_rel_tol = 1e-10
     nl_abs_tol = 1e-8
     nl_rel_step_tol = 1e-12
