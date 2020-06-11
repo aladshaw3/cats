@@ -58,9 +58,7 @@
     [./v_ic]
 #m/s  avg - superficial velocity (low 2.334 - high 2.4925) ?
         type = ParsedFunction
-#value = '2.334 + 0.1585*(y/0.1346)'
-#value = '2.334 + 0.1585*(1/2)'
-#value = '2.334'
+        #value = '2.334 + 0.1585*(y/0.1346)'
         value = '2.5'
     [../]
 []
@@ -389,7 +387,7 @@
         type = GPhaseThermalConductivity
         variable = Es
         temperature = Ts
-        volume_frac = s_frac  #s_frac = (1-eps)  ==>  s_frac*eps_s = 0.333
+        volume_frac = s_frac
         Dx = Ks
         Dy = Ks
         Dz = Ks
@@ -459,7 +457,7 @@
         variable = O2
         coupled = O2p
         rate_variable = kme_O2
-        av_ratio = 6640.5
+        av_ratio = 6640.5       #   Ao*(1-eps) = 6640.5
     [../]
  
     # Kernels for surface reaction
@@ -482,21 +480,21 @@
     [./O2p_dot]
         type = VariableCoefTimeDerivative
         variable = O2p
-        coupled_coef = 0.333        #s_frac*(1-eps)
+        coupled_coef = eps_s
     [../]
     [./O2_trans]
         type = FilmMassTransfer
         variable = O2p
         coupled = O2
         rate_variable = kme_O2
-        av_ratio = 6640.5
+        av_ratio = 11797
     [../]
     [./O2p_rx]  #   qc + O2p --> CO2p
         type = ArrheniusReaction
         variable = O2p
         this_variable = O2p
         temperature = Ts
-        scale = -48604163       #(1-eps)*As*-1
+        scale = -8.6346E7       #As*-1
         reactants = 'qc O2p'
         reactant_stoich = '1 1'
         products = 'CO2p'
@@ -529,27 +527,27 @@
         variable = CO2
         coupled = CO2p
         rate_variable = kme_CO2
-        av_ratio = 6640.5
+        av_ratio = 6640.5       #   Ao*(1-eps) = 6640.5
     [../]
  
     [./CO2p_dot]
         type = VariableCoefTimeDerivative
         variable = CO2p
-        coupled_coef = 0.333        #s_frac*(1-eps)
+        coupled_coef = eps_s
     [../]
     [./CO2_trans]
         type = FilmMassTransfer
         variable = CO2p
         coupled = CO2
         rate_variable = kme_CO2
-        av_ratio = 6640.5
+        av_ratio = 11797
     [../]
     [./CO2p_rx]  #   qc + O2p --> CO2p
         type = ArrheniusReaction
         variable = CO2p
         this_variable = CO2p
         temperature = Ts
-        scale = 48604163       #(1-eps)*As*1
+        scale = 8.6346E7       #As*1
         reactants = 'qc O2p'
         reactant_stoich = '1 1'
         products = 'CO2p'
@@ -580,7 +578,7 @@
         type = DGPhaseThermalConductivity
         variable = Es
         temperature = Ts
-        volume_frac = s_frac  #s_frac = (1-eps)  ==>  s_frac*eps_s = 0.333
+        volume_frac = s_frac
         Dx = Ks
         Dy = Ks
         Dz = Ks
@@ -624,13 +622,13 @@
 
 
 [AuxKernels]
-#    [./vel_y_calc]
-#        type = AuxAvgLinearVelocity
-#        variable = vel_y
-#        porosity = eps
-#        flow_rate = flow_rate
-#        xsec_area = x_sec
-#    [../]
+    [./vel_y_calc]
+        type = AuxAvgLinearVelocity
+        variable = vel_y
+        porosity = eps
+        flow_rate = flow_rate
+        xsec_area = x_sec
+    [../]
  
     [./P_ergun]
         type = AuxErgunPressure
@@ -805,7 +803,7 @@
         transfer_coef = hw
         wall_temp = Tw
         temperature = Ts
-        area_frac = s_frac   #s_frac = (1-eps)  ==>  s_frac*eps_s = 0.333
+        area_frac = s_frac
     [../]
  
     [./O2_FluxIn]
@@ -1051,29 +1049,17 @@
   [./SMP_PJFNK]
     type = SMP
     full = true
-    solve_type = pjfnk
   [../]
 [] #END Preconditioning
 
 [Executioner]
   type = Transient
   scheme = implicit-euler
+    solve_type = pjfnk
     petsc_options = '-snes_converged_reason'
     petsc_options_iname ='-ksp_type -ksp_gmres_restart -pc_type -sub_pc_type'
     petsc_options_value = 'gmres 300 asm lu'
 
-  # NOTE: gcr also has a -ksp_gcr_restart option (should override)
-  #-ksp_type options: gcr cgs bcgs gmres
-
-  #-pc_type options: asm bjacobi gasm
-  #-sub_pc_type:  lu   (NOTE: This is the only option that was found to work efficiently)
-#       ilu asm bjacobi gasm (these also work, but not if including Navier-Stokes)
-
-  # NOTE: Run the command line code suffixed with -log_view to get stats of the solve
-  #           If the problem is very large (i.e., many DOF) and if significant time
-  #           is spent in KSPSolve, then GPU acceleration may be viable.
-
-  #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
   nl_rel_tol = 1e-8
   nl_abs_tol = 1e-6
