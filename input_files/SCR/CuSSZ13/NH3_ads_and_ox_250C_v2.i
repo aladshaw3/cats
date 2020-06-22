@@ -98,11 +98,13 @@
     [./ZH_Z1Cu]
         order = FIRST
         family = MONOMIAL
+        initial_condition = 0.0069       #Change with w4 value below
     [../]
 
     [./ZH_CuO]
         order = FIRST
         family = MONOMIAL
+        initial_condition = 0.0065       #Change with w5 value below
     [../]
 
     [./qT]
@@ -159,18 +161,18 @@
       initial_condition = 0.0128515
   [../]
 
-# ZH with Z1Cu
+# ZH with Z1Cu (should lump this in with Z2Cu)
   [./w4]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.0069
+      initial_condition = 0.0069        #Change with ZH_Z1Cu initial condition value above
   [../]
 
 # ZH with CuO
   [./w5]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.0065
+      initial_condition = 0.0065        #Change with ZH_CuO initial condition value above
   [../]
 
   [./temp]
@@ -444,6 +446,28 @@
         product_stoich = '1'
     [../]
 
+# New rate term for open ZH_Z1Cu sites
+    [./ZH_Z1Cu_dot]
+        type = TimeDerivative
+        variable = ZH_Z1Cu
+    [../]
+    [./ZH_Z1Cu_rx]  #   NH3w + ZH_Z1Cu <-- --> ZH_NH3_Z1Cu
+      type = ArrheniusEquilibriumReaction
+      variable = ZH_Z1Cu
+      this_variable = ZH_Z1Cu
+      forward_activation_energy = 0
+      forward_pre_exponential = 833333.3
+      enthalpy = -91860.8
+      entropy = -28.9292
+      temperature = temp
+      scale = -1.0
+      reactants = 'NH3w ZH_Z1Cu'
+      reactant_stoich = '1 1'
+      products = 'ZH_NH3_Z1Cu'
+      product_stoich = '1'
+    [../]
+# End new rxn
+
     [./ZH_NH3_dot]
         type = TimeDerivative
         variable = ZH_NH3
@@ -503,6 +527,28 @@
       products = 'ZH_NH3_CuO'
       product_stoich = '1'
     [../]
+
+# New rate expression fro ZH_CuO
+    [./ZH_CuO_dot]
+        type = TimeDerivative
+        variable = ZH_CuO
+    [../]
+    [./ZH_CuO_rx]  #   NH3w + ZH_CuO <-- --> ZH_NH3_CuO
+      type = ArrheniusEquilibriumReaction
+      variable = ZH_CuO
+      this_variable = ZH_CuO
+      forward_activation_energy = 0
+      forward_pre_exponential = 833333.3
+      enthalpy = -91860.8
+      entropy = -28.9292
+      temperature = temp
+      scale = -1.0
+      reactants = 'NH3w ZH_CuO'
+      reactant_stoich = '1 1'
+      products = 'ZH_NH3_CuO'
+      product_stoich = '1'
+    [../]
+# End new rate
  
     [./qH2O_rx]  #   H2Ow + Z1CuOH <-- --> qH2O
       type = EquilibriumReaction
@@ -541,22 +587,29 @@
         weights = '1 1 1 1 1'
         total_material = qT
     [../]
- 
+
+# New lumped material balance for Z1Cu type species
+#   w1 + w5 = Z1CuOH + Z1CuOH_NH3 + qH2O + ZH_CuO + ZH_NH3_CuO
+# (Solve for Z1CuOH)
     [./Z1CuOH_bal]
         type = MaterialBalance
         variable = Z1CuOH
         this_variable = Z1CuOH
-        coupled_list = 'Z1CuOH_NH3 Z1CuOH qH2O'
-        weights = '1 1 1'
+        coupled_list = 'Z1CuOH_NH3 Z1CuOH qH2O ZH_CuO ZH_NH3_CuO w5'
+        weights = '1 1 1 1 1 -1'
         total_material = w1
     [../]
- 
+
+
+# New lumped material balance for Z2Cu type species
+#   w2 + w4 = Z2Cu + Z2Cu_NH3 + qO2 + ZH_Z1Cu + ZH_NH3_Z1Cu
+# (Solve for Z2Cu)
     [./Z2Cu_bal]
         type = MaterialBalance
         variable = Z2Cu
         this_variable = Z2Cu
-        coupled_list = 'Z2Cu_NH3 Z2Cu qO2'
-        weights = '1 1 1'
+        coupled_list = 'Z2Cu_NH3 Z2Cu qO2 ZH_NH3_Z1Cu ZH_Z1Cu w4'
+        weights = '1 1 1 1 1 -1'
         total_material = w2
     [../]
  
@@ -569,23 +622,6 @@
         total_material = w3
     [../]
 
-    [./ZH_Z1Cu_bal]
-        type = MaterialBalance
-        variable = ZH_Z1Cu
-        this_variable = ZH_Z1Cu
-        coupled_list = 'ZH_NH3_Z1Cu ZH_Z1Cu'
-        weights = '1 1'
-        total_material = w4
-    [../]
-
-    [./ZH_CuO_bal]
-        type = MaterialBalance
-        variable = ZH_CuO
-        this_variable = ZH_CuO
-        coupled_list = 'ZH_NH3_CuO ZH_CuO'
-        weights = '1 1'
-        total_material = w5
-    [../]
 
 [] #END Kernels
 
