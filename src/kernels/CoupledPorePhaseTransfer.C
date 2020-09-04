@@ -94,7 +94,7 @@ Real CoupledPorePhaseTransfer::computeQpOffDiagJacobian(unsigned int jvar)
     if (_gaining == true)
         {return _phi[_j][_qp]*_coupled_dot[_qp]*_test[_i][_qp];}
     else
-        {return _phi[_j][_qp]*_coupled_dot[_qp]*_test[_i][_qp];}
+        {return -_phi[_j][_qp]*_coupled_dot[_qp]*_test[_i][_qp];}
   }
 
 	return 0.0;

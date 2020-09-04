@@ -77,7 +77,7 @@ protected:
 		cross coupling of the variables. */
 	virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-  const VariableValue & _porosity;			///< Porosity variable
+    const VariableValue & _porosity;			///< Porosity variable
 	const unsigned int _porosity_var;				///< Variable identification for porosity
 
 private:
