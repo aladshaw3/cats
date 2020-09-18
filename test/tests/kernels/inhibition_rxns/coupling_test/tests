@@ -1,0 +1,7 @@
+[Tests]
+  [./coupled_inhibition_test]
+    type = 'Exodiff'
+    input = 'inhibition_coupling_test.i'
+    exodiff = 'inhibition_coupling_test_out.e'
+  [../]
+[]
