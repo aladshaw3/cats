@@ -1,10 +1,10 @@
 /*!
- *  \file LangmuirInhibition.h
- *    \brief Kernel for creating an inhibition function of a Langmuir form
+ *  \file PairedLangmuirInhibition.h
+ *    \brief Kernel for creating an inhibition function of a Langmuir form with paired species
  *    \details This file creates a standard MOOSE kernel for the coupling of a vector non-linear variables
- *            together via a Langmuir forcing function as follows...
- *            i.e., Res = 1 + sum(i, K_i * coupled_variable_i)
- *                  where K_i = A*T^B*exp(-E/R/T)
+ *            together via a Langmuir forcing function with paired species as follows...
+ *            i.e., Res = 1 + sum(i, K_i * coupled_variable_i) + sum( (i,j) , K_ij * coupled_i * coupled_j)
+ *                  where K_i and K_ij = A*T^B*exp(-E/R/T)
  *
  *            T is a coupled temperature and coupled_variable_i are coupled concentrations
  *
@@ -14,7 +14,7 @@
  *        be represented if multiple instances of these objects are necessary to define its behavior
  *
  *        Reaction kernel ==>   Res(R) = R*test
- *        Langmuir Inhibition ==> Res(R) = -LangmuirInhibition*test
+ *        Langmuir Inhibition ==> Res(R) = -PairedLangmuirInhibition*test
  *
  *  \author Austin Ladshaw
  *    \date 09/22/2020
@@ -44,41 +44,37 @@
 
 #pragma once
 
-#include "Kernel.h"
+#include "LangmuirInhibition.h"
 
-#ifndef Rstd
-#define Rstd 8.3144621                        ///< Gas Constant in J/K/mol (or) L*kPa/K/mol (Standard Units)
-#endif
-
-/// LangmuirInhibition class object inherits from Kernel object
+/// PairedLangmuirInhibition class object inherits from LangmuirInhibition object
 /** This class object inherits from the Kernel object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
     The kernel interfaces the set of non-linear variables to couple an extended Langmuir
     forcing function between given objects. */
-class LangmuirInhibition : public Kernel
+class PairedLangmuirInhibition : public LangmuirInhibition
 {
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
     
     /// Required constructor for objects in MOOSE
-    LangmuirInhibition(const InputParameters & parameters);
+    PairedLangmuirInhibition(const InputParameters & parameters);
 
 protected:
     /// Function to compute all langmuir coefficients from temperature
     void computeAllLangmuirCoeffs();
 
-    /// Function to compute the i-th term in the Langmuir function
-    Real computeLangmuirTerm(int i);
+    /// Function to compute the n-th pair in the Langmuir function using the n-th pairing coefficient
+    Real computePairedLangmuirTerm(int n);
 
     /// Function to compute the off-diagonal Jacobi for the coupled concentrations
-    Real computeLangmuirConcJacobi(int i);
+    Real computePairedLangmuirConcJacobi(int jvar);
     
-    /// Function to compute the i-th term in the Langmuir function's temperature Jacobi
-    Real computeLangmuirTempJacobiTerm(int i);
+    /// Function to compute the n-th pair in the Langmuir function's temperature Jacobi of the n-th parameter
+    Real computePairedLangmuirTempJacobiTerm(int n);
     
     /// Function to compute the Jacobi for the coupled temperature
-    Real computeLangmuirTempJacobi();
+    Real computePairedLangmuirTempJacobi();
 
     /// Required residual function for standard kernels in MOOSE
     /** This function returns a residual contribution for this object.*/
@@ -96,16 +92,17 @@ protected:
      cross coupling of the variables. */
     virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-    std::vector<Real> _langmuir_coef;                   ///< Langmuir Coefficients for the coupled variables (units are inverse concentration)
-    std::vector<Real> _pre_exp;                         ///< Pre-exponential factors for Langmuir coefficients
-    std::vector<Real> _beta;                            ///< Beta factors for the Langmuir coefficients
-    std::vector<Real> _act_energy;                      ///< Activation energies for Langmuir coefficients 
-    std::vector<const VariableValue *> _coupled;        ///< Pointer list to the coupled gases (concentration units)
-    std::vector<unsigned int> _coupled_vars;            ///< Indices for the concentration species in the system
-    const VariableValue & _temp;                        ///< Coupled variable for temperature
-    const unsigned int _temp_var;                       ///< Index for the coupled temperature variable
+    std::vector<Real> _binary_coef;                     ///< Paired Langmuir Coefficients for the coupled variables (units are inverse concentration)
+    std::vector<Real> _binary_pre_exp;                  ///< Pre-exponential factors for binary Langmuir coefficients
+    std::vector<Real> _binary_beta;                     ///< Beta factors for the binary Langmuir coefficients
+    std::vector<Real> _binary_act_energy;               ///< Activation energies for binary Langmuir coefficients
+    std::vector<const VariableValue *> _coupled_i;        ///< Pointer list to the coupled gases (concentration units)
+    std::vector<unsigned int> _coupled_i_vars;            ///< Indices for the concentration species in the system
+    std::vector<const VariableValue *> _coupled_j;        ///< Pointer list to the coupled gases (concentration units)
+    std::vector<unsigned int> _coupled_j_vars;            ///< Indices for the concentration species in the system
 
 private:
 
 };
+
 
