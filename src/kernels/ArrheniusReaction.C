@@ -123,8 +123,8 @@ Real ArrheniusReaction::computeQpOffDiagJacobian(unsigned int jvar)
         {
             prod_prod = prod_prod * std::pow( (*_products[i])[_qp], _prod_stoich[i] );
         }
-        jac = -_scale*_forward_rate*react_prod*_test[_i][_qp] * ((_act_energy_for/Rstd/_temp[_qp]/_temp[_qp]) + _beta_for * std::pow(_temp[_qp], _beta_for-2.0)) * _phi[_j][_qp];
-        jac += _scale*_reverse_rate*prod_prod*_test[_i][_qp] * ((_act_energy_rev/Rstd/_temp[_qp]/_temp[_qp]) + _beta_rev * std::pow(_temp[_qp], _beta_rev-2.0)) * _phi[_j][_qp];
+        jac = -_scale*_forward_rate*react_prod*_test[_i][_qp] * ((_act_energy_for/Rstd/_temp[_qp]/_temp[_qp]) + _beta_for * std::pow(_temp[_qp], -1.0)) * _phi[_j][_qp];
+        jac += _scale*_reverse_rate*prod_prod*_test[_i][_qp] * ((_act_energy_rev/Rstd/_temp[_qp]/_temp[_qp]) + _beta_rev * std::pow(_temp[_qp], -1.0)) * _phi[_j][_qp];
         return jac;
     }
     else
