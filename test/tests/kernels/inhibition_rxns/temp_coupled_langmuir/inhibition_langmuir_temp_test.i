@@ -27,6 +27,12 @@
     family = MONOMIAL
     initial_condition = 1
   [../]
+#Coupled non-linear temperature
+  [./temp]
+    order = FIRST
+    family = MONOMIAL
+    initial_condition = 298.15  #K
+  [../]
  
 []
  
@@ -36,7 +42,7 @@
     family = MONOMIAL
     initial_condition = 1
   [../]
-  [./temp]
+  [./temp_ref]
     order = FIRST
     family = MONOMIAL
     initial_condition = 298.15  #K
@@ -64,8 +70,8 @@
     this_variable = B
     temperature = temp
  
-    forward_pre_exponential = 1.0
-    forward_activation_energy = 0.0
+    forward_pre_exponential = 10.0
+    forward_activation_energy = 5700.0
     forward_inhibition = R
  
     reverse_pre_exponential = 0.0
@@ -84,8 +90,8 @@
     this_variable = B
     temperature = temp
  
-    forward_pre_exponential = 1.0
-    forward_activation_energy = 0.0
+    forward_pre_exponential = 5.0
+    forward_activation_energy = 4000.0
     forward_inhibition = R
 
     reverse_pre_exponential = 0.0
@@ -109,8 +115,8 @@
     this_variable = C
     temperature = temp
  
-    forward_pre_exponential = 1.0
-    forward_activation_energy = 0.0
+    forward_pre_exponential = 5.0
+    forward_activation_energy = 4000.0
     forward_inhibition = R
 
     reverse_pre_exponential = 0.0
@@ -133,9 +139,30 @@
     type = LangmuirInhibition
     variable = R
     temperature = temp
-    coupled_list = 'A B'
-    pre_exponentials = '1 1'
+    coupled_list = 'A B C'
+    pre_exponentials = '10 5 0'
+    activation_energies = '5700 4000 0'
   [../]
+ 
+#NOTE: This kernel is used to set the temperature equal to a reference temperature at each time step
+#      The residual for this kernel is k*(T - T_ref)  (with k = 1)
+  [./temp_equ]
+    type = ConstMassTransfer
+    variable = temp
+    coupled = temp_ref
+  [../]
+[]
+ 
+[AuxKernels]
+    [./temp_ramp]
+        type = LinearChangeInTime
+        variable = temp_ref
+        start_time = 0
+        end_time = 2
+        end_value = 323.15
+    # Execute always at initial, then at either timestep_begin or timestep_end
+        execute_on = 'initial timestep_begin'
+    [../]
 []
 
 [BCs]
@@ -161,6 +188,11 @@
     [./R]
         type = ElementAverageValue
         variable = R
+        execute_on = 'initial timestep_end'
+    [../]
+    [./T]
+        type = ElementAverageValue
+        variable = temp
         execute_on = 'initial timestep_end'
     [../]
 []

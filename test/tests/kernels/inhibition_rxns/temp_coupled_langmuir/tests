@@ -1,0 +1,7 @@
+[Tests]
+  [./langmuir_inhibition_coupling_test]
+    type = 'Exodiff'
+    input = 'inhibition_langmuir_temp_test.i'
+    exodiff = 'inhibition_langmuir_temp_test_out.e'
+  [../]
+[]
