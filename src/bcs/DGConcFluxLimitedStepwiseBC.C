@@ -106,13 +106,16 @@ _time_spans(getParam<std::vector<Real> >("time_spans"))
     {
         moose::internal::mooseErrorRaw("input_vals and input_times must have same size!");
     }
-    if (_time_spans.size() < _input_times.size())
+    
+    if (_time_spans.size() !=_input_times.size())
     {
-        for (int i=0; i<(_input_times.size()-_time_spans.size()); i++)
+        _time_spans.resize(_input_times.size());
+        for (int i=0; i<_time_spans.size(); i++)
         {
-            _time_spans.push_back(0.0);
+            _time_spans[i] = 0.0;
         }
     }
+
     if (_input_vals.size() == 0 && _input_times.size() == 0)
     {
         _input_vals.resize(1);

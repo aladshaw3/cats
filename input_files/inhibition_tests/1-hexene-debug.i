@@ -20,30 +20,6 @@
   [../]
 
 #Inhibition variables
-  [./R1]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 1970100
-    #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-  [../]
-  [./R2]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 34394
-   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-  [../]
-  [./R3]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 64790185
-   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-  [../]
-  [./R4]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 11773591
-   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-  [../]
   [./R5]
     order = FIRST
     family = MONOMIAL
@@ -157,7 +133,7 @@
 
     forward_pre_exponential = 1406.8
     forward_activation_energy = 6992.5
-    forward_inhibition = R1
+    forward_inhibition = 1970100
 
     scale = 1.0
     reactants = 'CO O2'
@@ -166,86 +142,6 @@
     product_stoich = ''
   [../]
 
-# Inhibitions
-  [./R1_eq]
-    type = Reaction
-    variable = R1
-  [../]
-  [./R1_inhib]
-    type = PairedLangmuirInhibition
-    variable = R1
-    temperature = temp
- 
-    coupled_list = 'CO'
-    pre_exponentials = '525.1'
-    activation_energies = '16340.5'
- 
-    coupled_i_list = 'CO'
-    coupled_j_list = 'NO_in'
-    binary_pre_exp = '1.43E-5'
-    binary_energies = '-33931.9'
-  [../]
- 
-# Inhibitions
-  [./R2_eq]
-    type = Reaction
-    variable = R2
-  [../]
-  [./R2_inhib]
-    type = PairedLangmuirInhibition
-    variable = R2
-    temperature = temp
- 
-    coupled_list = 'H2_in'
-    pre_exponentials = '62.43'
-    activation_energies = '23658.4'
- 
-    coupled_i_list = 'CO CO'
-    coupled_j_list = 'NO_in H2_in'
-    binary_pre_exp = '7.44E-10 3.42E-95'
-    binary_energies = '-50750.6 -690724'
-  [../]
- 
-# Inhibitions
-  [./R3_eq]
-    type = Reaction
-    variable = R3
-  [../]
-  [./R3_inhib]
-    type = PairedLangmuirInhibition
-    variable = R3
-    temperature = temp
-
-    coupled_list = 'HC_in'
-    pre_exponentials = '1.52'
-    activation_energies = '14130.3'
-
-    coupled_i_list = 'CO HC_in'
-    coupled_j_list = 'HC_in H2_in'
-    binary_pre_exp = '1.82E-8 1.32E-6'
-    binary_energies = '-62835.9 -39411.9'
-  [../]
- 
-# Inhibitions
-  [./R4_eq]
-    type = Reaction
-    variable = R4
-  [../]
-  [./R4_inhib]
-    type = PairedLangmuirInhibition
-    variable = R4
-    temperature = temp
-
-    coupled_list = 'H2_in'
-    pre_exponentials = '1'
-    activation_energies = '368551'
-
-    coupled_i_list = 'CO NO_in'
-    coupled_j_list = 'NO_in H2_in'
-    binary_pre_exp = '0.991 1.65E-51'
-    binary_energies = '1233280.7 -381364.44'
-  [../]
- 
 # Inhibitions
   [./R5_eq]
     type = Reaction
@@ -295,26 +191,6 @@
     [./O2]
         type = ElementAverageValue
         variable = O2
-        execute_on = 'initial timestep_end'
-    [../]
-    [./R1]
-        type = ElementAverageValue
-        variable = R1
-        execute_on = 'initial timestep_end'
-    [../]
-    [./R2]
-        type = ElementAverageValue
-        variable = R2
-        execute_on = 'initial timestep_end'
-    [../]
-    [./R3]
-        type = ElementAverageValue
-        variable = R3
-        execute_on = 'initial timestep_end'
-    [../]
-    [./R4]
-        type = ElementAverageValue
-        variable = R4
         execute_on = 'initial timestep_end'
     [../]
     [./R5]

@@ -89,19 +89,21 @@ _binary_act_energy(getParam<std::vector<Real> >("binary_energies"))
             moose::internal::mooseErrorRaw("Pre-exponentials can NOT be negative numbers!");
     }
     
-    if (_binary_beta.size() < _binary_coef.size())
+    if (_binary_beta.size() != _binary_coef.size())
     {
-        for (int i=0; i<(_binary_coef.size()-_binary_beta.size()); i++)
+        _binary_beta.resize(n);
+        for (int i=0; i<_binary_beta.size(); i++)
         {
-            _binary_beta.push_back(0.0);
+            _binary_beta[i] = 0.0;
         }
     }
     
-    if (_binary_act_energy.size() < _binary_coef.size())
+    if (_binary_act_energy.size() != _binary_coef.size())
     {
-        for (int i=0; i<(_binary_coef.size()-_binary_act_energy.size()); i++)
+        _binary_act_energy.resize(n);
+        for (int i=0; i<_binary_act_energy.size(); i++)
         {
-            _binary_act_energy.push_back(0.0);
+            _binary_act_energy[i] = 0.0;
         }
     }
     

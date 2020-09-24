@@ -82,19 +82,21 @@ _temp_var(coupled("temperature"))
             moose::internal::mooseErrorRaw("Pre-exponentials can NOT be negative numbers!");
     }
     
-    if (_beta.size() < _langmuir_coef.size())
+    if (_beta.size() != _langmuir_coef.size())
     {
-        for (int i=0; i<(_langmuir_coef.size()-_beta.size()); i++)
+        _beta.resize(n);
+        for (int i=0; i<_beta.size(); i++)
         {
-            _beta.push_back(0.0);
+            _beta[i] = 0.0;
         }
     }
     
-    if (_act_energy.size() < _langmuir_coef.size())
+    if (_act_energy.size() != _langmuir_coef.size())
     {
-        for (int i=0; i<(_langmuir_coef.size()-_act_energy.size()); i++)
+        _act_energy.resize(n);
+        for (int i=0; i<_act_energy.size(); i++)
         {
-            _act_energy.push_back(0.0);
+            _act_energy[i] = 0.0;
         }
     }
 
