@@ -50,30 +50,30 @@
     initial_condition = 9999775
    #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
   [../]
-#  [./R6]
-#    order = FIRST
-#    family = MONOMIAL
-#    initial_condition = 3.1E23
-#   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-#  [../]
-#  [./R8]
-#    order = FIRST
-#    family = MONOMIAL
-#    initial_condition = 5.1E27
-#   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-#  [../]
-#  [./R10]
-#    order = FIRST
-#    family = MONOMIAL
-#    initial_condition = 2531262
-#   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-#  [../]
-#  [./R14]
-#    order = FIRST
-#    family = MONOMIAL
-#    initial_condition = 1.6E51
-#   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-#  [../]
+  [./R6]
+    order = FIRST
+    family = MONOMIAL
+    initial_condition = 10305525
+   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
+  [../]
+  [./R8]
+    order = FIRST
+    family = MONOMIAL
+    initial_condition = 83232803
+   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
+  [../]
+  [./R10]
+    order = FIRST
+    family = MONOMIAL
+    initial_condition = 2531262
+   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
+  [../]
+  [./R14]
+    order = FIRST
+    family = MONOMIAL
+    initial_condition = 1.1E7
+   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
+  [../]
  
 #Coupled non-linear temperature
   [./temp]
@@ -266,6 +266,86 @@
     binary_energies = '269603 -228342.8'
   [../]
  
+# Inhibitions
+  [./R6_eq]
+    type = Reaction
+    variable = R6
+  [../]
+  [./R6_inhib]
+    type = PairedLangmuirInhibition
+    variable = R6
+    temperature = temp
+
+    coupled_list = 'H2_in'
+    pre_exponentials = '4.93E-14'
+    activation_energies = '-122752'
+
+    coupled_i_list = 'CO HC_in'
+    coupled_j_list = 'H2_in NO_in'
+    binary_pre_exp = '57.96 3.46E-10'
+    binary_energies = '89900 -75282'
+  [../]
+ 
+# Inhibitions
+  [./R8_eq]
+    type = Reaction
+    variable = R8
+  [../]
+  [./R8_inhib]
+    type = PairedLangmuirInhibition
+    variable = R8
+    temperature = temp
+
+    coupled_list = 'H2_in'
+    pre_exponentials = '1.63E-44'
+    activation_energies = '-365055'
+
+    coupled_i_list = 'CO'
+    coupled_j_list = 'NO_in'
+    binary_pre_exp = '142278'
+    binary_energies = '102428'
+  [../]
+ 
+# Inhibitions
+  [./R10_eq]
+    type = Reaction
+    variable = R10
+  [../]
+  [./R10_inhib]
+    type = PairedLangmuirInhibition
+    variable = R10
+    temperature = temp
+
+    coupled_list = 'HC_in'
+    pre_exponentials = '30262'
+    activation_energies = '62654'
+
+    coupled_i_list = 'HC_in'
+    coupled_j_list = 'NO_in'
+    binary_pre_exp = '0.19'
+    binary_energies = '-5404'
+  [../]
+ 
+# Inhibitions
+  [./R14_eq]
+    type = Reaction
+    variable = R14
+  [../]
+  [./R14_inhib]
+    type = PairedLangmuirInhibition
+    variable = R14
+    temperature = temp
+
+    coupled_list = ''
+    pre_exponentials = ''
+    activation_energies = ''
+
+    coupled_i_list = 'CO HC_in'
+    coupled_j_list = 'H2_in NO_in'
+    binary_pre_exp = '4.78E-5 3.147E-10'
+    binary_energies = '19.99 -76171'
+  [../]
+ 
 #NOTE: This kernel is used to set the temperature equal to a reference temperature at each time step
 #      The residual for this kernel is k*(T - T_ref)  (with k = 1)
   [./temp_equ]
@@ -320,6 +400,26 @@
     [./R5]
         type = ElementAverageValue
         variable = R5
+        execute_on = 'initial timestep_end'
+    [../]
+    [./R6]
+        type = ElementAverageValue
+        variable = R6
+        execute_on = 'initial timestep_end'
+    [../]
+    [./R8]
+        type = ElementAverageValue
+        variable = R8
+        execute_on = 'initial timestep_end'
+    [../]
+    [./R10]
+        type = ElementAverageValue
+        variable = R10
+     execute_on = 'initial timestep_end'
+    [../]
+    [./R14]
+        type = ElementAverageValue
+        variable = R14
         execute_on = 'initial timestep_end'
     [../]
     [./CO]
