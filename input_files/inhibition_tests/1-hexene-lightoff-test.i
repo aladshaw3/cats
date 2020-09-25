@@ -174,6 +174,11 @@
   [../]
 #Time coeff = 0.4945 or -0.4945
 # Mass Balances
+[./CO_time]
+   type = CoefTimeDerivative
+   variable = CO
+   Coefficient = 0.4945
+ [../]
   [./CO_conv]
     type = ConstMassTransfer
     variable = CO
@@ -185,10 +190,14 @@
     variable = CO
     this_variable = CO
     temperature = temp
+ 
+#    forward_pre_exponential = 1406.8
+#    forward_activation_energy = 6992.5
+#    forward_inhibition = R1
 
-    forward_pre_exponential = 1406.8
-    forward_activation_energy = 6992.5
-    forward_inhibition = R1
+    forward_pre_exponential = 548194281
+    forward_activation_energy = 112698
+    forward_inhibition = 1
 
     scale = 1.0
     reactants = 'CO O2'
@@ -247,6 +256,11 @@
  [../]
  
 # Mass Balances
+ [./H2_time]
+    type = CoefTimeDerivative
+    variable = H2
+    Coefficient = 0.4945
+  [../]
   [./H2_conv]
     type = ConstMassTransfer
     variable = H2
@@ -305,6 +319,11 @@
  [../]
  
 # Mass Balances
+ [./HC_time]
+    type = CoefTimeDerivative
+    variable = HC
+    Coefficient = 0.4945
+  [../]
   [./HC_conv]
     type = ConstMassTransfer
     variable = HC
@@ -335,10 +354,11 @@
 
    forward_pre_exponential = 2667984
    forward_activation_energy = 45483.9
-   forward_inhibition = R10
+#forward_inhibition = R10
+ forward_inhibition = 2E6
 
-scale = 0
-#scale = 1.0
+#scale = 0
+scale = 1.0
    reactants = 'HC NOx'
    reactant_stoich = '1 1'
    products = ''
@@ -346,6 +366,11 @@ scale = 0
  [../]
  
 # Mass Balances
+ [./NO_time]
+    type = CoefTimeDerivative
+    variable = NOx
+    Coefficient = 0.4945
+  [../]
   [./NO_conv]
     type = ConstMassTransfer
     variable = NOx
@@ -428,8 +453,8 @@ scale = 0
    forward_activation_energy = 45483.9
    forward_inhibition = R10
 
-scale = 0
-#scale = 18.0
+#scale = 0
+scale = 18.0
    reactants = 'HC NOx'
    reactant_stoich = '1 1'
    products = ''
@@ -454,6 +479,11 @@ scale = 0
  [../]
  
 # Mass Balances
+ [./N2O_time]
+    type = CoefTimeDerivative
+    variable = N2O
+    Coefficient = 0.4945
+  [../]
   [./N2O_conv]
     type = ConstMassTransfer
     variable = N2O
@@ -495,6 +525,11 @@ scale = 0
  [../]
  
 # Mass Balances
+ [./NH3_time]
+    type = CoefTimeDerivative
+    variable = NH3
+    Coefficient = 0.4945
+  [../]
   [./NH3_conv]
     type = ConstMassTransfer
     variable = NH3
@@ -801,7 +836,7 @@ scale = 0
   petsc_options_value = 'gmres 300 asm lu'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = basic
+  line_search = none
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-6
   nl_rel_step_tol = 1e-10
