@@ -6,11 +6,6 @@
 []
 
 [Variables]
- [./O2_act]
-   order = FIRST
-   family = MONOMIAL
-   initial_condition = 7100 #ppm
- [../]
  
 #O2 concentration (used as a variable for moving through time)
   [./O2]
@@ -179,32 +174,26 @@
 []
 
 [Kernels]
-  [./O2_time]
-    type = CoefTimeDerivative
-    variable = O2
-    Coefficient = 1
-  [../]
- 
 # Mass Balances
-[./O2_act_time]
+[./O2_time]
    type = CoefTimeDerivative
-   variable = O2_act
+   variable = O2
    Coefficient = 0.4945
  [../]
   [./O2_conv]
     type = ConstMassTransfer
-    variable = O2_act
+    variable = O2
     coupled = O2_in
     transfer_rate = -12.454
   [../]
   [./r1_rxn_O2]
     type = InhibitedArrheniusReaction
-    variable = O2_act
-    this_variable = O2_act
+    variable = O2
+    this_variable = O2
     temperature = temp
 
-    forward_pre_exponential = 5.69852E36
-    forward_activation_energy = 361593.2322
+    forward_pre_exponential = 1.042E38
+    forward_activation_energy = 371730.6911
     forward_inhibition = 1
 
     scale = 0.5
@@ -215,16 +204,20 @@
   [../]
  [./r2_rxn_O2]
    type = InhibitedArrheniusReaction
-   variable = O2_act
-   this_variable = O2_act
+   variable = O2
+   this_variable = O2
    temperature = temp
 
-   forward_pre_exponential = 6.99E8
-   forward_activation_energy = 101611.5
+#forward_pre_exponential = 1.2782E10
+#forward_activation_energy = 111748.9589
+forward_pre_exponential = 181.7259
+forward_activation_energy = 47133.079
    forward_inhibition = 1
 
-   reverse_pre_exponential = 7.02E10
-   reverse_activation_energy = 105951.7
+#reverse_pre_exponential = 7.02E10
+#reverse_activation_energy = 105951.7
+reverse_pre_exponential = 1096.83
+reverse_activation_energy = 57315.51
    reverse_inhibition = 1
 
    scale = 0.5
@@ -235,12 +228,12 @@
  [../]
  [./r3_rxn_O2]
    type = InhibitedArrheniusReaction
-   variable = O2_act
-   this_variable = O2_act
+   variable = O2
+   this_variable = O2
    temperature = temp
 
-   forward_pre_exponential = 1.239906E44
-   forward_activation_energy = 473201.3325
+   forward_pre_exponential = 2.26722E45
+   forward_activation_energy = 483338.7914
    forward_inhibition = 1
 
    scale = 3.0
@@ -269,8 +262,8 @@
     this_variable = CO
     temperature = temp
 
-    forward_pre_exponential = 5.69852E36
-    forward_activation_energy = 361593.2322
+ forward_pre_exponential = 1.042E38
+ forward_activation_energy = 371730.6911
     forward_inhibition = 1
 
     scale = 1.0
@@ -346,12 +339,16 @@
     this_variable = H2
     temperature = temp
 
-    forward_pre_exponential = 6.99E8
-    forward_activation_energy = 101611.5
-    forward_inhibition = 1
- 
-    reverse_pre_exponential = 7.02E10
-    reverse_activation_energy = 105951.7
+#forward_pre_exponential = 1.2782E10
+#forward_activation_energy = 111748.9589
+forward_pre_exponential = 181.7259
+forward_activation_energy = 47133.079
+   forward_inhibition = 1
+
+#reverse_pre_exponential = 7.02E10
+#reverse_activation_energy = 105951.7
+reverse_pre_exponential = 1096.83
+reverse_activation_energy = 57315.51
     reverse_inhibition = 1
 
     scale = 1.0
@@ -427,8 +424,8 @@
     this_variable = HC
     temperature = temp
 
-    forward_pre_exponential = 1.239906E44
-    forward_activation_energy = 473201.3325
+ forward_pre_exponential = 2.26722E45
+ forward_activation_energy = 483338.7914
     forward_inhibition = 1
 
     scale = 1.0
@@ -846,11 +843,6 @@
     [./O2]
         type = ElementAverageValue
         variable = O2
-        execute_on = 'initial timestep_end'
-    [../]
-    [./O2_act]
-        type = ElementAverageValue
-        variable = O2_act
         execute_on = 'initial timestep_end'
     [../]
     [./CO]

@@ -6,12 +6,6 @@
 []
 
 [Variables]
- [./O2_act]
-   order = FIRST
-   family = MONOMIAL
-   initial_condition = 7100 #ppm
- [../]
- 
 #O2 concentration (used as a variable for moving through time)
   [./O2]
     order = FIRST
@@ -34,7 +28,7 @@
   [./HC]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 1500 #ppm as C2
+    initial_condition = 1500 #ppm
   [../]
  
 #NOTE: CANNOT name a variable 'NO' because MOOSE interprets this as instructions and not a name
@@ -54,62 +48,6 @@
     order = FIRST
     family = MONOMIAL
     initial_condition = 0 #ppm
-  [../]
-
-#Inhibition variables
-  [./R1]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 1
-    #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-  [../]
-  [./R2]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 1
-   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-  [../]
-  [./R3]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 1
-   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-  [../]
-  [./R4]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 1
-   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-  [../]
-  [./R5]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 1
-   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-  [../]
-  [./R6]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 1
-   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-  [../]
-  [./R8]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 1
-   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-  [../]
-  [./R10]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 1
-   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
-  [../]
-  [./R14]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 1
-   #Need to provide a good initial condition for R1 (otherwise, convergence is poor)
   [../]
  
 #Coupled non-linear temperature
@@ -133,12 +71,6 @@
     initial_condition = 134535 #ppm
   [../]
  
- [./O2_in]
-   order = FIRST
-   family = MONOMIAL
-   initial_condition = 7100 #ppm
- [../]
- 
 #Inlet concentrations
   [./N2O_in]
     order = FIRST
@@ -161,7 +93,7 @@
   [./HC_in]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 1500 #ppm as C2
+    initial_condition = 1500 #ppm
   [../]
   
   [./CO_in]
@@ -185,71 +117,6 @@
     Coefficient = 1
   [../]
  
-# Mass Balances
-[./O2_act_time]
-   type = CoefTimeDerivative
-   variable = O2_act
-   Coefficient = 0.4945
- [../]
-  [./O2_conv]
-    type = ConstMassTransfer
-    variable = O2_act
-    coupled = O2_in
-    transfer_rate = -12.454
-  [../]
-  [./r1_rxn_O2]
-    type = InhibitedArrheniusReaction
-    variable = O2_act
-    this_variable = O2_act
-    temperature = temp
-
-    forward_pre_exponential = 5.69852E36
-    forward_activation_energy = 361593.2322
-    forward_inhibition = 1
-
-    scale = 0.5
-    reactants = 'CO O2'
-    reactant_stoich = '1 1'
-    products = ''
-    product_stoich = ''
-  [../]
- [./r2_rxn_O2]
-   type = InhibitedArrheniusReaction
-   variable = O2_act
-   this_variable = O2_act
-   temperature = temp
-
-   forward_pre_exponential = 6.99E8
-   forward_activation_energy = 101611.5
-   forward_inhibition = 1
-
-   reverse_pre_exponential = 7.02E10
-   reverse_activation_energy = 105951.7
-   reverse_inhibition = 1
-
-   scale = 0.5
-   reactants = 'H2 O2'
-   reactant_stoich = '1 1'
-   products = 'H2O'
-   product_stoich = '1'
- [../]
- [./r3_rxn_O2]
-   type = InhibitedArrheniusReaction
-   variable = O2_act
-   this_variable = O2_act
-   temperature = temp
-
-   forward_pre_exponential = 1.239906E44
-   forward_activation_energy = 473201.3325
-   forward_inhibition = 1
-
-   scale = 3.0
-   reactants = 'HC O2'
-   reactant_stoich = '1 1'
-   products = ''
-   product_stoich = ''
- [../]
- 
 #Time coeff = 0.4945 or -0.4945
 # Mass Balances
 [./CO_time]
@@ -269,8 +136,8 @@
     this_variable = CO
     temperature = temp
 
-    forward_pre_exponential = 5.69852E36
-    forward_activation_energy = 361593.2322
+    forward_pre_exponential = 1.3783E41
+    forward_activation_energy = 415622.45
     forward_inhibition = 1
 
     scale = 1.0
@@ -285,8 +152,8 @@
    this_variable = CO
    temperature = temp
 
-   forward_pre_exponential = 16513.02666
-   forward_activation_energy = 58158.01548
+   forward_pre_exponential = 58720.44
+   forward_activation_energy = 62556.5
    forward_inhibition = 1
 
    scale = 1.0
@@ -301,8 +168,8 @@
    this_variable = CO
    temperature = temp
 
-   forward_pre_exponential = 33.5318
-   forward_activation_energy = 37101.18
+   forward_pre_exponential = 70.342
+   forward_activation_energy = 39487.3
    forward_inhibition = 1
 
    scale = 1.0
@@ -317,8 +184,8 @@
    this_variable = CO
    temperature = temp
 
-   forward_pre_exponential = 0.41869
-   forward_activation_energy = 72465.53
+   forward_pre_exponential = 52.89546
+   forward_activation_energy = 91672.78
    forward_inhibition = 1
 
    scale = 2.5
@@ -346,12 +213,12 @@
     this_variable = H2
     temperature = temp
 
-    forward_pre_exponential = 6.99E8
-    forward_activation_energy = 101611.5
+    forward_pre_exponential = 31032693
+    forward_activation_energy = 88259.46
     forward_inhibition = 1
  
-    reverse_pre_exponential = 7.02E10
-    reverse_activation_energy = 105951.7
+    reverse_pre_exponential = 4.85E9
+    reverse_activation_energy = 95089.1
     reverse_inhibition = 1
 
     scale = 1.0
@@ -366,8 +233,8 @@
    this_variable = H2
    temperature = temp
 
-   forward_pre_exponential = 140391129.2
-   forward_activation_energy = 139019.5195
+   forward_pre_exponential = 2673.04
+   forward_activation_energy = 67254.65
    forward_inhibition = 1
 
    scale = 2.5
@@ -382,8 +249,8 @@
    this_variable = H2
    temperature = temp
 
-   forward_pre_exponential = 4.4072E10
-   forward_activation_energy = 122617.267
+   forward_pre_exponential = 3.61E11
+   forward_activation_energy = 134846.5
    forward_inhibition = 1
 
    scale = 1
@@ -398,8 +265,8 @@
    this_variable = H2
    temperature = temp
 
-   forward_pre_exponential = 175.866
-   forward_activation_energy = 43438.59
+   forward_pre_exponential = 368.117
+   forward_activation_energy = 48408.37
    forward_inhibition = 1
 
    scale = 1.0
@@ -427,8 +294,8 @@
     this_variable = HC
     temperature = temp
 
-    forward_pre_exponential = 1.239906E44
-    forward_activation_energy = 473201.3325
+    forward_pre_exponential = 8.17E15
+    forward_activation_energy = 187452.3
     forward_inhibition = 1
 
     scale = 1.0
@@ -456,8 +323,8 @@
     this_variable = NOx
     temperature = temp
 
-    forward_pre_exponential = 16513.02666
-    forward_activation_energy = 58158.01548
+    forward_pre_exponential = 58720.44
+    forward_activation_energy = 62556.5
     forward_inhibition = 1
 
     scale = 1.0
@@ -472,8 +339,8 @@
    this_variable = NOx
    temperature = temp
 
-   forward_pre_exponential = 33.5318
-   forward_activation_energy = 37101.18
+    forward_pre_exponential = 70.342
+    forward_activation_energy = 39487.3
    forward_inhibition = 1
 
    scale = 2.0
@@ -488,9 +355,9 @@
    this_variable = NOx
    temperature = temp
 
-    forward_pre_exponential = 140391129.2
-    forward_activation_energy = 139019.5195
-    forward_inhibition = 1
+    forward_pre_exponential = 2673.04
+    forward_activation_energy = 67254.65
+   forward_inhibition = 1
 
    scale = 1.0
    reactants = 'H2 NOx'
@@ -504,8 +371,8 @@
    this_variable = NOx
    temperature = temp
 
-   forward_pre_exponential = 4.4072E10
-   forward_activation_energy = 122617.267
+ forward_pre_exponential = 3.61E11
+ forward_activation_energy = 134846.5
    forward_inhibition = 1
 
    scale = 1
@@ -520,8 +387,8 @@
    this_variable = NOx
    temperature = temp
 
-    forward_pre_exponential = 0.41869
-    forward_activation_energy = 72465.53
+ forward_pre_exponential = 52.89546
+ forward_activation_energy = 91672.78
     forward_inhibition = 1
 
    scale = 1.0
@@ -536,8 +403,8 @@
    this_variable = NOx
    temperature = temp
 
-    forward_pre_exponential = 175.866
-    forward_activation_energy = 43438.59
+ forward_pre_exponential = 368.117
+ forward_activation_energy = 48408.37
     forward_inhibition = 1
 
    scale = 2.0
@@ -565,8 +432,8 @@
     this_variable = N2O
     temperature = temp
 
-    forward_pre_exponential = 33.5318
-    forward_activation_energy = 37101.18
+ forward_pre_exponential = 70.342
+ forward_activation_energy = 39487.3
     forward_inhibition = 1
 
     scale = -1.0
@@ -581,8 +448,8 @@
    this_variable = N2O
    temperature = temp
 
-    forward_pre_exponential = 175.866
-    forward_activation_energy = 43438.59
+ forward_pre_exponential = 368.117
+ forward_activation_energy = 48408.37
     forward_inhibition = 1
 
     scale = -1.0
@@ -610,8 +477,8 @@
     this_variable = NH3
     temperature = temp
 
-    forward_pre_exponential = 140391129.2
-    forward_activation_energy = 139019.5195
+ forward_pre_exponential = 2673.04
+ forward_activation_energy = 67254.65
     forward_inhibition = 1
 
     scale = -1.0
@@ -626,8 +493,8 @@
    this_variable = NH3
    temperature = temp
 
-    forward_pre_exponential = 0.41869
-    forward_activation_energy = 72465.53
+ forward_pre_exponential = 52.89546
+ forward_activation_energy = 91672.78
     forward_inhibition = 1
 
    scale = -1.0
@@ -636,186 +503,6 @@
    products = ''
    product_stoich = ''
  [../]
-
-# Inhibitions
-  [./R1_eq]
-    type = Reaction
-    variable = R1
-  [../]
-  [./R1_inhib]
-    type = PairedLangmuirInhibition
-    variable = R1
-    temperature = temp
- 
-    coupled_list = 'CO'
-    pre_exponentials = '0'
-    activation_energies = '0'
- 
-    coupled_i_list = 'CO'
-    coupled_j_list = 'NOx'
-    binary_pre_exp = '0'
-    binary_energies = '0'
-  [../]
- 
-# Inhibitions
-  [./R2_eq]
-    type = Reaction
-    variable = R2
-  [../]
-  [./R2_inhib]
-    type = PairedLangmuirInhibition
-    variable = R2
-    temperature = temp
- 
-    coupled_list = 'CO'
-    pre_exponentials = '0'
-    activation_energies = '0'
- 
-    coupled_i_list = 'CO CO'
-    coupled_j_list = 'NOx HC'
-    binary_pre_exp = '0 0'
-    binary_energies = '0 0'
-  [../]
- 
-# Inhibitions
-  [./R3_eq]
-    type = Reaction
-    variable = R3
-  [../]
-  [./R3_inhib]
-    type = PairedLangmuirInhibition
-    variable = R3
-    temperature = temp
-
-    coupled_list = 'HC'
-    pre_exponentials = '0'
-    activation_energies = '0'
-
-    coupled_i_list = 'CO HC'
-    coupled_j_list = 'HC NOx'
-    binary_pre_exp = '0 0'
-    binary_energies = '0 0'
-  [../]
- 
-# Inhibitions
-  [./R4_eq]
-    type = Reaction
-    variable = R4
-  [../]
-  [./R4_inhib]
-    type = PairedLangmuirInhibition
-    variable = R4
-    temperature = temp
-
-    coupled_list = 'HC'
-    pre_exponentials = '0'
-    activation_energies = '0'
-
-    coupled_i_list = 'CO NOx'
-    coupled_j_list = 'NOx HC'
-    binary_pre_exp = '0 0'
-    binary_energies = '0 0'
-  [../]
- 
-# Inhibitions
-  [./R5_eq]
-    type = Reaction
-    variable = R5
-  [../]
-  [./R5_inhib]
-    type = PairedLangmuirInhibition
-    variable = R5
-    temperature = temp
-
-    coupled_list = 'CO'
-    pre_exponentials = '0'
-    activation_energies = '0'
-
-    coupled_i_list = 'CO NOx'
-    coupled_j_list = 'HC HC'
-    binary_pre_exp = '0 0'
-    binary_energies = '0 0'
-  [../]
- 
-# Inhibitions
-  [./R6_eq]
-    type = Reaction
-    variable = R6
-  [../]
-  [./R6_inhib]
-    type = PairedLangmuirInhibition
-    variable = R6
-    temperature = temp
-
-    coupled_list = 'HC'
-    pre_exponentials = '0'
-    activation_energies = '0'
-
-    coupled_i_list = 'CO HC'
-    coupled_j_list = 'HC NOx'
-    binary_pre_exp = '0 0'
-    binary_energies = '0 0'
-  [../]
- 
-# Inhibitions
-  [./R8_eq]
-    type = Reaction
-    variable = R8
-  [../]
-  [./R8_inhib]
-    type = PairedLangmuirInhibition
-    variable = R8
-    temperature = temp
-
-    coupled_list = 'HC'
-    pre_exponentials = '0'
-    activation_energies = '0'
-
-    coupled_i_list = 'CO'
-    coupled_j_list = 'NOx'
-    binary_pre_exp = '0'
-    binary_energies = '0'
-  [../]
- 
-# Inhibitions
-  [./R10_eq]
-    type = Reaction
-    variable = R10
-  [../]
-  [./R10_inhib]
-    type = PairedLangmuirInhibition
-    variable = R10
-    temperature = temp
-
-    coupled_list = 'HC'
-    pre_exponentials = '0'
-    activation_energies = '0'
-
-    coupled_i_list = 'HC'
-    coupled_j_list = 'NOx'
-    binary_pre_exp = '0'
-    binary_energies = '0'
-  [../]
- 
-# Inhibitions
-  [./R14_eq]
-    type = Reaction
-    variable = R14
-  [../]
-  [./R14_inhib]
-    type = PairedLangmuirInhibition
-    variable = R14
-    temperature = temp
-
-    coupled_list = ''
-    pre_exponentials = ''
-    activation_energies = ''
-
-    coupled_i_list = 'CO HC'
-    coupled_j_list = 'HC NOx'
-    binary_pre_exp = '0 0'
-    binary_energies = '0 0'
-  [../]
  
 #NOTE: This kernel is used to set the temperature equal to a reference temperature at each time step
 #      The residual for this kernel is k*(T - T_ref)  (with k = 1)
@@ -830,8 +517,8 @@
     [./temp_ramp]
         type = LinearChangeInTime
         variable = temp_ref
-        start_time = 1
-        end_time = 43
+        start_time = 120
+        end_time = 5160
         end_value = 813.15
     # Execute always at initial, then at either timestep_begin or timestep_end
         execute_on = 'initial timestep_begin'
@@ -846,11 +533,6 @@
     [./O2]
         type = ElementAverageValue
         variable = O2
-        execute_on = 'initial timestep_end'
-    [../]
-    [./O2_act]
-        type = ElementAverageValue
-        variable = O2_act
         execute_on = 'initial timestep_end'
     [../]
     [./CO]
@@ -917,12 +599,12 @@
   l_max_its = 300
 
   start_time = 0
-  end_time = 43
-  dtmax = 1
+  end_time = 5160
+  dtmax = 120
 
   [./TimeStepper]
      type = ConstantDT
-     dt = 1
+     dt = 120
   [../]
 [] #END Executioner
 
