@@ -76,6 +76,22 @@
    initial_condition = 1663
  [../]
  
+ [./R4]
+   order = FIRST
+   family = MONOMIAL
+   initial_condition = 67147
+ [../]
+[./R4_COHC]
+  order = FIRST
+  family = MONOMIAL
+  initial_condition = 11.8
+[../]
+[./R4_NO]
+  order = FIRST
+  family = MONOMIAL
+  initial_condition = 5675
+[../]
+ 
 []
  
 [AuxVariables]
@@ -177,9 +193,13 @@
    this_variable = CO
    temperature = temp
 
-   forward_pre_exponential = 2.253
-   forward_activation_energy = 34410.26
-   forward_inhibition = 1
+#forward_pre_exponential = 2.253
+#forward_activation_energy = 34410.26
+#forward_inhibition = 1
+ 
+    forward_pre_exponential = 70.55
+    forward_activation_energy = 10032
+    forward_inhibition = R4
 
    scale = 1.0
    reactants = 'CO NOx'
@@ -373,9 +393,13 @@
     this_variable = NOx
     temperature = temp
 
-    forward_pre_exponential = 2.253
-    forward_activation_energy = 34410.26
-    forward_inhibition = 1
+#forward_pre_exponential = 2.253
+#forward_activation_energy = 34410.26
+#forward_inhibition = 1
+ 
+    forward_pre_exponential = 70.55
+    forward_activation_energy = 10032
+    forward_inhibition = R4
 
     scale = 1.0
     reactants = 'CO NOx'
@@ -620,6 +644,7 @@
  
  
 # ------------------ Start list of inhibition terms --------------------
+# =========== Reaction 1 ==========
  [./R1_COHC_eq]
    type = Reaction
    variable = R1_COHC
@@ -654,6 +679,44 @@
    type = InhibitionProducts
    variable = R1
    coupled_list = 'R1_COHC R1_NO'
+   power_list = '1 1'
+ [../]
+ 
+# =========== Reaction 4 ==========
+ [./R4_COHC_eq]
+   type = Reaction
+   variable = R4_COHC
+ [../]
+ [./R4_COHC_lang]
+   type = LangmuirInhibition
+   variable = R4_COHC
+   temperature = temp
+   coupled_list = 'HC CO'
+   pre_exponentials = '92294368 1.811E12'
+   activation_energies = '71974.97 150460.6'
+ [../]
+ 
+ [./R4_NO_eq]
+   type = Reaction
+   variable = R4_NO
+ [../]
+ [./R4_NO_lang]
+   type = LangmuirInhibition
+   variable = R4_NO
+   temperature = temp
+   coupled_list = 'NOx'
+   pre_exponentials = '3.68E-12'
+   activation_energies = '-92546.66'
+ [../]
+ 
+ [./R4_eq]
+   type = Reaction
+   variable = R4
+ [../]
+ [./R4_lang]
+   type = InhibitionProducts
+   variable = R4
+   coupled_list = 'R4_COHC R4_NO'
    power_list = '1 1'
  [../]
  
@@ -717,19 +780,19 @@
         execute_on = 'initial timestep_end'
     [../]
  
-# [./T_R1]
+# [./T_R4]
 #     type = ElementAverageValue
-#     variable = R1
+#     variable = R4
 #     execute_on = 'initial timestep_end'
 # [../]
-# [./T_R1_COHC]
+# [./T_R4_COHC]
 #     type = ElementAverageValue
-#     variable = R1_COHC
+#     variable = R4_COHC
 #     execute_on = 'initial timestep_end'
 # [../]
-# [./T_R1_NO]
+# [./T_R4_NO]
 #     type = ElementAverageValue
-#     variable = R1_NO
+#     variable = R4_NO
 #     execute_on = 'initial timestep_end'
 # [../]
 []
