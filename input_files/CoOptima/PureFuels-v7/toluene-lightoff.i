@@ -63,7 +63,6 @@
  [./R_NO]
    order = FIRST
    family = MONOMIAL
-#initial_condition = 2.6
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
@@ -76,56 +75,106 @@
   [./R1]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 103225
+    [./InitialCondition]
+        type = InitialInhibitionProducts
+        coupled_list = 'R1_COHC R_NO'
+        power_list = '1 1'
+    [../]
   [../]
  [./R1_COHC]
    order = FIRST
    family = MONOMIAL
-   initial_condition = 103225
+    [./InitialCondition]
+        type = InitialLangmuirInhibition
+        temperature = temp
+        coupled_list = 'HC CO'
+        pre_exponentials = '0.318267 3.5496E18'
+        activation_energies = '-21669.4 214764.7'
+    [../]
  [../]
  
  [./R4]
    order = FIRST
    family = MONOMIAL
-   initial_condition = 505407
+    [./InitialCondition]
+        type = InitialInhibitionProducts
+        coupled_list = 'R4_COHC R_NO'
+        power_list = '1 1'
+    [../]
  [../]
 [./R4_COHC]
   order = FIRST
   family = MONOMIAL
-  initial_condition = 195351
+    [./InitialCondition]
+        type = InitialLangmuirInhibition
+        temperature = temp
+        coupled_list = 'HC CO'
+        pre_exponentials = '3.048E-6 3.5496E18'
+        activation_energies = '-61530.3 214764.7'
+    [../]
 [../]
  
  [./R5]
    order = FIRST
    family = MONOMIAL
-   initial_condition = 97197
+    [./InitialCondition]
+        type = InitialInhibitionProducts
+        coupled_list = 'R5_COHC R_NO'
+        power_list = '1 1'
+    [../]
  [../]
 [./R5_COHC]
   order = FIRST
   family = MONOMIAL
-  initial_condition = 37569
+    [./InitialCondition]
+        type = InitialLangmuirInhibition
+        temperature = temp
+        coupled_list = 'HC CO'
+        pre_exponentials = '8.605E-6 3.5496E18'
+        activation_energies = '-52748.1 214764.7'
+    [../]
 [../]
  
  [./R8]
    order = FIRST
    family = MONOMIAL
-   initial_condition = 193059
+    [./InitialCondition]
+        type = InitialInhibitionProducts
+        coupled_list = 'R8_COHC R_NO'
+        power_list = '1 1'
+    [../]
  [../]
 [./R8_COHC]
   order = FIRST
   family = MONOMIAL
-  initial_condition = 74621
+    [./InitialCondition]
+        type = InitialLangmuirInhibition
+        temperature = temp
+        coupled_list = 'HC CO'
+        pre_exponentials = '0.000349 3.5496E18'
+        activation_energies = '-42887.6 214764.7'
+    [../]
 [../]
  
  [./R15]
    order = FIRST
    family = MONOMIAL
-   initial_condition = 7144342
+    [./InitialCondition]
+        type = InitialInhibitionProducts
+        coupled_list = 'R15_COHC R_NO'
+        power_list = '1 1'
+    [../]
  [../]
 [./R15_COHC]
   order = FIRST
   family = MONOMIAL
-  initial_condition = 2761444
+    [./InitialCondition]
+        type = InitialLangmuirInhibition
+        temperature = temp
+        coupled_list = 'HC CO'
+        pre_exponentials = '1.658E-7 3.5496E18'
+        activation_energies = '-79706.1 214764.7'
+    [../]
 [../]
  
 []

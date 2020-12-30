@@ -1,0 +1,7 @@
+[Tests]
+  [./product_inhibition_IC]
+    type = 'Exodiff'
+    input = 'inhibition_product_IC_test.i'
+    exodiff = 'inhibition_product_IC_test_out.e'
+  [../]
+[]
