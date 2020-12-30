@@ -60,84 +60,72 @@
 #Coupled Inhibition terms
 # ---------------- NOTE: May need to create a custom IC kernel for these -------------------
 # ----------------- Current ICs are given based on approximate inlet conditions -------------
+ [./R_NO]
+   order = FIRST
+   family = MONOMIAL
+#initial_condition = 2.6
+    [./InitialCondition]
+        type = InitialLangmuirInhibition
+        temperature = temp
+        coupled_list = 'NOx'
+        pre_exponentials = '7.6669E-8'
+        activation_energies = '-33295.6'
+    [../]
+ [../]
+ 
   [./R1]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 7089224
+    initial_condition = 103225
   [../]
  [./R1_COHC]
    order = FIRST
    family = MONOMIAL
-   initial_condition = 4262
- [../]
- [./R1_NO]
-   order = FIRST
-   family = MONOMIAL
-   initial_condition = 1663
+   initial_condition = 103225
  [../]
  
  [./R4]
    order = FIRST
    family = MONOMIAL
-   initial_condition = 67147
+   initial_condition = 505407
  [../]
 [./R4_COHC]
   order = FIRST
   family = MONOMIAL
-  initial_condition = 11.8
-[../]
-[./R4_NO]
-  order = FIRST
-  family = MONOMIAL
-  initial_condition = 5675
+  initial_condition = 195351
 [../]
  
  [./R5]
    order = FIRST
    family = MONOMIAL
-   initial_condition = 261
+   initial_condition = 97197
  [../]
 [./R5_COHC]
   order = FIRST
   family = MONOMIAL
-  initial_condition = 206
-[../]
-[./R5_NO]
-  order = FIRST
-  family = MONOMIAL
-  initial_condition = 1.3
+  initial_condition = 37569
 [../]
  
  [./R8]
    order = FIRST
    family = MONOMIAL
-   initial_condition = 4257
+   initial_condition = 193059
  [../]
 [./R8_COHC]
   order = FIRST
   family = MONOMIAL
-  initial_condition = 6.24
-[../]
-[./R8_NO]
-  order = FIRST
-  family = MONOMIAL
-  initial_condition = 681.2
+  initial_condition = 74621
 [../]
  
  [./R15]
    order = FIRST
    family = MONOMIAL
-   initial_condition = 82329
+   initial_condition = 7144342
  [../]
 [./R15_COHC]
   order = FIRST
   family = MONOMIAL
-  initial_condition = 4.566
-[../]
-[./R15_NO]
-  order = FIRST
-  family = MONOMIAL
-  initial_condition = 18029.7
+  initial_condition = 2761444
 [../]
  
 []
@@ -245,8 +233,8 @@
 #forward_activation_energy = 34410.26
 #forward_inhibition = 1
  
-    forward_pre_exponential = 70.55
-    forward_activation_energy = 10032
+    forward_pre_exponential = 0.02311
+    forward_activation_energy = -20622.4
     forward_inhibition = R4
 
    scale = 1.0
@@ -265,8 +253,8 @@
 #forward_activation_energy = 43202.27
 #forward_inhibition = 1
  
-    forward_pre_exponential = 2.774
-    forward_activation_energy = 11337.789
+    forward_pre_exponential = 0.0319
+    forward_activation_energy = -22675.6
     forward_inhibition = R5
 
 
@@ -286,8 +274,8 @@
 #forward_activation_energy = 65283.03
 #forward_inhibition = 1
  
-    forward_pre_exponential = 0.0048216
-    forward_activation_energy = 30874.95
+    forward_pre_exponential = 7.132E-5
+    forward_activation_energy = 3087.5
     forward_inhibition = R8
 
    scale = 2.5
@@ -306,8 +294,8 @@
 #forward_activation_energy = 117357
 #forward_inhibition = 1
  
-    forward_pre_exponential = 13334.3
-    forward_activation_energy = 63401.24
+    forward_pre_exponential = 108.97
+    forward_activation_energy = 31700.6
     forward_inhibition = R15
 
    scale = 1
@@ -458,8 +446,8 @@
 #forward_activation_energy = 34410.26
 #forward_inhibition = 1
  
-    forward_pre_exponential = 70.55
-    forward_activation_energy = 10032
+    forward_pre_exponential = 0.02311
+    forward_activation_energy = -20622.4
     forward_inhibition = R4
 
     scale = 1.0
@@ -478,8 +466,8 @@
 #forward_activation_energy = 43202.27
 #forward_inhibition = 1
  
-    forward_pre_exponential = 2.774
-    forward_activation_energy = 11337.789
+    forward_pre_exponential = 0.0319
+    forward_activation_energy = -22675.6
     forward_inhibition = R5
 
    scale = 2.0
@@ -498,8 +486,8 @@
 #forward_activation_energy = 65283.03
 #forward_inhibition = 1
  
-    forward_pre_exponential = 0.0048216
-    forward_activation_energy = 30874.95
+    forward_pre_exponential = 7.132E-5
+    forward_activation_energy = 3087.5
     forward_inhibition = R8
 
    scale = 1.0
@@ -536,8 +524,8 @@
 #forward_activation_energy = 117357
 #forward_inhibition = 1
  
-    forward_pre_exponential = 13334.3
-    forward_activation_energy = 63401.24
+    forward_pre_exponential = 108.97
+    forward_activation_energy = 31700.6
     forward_inhibition = R15
 
    scale = -2
@@ -604,8 +592,8 @@
 #forward_activation_energy = 43202.27
 #forward_inhibition = 1
  
-    forward_pre_exponential = 2.774
-    forward_activation_energy = 11337.789
+    forward_pre_exponential = 0.0319
+    forward_activation_energy = -22675.6
     forward_inhibition = R5
 
     scale = -1.0
@@ -624,8 +612,8 @@
 #forward_activation_energy = 117357
 #forward_inhibition = 1
  
-    forward_pre_exponential = 13334.3
-    forward_activation_energy = 63401.24
+    forward_pre_exponential = 108.97
+    forward_activation_energy = 31700.6
     forward_inhibition = R15
 
    scale = 1
@@ -676,8 +664,8 @@
 #forward_activation_energy = 65283.03
 #forward_inhibition = 1
  
-    forward_pre_exponential = 0.0048216
-    forward_activation_energy = 30874.95
+    forward_pre_exponential = 7.132E-5
+    forward_activation_energy = 3087.5
     forward_inhibition = R8
 
    scale = -1.0
@@ -733,6 +721,20 @@
  
  
 # ------------------ Start list of inhibition terms --------------------
+# ============= NO Term =============
+ [./R_NO_eq]
+   type = Reaction
+   variable = R_NO
+ [../]
+ [./R_NO_lang]
+   type = LangmuirInhibition
+   variable = R_NO
+   temperature = temp
+   coupled_list = 'NOx'
+   pre_exponentials = '7.6669E-8'
+   activation_energies = '-33295.6'
+ [../]
+ 
 # =========== Reaction 1 ==========
  [./R1_COHC_eq]
    type = Reaction
@@ -743,21 +745,8 @@
    variable = R1_COHC
    temperature = temp
    coupled_list = 'HC CO'
-   pre_exponentials = '718.33 4.494E24'
-   activation_energies = '13990.98 246998.65'
- [../]
- 
- [./R1_NO_eq]
-   type = Reaction
-   variable = R1_NO
- [../]
- [./R1_NO_lang]
-   type = LangmuirInhibition
-   variable = R1_NO
-   temperature = temp
-   coupled_list = 'NOx'
-   pre_exponentials = '6.34E-15'
-   activation_energies = '-109334'
+   pre_exponentials = '0.318267 3.5496E18'
+   activation_energies = '-21669.4 214764.7'
  [../]
  
  [./R1_eq]
@@ -767,7 +756,7 @@
  [./R1_lang]
    type = InhibitionProducts
    variable = R1
-   coupled_list = 'R1_COHC R1_NO'
+   coupled_list = 'R1_COHC R_NO'
    power_list = '1 1'
  [../]
  
@@ -781,21 +770,8 @@
    variable = R4_COHC
    temperature = temp
    coupled_list = 'HC CO'
-   pre_exponentials = '92294368 1.811E12'
-   activation_energies = '71974.97 150460.6'
- [../]
- 
- [./R4_NO_eq]
-   type = Reaction
-   variable = R4_NO
- [../]
- [./R4_NO_lang]
-   type = LangmuirInhibition
-   variable = R4_NO
-   temperature = temp
-   coupled_list = 'NOx'
-   pre_exponentials = '3.68E-12'
-   activation_energies = '-92546.66'
+    pre_exponentials = '3.048E-6 3.5496E18'
+    activation_energies = '-61530.3 214764.7'
  [../]
  
  [./R4_eq]
@@ -805,7 +781,7 @@
  [./R4_lang]
    type = InhibitionProducts
    variable = R4
-   coupled_list = 'R4_COHC R4_NO'
+   coupled_list = 'R4_COHC R_NO'
    power_list = '1 1'
  [../]
  
@@ -819,21 +795,8 @@
    variable = R5_COHC
    temperature = temp
    coupled_list = 'HC CO'
-   pre_exponentials = '4.096E-6 0.01651351'
-   activation_energies = '-37888.83 5521.85'
- [../]
- 
- [./R5_NO_eq]
-   type = Reaction
-   variable = R5_NO
- [../]
- [./R5_NO_lang]
-   type = LangmuirInhibition
-   variable = R5_NO
-   temperature = temp
-   coupled_list = 'NOx'
-   pre_exponentials = '7.9589E-19'
-   activation_energies = '-110148.95'
+    pre_exponentials = '8.605E-6 3.5496E18'
+    activation_energies = '-52748.1 214764.7'
  [../]
  
  [./R5_eq]
@@ -843,7 +806,7 @@
  [./R5_lang]
    type = InhibitionProducts
    variable = R5
-   coupled_list = 'R5_COHC R5_NO'
+   coupled_list = 'R5_COHC R_NO'
    power_list = '1 1'
  [../]
  
@@ -857,21 +820,8 @@
    variable = R8_COHC
    temperature = temp
    coupled_list = 'HC CO'
-   pre_exponentials = '9408.9 13.42'
-   activation_energies = '44725.12 37729.9'
- [../]
- 
- [./R8_NO_eq]
-   type = Reaction
-   variable = R8_NO
- [../]
- [./R8_NO_lang]
-   type = LangmuirInhibition
-   variable = R8_NO
-   temperature = temp
-   coupled_list = 'NOx'
-   pre_exponentials = '1.164E-11'
-   activation_energies = '-81848.85'
+    pre_exponentials = '0.000349 3.5496E18'
+    activation_energies = '-42887.6 214764.7'
  [../]
  
  [./R8_eq]
@@ -881,7 +831,7 @@
  [./R8_lang]
    type = InhibitionProducts
    variable = R8
-   coupled_list = 'R8_COHC R8_NO'
+   coupled_list = 'R8_COHC R_NO'
    power_list = '1 1'
  [../]
  
@@ -895,21 +845,8 @@
    variable = R15_COHC
    temperature = temp
    coupled_list = 'HC CO'
-   pre_exponentials = '10831.13 0.003577'
-   activation_energies = '46076.34 18665.17'
- [../]
- 
- [./R15_NO_eq]
-   type = Reaction
-   variable = R15_NO
- [../]
- [./R15_NO_lang]
-   type = LangmuirInhibition
-   variable = R15_NO
-   temperature = temp
-   coupled_list = 'NOx'
-   pre_exponentials = '3.36E-13'
-   activation_energies = '-104149.46'
+    pre_exponentials = '1.658E-7 3.5496E18'
+    activation_energies = '-79706.1 214764.7'
  [../]
  
  [./R15_eq]
@@ -919,7 +856,7 @@
  [./R15_lang]
    type = InhibitionProducts
    variable = R15
-   coupled_list = 'R15_COHC R15_NO'
+   coupled_list = 'R15_COHC R_NO'
    power_list = '1 1'
  [../]
  
