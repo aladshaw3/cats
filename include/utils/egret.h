@@ -133,7 +133,7 @@ typedef struct
 	double total_molecular_weight;			///< Calculated: Total molecular weight (g/mol)
 	double total_specific_heat;				///< Calculated: Total specific heat (J/g/K)
 	double Reynolds;						///< Calculated: Value of the Reynold's number	(-)
-	Matrix<double> binary_diffusion;		///< Calculated: Tensor matrix of binary gas diffusivities (cm^2/s)
+	MATRIX<double> binary_diffusion;		///< Calculated: Tensor matrix of binary gas diffusivities (cm^2/s)
 	
 	//All Species Info
 	std::vector<PURE_GAS> species_dat;		///< Vector of the pure gas info of all species
