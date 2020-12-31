@@ -136,7 +136,7 @@ typedef struct
 	MATRIX<double> binary_diffusion;		///< Calculated: Tensor matrix of binary gas diffusivities (cm^2/s)
 	
 	//All Species Info
-	std::vector<PURE_GAS> species_dat;		///< Vector of the pure gas info of all species
+	std::vector<PURE_GAS> species_dat;		///< Vector of the pure gas info of all specie
 	
 }MIXED_GAS;
 
