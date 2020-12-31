@@ -38,18 +38,6 @@
 
 registerMooseObject("catsApp", CoupledCoeffTimeDerivative);
 
-/*
-template<>
-InputParameters validParams<CoupledCoeffTimeDerivative>()
-{
-	InputParameters params = validParams<Kernel>();
-	params.addParam<bool>("gaining",false,"If coupled time derivative is a sink term, then gaining = false");
-	params.addParam<Real>("time_coeff",1.0,"Coefficient for the time derivative kernel");
-	params.addRequiredCoupledVar("coupled","Name of the variable being coupled");
-	return params;
-}
- */
-
 InputParameters CoupledCoeffTimeDerivative::validParams()
 {
     InputParameters params = Kernel::validParams();
