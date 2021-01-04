@@ -88,10 +88,22 @@
         type = InitialLangmuirInhibition
         temperature = temp
         coupled_list = 'HC CO'
-        pre_exponentials = '0.318267 3.5496E18'
-        activation_energies = '-21669.4 214764.7'
+        pre_exponentials = '0.31953 3.5496E-8'
+        activation_energies = '-21653 -42953'
     [../]
  [../]
+ 
+[./R3]
+  order = FIRST
+  family = MONOMIAL
+   [./InitialCondition]
+       type = InitialLangmuirInhibition
+       temperature = temp
+       coupled_list = 'HC CO'
+       pre_exponentials = '0.001603 3.5496E-8'
+       activation_energies = '-12193 -42953'
+   [../]
+[../]
  
  [./R4]
    order = FIRST
@@ -109,8 +121,8 @@
         type = InitialLangmuirInhibition
         temperature = temp
         coupled_list = 'HC CO'
-        pre_exponentials = '3.048E-6 3.5496E18'
-        activation_energies = '-61530.3 214764.7'
+        pre_exponentials = '0.00015947 3.5496E-8'
+        activation_energies = '-35504 -42953'
     [../]
 [../]
  
@@ -130,8 +142,8 @@
         type = InitialLangmuirInhibition
         temperature = temp
         coupled_list = 'HC CO'
-        pre_exponentials = '8.605E-6 3.5496E18'
-        activation_energies = '-52748.1 214764.7'
+        pre_exponentials = '0.00121 3.5496E-8'
+        activation_energies = '-21602 -42953'
     [../]
 [../]
  
@@ -151,8 +163,8 @@
         type = InitialLangmuirInhibition
         temperature = temp
         coupled_list = 'HC CO'
-        pre_exponentials = '0.000349 3.5496E18'
-        activation_energies = '-42887.6 214764.7'
+        pre_exponentials = '0.000355 3.5496E-8'
+        activation_energies = '-42820 -42953'
     [../]
 [../]
  
@@ -172,8 +184,8 @@
         type = InitialLangmuirInhibition
         temperature = temp
         coupled_list = 'HC CO'
-        pre_exponentials = '1.658E-7 3.5496E18'
-        activation_energies = '-79706.1 214764.7'
+        pre_exponentials = '1.67E-7 3.5496E-8'
+        activation_energies = '-79681 -42953'
     [../]
 [../]
  
@@ -282,8 +294,8 @@
 #forward_activation_energy = 34410.26
 #forward_inhibition = 1
  
-    forward_pre_exponential = 0.02311
-    forward_activation_energy = -20622.4
+    forward_pre_exponential = 1.1519
+    forward_activation_energy = 5156
     forward_inhibition = R4
 
    scale = 1.0
@@ -302,8 +314,8 @@
 #forward_activation_energy = 43202.27
 #forward_inhibition = 1
  
-    forward_pre_exponential = 0.0319
-    forward_activation_energy = -22675.6
+    forward_pre_exponential = 2.3487
+    forward_activation_energy = 5668.9
     forward_inhibition = R5
 
 
@@ -411,9 +423,13 @@
     this_variable = HC
     temperature = temp
 
-    forward_pre_exponential = 7.88E15
-    forward_activation_energy = 204098.8
-    forward_inhibition = 1
+#forward_pre_exponential = 7.88E15
+#forward_activation_energy = 204098.8
+#forward_inhibition = 1
+ 
+    forward_pre_exponential = 1.0305E14
+    forward_activation_energy = 174867
+    forward_inhibition = R3
 
     scale = 1.0
     reactants = 'HC O2'
@@ -495,8 +511,8 @@
 #forward_activation_energy = 34410.26
 #forward_inhibition = 1
  
-    forward_pre_exponential = 0.02311
-    forward_activation_energy = -20622.4
+    forward_pre_exponential = 1.1519
+    forward_activation_energy = 5156
     forward_inhibition = R4
 
     scale = 1.0
@@ -515,8 +531,8 @@
 #forward_activation_energy = 43202.27
 #forward_inhibition = 1
  
-    forward_pre_exponential = 0.0319
-    forward_activation_energy = -22675.6
+    forward_pre_exponential = 2.3487
+    forward_activation_energy = 5668.9
     forward_inhibition = R5
 
    scale = 2.0
@@ -641,8 +657,8 @@
 #forward_activation_energy = 43202.27
 #forward_inhibition = 1
  
-    forward_pre_exponential = 0.0319
-    forward_activation_energy = -22675.6
+    forward_pre_exponential = 2.3487
+    forward_activation_energy = 5668.9
     forward_inhibition = R5
 
     scale = -1.0
@@ -794,8 +810,8 @@
    variable = R1_COHC
    temperature = temp
    coupled_list = 'HC CO'
-   pre_exponentials = '0.318267 3.5496E18'
-   activation_energies = '-21669.4 214764.7'
+    pre_exponentials = '0.31953 3.5496E-8'
+    activation_energies = '-21653 -42953'
  [../]
  
  [./R1_eq]
@@ -809,6 +825,20 @@
    power_list = '1 1'
  [../]
  
+# =========== Reaction 3 ==========
+ [./R3_eq]
+   type = Reaction
+   variable = R3
+ [../]
+ [./R3_lang]
+   type = LangmuirInhibition
+   variable = R3
+   temperature = temp
+   coupled_list = 'HC CO'
+    pre_exponentials = '0.001603 3.5496E-8'
+    activation_energies = '-12193 -42953'
+ [../]
+ 
 # =========== Reaction 4 ==========
  [./R4_COHC_eq]
    type = Reaction
@@ -819,8 +849,8 @@
    variable = R4_COHC
    temperature = temp
    coupled_list = 'HC CO'
-    pre_exponentials = '3.048E-6 3.5496E18'
-    activation_energies = '-61530.3 214764.7'
+    pre_exponentials = '0.00015947 3.5496E-8'
+    activation_energies = '-35504 -42953'
  [../]
  
  [./R4_eq]
@@ -844,8 +874,8 @@
    variable = R5_COHC
    temperature = temp
    coupled_list = 'HC CO'
-    pre_exponentials = '8.605E-6 3.5496E18'
-    activation_energies = '-52748.1 214764.7'
+    pre_exponentials = '0.00121 3.5496E-8'
+    activation_energies = '-21602 -42953'
  [../]
  
  [./R5_eq]
@@ -869,8 +899,8 @@
    variable = R8_COHC
    temperature = temp
    coupled_list = 'HC CO'
-    pre_exponentials = '0.000349 3.5496E18'
-    activation_energies = '-42887.6 214764.7'
+    pre_exponentials = '0.000355 3.5496E-8'
+    activation_energies = '-42820 -42953'
  [../]
  
  [./R8_eq]
@@ -894,8 +924,8 @@
    variable = R15_COHC
    temperature = temp
    coupled_list = 'HC CO'
-    pre_exponentials = '1.658E-7 3.5496E18'
-    activation_energies = '-79706.1 214764.7'
+    pre_exponentials = '1.67E-7 3.5496E-8'
+    activation_energies = '-79681 -42953'
  [../]
  
  [./R15_eq]
