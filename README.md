@@ -10,13 +10,13 @@ Installation and Usage
 -----
 To use CATS, a user must first download and install the MOOSE framework (https://mooseframework.inl.gov/). Follow the installation instructions contained therein first. 
 
-After MOOSE is installed, you can download this source code repository to a sub-directory at the same level as the 'moose/' directory. (e.g., if MOOSE is installed in '~/projects/moose', then perform the 'git clone ...' commands in the '~/projects/' directory.)
+After MOOSE is installed, you can download this source code repository to a sub-directory at the same level as the 'moose/' directory. (e.g., if MOOSE is installed in '(HOME)/projects/moose', then perform the 'git clone ...' commands in the '(HOME)/projects/' directory.)
 
-For example (assuming MOOSE is located in '~/projects/moose'), do the following...
+For example (assuming MOOSE is located in '(HOME)/projects/moose'), do the following in the '(HOME)/projects' folder...
 
 git clone https://github.com/aladshaw3/cats.git 
 
-Then, you can build CATS using the 'make' commands in the '~/projects/cats' folder created. 
+Then, you can build CATS using the 'make' commands in the '(HOME)/projects/cats' folder created. 
 
 
 Running the Program
