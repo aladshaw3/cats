@@ -1,24 +1,9 @@
- [GlobalParams]
-   dg_scheme = nipg
-   sigma = 10
-    transfer_rate = 96.042   #s^-1   Ga*km
- [] #END GlobalParams
-
-[Problem]
-    coord_type = RZ
-    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
-[] #END Problem
-
 [Mesh]
-    type = GeneratedMesh
-    dim = 2
-    nx = 1
-    ny = 20
-    xmin = 0.0
-    xmax = 1.0    #1cm radius
-    ymin = 0.0
-    ymax = 5.0    #5cm length
-[] # END Mesh
+  type = GeneratedMesh
+  dim = 2
+  nx = 1
+  ny = 1
+[]
 
 [Variables]
 #O2 concentration (used as a variable for moving through time)
@@ -27,66 +12,36 @@
     family = MONOMIAL
     initial_condition = 7080 #ppm
   [../]
-[./O2b]
-  order = FIRST
-  family = MONOMIAL
-  initial_condition = 7080 #ppm
-[../]
  
   [./CO]
     order = FIRST
     family = MONOMIAL
     initial_condition = 5084 #ppm
   [../]
-[./COb]
-  order = FIRST
-  family = MONOMIAL
-  initial_condition = 5084 #ppm
-[../]
  
   [./H2]
     order = FIRST
     family = MONOMIAL
     initial_condition = 1670 #ppm
   [../]
-[./H2b]
-  order = FIRST
-  family = MONOMIAL
-  initial_condition = 1670 #ppm
-[../]
  
   [./HC_ethanol]
     order = FIRST
     family = MONOMIAL
     initial_condition = 150 #ppm
   [../]
-[./HCb_ethanol]
-  order = FIRST
-  family = MONOMIAL
-  initial_condition = 150 #ppm
-[../]
  
   [./HC_toluene]
      order = FIRST
      family = MONOMIAL
      initial_condition = 107.143 #ppm
   [../]
-[./HCb_toluene]
-   order = FIRST
-   family = MONOMIAL
-   initial_condition = 107.143 #ppm
-[../]
  
   [./HC_isooctane]
      order = FIRST
      family = MONOMIAL
      initial_condition = 243.75 #ppm
   [../]
-[./HCb_isooctane]
-   order = FIRST
-   family = MONOMIAL
-   initial_condition = 243.75 #ppm
-[../]
  
 #NOTE: CANNOT name a variable 'NO' because MOOSE interprets this as instructions and not a name
   [./NOx]
@@ -94,33 +49,18 @@
     family = MONOMIAL
     initial_condition = 1055 #ppm
   [../]
-[./NOxb]
-  order = FIRST
-  family = MONOMIAL
-  initial_condition = 1055 #ppm
-[../]
  
   [./N2O]
     order = FIRST
     family = MONOMIAL
     initial_condition = 0 #ppm
   [../]
-[./N2Ob]
-  order = FIRST
-  family = MONOMIAL
-  initial_condition = 0 #ppm
-[../]
  
   [./NH3]
     order = FIRST
     family = MONOMIAL
     initial_condition = 0 #ppm
   [../]
-[./NH3b]
-  order = FIRST
-  family = MONOMIAL
-  initial_condition = 0 #ppm
-[../]
  
 #Coupled non-linear temperature
   [./temp]
@@ -378,68 +318,6 @@
     initial_condition = 1670 #ppm
   [../]
 
-#Structural/other parameters
-    [./eb]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 0.3309
-    [../]
-
-    [./ew]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 0.2
-    [../]
-
-    [./total_pore]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 0.13382     #  ew*(1 - eb)
-    [../]
-
-
-    [./Ga]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 5145  #m^-1
-    [../]
-
-    [./km]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 0.018667  #m/s
-    [../]
-
-    [./vel_x]
-        order = FIRST
-        family = LAGRANGE
-        initial_condition = 0
-    [../]
-
-    [./vel_y]
-        order = FIRST
-        family = LAGRANGE
-        initial_condition = 125.92   #cm/s   Based on SV = 30,000 hr^-1 and size of TWC
-    [../]
-
-    [./vel_z]
-        order = FIRST
-        family = LAGRANGE
-        initial_condition = 0
-    [../]
-
-    [./Diff]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 0.0
-    [../]
-
-    [./Dz]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 0.0
-    [../]
-
 []
 
 [Kernels]
@@ -448,55 +326,22 @@
     variable = O2
     Coefficient = 1
   [../]
-[./O2b_time]
-  type = CoefTimeDerivative
-  variable = O2b
-  Coefficient = 1
-[../]
  
-# Bulk CO
-    [./COb_dot]
-        type = VariableCoefTimeDerivative
-        variable = COb
-        coupled_coef = eb
-    [../]
-    [./COb_gadv]
-        type = GPoreConcAdvection
-        variable = COb
-        porosity = eb
-        ux = vel_x
-        uy = vel_y
-        uz = vel_z
-    [../]
-    [./COb_gdiff]
-        type = GVarPoreDiffusion
-        variable = COb
-        porosity = eb
-        Dx = Diff
-        Dy = Diff
-        Dz = Dz
-    [../]
-    [./COb_CO_trans]
-        type = ConstMassTransfer
-        variable = COb
-        coupled = CO
-        transfer_rate = 96.042   #s^-1   Ga*km
-    [../]
-
+ 
+ 
+ 
 # Mass Balances
 [./CO_time]
-    type = VariableCoefTimeDerivative
-    variable = CO
-    coupled_coef = ew
+   type = CoefTimeDerivative
+   variable = CO
+   Coefficient = 0.4945
  [../]
   [./CO_conv]
     type = ConstMassTransfer
     variable = CO
-    coupled = COb
-    transfer_rate = 143.539   #s^-1   Ga*km/(1 - eb)
+    coupled = CO_in
+    transfer_rate = -12.454
   [../]
-
-# ================== Change all signs ===================
   [./r1_rxn_CO]
     type = InhibitedArrheniusReaction
     variable = CO
