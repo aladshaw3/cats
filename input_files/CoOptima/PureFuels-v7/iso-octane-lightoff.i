@@ -10,13 +10,13 @@
   [./O2]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 6500 #ppm
+    initial_condition = 7300 #ppm
   [../]
  
   [./CO]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 5069 #ppm
+    initial_condition = 5110 #ppm
   [../]
  
   [./H2]
@@ -25,17 +25,17 @@
     initial_condition = 1670 #ppm
   [../]
  
-  [./HC_toluene]
+  [./HC_isooctane]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 428.57 #ppm
+    initial_condition = 375 #ppm
   [../]
  
 #NOTE: CANNOT name a variable 'NO' because MOOSE interprets this as instructions and not a name
   [./NOx]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 1038 #ppm
+    initial_condition = 1050 #ppm
   [../]
  
   [./N2O]
@@ -78,9 +78,9 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_toluene CO'
-        pre_exponentials = '0.31953 3.5496E-8'
-        activation_energies = '-21653 -42953'
+        coupled_list = 'HC_isooctane CO'
+        pre_exponentials = '0.011252 3.5496E-8'
+        activation_energies = '-9753 -42953'
     [../]
  [../]
  
@@ -90,9 +90,9 @@
    [./InitialCondition]
        type = InitialLangmuirInhibition
        temperature = temp
-       coupled_list = 'HC_toluene CO'
-       pre_exponentials = '0.0022018 3.5496E-8'
-       activation_energies = '-12194 -42953'
+       coupled_list = 'HC_isooctane CO'
+       pre_exponentials = '0.001628 3.5496E-8'
+       activation_energies = '-11974 -42953'
    [../]
 [../]
  
@@ -111,9 +111,9 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_toluene CO'
-        pre_exponentials = '0.00015947 3.5496E-8'
-        activation_energies = '-35504 -42953'
+        coupled_list = 'HC_isooctane CO'
+        pre_exponentials = '0.0000607 3.5496E-8'
+        activation_energies = '-30698 -42953'
     [../]
 [../]
  
@@ -132,9 +132,9 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_toluene CO'
-        pre_exponentials = '0.00121 3.5496E-8'
-        activation_energies = '-21602 -42953'
+        coupled_list = 'HC_isooctane CO'
+        pre_exponentials = '0.001345 3.5496E-8'
+        activation_energies = '-23580 -42953'
     [../]
 [../]
  
@@ -153,9 +153,9 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_toluene CO'
-        pre_exponentials = '0.000355 3.5496E-8'
-        activation_energies = '-42820 -42953'
+        coupled_list = 'HC_isooctane CO'
+        pre_exponentials = '1.45E-6 3.5496E-8'
+        activation_energies = '-63398 -42953'
     [../]
 [../]
  
@@ -174,9 +174,9 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_toluene CO'
-        pre_exponentials = '0.00104 3.5496E-8'
-        activation_energies = '-16137 -42953'
+        coupled_list = 'HC_isooctane CO'
+        pre_exponentials = '0.005258 3.5496E-8'
+        activation_energies = '-10355 -42953'
     [../]
 [../]
  
@@ -195,9 +195,9 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_toluene CO'
-        pre_exponentials = '1.67E-7 3.5496E-8'
-        activation_energies = '-79681 -42953'
+        coupled_list = 'HC_isooctane CO'
+        pre_exponentials = '1.43E-7 3.5496E-8'
+        activation_energies = '-84768 -42953'
     [../]
 [../]
  
@@ -216,9 +216,9 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_toluene CO'
-        pre_exponentials = '0.00599 3.5496E-8'
-        activation_energies = '-4350 -42953'
+        coupled_list = 'HC_isooctane CO'
+        pre_exponentials = '0.00633 3.5496E-8'
+        activation_energies = '-1545 -42953'
     [../]
 [../]
  
@@ -237,9 +237,9 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_toluene CO'
-        pre_exponentials = '0.00368 3.5496E-8'
-        activation_energies = '-3330 -42953'
+        coupled_list = 'HC_isooctane CO'
+        pre_exponentials = '5.811E-5 3.5496E-8'
+        activation_energies = '-28761 -42953'
     [../]
 [../]
  
@@ -254,7 +254,7 @@
   [./H2O]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 134283 #ppm
+    initial_condition = 135436 #ppm
   [../]
  
 #Inlet concentrations
@@ -267,7 +267,7 @@
   [./NO_in]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 1038 #ppm
+    initial_condition = 1050 #ppm
   [../]
  
   [./NH3_in]
@@ -276,16 +276,16 @@
     initial_condition = 0 #ppm
   [../]
  
-  [./HC_toluene_in]
+  [./HC_isooctane_in]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 428.57 #ppm
+    initial_condition = 375 #ppm
   [../]
   
   [./CO_in]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 5069 #ppm
+    initial_condition = 5110 #ppm
   [../]
  
   [./H2_in]
@@ -440,77 +440,77 @@
  
  
 # Mass Balances
- [./HC_toluene_time]
+ [./HC_isooctane_time]
     type = CoefTimeDerivative
-    variable = HC_toluene
+    variable = HC_isooctane
     Coefficient = 0.4945
   [../]
-  [./HC_toluene_conv]
+  [./HC_isooctane_conv]
     type = ConstMassTransfer
-    variable = HC_toluene
-    coupled = HC_toluene_in
+    variable = HC_isooctane
+    coupled = HC_isooctane_in
     transfer_rate = -12.454
   [../]
-  [./r3_rxn_HC_toluene]
+  [./r3_rxn_HC_isooctane]
     type = InhibitedArrheniusReaction
-    variable = HC_toluene
-    this_variable = HC_toluene
+    variable = HC_isooctane
+    this_variable = HC_isooctane
     temperature = temp
  
-    forward_pre_exponential = 1.0305E14
-    forward_activation_energy = 174867
+    forward_pre_exponential = 2.90E9
+    forward_activation_energy = 133697
     forward_inhibition = R3
 
     scale = 1.0
-    reactants = 'HC_toluene O2'
+    reactants = 'HC_isooctane O2'
     reactant_stoich = '1 1'
     products = ''
     product_stoich = ''
   [../]
- [./r10_rxn_HC_toluene]
+ [./r10_rxn_HC_isooctane]
    type = InhibitedArrheniusReaction
-   variable = HC_toluene
-   this_variable = HC_toluene
+   variable = HC_isooctane
+   this_variable = HC_isooctane
    temperature = temp
 
-    forward_pre_exponential = 1.691E28
-    forward_activation_energy = 304020
+    forward_pre_exponential = 1.243E30
+    forward_activation_energy = 389345
     forward_inhibition = R10
  
    scale = 1.0
-   reactants = 'HC_toluene NOx'
+   reactants = 'HC_isooctane NOx'
    reactant_stoich = '1 1'
    products = ''
    product_stoich = ''
  [../]
- [./r16_rxn_HC_toluene]
+ [./r16_rxn_HC_isooctane]
    type = InhibitedArrheniusReaction
-   variable = HC_toluene
-   this_variable = HC_toluene
+   variable = HC_isooctane
+   this_variable = HC_isooctane
    temperature = temp
  
-    forward_pre_exponential = 4.466E29
-    forward_activation_energy = 375869
+    forward_pre_exponential = 1.837E28
+    forward_activation_energy = 417824
     forward_inhibition = R16
 
    scale = 1.0
-   reactants = 'HC_toluene NOx O2'
+   reactants = 'HC_isooctane NOx O2'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
  [../]
- [./r18_rxn_HC_toluene]
+ [./r18_rxn_HC_isooctane]
    type = InhibitedArrheniusReaction
-   variable = HC_toluene
-   this_variable = HC_toluene
+   variable = HC_isooctane
+   this_variable = HC_isooctane
    temperature = temp
  
-    forward_pre_exponential = 3.921E18
-    forward_activation_energy = 258462
+    forward_pre_exponential = 0.00016
+    forward_activation_energy = 18442
     forward_inhibition = R18
 
    scale = 1.0
-   reactants = 'HC_toluene NOx O2'
+   reactants = 'HC_isooctane NOx O2'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -585,14 +585,14 @@
    this_variable = NOx
    temperature = temp
  
-    forward_pre_exponential = 1.691E28
-    forward_activation_energy = 304020
+    forward_pre_exponential = 1.243E30
+    forward_activation_energy = 389345
     forward_inhibition = R10
 
 #NOTE:  ------------ MUST CHANGE SCALE FOR NOx:   (2x + (y/2) - z):   x=7, y=8, z=0 -----------------
 #   ----------------------   scale depends on CxHyOz  for a given HC --------------------------------
-   scale = 18.0
-   reactants = 'HC_toluene NOx'
+   scale = 25.0
+   reactants = 'HC_isooctane NOx'
    reactant_stoich = '1 1'
    products = ''
    product_stoich = ''
@@ -619,12 +619,12 @@
    this_variable = NOx
    temperature = temp
  
-    forward_pre_exponential = 4.466E29
-    forward_activation_energy = 375869
+    forward_pre_exponential = 1.837E28
+    forward_activation_energy = 417824
     forward_inhibition = R16
 
    scale = 1.0
-   reactants = 'HC_toluene NOx O2'
+   reactants = 'HC_isooctane NOx O2'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -635,12 +635,12 @@
    this_variable = NOx
    temperature = temp
  
-    forward_pre_exponential = 3.921E18
-    forward_activation_energy = 258462
+    forward_pre_exponential = 0.00016
+    forward_activation_energy = 18442
     forward_inhibition = R18
 
    scale = 2.0
-   reactants = 'HC_toluene NOx O2'
+   reactants = 'HC_isooctane NOx O2'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -699,12 +699,12 @@
    this_variable = N2O
    temperature = temp
  
-    forward_pre_exponential = 3.921E18
-    forward_activation_energy = 258462
+    forward_pre_exponential = 0.00016
+    forward_activation_energy = 18442
     forward_inhibition = R18
 
    scale = -1.0
-   reactants = 'HC_toluene NOx O2'
+   reactants = 'HC_isooctane NOx O2'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -747,12 +747,12 @@
    this_variable = NH3
    temperature = temp
  
-    forward_pre_exponential = 4.466E29
-    forward_activation_energy = 375869
+    forward_pre_exponential = 1.837E28
+    forward_activation_energy = 417824
     forward_inhibition = R16
 
    scale = -1.0
-   reactants = 'HC_toluene NOx O2'
+   reactants = 'HC_isooctane NOx O2'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -807,9 +807,9 @@
    type = LangmuirInhibition
    variable = R1
    temperature = temp
-   coupled_list = 'HC_toluene CO'
-    pre_exponentials = '0.31953 3.5496E-8'
-    activation_energies = '-21653 -42953'
+   coupled_list = 'HC_isooctane CO'
+    pre_exponentials = '0.011252 3.5496E-8'
+    activation_energies = '-9753 -42953'
  [../]
  
 # =========== Reaction 3 ==========
@@ -821,9 +821,9 @@
    type = LangmuirInhibition
    variable = R3
    temperature = temp
-   coupled_list = 'HC_toluene CO'
-    pre_exponentials = '0.002018 3.5496E-8'
-    activation_energies = '-12194 -42953'
+   coupled_list = 'HC_isooctane CO'
+    pre_exponentials = '0.001628 3.5496E-8'
+    activation_energies = '-11974 -42953'
  [../]
  
 # =========== Reaction 4 ==========
@@ -835,9 +835,9 @@
    type = LangmuirInhibition
    variable = R4_COHC
    temperature = temp
-   coupled_list = 'HC_toluene CO'
-    pre_exponentials = '0.00015947 3.5496E-8'
-    activation_energies = '-35504 -42953'
+   coupled_list = 'HC_isooctane CO'
+    pre_exponentials = '0.0000607 3.5496E-8'
+    activation_energies = '-30698 -42953'
  [../]
  
  [./R4_eq]
@@ -860,9 +860,9 @@
    type = LangmuirInhibition
    variable = R5_COHC
    temperature = temp
-   coupled_list = 'HC_toluene CO'
-    pre_exponentials = '0.00121 3.5496E-8'
-    activation_energies = '-21602 -42953'
+   coupled_list = 'HC_isooctane CO'
+    pre_exponentials = '0.001345 3.5496E-8'
+    activation_energies = '-23580 -42953'
  [../]
  
  [./R5_eq]
@@ -885,9 +885,9 @@
    type = LangmuirInhibition
    variable = R8_COHC
    temperature = temp
-   coupled_list = 'HC_toluene CO'
-    pre_exponentials = '0.000355 3.5496E-8'
-    activation_energies = '-42820 -42953'
+   coupled_list = 'HC_isooctane CO'
+    pre_exponentials = '1.45E-6 3.5496E-8'
+    activation_energies = '-63398 -42953'
  [../]
  
  [./R8_eq]
@@ -910,9 +910,9 @@
    type = LangmuirInhibition
    variable = R10_COHC
    temperature = temp
-   coupled_list = 'HC_toluene CO'
-    pre_exponentials = '0.00104 3.5496E-8'
-    activation_energies = '-16137 -42953'
+   coupled_list = 'HC_isooctane CO'
+    pre_exponentials = '0.005258 3.5496E-8'
+    activation_energies = '-10355 -42953'
  [../]
  
  [./R10_eq]
@@ -935,9 +935,9 @@
    type = LangmuirInhibition
    variable = R15_COHC
    temperature = temp
-   coupled_list = 'HC_toluene CO'
-    pre_exponentials = '1.67E-7 3.5496E-8'
-    activation_energies = '-79681 -42953'
+   coupled_list = 'HC_isooctane CO'
+    pre_exponentials = '1.43E-7 3.5496E-8'
+    activation_energies = '-84768 -42953'
  [../]
  
  [./R15_eq]
@@ -960,9 +960,9 @@
    type = LangmuirInhibition
    variable = R16_COHC
    temperature = temp
-   coupled_list = 'HC_toluene CO'
-    pre_exponentials = '0.00599 3.5496E-8'
-    activation_energies = '-4350 -42953'
+   coupled_list = 'HC_isooctane CO'
+    pre_exponentials = '0.00633 3.5496E-8'
+    activation_energies = '-1545 -42953'
  [../]
  
  [./R16_eq]
@@ -985,9 +985,9 @@
    type = LangmuirInhibition
    variable = R18_COHC
    temperature = temp
-   coupled_list = 'HC_toluene CO'
-    pre_exponentials = '0.00368 3.5496E-8'
-    activation_energies = '-3330 -42953'
+   coupled_list = 'HC_isooctane CO'
+    pre_exponentials = '5.811E-5 3.5496E-8'
+    activation_energies = '-28761 -42953'
  [../]
  
  [./R18_eq]
@@ -1035,9 +1035,9 @@
         variable = H2
         execute_on = 'initial timestep_end'
     [../]
-    [./HC_toluene]
+    [./HC_isooctane]
         type = ElementAverageValue
-        variable = HC_toluene
+        variable = HC_isooctane
         execute_on = 'initial timestep_end'
     [../]
     [./NO]
