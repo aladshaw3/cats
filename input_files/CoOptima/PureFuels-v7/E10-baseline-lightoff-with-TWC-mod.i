@@ -1,6 +1,7 @@
 ## THE RATES NEED TO BE RE-CALIBRATED FOR GIVEN RATE OF MT ##
 # Current rates are a little too fast #
 # Readjust intrinsic rates? #
+# Intrinsic rates need to be adjusted, both the A and E terms #
 
 [GlobalParams]
    dg_scheme = nipg

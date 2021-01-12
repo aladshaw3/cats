@@ -1,12 +1,10 @@
-## THE RATES NEED TO BE RE-CALIBRATED FOR GIVEN RATE OF MT ##
-# Current rates are a little too fast #
-# Readjust intrinsic rates? #
+## THIS NEEDS TO BE RE-WORKED TO CORRECTLY REMOVE MT ##
 
 [GlobalParams]
    dg_scheme = nipg
    sigma = 10
     transfer_rate = 96.042   #s^-1   Ga*km
-#use_legacy_material_output = false
+    use_legacy_material_output = false
  [] #END GlobalParams
 
 [Problem]
@@ -143,7 +141,7 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'NOx'
+        coupled_list = 'NOxb'
         pre_exponentials = '7.6669E-8'
         activation_energies = '-33295.6'
     [../]
@@ -155,7 +153,7 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+        coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
         pre_exponentials = '0.000552 0.011252 0.31953 3.5496E-8'
         activation_energies = '-22234 -9753 -21653 -42953'
     [../]
@@ -167,7 +165,7 @@
    [./InitialCondition]
        type = InitialLangmuirInhibition
        temperature = temp
-       coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+       coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
        pre_exponentials = '0.016807 0.001628 0.0022018 3.5496E-8'
        activation_energies = '-1369 -11974 -12194 -42953'
    [../]
@@ -188,7 +186,7 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+        coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
         pre_exponentials = '0.0002654 0.0000607 0.00015947 3.5496E-8'
         activation_energies = '-21962 -30698 -35504 -42953'
     [../]
@@ -209,7 +207,7 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+        coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
         pre_exponentials = '0.001939 0.001345 0.00121 3.5496E-8'
         activation_energies = '-17177 -23580 -21602 -42953'
     [../]
@@ -230,7 +228,7 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+        coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
         pre_exponentials = '1.07E-5 1.45E-6 0.000355 3.5496E-8'
         activation_energies = '-52915 -63398 -42820 -42953'
     [../]
@@ -251,7 +249,7 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+        coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
         pre_exponentials = '0.019888 0.005258 0.00104 3.5496E-8'
         activation_energies = '-2533 -10355 -16137 -42953'
     [../]
@@ -272,7 +270,7 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+        coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
         pre_exponentials = '9.55E-5 1.43E-7 1.67E-7 3.5496E-8'
         activation_energies = '-51512 -84768 -79681 -42953'
     [../]
@@ -293,7 +291,7 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+        coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
         pre_exponentials = '0.00909 0.00633 0.00599 3.5496E-8'
         activation_energies = '-3861 -1545 -4350 -42953'
     [../]
@@ -314,7 +312,7 @@
     [./InitialCondition]
         type = InitialLangmuirInhibition
         temperature = temp
-        coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+        coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
         pre_exponentials = '0.00928 5.811E-5 0.00368 3.5496E-8'
         activation_energies = '-3500 -28761 -3330 -42953'
     [../]
@@ -505,7 +503,7 @@
     forward_inhibition = R1
 
     scale = -1.0
-    reactants = 'CO O2'
+    reactants = 'COb O2b'
     reactant_stoich = '1 1'
     products = ''
     product_stoich = ''
@@ -521,7 +519,7 @@
     forward_inhibition = R4
 
    scale = -1.0
-   reactants = 'CO NOx'
+   reactants = 'COb NOxb'
    reactant_stoich = '1 1'
    products = ''
    product_stoich = ''
@@ -538,7 +536,7 @@
 
 
    scale = -1.0
-   reactants = 'CO NOx'
+   reactants = 'COb NOxb'
    reactant_stoich = '1 1'
    products = ''
    product_stoich = ''
@@ -554,7 +552,7 @@
     forward_inhibition = R8
 
    scale = -2.5
-   reactants = 'CO NOx H2O'
+   reactants = 'COb NOxb H2O'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -570,7 +568,7 @@
     forward_inhibition = R15
 
    scale = -1
-   reactants = 'N2O CO O2'
+   reactants = 'N2Ob COb O2'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -634,7 +632,7 @@
     reverse_inhibition = 1
 
     scale = -1.0
-    reactants = 'H2 O2'
+    reactants = 'H2b O2b'
     reactant_stoich = '1 1'
     products = 'H2O'
     product_stoich = '1'
@@ -694,7 +692,7 @@
     forward_inhibition = R3
 
     scale = -1.0
-    reactants = 'HC_ethanol O2'
+    reactants = 'HCb_ethanol O2b'
     reactant_stoich = '1 1'
     products = ''
     product_stoich = ''
@@ -710,7 +708,7 @@
     forward_inhibition = R10
  
    scale = -1.0
-   reactants = 'HC_ethanol NOx'
+   reactants = 'HCb_ethanol NOxb'
    reactant_stoich = '1 1'
    products = ''
    product_stoich = ''
@@ -726,7 +724,7 @@
     forward_inhibition = R16
 
    scale = -1.0
-   reactants = 'HC_ethanol NOx O2'
+   reactants = 'HCb_ethanol NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -742,7 +740,7 @@
     forward_inhibition = R18
 
    scale = -1.0
-   reactants = 'HC_ethanol NOx O2'
+   reactants = 'HCb_ethanol NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -802,7 +800,7 @@
     forward_inhibition = R3
 
     scale = -1.0
-    reactants = 'HC_toluene O2'
+    reactants = 'HCb_toluene O2b'
     reactant_stoich = '1 1'
     products = ''
     product_stoich = ''
@@ -818,7 +816,7 @@
     forward_inhibition = R10
  
    scale = -1.0
-   reactants = 'HC_toluene NOx'
+   reactants = 'HCb_toluene NOxb'
    reactant_stoich = '1 1'
    products = ''
    product_stoich = ''
@@ -834,7 +832,7 @@
     forward_inhibition = R16
 
    scale = -1.0
-   reactants = 'HC_toluene NOx O2'
+   reactants = 'HCb_toluene NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -850,7 +848,7 @@
     forward_inhibition = R18
 
    scale = -1.0
-   reactants = 'HC_toluene NOx O2'
+   reactants = 'HCb_toluene NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -909,7 +907,7 @@
     forward_inhibition = R3
 
     scale = -1.0
-    reactants = 'HC_isooctane O2'
+    reactants = 'HCb_isooctane O2b'
     reactant_stoich = '1 1'
     products = ''
     product_stoich = ''
@@ -925,7 +923,7 @@
     forward_inhibition = R10
  
    scale = -1.0
-   reactants = 'HC_isooctane NOx'
+   reactants = 'HCb_isooctane NOxb'
    reactant_stoich = '1 1'
    products = ''
    product_stoich = ''
@@ -941,7 +939,7 @@
     forward_inhibition = R16
 
    scale = -1.0
-   reactants = 'HC_isooctane NOx O2'
+   reactants = 'HCb_isooctane NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -957,7 +955,7 @@
     forward_inhibition = R18
 
    scale = -1.0
-   reactants = 'HC_isooctane NOx O2'
+   reactants = 'HCb_isooctane NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1016,7 +1014,7 @@
     forward_inhibition = R4
 
     scale = -1.0
-    reactants = 'CO NOx'
+    reactants = 'COb NOxb'
     reactant_stoich = '1 1'
     products = ''
     product_stoich = ''
@@ -1032,7 +1030,7 @@
     forward_inhibition = R5
 
    scale = -2.0
-   reactants = 'CO NOx'
+   reactants = 'COb NOxb'
    reactant_stoich = '1 1'
    products = ''
    product_stoich = ''
@@ -1048,7 +1046,7 @@
     forward_inhibition = R8
 
    scale = -1.0
-   reactants = 'CO NOx H2O'
+   reactants = 'COb NOxb H2O'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1066,7 +1064,7 @@
 #NOTE:  ------------ MUST CHANGE SCALE FOR NOx:   (2x + (y/2) - z):   x=7, y=8, z=0 -----------------
 #   ----------------------   scale depends on CxHyOz  for a given HC --------------------------------
    scale = -6.0
-   reactants = 'HC_ethanol NOx'
+   reactants = 'HCb_ethanol NOxb'
    reactant_stoich = '1 1'
    products = ''
    product_stoich = ''
@@ -1084,7 +1082,7 @@
 #NOTE:  ------------ MUST CHANGE SCALE FOR NOx:   (2x + (y/2) - z):   x=7, y=8, z=0 -----------------
 #   ----------------------   scale depends on CxHyOz  for a given HC --------------------------------
    scale = -18.0
-   reactants = 'HC_toluene NOx'
+   reactants = 'HCb_toluene NOxb'
    reactant_stoich = '1 1'
    products = ''
    product_stoich = ''
@@ -1102,7 +1100,7 @@
 #NOTE:  ------------ MUST CHANGE SCALE FOR NOx:   (2x + (y/2) - z):   x=7, y=8, z=0 -----------------
 #   ----------------------   scale depends on CxHyOz  for a given HC --------------------------------
    scale = -25.0
-   reactants = 'HC_isooctane NOx'
+   reactants = 'HCb_isooctane NOxb'
    reactant_stoich = '1 1'
    products = ''
    product_stoich = ''
@@ -1118,7 +1116,7 @@
     forward_inhibition = R15
 
    scale = 2
-   reactants = 'N2O CO O2'
+   reactants = 'N2Ob COb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1134,7 +1132,7 @@
     forward_inhibition = R16
 
    scale = -1.0
-   reactants = 'HC_ethanol NOx O2'
+   reactants = 'HCb_ethanol NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1150,7 +1148,7 @@
     forward_inhibition = R16
 
    scale = -1.0
-   reactants = 'HC_toluene NOx O2'
+   reactants = 'HCb_toluene NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1166,7 +1164,7 @@
     forward_inhibition = R16
 
    scale = -1.0
-   reactants = 'HC_isooctane NOx O2'
+   reactants = 'HCb_isooctane NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1182,7 +1180,7 @@
     forward_inhibition = R18
 
    scale = -2.0
-   reactants = 'HC_ethanol NOx O2'
+   reactants = 'HCb_ethanol NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1198,7 +1196,7 @@
     forward_inhibition = R18
 
    scale = -2.0
-   reactants = 'HC_toluene NOx O2'
+   reactants = 'HCb_toluene NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1214,7 +1212,7 @@
     forward_inhibition = R18
 
    scale = -2.0
-   reactants = 'HC_isooctane NOx O2'
+   reactants = 'HCb_isooctane NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1274,7 +1272,7 @@
     forward_inhibition = R5
 
     scale = 1.0
-    reactants = 'CO NOx'
+    reactants = 'COb NOxb'
     reactant_stoich = '1 1'
     products = ''
     product_stoich = ''
@@ -1290,7 +1288,7 @@
     forward_inhibition = R15
 
    scale = -1
-   reactants = 'N2O CO O2'
+   reactants = 'N2Ob COb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1306,7 +1304,7 @@
     forward_inhibition = R18
 
    scale = 1.0
-   reactants = 'HC_ethanol NOx O2'
+   reactants = 'HCb_ethanol NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1322,7 +1320,7 @@
     forward_inhibition = R18
 
    scale = 1.0
-   reactants = 'HC_toluene NOx O2'
+   reactants = 'HCb_toluene NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1338,7 +1336,7 @@
     forward_inhibition = R18
 
    scale = 1.0
-   reactants = 'HC_isooctane NOx O2'
+   reactants = 'HCb_isooctane NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1398,7 +1396,7 @@
     forward_inhibition = R8
 
    scale = 1.0
-   reactants = 'CO NOx H2O'
+   reactants = 'COb NOxb H2O'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1414,7 +1412,7 @@
     forward_inhibition = R16
 
    scale = 1.0
-   reactants = 'HC_ethanol NOx O2'
+   reactants = 'HCb_ethanol NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1430,7 +1428,7 @@
     forward_inhibition = R16
 
    scale = 1.0
-   reactants = 'HC_toluene NOx O2'
+   reactants = 'HCb_toluene NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1446,7 +1444,7 @@
     forward_inhibition = R16
 
    scale = 1.0
-   reactants = 'HC_isooctane NOx O2'
+   reactants = 'HCb_isooctane NOxb O2b'
    reactant_stoich = '1 1 1'
    products = ''
    product_stoich = ''
@@ -1462,7 +1460,7 @@
     forward_inhibition = 1
 
    scale = -2.0
-   reactants = 'NH3 O2'
+   reactants = 'NH3b O2b'
    reactant_stoich = '1 1'
    products = ''
    product_stoich = ''
@@ -1487,7 +1485,7 @@
    type = LangmuirInhibition
    variable = R_NO
    temperature = temp
-   coupled_list = 'NOx'
+   coupled_list = 'NOxb'
    pre_exponentials = '7.6669E-8'
    activation_energies = '-33295.6'
  [../]
@@ -1501,7 +1499,7 @@
    type = LangmuirInhibition
    variable = R1
    temperature = temp
-    coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+    coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
     pre_exponentials = '0.000552 0.011252 0.31953 3.5496E-8'
     activation_energies = '-22234 -9753 -21653 -42953'
  [../]
@@ -1515,7 +1513,7 @@
    type = LangmuirInhibition
    variable = R3
    temperature = temp
-    coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+    coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
     pre_exponentials = '0.016807 0.001628 0.0022018 3.5496E-8'
     activation_energies = '-1369 -11974 -12194 -42953'
  [../]
@@ -1529,7 +1527,7 @@
    type = LangmuirInhibition
    variable = R4_COHC
    temperature = temp
-    coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+    coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
     pre_exponentials = '0.0002654 0.0000607 0.00015947 3.5496E-8'
     activation_energies = '-21962 -30698 -35504 -42953'
  [../]
@@ -1554,7 +1552,7 @@
    type = LangmuirInhibition
    variable = R5_COHC
    temperature = temp
-    coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+    coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
     pre_exponentials = '0.001939 0.001345 0.00121 3.5496E-8'
     activation_energies = '-17177 -23580 -21602 -42953'
  [../]
@@ -1579,7 +1577,7 @@
    type = LangmuirInhibition
    variable = R8_COHC
    temperature = temp
-    coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+    coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
     pre_exponentials = '1.07E-5 1.45E-6 0.000355 3.5496E-8'
     activation_energies = '-52915 -63398 -42820 -42953'
  [../]
@@ -1604,7 +1602,7 @@
    type = LangmuirInhibition
    variable = R10_COHC
    temperature = temp
-    coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+    coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
     pre_exponentials = '0.019888 0.005258 0.00104 3.5496E-8'
     activation_energies = '-2533 -10355 -16137 -42953'
  [../]
@@ -1629,7 +1627,7 @@
    type = LangmuirInhibition
    variable = R15_COHC
    temperature = temp
-    coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+    coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
     pre_exponentials = '9.55E-5 1.43E-7 1.67E-7 3.5496E-8'
     activation_energies = '-51512 -84768 -79681 -42953'
  [../]
@@ -1654,7 +1652,7 @@
    type = LangmuirInhibition
    variable = R16_COHC
    temperature = temp
-    coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+    coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
     pre_exponentials = '0.00909 0.00633 0.00599 3.5496E-8'
     activation_energies = '-3861 -1545 -4350 -42953'
  [../]
@@ -1679,7 +1677,7 @@
    type = LangmuirInhibition
    variable = R18_COHC
    temperature = temp
-    coupled_list = 'HC_ethanol HC_isooctane HC_toluene CO'
+    coupled_list = 'HCb_ethanol HCb_isooctane HCb_toluene COb'
     pre_exponentials = '0.00928 5.811E-5 0.00368 3.5496E-8'
     activation_energies = '-3500 -28761 -3330 -42953'
  [../]
