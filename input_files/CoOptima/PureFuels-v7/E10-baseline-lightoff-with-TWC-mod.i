@@ -501,7 +501,8 @@
     this_variable = CO
     temperature = temp
  
-    forward_pre_exponential = 7.457E28
+#forward_pre_exponential = 7.457E28
+forward_pre_exponential = 8.811E28
     forward_activation_energy = 277517.95
     forward_inhibition = R1
 
@@ -533,7 +534,8 @@
    this_variable = CO
    temperature = temp
  
-    forward_pre_exponential = 2.3487
+#forward_pre_exponential = 2.3487
+forward_pre_exponential = 2.1138
     forward_activation_energy = 5668.9
     forward_inhibition = R5
 
@@ -550,7 +552,8 @@
    this_variable = CO
    temperature = temp
  
-    forward_pre_exponential = 7.132E-5
+#forward_pre_exponential = 7.132E-5
+forward_pre_exponential = 6.419E-5
     forward_activation_energy = 3087.5
     forward_inhibition = R8
 
@@ -566,7 +569,8 @@
    this_variable = CO
    temperature = temp
  
-    forward_pre_exponential = 108.97
+#forward_pre_exponential = 108.97
+forward_pre_exponential = 150.76
     forward_activation_energy = 31700.6
     forward_inhibition = R15
 
@@ -722,7 +726,8 @@
    this_variable = HC_ethanol
    temperature = temp
  
-    forward_pre_exponential = 1.758E26
+#forward_pre_exponential = 1.758E26
+forward_pre_exponential = 1.582E26
     forward_activation_energy = 337315
     forward_inhibition = R16
 
@@ -738,7 +743,8 @@
    this_variable = HC_ethanol
    temperature = temp
  
-    forward_pre_exponential = 10138
+#forward_pre_exponential = 10138
+forward_pre_exponential = 9124
     forward_activation_energy = 81824
     forward_inhibition = R18
 
@@ -830,7 +836,8 @@
    this_variable = HC_toluene
    temperature = temp
  
-    forward_pre_exponential = 4.466E29
+#forward_pre_exponential = 4.466E29
+forward_pre_exponential = 4.019E29
     forward_activation_energy = 375869
     forward_inhibition = R16
 
@@ -846,7 +853,8 @@
    this_variable = HC_toluene
    temperature = temp
  
-    forward_pre_exponential = 3.921E18
+#forward_pre_exponential = 3.921E18
+forward_pre_exponential = 3.529E18
     forward_activation_energy = 258462
     forward_inhibition = R18
 
@@ -937,7 +945,8 @@
    this_variable = HC_isooctane
    temperature = temp
  
-    forward_pre_exponential = 1.837E28
+#forward_pre_exponential = 1.837E28
+forward_pre_exponential = 1.653E28
     forward_activation_energy = 417824
     forward_inhibition = R16
 
@@ -953,7 +962,8 @@
    this_variable = HC_isooctane
    temperature = temp
  
-    forward_pre_exponential = 0.00016
+#forward_pre_exponential = 0.00016
+forward_pre_exponential = 0.000144
     forward_activation_energy = 18442
     forward_inhibition = R18
 
@@ -1028,7 +1038,8 @@
    this_variable = NOx
    temperature = temp
  
-    forward_pre_exponential = 2.3487
+#forward_pre_exponential = 2.3487
+forward_pre_exponential = 2.1138
     forward_activation_energy = 5668.9
     forward_inhibition = R5
 
@@ -1044,7 +1055,8 @@
    this_variable = NOx
    temperature = temp
  
-    forward_pre_exponential = 7.132E-5
+#forward_pre_exponential = 7.132E-5
+forward_pre_exponential = 6.419E-5
     forward_activation_energy = 3087.5
     forward_inhibition = R8
 
@@ -1114,7 +1126,8 @@
    this_variable = NOx
    temperature = temp
  
-    forward_pre_exponential = 108.97
+#forward_pre_exponential = 108.97
+forward_pre_exponential = 150.76
     forward_activation_energy = 31700.6
     forward_inhibition = R15
 
@@ -1130,7 +1143,8 @@
    this_variable = NOx
    temperature = temp
  
-    forward_pre_exponential = 1.758E26
+#forward_pre_exponential = 1.758E26
+forward_pre_exponential = 1.582E26
     forward_activation_energy = 337315
     forward_inhibition = R16
 
@@ -1146,7 +1160,8 @@
    this_variable = NOx
    temperature = temp
  
-    forward_pre_exponential = 4.466E29
+#forward_pre_exponential = 4.466E29
+forward_pre_exponential = 4.019E29
     forward_activation_energy = 375869
     forward_inhibition = R16
 
@@ -1162,7 +1177,8 @@
    this_variable = NOx
    temperature = temp
  
-    forward_pre_exponential = 1.837E28
+#forward_pre_exponential = 1.837E28
+forward_pre_exponential = 1.653E28
     forward_activation_energy = 417824
     forward_inhibition = R16
 
@@ -1178,7 +1194,8 @@
    this_variable = NOx
    temperature = temp
  
-    forward_pre_exponential = 10138
+#forward_pre_exponential = 10138
+forward_pre_exponential = 9124
     forward_activation_energy = 81824
     forward_inhibition = R18
 
@@ -1194,7 +1211,8 @@
    this_variable = NOx
    temperature = temp
  
-    forward_pre_exponential = 3.921E18
+#forward_pre_exponential = 3.921E18
+forward_pre_exponential = 3.529E18
     forward_activation_energy = 258462
     forward_inhibition = R18
 
@@ -1210,7 +1228,8 @@
    this_variable = NOx
    temperature = temp
  
-    forward_pre_exponential = 0.00016
+#forward_pre_exponential = 0.00016
+forward_pre_exponential = 0.000144
     forward_activation_energy = 18442
     forward_inhibition = R18
 
@@ -1270,7 +1289,8 @@
     this_variable = N2O
     temperature = temp
  
-    forward_pre_exponential = 2.3487
+#forward_pre_exponential = 2.3487
+forward_pre_exponential = 2.1138
     forward_activation_energy = 5668.9
     forward_inhibition = R5
 
@@ -1286,7 +1306,8 @@
    this_variable = N2O
    temperature = temp
  
-    forward_pre_exponential = 108.97
+#forward_pre_exponential = 108.97
+forward_pre_exponential = 150.76
     forward_activation_energy = 31700.6
     forward_inhibition = R15
 
@@ -1302,7 +1323,8 @@
    this_variable = N2O
    temperature = temp
  
-    forward_pre_exponential = 10138
+#forward_pre_exponential = 10138
+forward_pre_exponential = 9124
     forward_activation_energy = 81824
     forward_inhibition = R18
 
@@ -1318,7 +1340,8 @@
    this_variable = N2O
    temperature = temp
  
-    forward_pre_exponential = 3.921E18
+#forward_pre_exponential = 3.921E18
+forward_pre_exponential = 3.529E18
     forward_activation_energy = 258462
     forward_inhibition = R18
 
@@ -1334,7 +1357,8 @@
    this_variable = N2O
    temperature = temp
  
-    forward_pre_exponential = 0.00016
+#forward_pre_exponential = 0.00016
+forward_pre_exponential = 0.000144
     forward_activation_energy = 18442
     forward_inhibition = R18
 
@@ -1394,7 +1418,8 @@
    this_variable = NH3
    temperature = temp
  
-    forward_pre_exponential = 7.132E-5
+#forward_pre_exponential = 7.132E-5
+forward_pre_exponential = 6.419E-5
     forward_activation_energy = 3087.5
     forward_inhibition = R8
 
@@ -1410,7 +1435,8 @@
    this_variable = NH3
    temperature = temp
  
-    forward_pre_exponential = 1.758E26
+#forward_pre_exponential = 1.758E26
+forward_pre_exponential = 1.582E26
     forward_activation_energy = 337315
     forward_inhibition = R16
 
@@ -1426,7 +1452,8 @@
    this_variable = NH3
    temperature = temp
  
-    forward_pre_exponential = 4.466E29
+#forward_pre_exponential = 4.466E29
+forward_pre_exponential = 4.019E29
     forward_activation_energy = 375869
     forward_inhibition = R16
 
@@ -1442,7 +1469,8 @@
    this_variable = NH3
    temperature = temp
  
-    forward_pre_exponential = 1.837E28
+#forward_pre_exponential = 1.837E28
+forward_pre_exponential = 1.653E28
     forward_activation_energy = 417824
     forward_inhibition = R16
 

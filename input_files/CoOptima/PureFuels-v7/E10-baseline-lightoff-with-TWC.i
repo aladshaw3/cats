@@ -18,7 +18,8 @@
     type = GeneratedMesh
     dim = 2
     nx = 1
-    ny = 40
+#ny = 2
+    ny = 20
     xmin = 0.0
     xmax = 1.0    #1cm radius
     ymin = 0.0
