@@ -235,16 +235,10 @@
          coupled = q1
          porosity = pore
      [../]
-     [./transfer_q2a]
+     [./transfer_q2]
          type = CoupledPorePhaseTransfer
          variable = NH3w
-         coupled = q2a
-         porosity = pore
-     [../]
-     [./transfer_q2b]
-         type = CoupledPorePhaseTransfer
-         variable = NH3w
-         coupled = q2b
+         coupled = q2
          porosity = pore
      [../]
      [./transfer_q3]
@@ -264,7 +258,7 @@
       variable = q1
       this_variable = q1
       forward_activation_energy = 0
-      forward_pre_exponential = 120000
+      forward_pre_exponential = 250000
       enthalpy = -54547.9
       entropy = -29.9943
       temperature = temp
@@ -284,8 +278,7 @@
       variable = q2a
       this_variable = q2a
       forward_activation_energy = 0
-      # Between 250000 - 700000
-      forward_pre_exponential = 350000
+      forward_pre_exponential = 700000
       enthalpy = -78073.843
       entropy = -35.311574
       temperature = temp
@@ -305,8 +298,7 @@
       variable = q2b
       this_variable = q2b
       forward_activation_energy = 0
-      # Between 25000 - 70000
-      forward_pre_exponential = 45000
+      forward_pre_exponential = 350000
       enthalpy = -78064.167
       entropy = -46.821878
       temperature = temp

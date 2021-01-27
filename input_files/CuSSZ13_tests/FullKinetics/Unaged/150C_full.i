@@ -28,7 +28,7 @@
         family = MONOMIAL
         initial_condition = 1e-9
     [../]
- 
+
     [./NH3w]
         order = FIRST
         family = MONOMIAL
@@ -52,12 +52,12 @@
         family = MONOMIAL
         initial_condition = 0
     [../]
- 
+
      [./qH2O]
          order = FIRST
          family = MONOMIAL
      [../]
-  
+
      [./S1]
          order = FIRST
          family = MONOMIAL
@@ -94,7 +94,7 @@
       family = MONOMIAL
       initial_condition = 0.001337966847917
   [../]
- 
+
   [./H2Ow]
       order = FIRST
       family = MONOMIAL
@@ -130,7 +130,7 @@
     family = MONOMIAL
     initial_condition = 0.0
   [../]
- 
+
   [./Dz]
     order = FIRST
     family = MONOMIAL
@@ -205,7 +205,7 @@
         variable = NH3
         coupled = NH3w
     [../]
- 
+
     [./NH3w_dot]
         type = VariableCoefTimeDerivative
         variable = NH3w
@@ -295,7 +295,7 @@
       products = 'q3'
       product_stoich = '1'
     [../]
- 
+
     [./qH2O_rx]  #   H2Ow + S1 <-- --> qH2O
       type = EquilibriumReaction
       variable = qH2O
@@ -308,7 +308,7 @@
       products = 'qH2O'
       product_stoich = '1'
     [../]
- 
+
     [./qT_calc]
         type = MaterialBalance
         variable = qT
@@ -317,7 +317,7 @@
         weights = '1 1 1'
         total_material = qT
     [../]
- 
+
     [./S1_bal]
         type = MaterialBalance
         variable = S1
@@ -326,7 +326,7 @@
         weights = '1 1 1'
         total_material = w1
     [../]
- 
+
     [./S2_bal]
         type = MaterialBalance
         variable = S2
@@ -335,7 +335,7 @@
         weights = '1 1'
         total_material = w2
     [../]
- 
+
     [./S3_bal]
         type = MaterialBalance
         variable = S3
@@ -369,7 +369,7 @@
 [] #END DGKernels
 
 [AuxKernels]
- 
+
     [./temp_increase]
         type = LinearChangeInTime
         variable = temp
@@ -420,7 +420,7 @@
         variable = NH3
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./NH3_bypass]
         type = SideAverageValue
         boundary = 'bottom'
@@ -451,7 +451,7 @@
         variable = qT
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./temp_avg]
         type = ElementAverageValue
         variable = temp

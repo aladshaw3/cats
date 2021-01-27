@@ -116,19 +116,19 @@
   [./w1]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.052619
+      initial_condition = 0.0512748
   [../]
 
   [./w2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.0231257
+      initial_condition = 0.0258201
   [../]
 
   [./w3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.0262515
+      initial_condition = 0.0182629
   [../]
 
   [./temp]
@@ -140,7 +140,7 @@
   [./Diff]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 0.0
+    initial_condition = 75.0
   [../]
 
   [./Dz]
@@ -317,7 +317,7 @@
       variable = q3
       this_variable = q3
       forward_activation_energy = 0
-      forward_pre_exponential = 5000000
+      forward_pre_exponential = 500000
       enthalpy = -91860.8
       entropy = -28.9292
       temperature = temp
@@ -414,9 +414,9 @@
     [./temp_increase]
         type = LinearChangeInTime
         variable = temp
-        start_time = 225.425
-        end_time = 305.3
-        end_value = 809.5651714
+        start_time = 237.925
+        end_time = 317.758333
+        end_value = 810.67488
         execute_on = 'initial timestep_end'
     [../]
 
@@ -433,8 +433,8 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_vals = '2.88105E-05    2.28698E-05    1.70674E-05    1.13344E-05    5.76691E-06    2.87521E-06    1.43838E-06    7.21421E-07    3.67254E-07    3.81105E-09'
-      input_times = '2.09166667    15.925    24.425    32.7583333    42.425    55.0916667    77.0916667    109.091667    154.925    225.425'
+      input_vals = '2.88922E-05    2.30003E-05    1.71552E-05    1.13788E-05    5.73347E-06    2.86666E-06    1.43217E-06    7.15459E-07    3.61905E-07    1.23042E-09'
+      input_times = '2.09166667    15.7583333    23.2583333    31.425    40.925    55.925    76.425    107.591667    155.258333    237.925'
       time_spans = '0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25'
     [../]
     [./NH3_FluxOut]
@@ -527,7 +527,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 306.0
+  end_time = 318.0
   dtmax = 0.25
 
   [./TimeStepper]
