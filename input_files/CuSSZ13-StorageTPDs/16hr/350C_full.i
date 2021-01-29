@@ -65,29 +65,30 @@
         initial_condition = 0
     [../]
 
-    [./qH2O]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./qH2O]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
-    [./S1]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./S1]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
-    [./S2]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./S2]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
-    [./S3]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./S3]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
     [./qT]
         order = FIRST
         family = MONOMIAL
+        initial_condition = 0
     [../]
 
 [] #END Variables
@@ -104,37 +105,37 @@
   [./H2O]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.000989724
+      initial_condition = 0.000913488
   [../]
 
   [./H2Ow]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.000989724
+      initial_condition = 0.000913488
   [../]
 
- [./w1]
-     order = FIRST
-     family = MONOMIAL
-     initial_condition = 0.052619
- [../]
+  [./w1]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0503597
+  [../]
 
- [./w2]
-     order = FIRST
-     family = MONOMIAL
-     initial_condition = 0.0231257
- [../]
+  [./w2]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0251799
+  [../]
 
- [./w3]
-     order = FIRST
-     family = MONOMIAL
-     initial_condition = 0.0262515
- [../]
+  [./w3]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0093215
+  [../]
 
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 573.15
+      initial_condition = 623.15
   [../]
 
   [./Diff]
@@ -414,9 +415,9 @@
     [./temp_increase]
         type = LinearChangeInTime
         variable = temp
-        start_time = 266.591667
-        end_time = 316.425
-        end_value = 810.1158294
+        start_time = 171.758333
+        end_time = 211.591667
+        end_value = 811.0043526
         execute_on = 'initial timestep_end'
     [../]
 
@@ -433,8 +434,8 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_vals = '2.03057E-05    1.60424E-05    1.18705E-05    7.76132E-06    3.86517E-06    1.92208E-06    9.57902E-07    4.80659E-07    2.43069E-07    2.50142E-09'
-      input_times = '2.09166667    15.5916667    23.7583333    34.425    45.0916667    60.7583333    86.7583333    121.258333    180.925    266.591667'
+      input_vals = '1.86224E-05    1.47432E-05    1.09791E-05    7.28599E-06    3.65177E-06    1.81485E-06    8.89674E-07    4.32275E-07    2.08136E-07    1.7077E-09'
+      input_times = '2.09166667    12.2583333    20.7583333    30.2583333    41.7583333    59.2583333    79.425    103.758333    133.758333    171.758333'
       time_spans = '0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25'
     [../]
     [./NH3_FluxOut]
@@ -527,7 +528,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 317.0
+  end_time = 212.0
   dtmax = 0.25
 
   [./TimeStepper]

@@ -277,7 +277,7 @@
       variable = q2a
       this_variable = q2a
       forward_activation_energy = 0
-      forward_pre_exponential = 700000
+      forward_pre_exponential = 300000
       enthalpy = -78073.843
       entropy = -35.311574
       temperature = temp
@@ -297,7 +297,7 @@
       variable = q2b
       this_variable = q2b
       forward_activation_energy = 0
-      forward_pre_exponential = 350000
+      forward_pre_exponential = 150000
       enthalpy = -78064.167
       entropy = -46.821878
       temperature = temp
@@ -317,7 +317,7 @@
       variable = q3
       this_variable = q3
       forward_activation_energy = 0
-      forward_pre_exponential = 5000000
+      forward_pre_exponential = 2500000
       enthalpy = -91860.8
       entropy = -28.9292
       temperature = temp

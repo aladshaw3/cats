@@ -65,25 +65,25 @@
         initial_condition = 0
     [../]
 
-    [./qH2O]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./qH2O]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
-    [./S1]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./S1]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
-    [./S2]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./S2]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
-    [./S3]
-        order = FIRST
-        family = MONOMIAL
-    [../]
+     [./S3]
+         order = FIRST
+         family = MONOMIAL
+     [../]
 
     [./qT]
         order = FIRST
@@ -104,37 +104,37 @@
   [./H2O]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.000989724
+      initial_condition = 0.001337966847917
   [../]
 
   [./H2Ow]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.000989724
+      initial_condition = 0.001337966847917
   [../]
 
- [./w1]
-     order = FIRST
-     family = MONOMIAL
-     initial_condition = 0.052619
- [../]
+  [./w1]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.04968
+  [../]
 
- [./w2]
-     order = FIRST
-     family = MONOMIAL
-     initial_condition = 0.0231257
- [../]
+  [./w2]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0269247
+  [../]
 
- [./w3]
-     order = FIRST
-     family = MONOMIAL
-     initial_condition = 0.0262515
- [../]
+  [./w3]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0142046
+  [../]
 
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 573.15
+      initial_condition = 423.15
   [../]
 
   [./Diff]
@@ -155,15 +155,15 @@
       initial_condition = 0.3309
   [../]
 
-   [./total_pore]
- # ew =~ 1/5
- # total_pore = ew* (1 - pore)
- # micro_pore_vol = 0.18 cm^3/g
- # assume ew = 0.2
-       order = FIRST
-       family = MONOMIAL
-       initial_condition = 0.13382
-   [../]
+  [./total_pore]
+# ew =~ 1/5
+# total_pore = ew* (1 - pore)
+# micro_pore_vol = 0.18 cm^3/g
+# assume ew = 0.2
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.13382
+  [../]
 
   [./vel_x]
       order = FIRST
@@ -212,42 +212,42 @@
         Dy = Diff
         Dz = Dz
     [../]
-     [./NH3w_trans]
-         type = ConstMassTransfer
-         variable = NH3
-         coupled = NH3w
-     [../]
+    [./NH3w_trans]
+        type = ConstMassTransfer
+        variable = NH3
+        coupled = NH3w
+    [../]
 
-     [./NH3w_dot]
-         type = VariableCoefTimeDerivative
-         variable = NH3w
-         coupled_coef = total_pore
-     [../]
-     [./NH3_trans]
-         type = ConstMassTransfer
-         variable = NH3w
-         coupled = NH3
-     [../]
-     [./transfer_q1]
-         type = CoupledPorePhaseTransfer
-         variable = NH3w
-         coupled = q1
-         porosity = pore
-     [../]
-     [./transfer_q2]
-         type = CoupledPorePhaseTransfer
-         variable = NH3w
-         coupled = q2
-         porosity = pore
-     [../]
-     [./transfer_q3]
-         type = CoupledPorePhaseTransfer
-         variable = NH3w
-         coupled = q3
-         porosity = pore
-     [../]
+    [./NH3w_dot]
+        type = VariableCoefTimeDerivative
+        variable = NH3w
+        coupled_coef = total_pore
+    [../]
+    [./NH3_trans]
+        type = ConstMassTransfer
+        variable = NH3w
+        coupled = NH3
+    [../]
+    [./transfer_q1]
+        type = CoupledPorePhaseTransfer
+        variable = NH3w
+        coupled = q1
+        porosity = pore
+    [../]
+    [./transfer_q2]
+        type = CoupledPorePhaseTransfer
+        variable = NH3w
+        coupled = q2
+        porosity = pore
+    [../]
+    [./transfer_q3]
+        type = CoupledPorePhaseTransfer
+        variable = NH3w
+        coupled = q3
+        porosity = pore
+    [../]
 
- #   NOTE: According to the Olsson paper, the activation energy for adsorption is 0.0
+#   NOTE: According to the Olsson paper, the activation energy for adsorption is 0.0
     [./q1_dot]
         type = TimeDerivative
         variable = q1
@@ -414,9 +414,9 @@
     [./temp_increase]
         type = LinearChangeInTime
         variable = temp
-        start_time = 266.591667
-        end_time = 316.425
-        end_value = 810.1158294
+        start_time = 232.925
+        end_time = 312.758333
+        end_value = 810.5171825
         execute_on = 'initial timestep_end'
     [../]
 
@@ -433,8 +433,8 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_vals = '2.03057E-05    1.60424E-05    1.18705E-05    7.76132E-06    3.86517E-06    1.92208E-06    9.57902E-07    4.80659E-07    2.43069E-07    2.50142E-09'
-      input_times = '2.09166667    15.5916667    23.7583333    34.425    45.0916667    60.7583333    86.7583333    121.258333    180.925    266.591667'
+      input_vals = '2.85829E-05    2.27426E-05    1.69926E-05    1.12375E-05    5.68015E-06    2.84207E-06    1.42064E-06    7.12003E-07    3.598E-07    2.26936E-09'
+      input_times = '2.09166667    16.425    24.0916667    32.0916667    41.925    55.0916667    75.2583333    108.258333    152.425    232.925'
       time_spans = '0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25'
     [../]
     [./NH3_FluxOut]
@@ -527,7 +527,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 317.0
+  end_time = 313.0
   dtmax = 0.25
 
   [./TimeStepper]
