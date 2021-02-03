@@ -93,6 +93,7 @@
     [./qT]
         order = FIRST
         family = MONOMIAL
+        initial_condition = 0
     [../]
 
 [] #END Variables
@@ -109,13 +110,13 @@
   [./H2O]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.001337966847917
+      initial_condition = 0.000913488
   [../]
 
   [./H2Ow]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.001337966847917
+      initial_condition = 0.000913488
   [../]
 
   [./w1]
@@ -139,13 +140,13 @@
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 423.15
+      initial_condition = 623.15
   [../]
 
   [./Diff]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 0.0
+    initial_condition = 75.0
   [../]
 
   [./Dz]
@@ -160,15 +161,15 @@
       initial_condition = 0.3309
   [../]
 
-  [./total_pore]
-# ew =~ 1/5
-# total_pore = ew* (1 - pore)
-# micro_pore_vol = 0.18 cm^3/g
-# assume ew = 0.2
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 0.13382
-  [../]
+   [./total_pore]
+ # ew =~ 1/5
+ # total_pore = ew* (1 - pore)
+ # micro_pore_vol = 0.18 cm^3/g
+ # assume ew = 0.2
+       order = FIRST
+       family = MONOMIAL
+       initial_condition = 0.13382
+   [../]
 
   [./vel_x]
       order = FIRST
@@ -217,42 +218,42 @@
         Dy = Diff
         Dz = Dz
     [../]
-    [./NH3w_trans]
-        type = ConstMassTransfer
-        variable = NH3
-        coupled = NH3w
-    [../]
+     [./NH3w_trans]
+         type = ConstMassTransfer
+         variable = NH3
+         coupled = NH3w
+     [../]
 
-    [./NH3w_dot]
-        type = VariableCoefTimeDerivative
-        variable = NH3w
-        coupled_coef = total_pore
-    [../]
-    [./NH3_trans]
-        type = ConstMassTransfer
-        variable = NH3w
-        coupled = NH3
-    [../]
-    [./transfer_q1]
-        type = CoupledPorePhaseTransfer
-        variable = NH3w
-        coupled = q1
-        porosity = pore
-    [../]
-    [./transfer_q2]
-        type = CoupledPorePhaseTransfer
-        variable = NH3w
-        coupled = q2
-        porosity = pore
-    [../]
-    [./transfer_q3]
-        type = CoupledPorePhaseTransfer
-        variable = NH3w
-        coupled = q3
-        porosity = pore
-    [../]
+     [./NH3w_dot]
+         type = VariableCoefTimeDerivative
+         variable = NH3w
+         coupled_coef = total_pore
+     [../]
+     [./NH3_trans]
+         type = ConstMassTransfer
+         variable = NH3w
+         coupled = NH3
+     [../]
+     [./transfer_q1]
+         type = CoupledPorePhaseTransfer
+         variable = NH3w
+         coupled = q1
+         porosity = pore
+     [../]
+     [./transfer_q2]
+         type = CoupledPorePhaseTransfer
+         variable = NH3w
+         coupled = q2
+         porosity = pore
+     [../]
+     [./transfer_q3]
+         type = CoupledPorePhaseTransfer
+         variable = NH3w
+         coupled = q3
+         porosity = pore
+     [../]
 
-#   NOTE: According to the Olsson paper, the activation energy for adsorption is 0.0
+ #   NOTE: According to the Olsson paper, the activation energy for adsorption is 0.0
     [./q1_dot]
         type = TimeDerivative
         variable = q1
@@ -432,9 +433,9 @@
     [./temp_increase]
         type = LinearChangeInTime
         variable = temp
-        start_time = 225.425
-        end_time = 305.3
-        end_value = 809.5651714
+        start_time = 252.925
+        end_time = 292.75
+        end_value = 810.6490727
         execute_on = 'initial timestep_end'
     [../]
 
@@ -451,8 +452,8 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_vals = '2.88105E-05    2.28698E-05    1.70674E-05    1.13344E-05    5.76691E-06    2.87521E-06    1.43838E-06    7.21421E-07    3.67254E-07    3.81105E-09'
-      input_times = '2.09166667    15.925    24.425    32.7583333    42.425    55.0916667    77.0916667    109.091667    154.925    225.425'
+      input_vals = '1.85393E-05    1.46522E-05    1.08693E-05    7.13522E-06    3.55552E-06    1.74266E-06    8.3543E-07    3.9147E-07    1.75525E-07    1.92874E-09'
+      input_times = '2.09166667    13.2583333    21.425    30.425    41.925    57.0916667    81.2583333    116.091667    170.091667    252.925'
       time_spans = '0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25    0.25'
     [../]
     [./NH3_FluxOut]
@@ -545,7 +546,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 306.0
+  end_time = 293.0
   dtmax = 0.25
 
   [./TimeStepper]
