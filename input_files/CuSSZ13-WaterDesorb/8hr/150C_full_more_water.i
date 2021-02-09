@@ -515,7 +515,7 @@
 [BCs]
 
     [./NH3_FluxIn]
-      type = DGPoreConcFluxBC
+      type = DGPoreConcFluxStepwiseBC
       variable = NH3
       boundary = 'bottom'
       u_input = 1.1386E-5
@@ -523,6 +523,9 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
+      input_vals = '1.1386E-5 1.108E-5   1.111E-5    1.127E-5    1.128E-5    1.141E-5'
+      input_times = '-30 4.98    15.48    23.68    33.23   42.73'
+      time_spans = '0.25 0.25    0.25    0.25    0.25    0.25'
     [../]
     [./NH3_FluxOut]
       type = DGPoreConcFluxBC
