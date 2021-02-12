@@ -342,6 +342,21 @@
       products = 'q2a'
       product_stoich = '1'
     [../]
+    [./q2b_rx_a]  #   NH3w + q2a <-- --> q2b
+      type = ArrheniusEquilibriumReaction
+      variable = q2a
+      this_variable = q2a
+      forward_activation_energy = 0
+      forward_pre_exponential = 150000
+      enthalpy = -78064.167
+      entropy = -46.821878
+      temperature = temp
+      scale = -1.0
+      reactants = 'NH3w q2a'
+      reactant_stoich = '1 1'
+      products = 'q2b'
+      product_stoich = '1'
+    [../]
 
     [./q2b_dot]
         type = TimeDerivative
