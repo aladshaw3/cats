@@ -239,11 +239,41 @@
         coupled = q1
         porosity = pore
     [../]
-    [./transfer_q2]
-        type = CoupledPorePhaseTransfer
-        variable = NH3w
-        coupled = q2
-        porosity = pore
+    #[./transfer_q2]
+     #   type = CoupledPorePhaseTransfer
+     #   variable = NH3w
+     #   coupled = q2
+     #   porosity = pore
+    #[../]
+    [./q2a_rx_n]  #   NH3w + S2 <-- --> q2a
+      type = ArrheniusEquilibriumReaction
+      variable = NH3w
+      this_variable = NH3w
+      forward_activation_energy = 0
+      forward_pre_exponential = 300000
+      enthalpy = -78073.843
+      entropy = -35.311574
+      temperature = temp
+      scale = -0.6691
+      reactants = 'NH3w S2'
+      reactant_stoich = '1 1'
+      products = 'q2a'
+      product_stoich = '1'
+    [../]
+    [./q2b_rx_n]  #   NH3w + q2a <-- --> q2b
+      type = ArrheniusEquilibriumReaction
+      variable = NH3w
+      this_variable = NH3w
+      forward_activation_energy = 0
+      forward_pre_exponential = 150000
+      enthalpy = -78064.167
+      entropy = -46.821878
+      temperature = temp
+      scale = -0.6691
+      reactants = 'NH3w q2a'
+      reactant_stoich = '1 1'
+      products = 'q2b'
+      product_stoich = '1'
     [../]
     [./transfer_q3]
         type = CoupledPorePhaseTransfer
@@ -290,6 +320,21 @@
       reactants = 'NH3w S2'
       reactant_stoich = '1 1'
       products = 'q2a'
+      product_stoich = '1'
+    [../]
+    [./q2b_rx_a]  #   NH3w + q2a <-- --> q2b
+      type = ArrheniusEquilibriumReaction
+      variable = q2a
+      this_variable = q2a
+      forward_activation_energy = 0
+      forward_pre_exponential = 150000
+      enthalpy = -78064.167
+      entropy = -46.821878
+      temperature = temp
+      scale = -1.0
+      reactants = 'NH3w q2a'
+      reactant_stoich = '1 1'
+      products = 'q2b'
       product_stoich = '1'
     [../]
 

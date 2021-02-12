@@ -292,6 +292,21 @@
       products = 'q2a'
       product_stoich = '1'
     [../]
+    [./q2b_rx_a]  #   NH3w + q2a <-- --> q2b
+      type = ArrheniusEquilibriumReaction
+      variable = q2a
+      this_variable = q2a
+      forward_activation_energy = 0
+      forward_pre_exponential = 150000
+      enthalpy = -78064.167
+      entropy = -46.821878
+      temperature = temp
+      scale = -1.0
+      reactants = 'NH3w q2a'
+      reactant_stoich = '1 1'
+      products = 'q2b'
+      product_stoich = '1'
+    [../]
 
     [./q2b_dot]
         type = TimeDerivative
@@ -384,15 +399,6 @@
         coupled_list = 'q1 S1 qH2O'
         weights = '1 1 1'
         total_material = w1
-    [../]
-
-    [./S2_bal]
-        type = MaterialBalance
-        variable = S2
-        this_variable = S2
-        coupled_list = 'q2a q2b S2'
-        weights = '1 1 1'
-        total_material = w2
     [../]
 
     [./S2_bal]
