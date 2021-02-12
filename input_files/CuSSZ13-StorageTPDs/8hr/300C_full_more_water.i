@@ -392,21 +392,21 @@
         total_material = q2
     [../]
 
-    [./S2_bal]
+    [./S1_bal]
         type = MaterialBalance
-        variable = S2
-        this_variable = S2
-        coupled_list = 'q2a q2b S2 qH2O_2'
-        weights = '1 1 1 1'
-        total_material = w2
+        variable = S1
+        this_variable = S1
+        coupled_list = 'q1 S1 qH2O'
+        weights = '1 1 1'
+        total_material = w1
     [../]
 
     [./S2_bal]
         type = MaterialBalance
         variable = S2
         this_variable = S2
-        coupled_list = 'q2a q2b S2'
-        weights = '1 1 1'
+        coupled_list = 'q2a q2b S2 qH2O_2'
+        weights = '1 1 1 1'
         total_material = w2
     [../]
 
