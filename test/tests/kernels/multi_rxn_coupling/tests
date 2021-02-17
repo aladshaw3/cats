@@ -1,0 +1,7 @@
+[Tests]
+  [./coupled_multi_rxn_with_sum_functions]
+    type = 'Exodiff'
+    input = '150C_NH3_example.i'
+    exodiff = '150C_NH3_example_out.e'
+  [../]
+[]
