@@ -24,7 +24,7 @@
     nx = 1
     ny = 20
     xmin = 0.0
-    xmax = 1.0    #2cm diameter 
+    xmax = 1.0    #2cm diameter
     ymin = 0.0
     ymax = 5.0    #5cm length
 [] # END Mesh
@@ -1349,8 +1349,8 @@
       variable = r12
       this_variable = r12
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 1436447
+      forward_pre_exponential = 2.373E26
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1465,8 +1465,8 @@
       variable = r17a
       this_variable = r17a
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 78994.2
+      forward_pre_exponential = 1.1064E15
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1488,8 +1488,8 @@
       variable = r18a
       this_variable = r18a
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 103490.4
+      forward_pre_exponential = 2.7738E19
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1534,8 +1534,8 @@
       variable = r20a
       this_variable = r20a
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 129058.1
+      forward_pre_exponential = 6.528E26
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1651,8 +1651,8 @@
       variable = r17b
       this_variable = r17b
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 5286945
+      forward_pre_exponential = 2.1876E25
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1836,8 +1836,8 @@
       variable = r25
       this_variable = r25
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 328211.2
+      forward_pre_exponential = 1.437E29
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1859,8 +1859,8 @@
       variable = r26
       this_variable = r26
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 93627
+      forward_pre_exponential = 2.6832E17
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1905,8 +1905,8 @@
       variable = r28
       this_variable = r28
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 188749.5
+      forward_pre_exponential = 3.393E32
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2021,8 +2021,8 @@
       variable = r33
       this_variable = r33
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 292918.1
+      forward_pre_exponential = 1.476E37
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2044,8 +2044,8 @@
       variable = r34
       this_variable = r34
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 1456420
+      forward_pre_exponential = 4.6722E27
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2090,8 +2090,8 @@
       variable = r36
       this_variable = r36
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 301283.1
+      forward_pre_exponential = 4.0566E26
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2275,8 +2275,8 @@
       variable = r44
       this_variable = r44
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 160637
+      forward_pre_exponential = 2.8794E29
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
