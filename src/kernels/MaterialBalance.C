@@ -84,7 +84,7 @@ _main_var(coupled("this_variable"))
         if (_coupled_vars[i] == _main_var)
             inList = true;
     }
-    
+
     if (inList == true)
     {
         for (unsigned int i = 0; i<_coupled.size(); ++i)
@@ -101,7 +101,7 @@ Real MaterialBalance::computeQpResidual()
     Real sum = 0.0;
     for (unsigned int i = 0; i<_coupled.size(); ++i)
     {
-        if (((*_coupled[i])[_qp]) > 0.0)
+        //if (((*_coupled[i])[_qp]) > 0.0)
             sum += _weights[i] * ((*_coupled[i])[_qp]);
     }
     return (_coupled_total[_qp] - sum) * _test[_i][_qp];
@@ -129,10 +129,9 @@ Real MaterialBalance::computeQpOffDiagJacobian(unsigned int jvar)
     {
         if (jvar == _coupled_vars[i] && jvar != _main_var)
         {
-            if (((*_coupled[i])[_qp]) > 0.0)
+            //if (((*_coupled[i])[_qp]) > 0.0)
                 return -_phi[_j][_qp] * _weights[index] * _test[_i][_qp];
         }
     }
     return 0.0;
 }
-
