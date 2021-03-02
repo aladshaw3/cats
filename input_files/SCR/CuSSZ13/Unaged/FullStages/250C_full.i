@@ -59,49 +59,49 @@
     [./NH3]
         order = CONSTANT
         family = MONOMIAL
-        initial_condition = 1E-9
+        initial_condition = 1E-15
     [../]
 
     [./NH3w]
         order = CONSTANT
         family = MONOMIAL
-        initial_condition = 1E-9
+        initial_condition = 1E-15
     [../]
 
     [./NOx]
         order = CONSTANT
         family = MONOMIAL
-        initial_condition = 1E-9
+        initial_condition = 1E-15
     [../]
 
     [./NOxw]
         order = CONSTANT
         family = MONOMIAL
-        initial_condition = 1E-9
+        initial_condition = 1E-15
     [../]
 
     [./NO2]
         order = CONSTANT
         family = MONOMIAL
-        initial_condition = 1E-9
+        initial_condition = 1E-15
     [../]
 
     [./NO2w]
         order = CONSTANT
         family = MONOMIAL
-        initial_condition = 1E-9
+        initial_condition = 1E-15
     [../]
 
     [./N2O]
         order = CONSTANT
         family = MONOMIAL
-        initial_condition = 1E-9
+        initial_condition = 1E-15
     [../]
 
     [./N2Ow]
         order = CONSTANT
         family = MONOMIAL
-        initial_condition = 1E-9
+        initial_condition = 1E-15
     [../]
 
 ## Reaction variable list
@@ -1465,8 +1465,8 @@
       variable = r17a
       this_variable = r17a
 
-      forward_activation_energy = 78994.2
-      forward_pre_exponential = 1.1064E15
+      forward_activation_energy = 54359.2
+      forward_pre_exponential = 1.54734E12
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1488,8 +1488,8 @@
       variable = r18a
       this_variable = r18a
 
-      forward_activation_energy = 103490.4
-      forward_pre_exponential = 2.7738E19
+      forward_activation_energy = 89832.6
+      forward_pre_exponential = 2.6758E15
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1651,8 +1651,8 @@
       variable = r17b
       this_variable = r17b
 
-      forward_activation_energy = 5286945
-      forward_pre_exponential = 2.1876E25
+      forward_activation_energy = 0
+      forward_pre_exponential = 0
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1674,8 +1674,8 @@
       variable = r18b
       this_variable = r18b
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 153031.1
+      forward_pre_exponential = 1.27128E23
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1814,7 +1814,7 @@
       this_variable = r24
 
       forward_activation_energy = 105579.3
-      forward_pre_exponential = 1.61724E19
+      forward_pre_exponential = 1.61724E18
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1836,8 +1836,8 @@
       variable = r25
       this_variable = r25
 
-      forward_activation_energy = 328211.2
-      forward_pre_exponential = 1.437E29
+      forward_activation_energy = 112935.4
+      forward_pre_exponential = 8.55678E16
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1859,8 +1859,8 @@
       variable = r26
       this_variable = r26
 
-      forward_activation_energy = 93627
-      forward_pre_exponential = 2.6832E17
+      forward_activation_energy = 238744.1
+      forward_pre_exponential = 9.92376E16
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1883,7 +1883,7 @@
       this_variable = r27
 
       forward_activation_energy = 97070.4
-      forward_pre_exponential = 8.61972E16
+      forward_pre_exponential = 8.61972E15
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2021,8 +2021,8 @@
       variable = r33
       this_variable = r33
 
-      forward_activation_energy = 292918.1
-      forward_pre_exponential = 1.476E37
+      forward_activation_energy = 0
+      forward_pre_exponential = 0
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2044,8 +2044,8 @@
       variable = r34
       this_variable = r34
 
-      forward_activation_energy = 1456420
-      forward_pre_exponential = 4.6722E27
+      forward_activation_energy = 141411
+      forward_pre_exponential = 6.32648E22
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2206,8 +2206,8 @@
       variable = r41
       this_variable = r41
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_activation_energy = 119148
+      forward_pre_exponential = 3.11187E18
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2463,12 +2463,12 @@
         type = DGPoreConcFluxStepwiseBC
         variable = NH3
         boundary = 'bottom'
-        u_input = 1E-9
+        u_input = 1E-15
         porosity = pore
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        input_vals = '6.9499E-6   1E-9   6.9499E-6  1E-9    6.9499E-6   1E-9'
+        input_vals = '6.9499E-6   1E-15   6.9499E-6  1E-15    6.9499E-6   1E-15'
         input_times = '2.0917   40.75    56.2583    101.425    130.425    190.7583'
         time_spans = '1      1    1    1    1    1'
     [../]
@@ -2487,7 +2487,7 @@
         type = DGPoreConcFluxStepwiseBC
         variable = NOx
         boundary = 'bottom'
-        u_input = 1E-9
+        u_input = 1E-15
         porosity = pore
         ux = vel_x
         uy = vel_y
@@ -2511,12 +2511,12 @@
         type = DGPoreConcFluxStepwiseBC
         variable = NO2
         boundary = 'bottom'
-        u_input = 1E-9
+        u_input = 1E-15
         porosity = pore
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        input_vals = '3.37554E-6   1E-9'
+        input_vals = '3.37554E-6   1E-15'
         input_times = '116.925    203.7583'
         time_spans = '1      1    1'
     [../]
@@ -2535,12 +2535,12 @@
         type = DGPoreConcFluxStepwiseBC
         variable = N2O
         boundary = 'bottom'
-        u_input = 1E-9
+        u_input = 1E-15
         porosity = pore
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        input_vals = '1E-9'
+        input_vals = '1E-15'
         input_times = '1'
         time_spans = '1'
     [../]
