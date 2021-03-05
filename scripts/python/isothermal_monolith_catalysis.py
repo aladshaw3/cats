@@ -79,25 +79,7 @@ def equilibrium_arrhenius_consts(Af, Ef, dH, dS):
 #           Specific Site Balances (Optional, but required if tracking surface species)
 #
 #                   Smax = S + SUM(all qi, u_si*qi) = 0
-
-
-# TODO: Delete notes and testing
-'''
-name = "Cb"
-# This will add a component by name
-self.model.add_component(name, Var())
-# How to check if component by name already exists
-if self.model.find_component("r") == None:
-    self.model.add_component("r", Param())
-else:
-    print("ERROR! Component name already exists")
-
-self.model.pprint()
-
-# This will fetch a component by name
-self.model.component(name).pprint()
-'''
-
+#
 class Isothermal_Monolith_Simulator(object):
     #Default constructor
     # Pass a list of species names (Specs) for the mass balances
@@ -133,6 +115,7 @@ class Isothermal_Monolith_Simulator(object):
         self.isDiscrete = False
         self.isInitialSet = {}
         self.isBoundarySet = {}
+        self.isObjectiveSet = False
 
     # Add a continuous set for spatial dimension (current expected units = cm)
     def add_axial_dim(self, start_point, end_point, point_list=[]):
@@ -429,11 +412,15 @@ class Isothermal_Monolith_Simulator(object):
         self.model.equ_arrhenius_rxns = Set(initialize=arr_equ_rxn_list)
 
         # All reactions (regardless of type) have some impact on mass balances
-        #           Access is [species, rxn]
-        self.model.u_C = Param(self.model.gas_set, self.model.all_rxns, domain=Reals,
+        #           Access is [species, rxn, loc]
+        #
+        #       NOTE: u_C and u_q were made positional so that reactions could be
+        #           turned off or on based on location in the domain. This can be
+        #           utilized to simulate the effect of catalyst 'zoning'
+        self.model.u_C = Param(self.model.gas_set, self.model.all_rxns, self.model.z, domain=Reals,
                                 initialize=0, mutable=True)
         if self.isSurfSpecSet == True:
-            self.model.u_q = Param(self.model.surf_set, self.model.all_rxns, domain=Reals,
+            self.model.u_q = Param(self.model.surf_set, self.model.all_rxns, self.model.z, domain=Reals,
                                     initialize=0, mutable=True)
 
         # Variables for the Arrhenius type
@@ -495,6 +482,11 @@ class Isothermal_Monolith_Simulator(object):
         if self.isSitesSet == False:
             print("Error! Did not specify the existance of surface sites")
             exit()
+        if value < 0:
+            print("Error! Cannot have a negative concentration of sites")
+            exit()
+        if value < 1e-20:
+            value = 1e-20
         for loc in self.model.z:
             for time in self.model.t:
                 self.model.Smax[site, age, loc, time].set_value(value)
@@ -586,7 +578,8 @@ class Isothermal_Monolith_Simulator(object):
                 u_C_sum -= info["mol_reactants"][spec]
             if spec in info["mol_products"]:
                 u_C_sum += info["mol_products"][spec]
-            self.model.u_C[spec,rxn].set_value(u_C_sum)
+            for loc in self.model.z:
+                self.model.u_C[spec,rxn,loc].set_value(u_C_sum)
 
         if self.isSurfSpecSet == True:
             for spec in self.model.surf_set:
@@ -595,7 +588,8 @@ class Isothermal_Monolith_Simulator(object):
                     u_q_sum -= info["mol_reactants"][spec]
                 if spec in info["mol_products"]:
                     u_q_sum += info["mol_products"][spec]
-                self.model.u_q[spec,rxn].set_value(u_q_sum)
+                for loc in self.model.z:
+                    self.model.u_q[spec,rxn,loc].set_value(u_q_sum)
 
         # Set reaction order information
         for spec in self.model.all_species_set:
@@ -649,18 +643,18 @@ class Isothermal_Monolith_Simulator(object):
     def reaction_sum_gas(self, gas_spec, model, age, temp, loc, time):
         r_sum=0
         for r in model.arrhenius_rxns:
-            r_sum += model.u_C[gas_spec,r]*self.arrhenius_rate_func(r, model, age, temp, loc, time)
+            r_sum += model.u_C[gas_spec,r,loc]*self.arrhenius_rate_func(r, model, age, temp, loc, time)
         for re in model.equ_arrhenius_rxns:
-            r_sum += model.u_C[gas_spec,re]*self.equilibrium_arrhenius_rate_func(re, model, age, temp, loc, time)
+            r_sum += model.u_C[gas_spec,re,loc]*self.equilibrium_arrhenius_rate_func(re, model, age, temp, loc, time)
         return r_sum
 
     # Define a function for the reaction sum for surface species
     def reaction_sum_surf(self, surf_spec, model, age, temp, loc, time):
         r_sum=0
         for r in model.arrhenius_rxns:
-            r_sum += model.u_q[surf_spec,r]*self.arrhenius_rate_func(r, model, age, temp, loc, time)
+            r_sum += model.u_q[surf_spec,r,loc]*self.arrhenius_rate_func(r, model, age, temp, loc, time)
         for re in model.equ_arrhenius_rxns:
-            r_sum += model.u_q[surf_spec,re]*self.equilibrium_arrhenius_rate_func(re, model, age, temp, loc, time)
+            r_sum += model.u_q[surf_spec,re,loc]*self.equilibrium_arrhenius_rate_func(re, model, age, temp, loc, time)
         return r_sum
 
     # Define a function for the site sum
@@ -741,30 +735,38 @@ class Isothermal_Monolith_Simulator(object):
             for age in self.model.age_set:
                 for temp in self.model.T_set:
                     val = value(self.model.Cb_in[spec,age,temp,self.model.t.first()])
-                    for time in self.model.t:
-                        self.model.Cb_in[spec,age,temp, time].set_value(val)
+                    self.model.Cb_in[spec,age,temp, :].set_value(val)
 
         #       Initialize T
         for age in self.model.age_set:
             for temp in self.model.T_set:
                 val = value(self.model.T[age,temp,self.model.t.first()])
-                for time in self.model.t:
-                    self.model.T[age,temp,time] = val
+                self.model.T[age,temp,:] = val
 
         #       Initialize age set
         for age in self.model.age_set:
             val = value(self.model.age[age,self.model.t.first()])
-            for time in self.model.t:
-                self.model.age[age,time].set_value(val)
+            self.model.age[age,:].set_value(val)
 
         #       Initialize Smax
         if self.isSitesSet == True:
             for site in self.model.site_set:
                 for age in self.model.age_set:
                     val = value(self.model.Smax[site,age,self.model.z.first(),self.model.t.first()])
-                    for loc in self.model.z:
-                        for time in self.model.t:
-                            self.model.Smax[site,age,loc,time].set_value(val)
+                    self.model.Smax[site,age,:,:].set_value(val)
+
+        #        Initialize u_C
+        for spec in self.model.gas_set:
+            for rxn in self.model.all_rxns:
+                val = value(self.model.u_C[spec,rxn,self.model.z.first()])
+                self.model.u_C[spec,rxn,:].set_value(val)
+
+        #        Initialize u_q
+        if self.isSurfSpecSet == True:
+            for spec in self.model.surf_set:
+                for rxn in self.model.all_rxns:
+                    val = value(self.model.u_q[spec,rxn,self.model.z.first()])
+                    self.model.u_q[spec,rxn,:].set_value(val)
 
         # For PDE portions, fix the first time derivative at the first node
         for spec in self.model.gas_set:
@@ -777,6 +779,14 @@ class Isothermal_Monolith_Simulator(object):
 
     # Set constant initial conditions
     def set_const_IC(self,spec,age,temp,value):
+        if self.isDiscrete == False:
+            print("Error! User should call the discretizer before setting initial conditions")
+            exit()
+        if value < 0:
+            print("Error! Concentrations cannot be negative")
+            exit()
+        if value < 1e-20:
+            value = 1e-20
         if spec in self.model.gas_set:
             self.model.Cb[spec,age,temp, :, self.model.t.first()].set_value(value)
             self.model.Cb[spec,age,temp, :, self.model.t.first()].fix()
@@ -801,11 +811,70 @@ class Isothermal_Monolith_Simulator(object):
             print("Error! User must specify initial conditions before boundary conditions")
             exit()
 
-        for time in self.model.t:
-            self.model.Cb_in[spec,age,temp, time].set_value(value)
+        if value < 0:
+            print("Error! Concentrations cannot be negative")
+            exit()
+        if value < 1e-20:
+            value = 1e-20
 
+        self.model.Cb_in[spec,age,temp, :].set_value(value)
         self.model.Cb[spec,age,temp,self.model.z.first(), :].set_value(value)
         self.model.Cb[spec,age,temp,self.model.z.first(), :].fix()
+        self.isBoundarySet[spec] = True
+
+    # Set time dependent BCs using a 'time_value_pairs' list of tuples
+    #       If user does not provide an initial value, it will be assumed 1e-20
+    def set_time_dependent_BC(self,spec,age,temp,time_value_pairs,initial_value=1e-20):
+        if spec not in self.model.gas_set:
+            print("Error! Cannot specify boundary value for non-gas species")
+            exit()
+
+        if self.isInitialSet[spec] == False:
+            print("Error! User must specify initial conditions before boundary conditions")
+            exit()
+
+        if type(time_value_pairs) is not list:
+            print("Error! Must specify time dependent BCs using a list of tuples: [(t0,value), (t1,value) ...]")
+            exit()
+
+        if type(time_value_pairs[0]) is not tuple:
+            print("Error! Must specify time dependent BCs using a list of tuples: [(t0,value), (t1,value) ...]")
+            exit()
+
+        # Set the first value as given initial_value
+        if initial_value < 0:
+            print("Error! Concentrations cannot be negative")
+            exit()
+        if initial_value < 1e-20:
+            initial_value = 1e-20
+        self.model.Cb_in[spec,age,temp,self.model.t.first()].set_value(initial_value)
+        i=0
+        current_bc_time = time_value_pairs[i][0]
+        current_bc_value = time_value_pairs[i][1]
+        for time in self.model.t:
+            if time >= current_bc_time:
+                try:
+                    current_bc_value = time_value_pairs[i][1]
+                    if current_bc_value < 0:
+                        print("Error! Concentrations cannot be negative")
+                        exit()
+                    if current_bc_value < 1e-20:
+                        current_bc_value = 1e-20
+                except:
+                    pass
+                self.model.Cb_in[spec,age,temp,time].set_value(current_bc_value)
+                self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(current_bc_value)
+                self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
+                i+=1
+                try:
+                    current_bc_time = time_value_pairs[i][0]
+                except:
+                    pass
+            else:
+                self.model.Cb_in[spec,age,temp,time].set_value(current_bc_value)
+                self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(current_bc_value)
+                self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
+
         self.isBoundarySet[spec] = True
 
 
@@ -845,4 +914,152 @@ class Isothermal_Monolith_Simulator(object):
             self.model.dH[rxn].fix()
             self.model.dS[rxn].fix()
 
-    # # TODO: Add a solver (Check for existance of objective function or data)
+    # Function to run the solver
+    # # TODO: (?) Add additional solver options ?
+    # # TODO: (?) Add preconditioning options ? (is that available in 'ipopt'?)
+    def run_solver(self,console_out=True):
+        for spec in self.model.gas_set:
+            if self.isBoundarySet[spec] == False:
+                print("Error! Must specify boundaries before attempting to solve")
+                exit()
+        if self.isObjectiveSet == False:
+            print("Warning! No objective function set. Forcing all kinetics to be fixed.")
+            self.fix_all_reactions()
+
+        solver = SolverFactory('ipopt')
+        results = solver.solve(self.model, tee=console_out)
+
+
+    # # TODO: Add print functionality
+
+    # Function to print a list of species at a given node for all times
+    def print_results_of_location(self, spec_list, age, temp, loc, file_name=""):
+        if type(spec_list) is not list:
+            print("Error! Need to provide species as a list (even if it is just one species)")
+            exit()
+        for spec in spec_list:
+            if spec not in self.model.all_species_set:
+                print("Error! Invalid species given!")
+                print("\t"+str(spec)+ " is not a species in the model")
+                exit()
+        if file_name == "":
+            for spec in spec_list:
+                file_name+=spec+"_"
+            file_name+="loc_z_at_"+str(loc)
+            file_name+=".txt"
+
+        file = open(file_name,"w")
+        file.write('Results for z='+str(loc)+' at in table below'+'\n')
+        file.write('Time\t')
+        for spec in spec_list:
+            if spec in self.model.gas_set:
+                file.write(str(spec)+'_b\t'+str(spec)+'_w\t')
+            elif spec in self.model.surf_set:
+                file.write(str(spec)+'\t')
+            else:
+                file.write(str(spec)+'\t')
+        file.write('\n')
+        for time in self.model.t:
+            file.write(str(time) + '\t')
+            for spec in spec_list:
+                if spec in self.model.gas_set:
+                    file.write(str(value(self.model.Cb[spec,age,temp,loc,time])) + '\t' + str(value(self.model.C[spec,age,temp,loc,time])) + '\t')
+                elif spec in self.model.surf_set:
+                    file.write(str(value(self.model.q[spec,age,temp,loc,time])) + '\t')
+                else:
+                    file.write(str(value(self.model.S[spec,age,temp,loc,time])) + '\t')
+            file.write('\n')
+        file.write('\n')
+        file.close()
+
+
+    # Function to print a list of species at the exit of the domain
+    def print_results_of_breakthrough(self, spec_list, age, temp, file_name=""):
+        self.print_results_of_location(spec_list, age, temp, self.model.z.last(), file_name)
+
+    # Print integrated average results over domain for a species
+    def print_results_of_integral_average(self, spec_list, age, temp, file_name=""):
+        if type(spec_list) is not list:
+            print("Error! Need to provide species as a list (even if it is just one species)")
+            exit()
+        for spec in spec_list:
+            if spec not in self.model.all_species_set:
+                print("Error! Invalid species given!")
+                print("\t"+str(spec)+ " is not a species in the model")
+                exit()
+        if file_name == "":
+            for spec in spec_list:
+                file_name+=spec+"_"
+            file_name+="integral_avg"
+            file_name+=".txt"
+
+        file = open(file_name,"w")
+        file.write('Integral average results in table below'+'\n')
+        file.write('Time\t')
+        for spec in spec_list:
+            if spec in self.model.gas_set:
+                file.write(str(spec)+'_b\t'+str(spec)+'_w\t')
+            elif spec in self.model.surf_set:
+                file.write(str(spec)+'\t')
+            else:
+                file.write(str(spec)+'\t')
+        file.write('\n')
+        for time in self.model.t:
+            file.write(str(time) + '\t')
+            for spec in spec_list:
+                if spec in self.model.gas_set:
+                    #bulk variable
+                    total = 0
+                    i = 0
+                    for loc in self.model.z:
+                        if i == 0:
+                            loc_old = loc
+                        else:
+                            total += (loc - loc_old)*0.5*(value(self.model.Cb[spec,age,temp,loc,time])+value(self.model.Cb[spec,age,temp,loc_old,time]))
+                        i += 1
+                        loc_old = loc
+                    avg = total/(self.model.z.last()-self.model.z.first())
+                    file.write(str(avg) + '\t')
+
+                    # Washcoat variable
+                    total = 0
+                    i = 0
+                    for loc in self.model.z:
+                        if i == 0:
+                            loc_old = loc
+                        else:
+                            total += (loc - loc_old)*0.5*(value(self.model.C[spec,age,temp,loc,time])+value(self.model.C[spec,age,temp,loc_old,time]))
+                        i += 1
+                        loc_old = loc
+                    avg = total/(self.model.z.last()-self.model.z.first())
+                    file.write(str(avg) + '\t')
+                elif spec in self.model.surf_set:
+                    total = 0
+                    i = 0
+                    for loc in self.model.z:
+                        if i == 0:
+                            loc_old = loc
+                        else:
+                            total += (loc - loc_old)*0.5*(value(self.model.q[spec,age,temp,loc,time])+value(self.model.q[spec,age,temp,loc_old,time]))
+                        i += 1
+                        loc_old = loc
+                    avg = total/(self.model.z.last()-self.model.z.first())
+                    file.write(str(avg) + '\t')
+                else:
+                    total = 0
+                    i = 0
+                    for loc in self.model.z:
+                        if i == 0:
+                            loc_old = loc
+                        else:
+                            total += (loc - loc_old)*0.5*(value(self.model.S[spec,age,temp,loc,time])+value(self.model.S[spec,age,temp,loc_old,time]))
+                        i += 1
+                        loc_old = loc
+                    avg = total/(self.model.z.last()-self.model.z.first())
+                    file.write(str(avg) + '\t')
+            file.write('\n')
+        file.write('\n')
+        file.close()
+
+
+    # # TODO: Add plotting functionality?
