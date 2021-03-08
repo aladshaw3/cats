@@ -60,8 +60,13 @@ test.set_const_BC("CO2","A0","T0",0)
 # Setup temperature ramp
 test.set_temperature_ramp("A0", "T0", 120, 5160, 813.15)
 
+# Specify a reaction zone
+#   Zone is specified as a tuple: (start_zone, end_zone)
+test.set_reaction_zone("r4", (2.5, 5))
+
 # Fix the kinetics to only run a simulation
 test.fix_all_reactions()
 test.run_solver()
 
-test.print_results_of_breakthrough(["CO","NO","O2"], "A0", "T0", file_name="")
+test.print_results_of_breakthrough(["CO","NO","O2"], "A0", "T0", file_name="Zoned_breakthrough.txt")
+test.print_results_all_locations(["CO","NO","O2"], "A0", "T0", file_name="")

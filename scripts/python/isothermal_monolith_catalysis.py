@@ -594,7 +594,8 @@ class Isothermal_Monolith_Simulator(object):
         # Set reaction order information
         for spec in self.model.all_species_set:
             if spec in info["rxn_orders"]:
-                self.model.rxn_orders[rxn,spec].set_value(info["rxn_orders"][spec])
+                if spec in info["mol_reactants"] or spec in info["mol_products"]:
+                    self.model.rxn_orders[rxn,spec].set_value(info["rxn_orders"][spec])
 
         self.isRxnBuilt = True
 
@@ -906,6 +907,43 @@ class Isothermal_Monolith_Simulator(object):
                     self.model.T[age,temp,time].set_value(start_temp+slope*(time-start_time))
             previous_time = time
 
+    # Function to define reaction 'zones'
+    #       By default, all reactions occur in all zones. Users can
+    #       utilize this function to specify if a particular reaction
+    #       set is only active in a particular 'zone' of the catalyst.
+    #       The 'zone' must be specified via a tuple argument where
+    #       the first item in the tuple is the start of the zone and
+    #       the second argument is the end of the zone. The given
+    #       reaction will not occur at points outside the given zone.
+    def set_reaction_zone(self, rxn, zone):
+        if self.isDiscrete == False:
+            print("Error! User should call the discretizer before setting a reaction zone")
+            exit()
+        if rxn not in self.model.all_rxns:
+            print("Error! Invalid reaction ID given")
+            exit()
+        if type(zone) is not tuple:
+            print("Error! Zone must be given as tuple: zone=(start_loc, end_loc)")
+            exit()
+        start_loc = zone[0]
+        if start_loc > zone[1]:
+            start_loc = zone[1]
+            end_loc = zone[0]
+        else:
+            end_loc = zone[1]
+        inside = False
+        for loc in self.model.z:
+            if loc >= start_loc and loc <= end_loc:
+                inside = True
+            else:
+                inside = False
+
+            if inside == False:
+                for spec in self.model.gas_set:
+                    self.model.u_C[spec,rxn,loc].set_value(0)
+                if self.isSurfSpecSet == True:
+                    for spec in self.model.surf_set:
+                        self.model.u_q[spec,rxn,loc].set_value(0)
 
 
     # Function to fix all kinetic vars
