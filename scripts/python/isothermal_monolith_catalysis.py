@@ -607,10 +607,12 @@ class Isothermal_Monolith_Simulator(object):
         for spec in model.component(rxn+"_reactants"):
             if spec in model.gas_set:
                 r=r*model.C[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
-            if spec in model.surf_set:
-                r=r*model.q[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
-            if spec in model.site_set:
-                r=r*model.S[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
+            if self.isSurfSpecSet == True:
+                if spec in model.surf_set:
+                    r=r*model.q[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
+                if self.isSitesSet == True:
+                    if spec in model.site_set:
+                        r=r*model.S[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
         return r
 
     # Define a single equilibrium arrhenius rate function to be used in the model
@@ -625,17 +627,21 @@ class Isothermal_Monolith_Simulator(object):
         for spec in model.component(rxn+"_reactants"):
             if spec in model.gas_set:
                 rf=rf*model.C[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
-            if spec in model.surf_set:
-                rf=rf*model.q[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
-            if spec in model.site_set:
-                rf=rf*model.S[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
+            if self.isSurfSpecSet == True:
+                if spec in model.surf_set:
+                    rf=rf*model.q[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
+                if self.isSitesSet == True:
+                    if spec in model.site_set:
+                        rf=rf*model.S[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
         for spec in model.component(rxn+"_products"):
              if spec in model.gas_set:
                  rr=rr*model.C[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
-             if spec in model.surf_set:
-                 rr=rr*model.q[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
-             if spec in model.site_set:
-                 rr=rr*model.S[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
+             if self.isSurfSpecSet == True:
+                 if spec in model.surf_set:
+                     rr=rr*model.q[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
+                 if self.isSitesSet == True:
+                     if spec in model.site_set:
+                         rr=rr*model.S[spec,age,temp,loc,time]**model.rxn_orders[rxn,spec]
         r = rf-rr
         return r
 
@@ -793,13 +799,15 @@ class Isothermal_Monolith_Simulator(object):
             self.model.C[spec,age,temp, :, self.model.t.first()].set_value(value)
             self.model.C[spec,age,temp, :, self.model.t.first()].fix()
             self.isInitialSet[spec] = True
-        if spec in self.model.surf_set:
-            self.model.q[spec,age,temp, :, self.model.t.first()].set_value(value)
-            self.model.q[spec,age,temp, :, self.model.t.first()].fix()
-            self.isInitialSet[spec] = True
-        if spec in self.model.site_set:
-            # Do not set this initial value (not a time dependent variable)
-            self.isInitialSet[spec] = True
+        if self.isSurfSpecSet == True:
+            if spec in self.model.surf_set:
+                self.model.q[spec,age,temp, :, self.model.t.first()].set_value(value)
+                self.model.q[spec,age,temp, :, self.model.t.first()].fix()
+                self.isInitialSet[spec] = True
+            if self.isSitesSet == True:
+                if spec in self.model.site_set:
+                    # Do not set this initial value (not a time dependent variable)
+                    self.isInitialSet[spec] = True
 
     # Set constant boundary conditions
     def set_const_BC(self,spec,age,temp,value):
@@ -877,6 +885,28 @@ class Isothermal_Monolith_Simulator(object):
 
         self.isBoundarySet[spec] = True
 
+    # Function to add linear temperature ramp section
+    #       Starting temperature will be whatever the temperature is
+    #       at the start time. End temperature will be carried over to
+    #       end time (if possible).
+    def set_temperature_ramp(self, age, temp, start_time, end_time, end_temp):
+        if self.isDiscrete == False:
+            print("Error! User should call the discretizer before setting a temperature ramp")
+            exit()
+        start_temp = value(self.model.T[age,temp,self.model.t.first()])
+        previous_time = self.model.t.first()
+        for time in self.model.t:
+            if time <= start_time:
+                start_temp = value(self.model.T[age,temp,self.model.t.first()])
+            else:
+                if time >= end_time:
+                    self.model.T[age,temp,time].set_value(end_temp)
+                else:
+                    slope = (end_temp-start_temp)/(end_time-start_time)
+                    self.model.T[age,temp,time].set_value(start_temp+slope*(time-start_time))
+            previous_time = time
+
+
 
     # Function to fix all kinetic vars
     def fix_all_reactions(self):
@@ -930,7 +960,74 @@ class Isothermal_Monolith_Simulator(object):
         results = solver.solve(self.model, tee=console_out)
 
 
-    # # TODO: Add print functionality
+    # Function to print out results of variables at all locations and times
+    def print_results_all_locations(self, spec_list, age, temp, file_name=""):
+        if type(spec_list) is not list:
+            print("Error! Need to provide species as a list (even if it is just one species)")
+            exit()
+        for spec in spec_list:
+            if spec not in self.model.all_species_set:
+                print("Error! Invalid species given!")
+                print("\t"+str(spec)+ " is not a species in the model")
+                exit()
+        if file_name == "":
+            for spec in spec_list:
+                file_name+=spec+"_"
+            file_name+=str(age)+"_"+str(temp)+"_"
+            file_name+="all_loc"
+            file_name+=".txt"
+
+        file = open(file_name,"w")
+
+        # Embeddd helper function
+        def _print_all_results(model, var, spec, age, temp, file):
+            tstart = model.t.first()
+            tend = model.t.last()
+
+            #Print header first
+            file.write('\t'+'Times (across)'+'\n')
+            for time in model.t:
+            	if time == tend:
+            		file.write(str(time)+'\n')
+            	elif time == tstart:
+            		file.write('time ->\t'+str(time)+'\t')
+            	else:
+            		file.write(str(time)+'\t')
+
+            for time in model.t:
+            	if time == tend:
+            		file.write(str(var)+'[@t='+str(time)+']\n')
+            	elif time == tstart:
+            		file.write('Z (down)\t'+str(var)+'[@t='+str(time)+']\t')
+            	else:
+            		file.write(str(var)+'[@t='+str(time)+']\t')
+
+            #Print x results
+            for loc in model.z:
+            	for time in model.t:
+            		if time == tstart:
+            			file.write(str(loc)+'\t'+str(value(var[spec,age,temp,loc,time]))+'\t')
+            		elif time == tend:
+            			file.write(str(value(var[spec,age,temp,loc,time]))+'\n')
+            		else:
+            			file.write(str(value(var[spec,age,temp,loc,time]))+'\t')
+            file.write('\n')
+
+        for spec in spec_list:
+            if spec in self.model.gas_set:
+                file.write('Results for bulk '+str(spec)+'_b in table below'+'\n')
+                _print_all_results(self.model, self.model.Cb, spec, age, temp, file)
+                file.write('Results for washcoat '+str(spec)+'_w in table below'+'\n')
+                _print_all_results(self.model, self.model.C, spec, age, temp, file)
+            elif spec in self.model.surf_set:
+                file.write('Results for surface '+str(spec)+' in table below'+'\n')
+                _print_all_results(self.model, self.model.q, spec, age, temp, file)
+            else:
+                file.write('Results for site '+str(spec)+' in table below'+'\n')
+                _print_all_results(self.model, self.model.S, spec, age, temp, file)
+
+        file.write('\n')
+        file.close()
 
     # Function to print a list of species at a given node for all times
     def print_results_of_location(self, spec_list, age, temp, loc, file_name=""):
@@ -945,6 +1042,7 @@ class Isothermal_Monolith_Simulator(object):
         if file_name == "":
             for spec in spec_list:
                 file_name+=spec+"_"
+            file_name+=str(age)+"_"+str(temp)+"_"
             file_name+="loc_z_at_"+str(loc)
             file_name+=".txt"
 
@@ -990,6 +1088,7 @@ class Isothermal_Monolith_Simulator(object):
         if file_name == "":
             for spec in spec_list:
                 file_name+=spec+"_"
+            file_name+=str(age)+"_"+str(temp)+"_"
             file_name+="integral_avg"
             file_name+=".txt"
 

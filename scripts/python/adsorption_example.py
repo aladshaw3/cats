@@ -57,3 +57,4 @@ test.run_solver()
 
 test.print_results_of_breakthrough(["NH3"], "Unaged", "250C", file_name="")
 test.print_results_of_integral_average(["q1","S1"], "Unaged", "250C", file_name="")
+test.print_results_all_locations(["NH3"], "Unaged", "250C", file_name="")
