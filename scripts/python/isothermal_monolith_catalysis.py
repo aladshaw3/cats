@@ -451,7 +451,11 @@ class Isothermal_Monolith_Simulator(object):
         self.model.rxn_orders = Param(self.model.all_rxns, self.model.all_species_set,
                                     domain=Reals, initialize=0, mutable=True)
         self.isRxnSet = True
-        self.rxn_list = rxns
+        for rxn in rxns:
+            self.rxn_list[rxn] = {}
+            self.rxn_list[rxn]["type"]=rxns[rxn]
+            self.rxn_list[rxn]["fixed"]=False
+
 
     #========= Setup functions for parameters ===============
     def set_bulk_porosity(self, eb):
@@ -915,7 +919,7 @@ class Isothermal_Monolith_Simulator(object):
     #       the first item in the tuple is the start of the zone and
     #       the second argument is the end of the zone. The given
     #       reaction will not occur at points outside the given zone.
-    def set_reaction_zone(self, rxn, zone):
+    def set_reaction_zone(self, rxn, zone, isNotActive=False):
         if self.isDiscrete == False:
             print("Error! User should call the discretizer before setting a reaction zone")
             exit()
@@ -938,7 +942,7 @@ class Isothermal_Monolith_Simulator(object):
             else:
                 inside = False
 
-            if inside == False:
+            if inside == isNotActive:
                 for spec in self.model.gas_set:
                     self.model.u_C[spec,rxn,loc].set_value(0)
                 if self.isSurfSpecSet == True:
@@ -952,11 +956,13 @@ class Isothermal_Monolith_Simulator(object):
             self.model.A[r].fix()
             self.model.B[r].fix()
             self.model.E[r].fix()
+            self.rxn_list[r]["fixed"]=True
         for re in self.model.equ_arrhenius_rxns:
             self.model.Af[re].fix()
             self.model.Ef[re].fix()
             self.model.dH[re].fix()
             self.model.dS[re].fix()
+            self.rxn_list[re]["fixed"]=True
 
     # Function to fix only a given reaction
     def fix_reaction(self, rxn):
@@ -964,23 +970,71 @@ class Isothermal_Monolith_Simulator(object):
             self.model.A[rxn].fix()
             self.model.B[rxn].fix()
             self.model.E[rxn].fix()
+            self.rxn_list[rxn]["fixed"]=True
         if rxn in self.model.equ_arrhenius_rxns:
             self.model.Af[rxn].fix()
             self.model.Ef[rxn].fix()
             self.model.dH[rxn].fix()
             self.model.dS[rxn].fix()
+            self.rxn_list[rxn]["fixed"]=True
+
+    # Function to unfix a specified reaction
+    def unfix_reaction(self, rxn):
+        if rxn in self.model.arrhenius_rxns:
+            self.model.A[rxn].unfix()
+            self.model.B[rxn].unfix()
+            self.model.E[rxn].unfix()
+            self.rxn_list[rxn]["fixed"]=False
+        if rxn in self.model.equ_arrhenius_rxns:
+            self.model.Af[rxn].unfix()
+            self.model.Ef[rxn].unfix()
+            self.model.dH[rxn].unfix()
+            self.model.dS[rxn].unfix()
+            self.rxn_list[rxn]["fixed"]=False
 
     # Function to fix all equilibrium relations
     def fix_all_equilibrium_relations(self):
         for re in self.model.equ_arrhenius_rxns:
             self.model.dH[re].fix()
             self.model.dS[re].fix()
+            self.rxn_list[re]["fixed"]=True
 
     # Function to fix a given equilibrium relation
     def fix_equilibrium_relation(self, rxn):
         if rxn in self.model.equ_arrhenius_rxns:
             self.model.dH[rxn].fix()
             self.model.dS[rxn].fix()
+            self.rxn_list[rxn]["fixed"]=True
+
+    # # TODO: ADD an initializer to solve model with fixed kinetics 1 step at a time
+    # Function to initilize the simulator
+    def initialize_simulator(self, console_out=True):
+        # Setup a dictionary to determine which reaction to unfix after solve
+        fixed_dict = {}
+        for rxn in self.rxn_list:
+            fixed_dict[rxn]=self.rxn_list[rxn]["fixed"]
+        self.fix_all_reactions()
+
+        # Run a solve of the model without objective function
+        if self.isObjectiveSet == True:
+            # remove obj
+            pass
+
+        # Run through model serially solving 1 time step at a time
+        for age in self.model.age_set:
+            for temp in self.model.T_set:
+                for time in self.model.t:
+                    pass
+
+
+        # Add objective function back
+        if self.isObjectiveSet == True:
+            # add obj
+            pass
+
+        # After solve, unfix specified reactions
+        for rxn in fixed_dict:
+            self.unfix_reaction(rxn)
 
     # Function to run the solver
     # # TODO: (?) Add additional solver options ?
