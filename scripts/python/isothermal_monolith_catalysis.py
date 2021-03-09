@@ -23,6 +23,10 @@ import os.path
 from os import path
 from enum import Enum
 
+# IDAES is not installed, then the script will search for any other available 'ipopt' library
+if os.environ['CONDA_DEFAULT_ENV'] == "idaes" or os.environ['CONDA_DEFAULT_ENV'] == "idaes2":
+    from idaes.core import *
+
 # Define an Enum class for reaction types
 class ReactionType(Enum):
     Arrhenius = 1
@@ -80,6 +84,17 @@ def equilibrium_arrhenius_consts(Af, Ef, dH, dS):
 #
 #                   Smax = S + SUM(all qi, u_si*qi) = 0
 #
+
+# # TODO: Add in data and objective functions
+#       # NOTE: In order to be efficient as a simulator and optimizer, the data
+#               given should likely be a sub-set of a full data run. Points should
+#               be selected with high-density where apparent rates of change are
+#               high, but points should be selected with low density where apparent
+#               rates of change are low.
+#
+# # TODO: (?) Develop subroutines to automatically down select data (?)
+#               Use relative rate of change between nieghbors do determine
+#               the density of points to select
 class Isothermal_Monolith_Simulator(object):
     #Default constructor
     # Pass a list of species names (Specs) for the mass balances
@@ -1294,6 +1309,8 @@ class Isothermal_Monolith_Simulator(object):
 
     # Function to run the solver
     # # TODO: (?) Add additional solver options ?
+    # # TODO: (?) Force solver to ONLY initialize if no objective function exists (?)
+    # # TODO: (?) Force tolerances to relax if the initializer was run (?)
     def run_solver(self,console_out=True):
         for spec in self.model.gas_set:
             if self.isBoundarySet[spec] == False:
@@ -1304,6 +1321,33 @@ class Isothermal_Monolith_Simulator(object):
             self.fix_all_reactions()
 
         solver = SolverFactory('ipopt')
+        # Change some solver options
+        solver.options['print_user_options'] = 'yes'
+        #   linear_solver -> valid options:
+        #   -------------------------------
+        #       Depends on installed libraries
+        #           'mumps'  --> available on Windows AND 'idaes'
+        #           'ma27' --> NOT available on Windows
+        #                       BUT is available with 'idaes'
+        #           'ma57' --> NOT available on Windows
+        #                       BUT is available with 'idaes'
+        #           'ma77' --> NOT functional with Windows OR 'idaes'
+        #           'ma86' --> NOT functional with Windows OR 'idaes'
+        #           'ma97' --> NOT available on Windows
+        #                       BUT is available with 'idaes'
+        #           'pardiso' --> NOT functional with Windows OR 'idaes'
+        #           'wsmp' --> NOT functional with Windows OR 'idaes'
+        #
+        #   NOTE: The solver libraries bundled with 'idaes' are MUCH more
+        #           computationally efficient than the standard Windows
+        #           solver libraries
+        solver.options['linear_solver'] = 'ma27'
+        #solver.options['print_level'] = 5
+        #solver.options['tol'] = 1e-6
+        #solver.options['acceptable_tol'] = 1e-6
+        #solver.options['compl_inf_tol'] = 1e-6
+        #solver.options['max_iter'] = 3000 #?
+        solver.options['obj_scaling_factor'] = 1
         results = solver.solve(self.model, tee=console_out)
         # TODO: Add check for solver fails
 

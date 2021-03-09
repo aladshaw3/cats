@@ -46,7 +46,7 @@ test.set_isothermal_temp("2hr","150C",150+273.15)
 # Build the constraints then discretize
 test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=5,elems=3,colpoints=1)
+                    tstep=10,elems=5,colpoints=1)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 test.set_const_IC("NH3","Unaged","150C",0)
@@ -71,6 +71,8 @@ test.fix_all_reactions()
 # Run initializer and solver
 test.initialize_simulator()
 test.run_solver()
+
+test.print_results_all_locations(["NH3"], "Unaged", "250C", file_name="")
 
 test.print_results_of_breakthrough(["NH3"], "Unaged", "150C", file_name="")
 test.print_results_of_integral_average(["q1"], "Unaged", "150C", file_name="")
