@@ -272,9 +272,9 @@ class Isothermal_Monolith_Simulator(object):
         self.isGasSpecSet = True
         for spec in self.model.gas_set:
             self.isBoundarySet[spec] = False
-        self.model.dCb_dz = DerivativeVar(self.model.Cb, wrt=self.model.z, units=units.mol/units.L/units.min)
-        self.model.dCb_dt = DerivativeVar(self.model.Cb, wrt=self.model.t, units=units.mol/units.L/units.min)
-        self.model.dC_dt = DerivativeVar(self.model.C, wrt=self.model.t, units=units.mol/units.L/units.min)
+        self.model.dCb_dz = DerivativeVar(self.model.Cb, wrt=self.model.z, initialize=0, units=units.mol/units.L/units.min)
+        self.model.dCb_dt = DerivativeVar(self.model.Cb, wrt=self.model.t, initialize=0, units=units.mol/units.L/units.min)
+        self.model.dC_dt = DerivativeVar(self.model.C, wrt=self.model.t, initialize=0, units=units.mol/units.L/units.min)
 
     # Add surface species (optional) [Must be strings]
     #       Currently expects surface concentrations in mol/L
@@ -313,7 +313,7 @@ class Isothermal_Monolith_Simulator(object):
                 print("Error! Surface species must be a string")
                 exit()
         self.isSurfSpecSet = True
-        self.model.dq_dt = DerivativeVar(self.model.q, wrt=self.model.t, units=units.mol/units.L/units.min)
+        self.model.dq_dt = DerivativeVar(self.model.q, wrt=self.model.t, initialize=0, units=units.mol/units.L/units.min)
 
     # Add surface sites (optional, but necessary when using surface species) [Must be strings]
     #       Currently expects surface concentrations in mol/L
@@ -1006,9 +1006,13 @@ class Isothermal_Monolith_Simulator(object):
             self.model.dS[rxn].fix()
             self.rxn_list[rxn]["fixed"]=True
 
-    # # TODO: ADD an initializer to solve model with fixed kinetics 1 step at a time
     # Function to initilize the simulator
-    def initialize_simulator(self, console_out=True):
+    def initialize_simulator(self, console_out=False):
+        for spec in self.model.gas_set:
+            if self.isBoundarySet[spec] == False:
+                print("Error! Must specify boundaries before attempting to solve")
+                exit()
+
         # Setup a dictionary to determine which reaction to unfix after solve
         fixed_dict = {}
         for rxn in self.rxn_list:
@@ -1017,28 +1021,279 @@ class Isothermal_Monolith_Simulator(object):
 
         # Run a solve of the model without objective function
         if self.isObjectiveSet == True:
-            # remove obj
+            # TODO: remove obj
             pass
 
         # Run through model serially solving 1 time step at a time
-        for age in self.model.age_set:
-            for temp in self.model.T_set:
-                for time in self.model.t:
-                    pass
+        '''
+            Certain constraints and variables should be deactivated or fixed
+            during the initialization solve. For instance, we want to only solve
+            at 1 age, 1 temp, and at 1 time for each solve. All other ages, temps,
+            and times would be 'fixed' at a given solve.
+
+            Names of Constraints (all active):
+            ----------------------------------
+                - surf_cons:    (surf_spec, age, temp, loc, time) [optional]
+                - site_cons:    (site_spec, age, temp, loc, time) [optional]
+                - pore_cons:    (gas_spec,  age, temp, loc, time)
+                - bulk_cons:    (gas_spec,  age, temp, loc, time)
+
+                - dq_dt_disc_eq:
+                        (surf_spec, age, temp, loc, time)         [optional]
+                        {NOTE: 'time' starts after model.t.first()}
+
+                - dCb_dz_disc_eq:
+                        (gas_spec,  age, temp, loc, time)
+                        {NOTE: Spatial derivatives always active,
+                                but should 'turn off' at certain times}
+
+                - dCb_dt_disc_eq:
+                        (gas_spec,  age, temp, loc, time)
+                        {NOTE: 'time' starts after model.t.first()}
+
+                - dC_dt_disc_eq:
+                        (gas_spec,  age, temp, loc, time)
+                        {NOTE: 'time' starts after model.t.first()}
+
+            Names of Variables (fixed on initial and boundary):
+            ----------------------------------------------------
+                NOTE: Variables are already inherently 'fixed' at their initial
+                        values (except for S). The 'Cb' varaibles are also
+                        inherently 'fixed' at the boundary values.
+
+                - q:    (surf_spec, age, temp, loc, time) [optional]
+                - S:    (site_spec, age, temp, loc, time) [optional]
+                - C:    (gas_spec,  age, temp, loc, time)
+                - Cb:   (gas_spec,  age, temp, loc, time)
+
+                - dq_dt:    (surf_spec, age, temp, loc, time)
+
+                - dCb_dz:   (gas_spec,  age, temp, loc, time)
+
+                - dCb_dt:   (gas_spec,  age, temp, loc, time)
+                        {NOTE: ALWAYS 'fixed' at model.z.first() and model.t.first()}
+
+                - dC_dt:    (gas_spec,  age, temp, loc, time)
+
+        '''
+        for age_solve in self.model.age_set:
+            for temp_solve in self.model.T_set:
+                # Fix all ages and temps not currently being solved for
+                for age_hold in self.model.age_set:
+                    if age_solve != age_hold:
+                        # Fix all constraints and vars associated with
+                        #   the 'age_hold' id
+                        self.model.Cb[:, age_hold, :, :, :].fix()
+                        self.model.C[:, age_hold, :, :, :].fix()
+                        self.model.dCb_dt[:, age_hold, :, :, :].fix()
+                        self.model.dC_dt[:, age_hold, :, :, :].fix()
+                        self.model.dCb_dz[:, age_hold, :, :, :].fix()
+                        self.model.bulk_cons[:, age_hold, :, :, :].deactivate()
+                        self.model.pore_cons[:, age_hold, :, :, :].deactivate()
+                        self.model.dCb_dz_disc_eq[:, age_hold, :, :, :].deactivate()
+                        self.model.dCb_dt_disc_eq[:, age_hold, :, :, :].deactivate()
+                        self.model.dC_dt_disc_eq[:, age_hold, :, :, :].deactivate()
+
+                        if self.isSurfSpecSet == True:
+                            self.model.q[:, age_hold, :, :, :].fix()
+                            self.model.dq_dt[:, age_hold, :, :, :].fix()
+                            self.model.surf_cons[:, age_hold, :, :, :].deactivate()
+                            self.model.dq_dt_disc_eq[:, age_hold, :, :, :].deactivate()
+
+                            if self.isSitesSet == True:
+                                self.model.S[:, age_hold, :, :, :].fix()
+                                self.model.site_cons[:, age_hold, :, :, :].deactivate()
+
+                for temp_hold in self.model.T_set:
+                    if temp_solve != temp_hold:
+                        # Fix all constraints and vars associated with
+                        #   the 'temp_hold' id
+                        self.model.Cb[:, :, temp_hold, :, :].fix()
+                        self.model.C[:, :, temp_hold, :, :].fix()
+                        self.model.dCb_dt[:, :, temp_hold, :, :].fix()
+                        self.model.dC_dt[:, :, temp_hold, :, :].fix()
+                        self.model.dCb_dz[:, :, temp_hold, :, :].fix()
+                        self.model.bulk_cons[:, :, temp_hold, :, :].deactivate()
+                        self.model.pore_cons[:, :, temp_hold, :, :].deactivate()
+                        self.model.dCb_dz_disc_eq[:, :, temp_hold, :, :].deactivate()
+                        self.model.dCb_dt_disc_eq[:, :, temp_hold, :, :].deactivate()
+                        self.model.dC_dt_disc_eq[:, :, temp_hold, :, :].deactivate()
+
+                        if self.isSurfSpecSet == True:
+                            self.model.q[:, :, temp_hold, :, :].fix()
+                            self.model.dq_dt[:, :, temp_hold, :, :].fix()
+                            self.model.surf_cons[:, :, temp_hold, :, :].deactivate()
+                            self.model.dq_dt_disc_eq[:, :, temp_hold, :, :].deactivate()
+
+                            if self.isSitesSet == True:
+                                self.model.S[:, :, temp_hold, :, :].fix()
+                                self.model.site_cons[:, :, temp_hold, :, :].deactivate()
+
+                # Inside age_solve && temp_solve
+                print("Initializing for " + str(age_solve) + " -> " + str(temp_solve))
+
+                # Fix all times not associated with current time step
+                i=0
+                for time_solve in self.model.t:
+                    if i > 0:
+                        for time_hold in self.model.t:
+                            if time_solve != time_hold:
+                                # Fix all constraints and vars associated with
+                                #   the 'time_hold' id
+                                self.model.Cb[:, :, :, :, time_hold].fix()
+                                self.model.C[:, :, :, :, time_hold].fix()
+                                self.model.dCb_dt[:, :, :, :, time_hold].fix()
+                                self.model.dC_dt[:, :, :, :, time_hold].fix()
+                                self.model.dCb_dz[:, :, :, :, time_hold].fix()
+                                self.model.bulk_cons[:, :, :, :, time_hold].deactivate()
+                                self.model.pore_cons[:, :, :, :, time_hold].deactivate()
+                                self.model.dCb_dz_disc_eq[:, :, :, :, time_hold].deactivate()
+                                self.model.dCb_dt_disc_eq[:, :, :, :, time_hold].deactivate()
+                                self.model.dC_dt_disc_eq[:, :, :, :, time_hold].deactivate()
+
+                                if self.isSurfSpecSet == True:
+                                    self.model.q[:, :, :, :, time_hold].fix()
+                                    self.model.dq_dt[:, :, :, :, time_hold].fix()
+                                    self.model.surf_cons[:, :, :, :, time_hold].deactivate()
+                                    self.model.dq_dt_disc_eq[:, :, :, :, time_hold].deactivate()
+
+                                    if self.isSitesSet == True:
+                                        self.model.S[:, :, :, :, time_hold].fix()
+                                        self.model.site_cons[:, :, :, :, time_hold].deactivate()
+
+                        #Inside age_solve, temp_solve, and time_solve
+                        print("\t...initializing for time =\t" + str(time_solve))
+                        solver = SolverFactory('ipopt')
+                        results = solver.solve(self.model, tee=console_out)
+                        # TODO: Add check for solver fails
+
+                        # Unfix all times (paying close attention to
+                        #   specific vars and constraints that should still be
+                        #   fixed according to our problem definition)
+                        #       (i.e., initial conditions, boundary conditions,
+                        #               and dCb_dt at (z=0,t=0) )
+                        for time_hold in self.model.t:
+                            if time_solve != time_hold:
+                                # Fix all constraints and vars associated with
+                                #   the 'time_hold' id
+                                self.model.Cb[:, age_solve, temp_solve, :, time_hold].unfix()
+                                self.model.C[:, age_solve, temp_solve, :, time_hold].unfix()
+                                self.model.dCb_dt[:, age_solve, temp_solve, :, time_hold].unfix()
+                                self.model.dC_dt[:, age_solve, temp_solve, :, time_hold].unfix()
+                                self.model.dCb_dz[:, age_solve, temp_solve, :, time_hold].unfix()
+                                self.model.bulk_cons[:, age_solve, temp_solve, :, time_hold].activate()
+                                self.model.pore_cons[:, age_solve, temp_solve, :, time_hold].activate()
+                                self.model.dCb_dz_disc_eq[:, age_solve, temp_solve, :, time_hold].activate()
+                                self.model.dCb_dt_disc_eq[:, age_solve, temp_solve, :, time_hold].activate()
+                                self.model.dC_dt_disc_eq[:, age_solve, temp_solve, :, time_hold].activate()
+
+                                if self.isSurfSpecSet == True:
+                                    self.model.q[:, age_solve, temp_solve, :, time_hold].unfix()
+                                    self.model.dq_dt[:, age_solve, temp_solve, :, time_hold].unfix()
+                                    self.model.surf_cons[:, age_solve, temp_solve, :, time_hold].activate()
+                                    self.model.dq_dt_disc_eq[:, age_solve, temp_solve, :, time_hold].activate()
+
+                                    if self.isSitesSet == True:
+                                        self.model.S[:, age_solve, temp_solve, :, time_hold].unfix()
+                                        self.model.site_cons[:, age_solve, temp_solve, :, time_hold].activate()
+
+                            # Make sure the vars that should be fixed, are fixed
+                            #   Fix ICs, BCs, and dCb_dt @ z=0, t=0
+                            self.model.dCb_dt[:,:,:,self.model.z.first(),self.model.t.first()].fix()
+                            self.model.Cb[:,:,:, :, self.model.t.first()].fix()
+                            self.model.C[:,:,:, :, self.model.t.first()].fix()
+                            if self.isSurfSpecSet == True:
+                                self.model.q[:,:,:, :, self.model.t.first()].fix()
+                            self.model.Cb[:,:,:,self.model.z.first(), :].fix()
+                    else:
+                        pass
+                    i+=1
+                # End time_solve loop
+
+
+                # Unfix all ages and temps (paying close attention to
+                #   specific vars and constraints that should still be
+                #   fixed according to our problem definition)
+                #       (i.e., initial conditions, boundary conditions,
+                #               and dCb_dt at (z=0,t=0) )
+                for age_hold in self.model.age_set:
+                    if age_solve != age_hold:
+                        # UNFix all constraints and vars associated with
+                        #   the 'age_hold' id
+                        self.model.Cb[:, age_hold, :, :, :].unfix()
+                        self.model.C[:, age_hold, :, :, :].unfix()
+                        self.model.dCb_dt[:, age_hold, :, :, :].unfix()
+                        self.model.dC_dt[:, age_hold, :, :, :].unfix()
+                        self.model.dCb_dz[:, age_hold, :, :, :].unfix()
+                        self.model.bulk_cons[:, age_hold, :, :, :].activate()
+                        self.model.pore_cons[:, age_hold, :, :, :].activate()
+                        self.model.dCb_dz_disc_eq[:, age_hold, :, :, :].activate()
+                        self.model.dCb_dt_disc_eq[:, age_hold, :, :, :].activate()
+                        self.model.dC_dt_disc_eq[:, age_hold, :, :, :].activate()
+
+                        if self.isSurfSpecSet == True:
+                            self.model.q[:, age_hold, :, :, :].unfix()
+                            self.model.dq_dt[:, age_hold, :, :, :].unfix()
+                            self.model.surf_cons[:, age_hold, :, :, :].activate()
+                            self.model.dq_dt_disc_eq[:, age_hold, :, :, :].activate()
+
+                            if self.isSitesSet == True:
+                                self.model.S[:, age_hold, :, :, :].unfix()
+                                self.model.site_cons[:, age_hold, :, :, :].activate()
+
+                for temp_hold in self.model.T_set:
+                    if temp_solve != temp_hold:
+                        # UNFix all constraints and vars associated with
+                        #   the 'temp_hold' id
+                        self.model.Cb[:, :, temp_hold, :, :].unfix()
+                        self.model.C[:, :, temp_hold, :, :].unfix()
+                        self.model.dCb_dt[:, :, temp_hold, :, :].unfix()
+                        self.model.dC_dt[:, :, temp_hold, :, :].unfix()
+                        self.model.dCb_dz[:, :, temp_hold, :, :].unfix()
+                        self.model.bulk_cons[:, :, temp_hold, :, :].activate()
+                        self.model.pore_cons[:, :, temp_hold, :, :].activate()
+                        self.model.dCb_dz_disc_eq[:, :, temp_hold, :, :].activate()
+                        self.model.dCb_dt_disc_eq[:, :, temp_hold, :, :].activate()
+                        self.model.dC_dt_disc_eq[:, :, temp_hold, :, :].activate()
+
+                        if self.isSurfSpecSet == True:
+                            self.model.q[:, :, temp_hold, :, :].unfix()
+                            self.model.dq_dt[:, :, temp_hold, :, :].unfix()
+                            self.model.surf_cons[:, :, temp_hold, :, :].activate()
+                            self.model.dq_dt_disc_eq[:, :, temp_hold, :, :].activate()
+
+                            if self.isSitesSet == True:
+                                self.model.S[:, :, temp_hold, :, :].unfix()
+                                self.model.site_cons[:, :, temp_hold, :, :].activate()
+
+                # Make sure the vars that should be fixed, are fixed
+                #   Fix ICs, BCs, and dCb_dt @ z=0, t=0
+                self.model.dCb_dt[:,:,:,self.model.z.first(),self.model.t.first()].fix()
+                self.model.Cb[:,:,:, :, self.model.t.first()].fix()
+                self.model.C[:,:,:, :, self.model.t.first()].fix()
+                if self.isSurfSpecSet == True:
+                    self.model.q[:,:,:, :, self.model.t.first()].fix()
+                self.model.Cb[:,:,:,self.model.z.first(), :].fix()
+
+
+            # End temp_solve loop
+        # End age_solve loop
 
 
         # Add objective function back
         if self.isObjectiveSet == True:
-            # add obj
+            # TODO: add obj
             pass
 
         # After solve, unfix specified reactions
         for rxn in fixed_dict:
-            self.unfix_reaction(rxn)
+            if fixed_dict[rxn] == False:
+                self.unfix_reaction(rxn)
+
+        # End Initializer
 
     # Function to run the solver
     # # TODO: (?) Add additional solver options ?
-    # # TODO: (?) Add preconditioning options ? (is that available in 'ipopt'?)
     def run_solver(self,console_out=True):
         for spec in self.model.gas_set:
             if self.isBoundarySet[spec] == False:
@@ -1050,6 +1305,7 @@ class Isothermal_Monolith_Simulator(object):
 
         solver = SolverFactory('ipopt')
         results = solver.solve(self.model, tee=console_out)
+        # TODO: Add check for solver fails
 
 
     # Function to print out results of variables at all locations and times
