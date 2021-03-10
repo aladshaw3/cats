@@ -63,6 +63,11 @@ test.set_temperature_ramp("A0", "T0", 120, 5160, 813.15)
 # Specify a reaction zone
 #   Zone is specified as a tuple: (start_zone, end_zone)
 test.set_reaction_zone("r4", (2.5, 5))
+#   NOTE: If you have multiple zones where a reaction may be active, then
+#           you should use the function below to specify sets of zones where
+#           the reaction is NOT active. This is because only the 'NOT' version
+#           of this function is additive (whereas the standard function would
+#           override susequent zoning information)
 #test.set_reaction_zone("r4", (0, 2.5), isNotActive=True)
 
 # Fix the kinetics to only run a simulation

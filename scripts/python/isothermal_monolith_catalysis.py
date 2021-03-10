@@ -138,6 +138,7 @@ class Isothermal_Monolith_Simulator(object):
         self.isInitialSet = {}
         self.isBoundarySet = {}
         self.isObjectiveSet = False
+        self.isInitialized = False
 
     # Add a continuous set for spatial dimension (current expected units = cm)
     def add_axial_dim(self, start_point, end_point, point_list=[]):
@@ -261,14 +262,14 @@ class Isothermal_Monolith_Simulator(object):
             self.model.Cb = Var(self.model.gas_set, self.model.age_set, self.model.T_set,
                             self.model.z, self.model.t,
                             domain=NonNegativeReals, bounds=(1e-20,1e5),
-                            initialize=1e-20, units=units.mol/units.L)
+                            initialize=1e-10, units=units.mol/units.L)
             self.model.C = Var(self.model.gas_set, self.model.age_set, self.model.T_set,
                             self.model.z, self.model.t,
                             domain=NonNegativeReals, bounds=(1e-20,1e5),
-                            initialize=1e-20, units=units.mol/units.L)
+                            initialize=1e-10, units=units.mol/units.L)
             self.model.Cb_in = Param(self.model.gas_set, self.model.age_set, self.model.T_set,
                             self.model.t,
-                            within=NonNegativeReals, initialize=1e-20,
+                            within=NonNegativeReals, initialize=1e-10,
                             mutable=True, units=units.mol/units.L)
         else:
             if isinstance(gas_species, str):
@@ -279,14 +280,14 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.Cb = Var(self.model.gas_set, self.model.age_set, self.model.T_set,
                                 self.model.z, self.model.t,
                                 domain=NonNegativeReals, bounds=(1e-20,1e5),
-                                initialize=1e-20, units=units.mol/units.L)
+                                initialize=1e-10, units=units.mol/units.L)
                 self.model.C = Var(self.model.gas_set, self.model.age_set, self.model.T_set,
                                 self.model.z, self.model.t,
                                 domain=NonNegativeReals, bounds=(1e-20,1e5),
-                                initialize=1e-20, units=units.mol/units.L)
+                                initialize=1e-10, units=units.mol/units.L)
                 self.model.Cb_in = Param(self.model.gas_set, self.model.age_set, self.model.T_set,
                                 self.model.t,
-                                within=NonNegativeReals, initialize=1e-20,
+                                within=NonNegativeReals, initialize=1e-10,
                                 mutable=True, units=units.mol/units.L)
             else:
                 print("Error! Gas species must be a string")
@@ -294,7 +295,7 @@ class Isothermal_Monolith_Simulator(object):
         self.isGasSpecSet = True
         for spec in self.model.gas_set:
             self.isBoundarySet[spec] = False
-        self.model.dCb_dz = DerivativeVar(self.model.Cb, wrt=self.model.z, initialize=0, units=units.mol/units.L/units.min)
+        self.model.dCb_dz = DerivativeVar(self.model.Cb, wrt=self.model.z, initialize=0, units=units.mol/units.L/units.cm)
         self.model.dCb_dt = DerivativeVar(self.model.Cb, wrt=self.model.t, initialize=0, units=units.mol/units.L/units.min)
         self.model.dC_dt = DerivativeVar(self.model.C, wrt=self.model.t, initialize=0, units=units.mol/units.L/units.min)
 
@@ -322,7 +323,7 @@ class Isothermal_Monolith_Simulator(object):
             self.model.q = Var(self.model.surf_set, self.model.age_set, self.model.T_set,
                             self.model.z, self.model.t,
                             domain=NonNegativeReals, bounds=(1e-20,1e5),
-                            initialize=1e-20, units=units.mol/units.L)
+                            initialize=1e-10, units=units.mol/units.L)
         else:
             if isinstance(surf_species, str):
                 self.surf_list[surf_species] = surf_species
@@ -330,7 +331,7 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.q = Var(self.model.surf_set, self.model.age_set, self.model.T_set,
                                 self.model.z, self.model.t,
                                 domain=NonNegativeReals, bounds=(1e-20,1e5),
-                                initialize=1e-20, units=units.mol/units.L)
+                                initialize=1e-10, units=units.mol/units.L)
             else:
                 print("Error! Surface species must be a string")
                 exit()
@@ -368,10 +369,10 @@ class Isothermal_Monolith_Simulator(object):
             self.model.S = Var(self.model.site_set, self.model.age_set, self.model.T_set,
                             self.model.z, self.model.t,
                             domain=NonNegativeReals, bounds=(1e-20,1e5),
-                            initialize=1e-20, units=units.mol/units.L)
+                            initialize=1e-10, units=units.mol/units.L)
             self.model.Smax = Param(self.model.site_set, self.model.age_set,
                             self.model.z, self.model.t,
-                            within=NonNegativeReals, initialize=1e-20,
+                            within=NonNegativeReals, initialize=1e-10,
                             mutable=True, units=units.mol/units.L)
         else:
             if isinstance(sites, str):
@@ -380,10 +381,10 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.S = Var(self.model.site_set, self.model.age_set, self.model.T_set,
                                 self.model.z, self.model.t,
                                 domain=NonNegativeReals, bounds=(1e-20,1e5),
-                                initialize=1e-20, units=units.mol/units.L)
+                                initialize=1e-10, units=units.mol/units.L)
                 self.model.Smax = Param(self.model.site_set, self.model.age_set,
                                 self.model.z, self.model.t,
-                                within=NonNegativeReals, initialize=1e-20,
+                                within=NonNegativeReals, initialize=1e-10,
                                 mutable=True, units=units.mol/units.L)
             else:
                 print("Error! Surface sites must be a string")
@@ -1031,10 +1032,10 @@ class Isothermal_Monolith_Simulator(object):
     # Function to initilize the simulator
     def initialize_simulator(self, console_out=False, options={'print_user_options': 'yes',
                                                     'linear_solver': LinearSolverMethod.MA97,
-                                                    'tol': 1e-6,
-                                                    'acceptable_tol': 1e-6,
-                                                    'compl_inf_tol': 1e-6,
-                                                    'constr_viol_tol': 1e-6,
+                                                    'tol': 1e-8,
+                                                    'acceptable_tol': 1e-8,
+                                                    'compl_inf_tol': 1e-8,
+                                                    'constr_viol_tol': 1e-8,
                                                     'max_iter': 3000,
                                                     'obj_scaling_factor': 1,
                                                     'diverging_iterates_tol': 1e50}):
@@ -1164,6 +1165,7 @@ class Isothermal_Monolith_Simulator(object):
 
                 # Fix all times not associated with current time step
                 i=0
+                time_old=0
                 for time_solve in self.model.t:
                     if i > 0:
                         for time_hold in self.model.t:
@@ -1190,6 +1192,28 @@ class Isothermal_Monolith_Simulator(object):
                                     if self.isSitesSet == True:
                                         self.model.S[:, :, :, :, time_hold].fix()
                                         self.model.site_cons[:, :, :, :, time_hold].deactivate()
+                            # End time_hold loop
+
+                        # Guess new step
+
+                        for gas in self.model.gas_set:
+                            for loc in self.model.z:
+                                self.model.Cb[gas, age_solve, temp_solve, loc, time_solve].value = value(self.model.Cb[gas, age_solve, temp_solve, loc, time_old])
+                                self.model.C[gas, age_solve, temp_solve, loc, time_solve].value = value(self.model.C[gas, age_solve, temp_solve, loc, time_old])
+                                self.model.dCb_dt[gas, age_solve, temp_solve, loc, time_solve].value = value(self.model.dCb_dt[gas, age_solve, temp_solve, loc, time_old])
+                                self.model.dCb_dz[gas, age_solve, temp_solve, loc, time_solve].value = value(self.model.dCb_dz[gas, age_solve, temp_solve, loc, time_old])
+                                self.model.dC_dt[gas, age_solve, temp_solve, loc, time_solve].value = value(self.model.dC_dt[gas, age_solve, temp_solve, loc, time_old])
+                        if self.isSurfSpecSet == True:
+                            for surf in self.model.surf_set:
+                                for loc in self.model.z:
+                                    self.model.q[surf, age_solve, temp_solve, loc, time_solve].value = value(self.model.q[surf, age_solve, temp_solve, loc, time_old])
+                                    self.model.dq_dt[surf, age_solve, temp_solve, loc, time_solve].value = value(self.model.dq_dt[surf, age_solve, temp_solve, loc, time_old])
+                            if self.isSitesSet == True:
+                                for site in self.model.site_set:
+                                    for loc in self.model.z:
+                                        self.model.S[site, age_solve, temp_solve, loc, time_solve].value = value(self.model.S[site, age_solve, temp_solve, loc, time_old])
+
+
 
                         #Inside age_solve, temp_solve, and time_solve
                         print("\t...initializing for time =\t" + str(time_solve))
@@ -1263,16 +1287,14 @@ class Isothermal_Monolith_Simulator(object):
                         if 'warm_start_init_point' in options:
                             solver.options['warm_start_init_point'] = options['warm_start_init_point']
 
-                        # Run solver
+                        # Run solver (loosen the bounds to force good solutions)
+                        solver.options['bound_push'] = 1e-4
+                        solver.options['bound_frac'] = 1e-4
+                        solver.options['slack_bound_push'] = 1e-4
+                        solver.options['slack_bound_frac'] = 1e-4
+                        solver.options['warm_start_init_point'] = 'yes'
+
                         results = solver.solve(self.model, tee=console_out)
-                        #, load_solutions=False?
-                        '''
-                        try:
-                            self.model.solutions.load_from(results)
-                        except:
-                            print("\n ---------------- ERROR! -----------------------\n")
-                            exit()
-                        '''
                         # TODO: Add check for solver fails
 
                         # Unfix all times (paying close attention to
@@ -1316,6 +1338,7 @@ class Isothermal_Monolith_Simulator(object):
                     else:
                         pass
                     i+=1
+                    time_old=time_solve
                 # End time_solve loop
 
 
@@ -1387,35 +1410,6 @@ class Isothermal_Monolith_Simulator(object):
             # End temp_solve loop
         # End age_solve loop
 
-        # Remove variable staleness
-        '''
-        for spec in self.model.gas_set:
-            for age in self.model.age_set:
-                for temp in self.model.T_set:
-                    for loc in self.model.z:
-                        for time in self.model.t:
-                            self.model.Cb[spec,age,temp,loc,time].set_value(value(self.model.Cb[spec,age,temp,loc,time]))
-                            self.model.C[spec,age,temp,loc,time].set_value(value(self.model.C[spec,age,temp,loc,time]))
-                            self.model.dCb_dt[spec,age,temp,loc,time].set_value(value(self.model.dCb_dt[spec,age,temp,loc,time]))
-                            self.model.dCb_dz[spec,age,temp,loc,time].set_value(value(self.model.dCb_dz[spec,age,temp,loc,time]))
-                            self.model.dC_dt[spec,age,temp,loc,time].set_value(value(self.model.dC_dt[spec,age,temp,loc,time]))
-        if self.isSurfSpecSet == True:
-            for spec in self.model.surf_set:
-                for age in self.model.age_set:
-                    for temp in self.model.T_set:
-                        for loc in self.model.z:
-                            for time in self.model.t:
-                                self.model.q[spec,age,temp,loc,time].set_value(value(self.model.q[spec,age,temp,loc,time]))
-                                self.model.dq_dt[spec,age,temp,loc,time].set_value(value(self.model.dq_dt[spec,age,temp,loc,time]))
-            if self.isSitesSet == True:
-                for spec in self.model.site_set:
-                    for age in self.model.age_set:
-                        for temp in self.model.T_set:
-                            for loc in self.model.z:
-                                for time in self.model.t:
-                                    self.model.S[spec,age,temp,loc,time].set_value(value(self.model.S[spec,age,temp,loc,time]))
-        '''
-
         # Add objective function back
         if self.isObjectiveSet == True:
             # TODO: add obj
@@ -1426,19 +1420,17 @@ class Isothermal_Monolith_Simulator(object):
             if fixed_dict[rxn] == False:
                 self.unfix_reaction(rxn)
 
+        self.isInitialized = True
         # End Initializer
 
     # Function to run the solver
-    # # TODO: (?) Add additional solver options ?
-    # # TODO: (?) Force solver to ONLY initialize if no objective function exists (?)
-    # # TODO: (?) Force tolerances to relax if the initializer was run (?)
     def run_solver(self, console_out=True, options={'print_user_options': 'yes',
                                                     'linear_solver': LinearSolverMethod.MA97,
                                                     'tol': 1e-6,
                                                     'acceptable_tol': 1e-6,
                                                     'compl_inf_tol': 1e-6,
                                                     'constr_viol_tol': 1e-6,
-                                                    'max_iter': 0,
+                                                    'max_iter': 3000,
                                                     'obj_scaling_factor': 1,
                                                     'diverging_iterates_tol': 1e50}):
         for spec in self.model.gas_set:
@@ -1520,15 +1512,24 @@ class Isothermal_Monolith_Simulator(object):
             solver.options['warm_start_init_point'] = options['warm_start_init_point']
 
         # Call the solver
-        #self.model.Cb.pprint()
-        #print(solver)
-        # HEELPPP  - WTF!?!?!
-        #self.model.Cb.pprint()
-        #exit()
-        results = solver.solve(self.model, tee=console_out, load_solutions=True)
-        #print(results)
-        #self.model.Cb.pprint()
-        #exit()
+        if self.isInitialized == True:
+            # MORE INFO: https://coin-or.github.io/Ipopt/OPTIONS.html
+            # -------------------------------------------------------
+            #       Check out the 'Initializer' section for ipopt options
+            #   If we have already initialized the solution, then we are already
+            #   at (or very close to) the solution to the problem. However, ipopt
+            #   does NOT like starting variables that are near the boundaries
+            #   of the optimization problem. Thus, we need to tell ipopt to not
+            #   change the initial values (at least not by much). To do that,
+            #   we are forced to specify very small numbers for 'bound_frac' and
+            #   'bound_push'. Otherwise, ipopt will essentially through out all
+            #   the hard work that our custom initializer does.
+            solver.options['bound_push'] = 1e-16
+            solver.options['bound_frac'] = 1e-16
+            solver.options['slack_bound_push'] = 1e-8
+            solver.options['slack_bound_frac'] = 1e-8
+            solver.options['warm_start_init_point'] = 'yes'
+        results = solver.solve(self.model, tee=console_out)
         # TODO: Add check for solver fails
 
 
