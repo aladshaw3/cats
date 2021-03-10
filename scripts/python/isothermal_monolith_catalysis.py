@@ -37,6 +37,13 @@ class DiscretizationMethod(Enum):
     OrthogonalCollocation = 1
     FiniteDifference = 2
 
+# Define an Enum class for linear solver types
+class LinearSolverMethod(Enum):
+    MUMPS = 1
+    MA27 = 2
+    MA57 = 3
+    MA97 = 4
+
 # Helper function for Arrhenius reaction rates
 #   E = activation energy in J/mol
 #   A = pre-exponential factor (units depend on reaction)
@@ -1022,7 +1029,15 @@ class Isothermal_Monolith_Simulator(object):
             self.rxn_list[rxn]["fixed"]=True
 
     # Function to initilize the simulator
-    def initialize_simulator(self, console_out=False):
+    def initialize_simulator(self, console_out=False, options={'print_user_options': 'yes',
+                                                    'linear_solver': LinearSolverMethod.MA97,
+                                                    'tol': 1e-6,
+                                                    'acceptable_tol': 1e-6,
+                                                    'compl_inf_tol': 1e-6,
+                                                    'constr_viol_tol': 1e-6,
+                                                    'max_iter': 3000,
+                                                    'obj_scaling_factor': 1,
+                                                    'diverging_iterates_tol': 1e50}):
         for spec in self.model.gas_set:
             if self.isBoundarySet[spec] == False:
                 print("Error! Must specify boundaries before attempting to solve")
@@ -1179,7 +1194,85 @@ class Isothermal_Monolith_Simulator(object):
                         #Inside age_solve, temp_solve, and time_solve
                         print("\t...initializing for time =\t" + str(time_solve))
                         solver = SolverFactory('ipopt')
+
+                        # Check user options
+                        if 'print_user_options' in options:
+                            if options['print_user_options'] == "yes":
+                                solver.options['print_user_options'] = options['print_user_options']
+                        #   linear_solver -> valid options:
+                        #   -------------------------------
+                        #       Depends on installed libraries
+                        #           'mumps'  --> available on Windows AND 'idaes'
+                        #                       (Only option if NOT using 'idaes')
+                        #           'ma27' --> NOT available on Windows
+                        #                       BUT is available with 'idaes'
+                        #                       (Best for Small problems, Not parallel)
+                        #           'ma57' --> NOT available on Windows
+                        #                       BUT is available with 'idaes'
+                        #                       (Best for Medium problems, threaded blas)
+                        #           'ma77' --> NOT functional with Windows OR 'idaes'
+                        #           'ma86' --> NOT functional with Windows OR 'idaes'
+                        #           'ma97' --> NOT available on Windows
+                        #                       BUT is available with 'idaes'
+                        #                       (Best for Large problems, parallel)
+                        #           'pardiso' --> NOT functional with Windows OR 'idaes'
+                        #           'wsmp' --> NOT functional with Windows OR 'idaes'
+                        #
+                        #   NOTE: The solver libraries bundled with 'idaes' are MUCH more
+                        #           computationally efficient than the standard Windows
+                        #           solver libraries
+                        if 'linear_solver' in options:
+                            # Force the use of MUMPS if conda environment is not setup for 'idaes'
+                            if os.environ['CONDA_DEFAULT_ENV'] != "idaes" and os.environ['CONDA_DEFAULT_ENV'] != "idaes2":
+                                options['linear_solver'] = LinearSolverMethod.MUMPS
+                            if options['linear_solver'] == LinearSolverMethod.MUMPS:
+                                # Only available option without 'idaes' enviroment or
+                                #   another precompiled HSL library: https://www.hsl.rl.ac.uk/ipopt/
+                                solver.options['linear_solver'] = 'mumps'
+                            elif options['linear_solver'] == LinearSolverMethod.MA27:
+                                # Best for small problems (no parallelization)
+                                solver.options['linear_solver'] = 'ma27'
+                            elif options['linear_solver'] == LinearSolverMethod.MA57:
+                                # Best for medium problems (threaded BLAS)
+                                solver.options['linear_solver'] = 'ma57'
+                            elif options['linear_solver'] == LinearSolverMethod.MA97:
+                                # Best for large problems (maximizes parallelization)
+                                solver.options['linear_solver'] = 'ma97'
+                            else:
+                                print("Error! Invalid solver option")
+                                print("\tValid Options: 'LinearSolverMethod.MUMPS'")
+                                print("\t               'LinearSolverMethod.MA27'")
+                                print("\t               'LinearSolverMethod.MA57'")
+                                print("\t               'LinearSolverMethod.MA97'")
+                                print("\nNOTE: 'MA' solvers only available if 'idaes' environment is used...")
+                                exit()
+                        if 'tol' in options:
+                            solver.options['tol'] = options['tol']
+                        if 'acceptable_tol' in options:
+                            solver.options['acceptable_tol'] = options['acceptable_tol']
+                        if 'compl_inf_tol' in options:
+                            solver.options['compl_inf_tol'] = options['compl_inf_tol']
+                        if 'constr_viol_tol' in options:
+                            solver.options['constr_viol_tol'] = options['constr_viol_tol']
+                        if 'max_iter' in options:
+                            solver.options['max_iter'] = options['max_iter']
+                        if 'obj_scaling_factor' in options:
+                            solver.options['obj_scaling_factor'] = options['obj_scaling_factor']
+                        if 'diverging_iterates_tol' in options:
+                            solver.options['diverging_iterates_tol'] = options['diverging_iterates_tol']
+                        if 'warm_start_init_point' in options:
+                            solver.options['warm_start_init_point'] = options['warm_start_init_point']
+
+                        # Run solver
                         results = solver.solve(self.model, tee=console_out)
+                        #, load_solutions=False?
+                        '''
+                        try:
+                            self.model.solutions.load_from(results)
+                        except:
+                            print("\n ---------------- ERROR! -----------------------\n")
+                            exit()
+                        '''
                         # TODO: Add check for solver fails
 
                         # Unfix all times (paying close attention to
@@ -1294,6 +1387,34 @@ class Isothermal_Monolith_Simulator(object):
             # End temp_solve loop
         # End age_solve loop
 
+        # Remove variable staleness
+        '''
+        for spec in self.model.gas_set:
+            for age in self.model.age_set:
+                for temp in self.model.T_set:
+                    for loc in self.model.z:
+                        for time in self.model.t:
+                            self.model.Cb[spec,age,temp,loc,time].set_value(value(self.model.Cb[spec,age,temp,loc,time]))
+                            self.model.C[spec,age,temp,loc,time].set_value(value(self.model.C[spec,age,temp,loc,time]))
+                            self.model.dCb_dt[spec,age,temp,loc,time].set_value(value(self.model.dCb_dt[spec,age,temp,loc,time]))
+                            self.model.dCb_dz[spec,age,temp,loc,time].set_value(value(self.model.dCb_dz[spec,age,temp,loc,time]))
+                            self.model.dC_dt[spec,age,temp,loc,time].set_value(value(self.model.dC_dt[spec,age,temp,loc,time]))
+        if self.isSurfSpecSet == True:
+            for spec in self.model.surf_set:
+                for age in self.model.age_set:
+                    for temp in self.model.T_set:
+                        for loc in self.model.z:
+                            for time in self.model.t:
+                                self.model.q[spec,age,temp,loc,time].set_value(value(self.model.q[spec,age,temp,loc,time]))
+                                self.model.dq_dt[spec,age,temp,loc,time].set_value(value(self.model.dq_dt[spec,age,temp,loc,time]))
+            if self.isSitesSet == True:
+                for spec in self.model.site_set:
+                    for age in self.model.age_set:
+                        for temp in self.model.T_set:
+                            for loc in self.model.z:
+                                for time in self.model.t:
+                                    self.model.S[spec,age,temp,loc,time].set_value(value(self.model.S[spec,age,temp,loc,time]))
+        '''
 
         # Add objective function back
         if self.isObjectiveSet == True:
@@ -1311,7 +1432,15 @@ class Isothermal_Monolith_Simulator(object):
     # # TODO: (?) Add additional solver options ?
     # # TODO: (?) Force solver to ONLY initialize if no objective function exists (?)
     # # TODO: (?) Force tolerances to relax if the initializer was run (?)
-    def run_solver(self,console_out=True):
+    def run_solver(self, console_out=True, options={'print_user_options': 'yes',
+                                                    'linear_solver': LinearSolverMethod.MA97,
+                                                    'tol': 1e-6,
+                                                    'acceptable_tol': 1e-6,
+                                                    'compl_inf_tol': 1e-6,
+                                                    'constr_viol_tol': 1e-6,
+                                                    'max_iter': 0,
+                                                    'obj_scaling_factor': 1,
+                                                    'diverging_iterates_tol': 1e50}):
         for spec in self.model.gas_set:
             if self.isBoundarySet[spec] == False:
                 print("Error! Must specify boundaries before attempting to solve")
@@ -1321,34 +1450,85 @@ class Isothermal_Monolith_Simulator(object):
             self.fix_all_reactions()
 
         solver = SolverFactory('ipopt')
-        # Change some solver options
-        solver.options['print_user_options'] = 'yes'
+
+        # Check user options
+        if 'print_user_options' in options:
+            if options['print_user_options'] == "yes":
+                solver.options['print_user_options'] = options['print_user_options']
         #   linear_solver -> valid options:
         #   -------------------------------
         #       Depends on installed libraries
         #           'mumps'  --> available on Windows AND 'idaes'
+        #                       (Only option if NOT using 'idaes')
         #           'ma27' --> NOT available on Windows
         #                       BUT is available with 'idaes'
+        #                       (Best for Small problems, Not parallel)
         #           'ma57' --> NOT available on Windows
         #                       BUT is available with 'idaes'
+        #                       (Best for Medium problems, threaded blas)
         #           'ma77' --> NOT functional with Windows OR 'idaes'
         #           'ma86' --> NOT functional with Windows OR 'idaes'
         #           'ma97' --> NOT available on Windows
         #                       BUT is available with 'idaes'
+        #                       (Best for Large problems, parallel)
         #           'pardiso' --> NOT functional with Windows OR 'idaes'
         #           'wsmp' --> NOT functional with Windows OR 'idaes'
         #
         #   NOTE: The solver libraries bundled with 'idaes' are MUCH more
         #           computationally efficient than the standard Windows
         #           solver libraries
-        solver.options['linear_solver'] = 'ma27'
-        #solver.options['print_level'] = 5
-        #solver.options['tol'] = 1e-6
-        #solver.options['acceptable_tol'] = 1e-6
-        #solver.options['compl_inf_tol'] = 1e-6
-        #solver.options['max_iter'] = 3000 #?
-        solver.options['obj_scaling_factor'] = 1
-        results = solver.solve(self.model, tee=console_out)
+        if 'linear_solver' in options:
+            # Force the use of MUMPS if conda environment is not setup for 'idaes'
+            if os.environ['CONDA_DEFAULT_ENV'] != "idaes" and os.environ['CONDA_DEFAULT_ENV'] != "idaes2":
+                options['linear_solver'] = LinearSolverMethod.MUMPS
+            if options['linear_solver'] == LinearSolverMethod.MUMPS:
+                # Only available option without 'idaes' enviroment or
+                #   another precompiled HSL library: https://www.hsl.rl.ac.uk/ipopt/
+                solver.options['linear_solver'] = 'mumps'
+            elif options['linear_solver'] == LinearSolverMethod.MA27:
+                # Best for small problems (no parallelization)
+                solver.options['linear_solver'] = 'ma27'
+            elif options['linear_solver'] == LinearSolverMethod.MA57:
+                # Best for medium problems (threaded BLAS)
+                solver.options['linear_solver'] = 'ma57'
+            elif options['linear_solver'] == LinearSolverMethod.MA97:
+                # Best for large problems (maximizes parallelization)
+                solver.options['linear_solver'] = 'ma97'
+            else:
+                print("Error! Invalid solver option")
+                print("\tValid Options: 'LinearSolverMethod.MUMPS'")
+                print("\t               'LinearSolverMethod.MA27'")
+                print("\t               'LinearSolverMethod.MA57'")
+                print("\t               'LinearSolverMethod.MA97'")
+                print("\nNOTE: 'MA' solvers only available if 'idaes' environment is used...")
+                exit()
+        if 'tol' in options:
+            solver.options['tol'] = options['tol']
+        if 'acceptable_tol' in options:
+            solver.options['acceptable_tol'] = options['acceptable_tol']
+        if 'compl_inf_tol' in options:
+            solver.options['compl_inf_tol'] = options['compl_inf_tol']
+        if 'constr_viol_tol' in options:
+            solver.options['constr_viol_tol'] = options['constr_viol_tol']
+        if 'max_iter' in options:
+            solver.options['max_iter'] = options['max_iter']
+        if 'obj_scaling_factor' in options:
+            solver.options['obj_scaling_factor'] = options['obj_scaling_factor']
+        if 'diverging_iterates_tol' in options:
+            solver.options['diverging_iterates_tol'] = options['diverging_iterates_tol']
+        if 'warm_start_init_point' in options:
+            solver.options['warm_start_init_point'] = options['warm_start_init_point']
+
+        # Call the solver
+        #self.model.Cb.pprint()
+        #print(solver)
+        # HEELPPP  - WTF!?!?!
+        #self.model.Cb.pprint()
+        #exit()
+        results = solver.solve(self.model, tee=console_out, load_solutions=True)
+        #print(results)
+        #self.model.Cb.pprint()
+        #exit()
         # TODO: Add check for solver fails
 
 

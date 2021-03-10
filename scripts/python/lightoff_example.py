@@ -41,7 +41,7 @@ test.set_isothermal_temp("A0","T0",393.15) # K
 # Build the constraints then discretize
 test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=20,elems=5,colpoints=1)
+                    tstep=10,elems=5,colpoints=1)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 #       Units of concentration here are in ppm

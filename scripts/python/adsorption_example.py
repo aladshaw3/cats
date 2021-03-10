@@ -2,10 +2,14 @@
 
 from isothermal_monolith_catalysis import *
 
+# Import the pyomo environments
+from pyomo.environ import *
+from pyomo.dae import *
+
 # Testing
 test = Isothermal_Monolith_Simulator()
 test.add_axial_dim(0,5)
-test.add_temporal_dim(0,60)
+test.add_temporal_dim(0,10)
 
 test.add_age_set("Unaged")
 test.add_temperature_set("250C")
@@ -42,7 +46,7 @@ test.set_isothermal_temp("Unaged","250C",250+273.15)
 # Build the constraints then discretize
 test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=50,elems=20,colpoints=1)
+                    tstep=3,elems=1,colpoints=1)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 test.set_const_IC("NH3","Unaged","250C",0)
@@ -53,8 +57,31 @@ test.set_time_dependent_BC("NH3","Unaged","250C",
 
 # Fix the kinetics to only run a simulation
 test.fix_all_reactions()
-test.run_solver()
+test.model.pprint()
+# Make initial guesses
+test.model.Cb["NH3","Unaged","250C",5,3.333333].value = 1.77534289567192E-06
+test.model.Cb["NH3","Unaged","250C",5,6.666667].value = 2.58877972766565E-06
+test.model.Cb["NH3","Unaged","250C",5,10].value = 3.62656205009183E-06
+
+test.model.C["NH3","Unaged","250C",5,3.333333].value = 9.74471398257293E-07
+test.model.C["NH3","Unaged","250C",5,6.666667].value = 1.91403550528925E-06
+test.model.C["NH3","Unaged","250C",5,10].value = 3.11275329075589E-06
+
+test.model.q["q1","Unaged","250C",5,3.333333].value = 0.0257277781217619
+test.model.q["q1","Unaged","250C",5,6.666667].value = 0.0474037347714723
+test.model.q["q1","Unaged","250C",5,10].value = 0.0639095861277674
+
+test.model.S["S1","Unaged","250C",5,3.333333].value = 0.089534121878238
+test.model.S["S1","Unaged","250C",5,6.666667].value = 0.0678581652285276
+test.model.S["S1","Unaged","250C",5,10].value = 0.0513523138722325
+
+test.model.pprint()
+
+#test.run_solver()
+solver = SolverFactory('ipopt')
+solver.options['max_iter'] = 0
+results = solver.solve(test.model, tee=True)
 
 test.print_results_of_breakthrough(["NH3"], "Unaged", "250C", file_name="")
 test.print_results_of_integral_average(["q1","S1"], "Unaged", "250C", file_name="")
-test.print_results_all_locations(["NH3"], "Unaged", "250C", file_name="")
+test.print_results_all_locations(["NH3","q1","S1"], "Unaged", "250C", file_name="")

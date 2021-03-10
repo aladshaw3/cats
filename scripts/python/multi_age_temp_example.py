@@ -69,7 +69,15 @@ test.set_const_BC("NH3","2hr","250C",6.94E-6)
 test.fix_all_reactions()
 
 # Run initializer and solver
+#test.model.Cb.pprint()
 test.initialize_simulator()
+'''
+for t in test.model.t:
+    for z in test.model.z:
+        test.model.Cb["NH3", "Unaged", "150C", z, t].set_value(value(test.model.Cb["NH3", "Unaged", "150C", z, t]))
+test.model.Cb.pprint()
+exit()
+'''
 test.run_solver()
 
 test.print_results_all_locations(["NH3"], "Unaged", "250C", file_name="")
