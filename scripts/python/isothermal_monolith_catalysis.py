@@ -22,6 +22,7 @@ import yaml
 import os.path
 from os import path
 from enum import Enum
+import time
 
 # IDAES is not installed, then the script will search for any other available 'ipopt' library
 if os.environ['CONDA_DEFAULT_ENV'] == "idaes" or os.environ['CONDA_DEFAULT_ENV'] == "idaes2":
@@ -1109,6 +1110,7 @@ class Isothermal_Monolith_Simulator(object):
         '''
         for age_solve in self.model.age_set:
             for temp_solve in self.model.T_set:
+                start = time.time()
                 # Fix all ages and temps not currently being solved for
                 for age_hold in self.model.age_set:
                     if age_solve != age_hold:
@@ -1164,14 +1166,65 @@ class Isothermal_Monolith_Simulator(object):
                 print("Initializing for " + str(age_solve) + " -> " + str(temp_solve))
 
                 # Fix all times not associated with current time step
+                self.model.Cb[:, :, :, :, :].fix()
+                self.model.C[:, :, :, :, :].fix()
+                self.model.dCb_dt[:, :, :, :, :].fix()
+                self.model.dC_dt[:, :, :, :, :].fix()
+                self.model.dCb_dz[:, :, :, :, :].fix()
+                self.model.bulk_cons[:, :, :, :, :].deactivate()
+                self.model.pore_cons[:, :, :, :, :].deactivate()
+                self.model.dCb_dz_disc_eq[:, :, :, :, :].deactivate()
+                self.model.dCb_dt_disc_eq[:, :, :, :, :].deactivate()
+                self.model.dC_dt_disc_eq[:, :, :, :, :].deactivate()
+
+                if self.isSurfSpecSet == True:
+                    self.model.q[:, :, :, :, :].fix()
+                    self.model.dq_dt[:, :, :, :, :].fix()
+                    self.model.surf_cons[:, :, :, :, :].deactivate()
+                    self.model.dq_dt_disc_eq[:, :, :, :, :].deactivate()
+
+                    if self.isSitesSet == True:
+                        self.model.S[:, :, :, :, :].fix()
+                        self.model.site_cons[:, :, :, :, :].deactivate()
                 i=0
                 time_old=0
                 for time_solve in self.model.t:
                     if i > 0:
+                        start = time.time()
+                        self.model.Cb[:, age_solve, temp_solve, :, time_solve].unfix()
+                        self.model.C[:, age_solve, temp_solve, :, time_solve].unfix()
+                        self.model.dCb_dt[:, age_solve, temp_solve, :, time_solve].unfix()
+                        self.model.dC_dt[:, age_solve, temp_solve, :, time_solve].unfix()
+                        self.model.dCb_dz[:, age_solve, temp_solve, :, time_solve].unfix()
+                        self.model.bulk_cons[:, age_solve, temp_solve, :, time_solve].activate()
+                        self.model.pore_cons[:, age_solve, temp_solve, :, time_solve].activate()
+                        self.model.dCb_dz_disc_eq[:, age_solve, temp_solve, :, time_solve].activate()
+                        self.model.dCb_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].activate()
+                        self.model.dC_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].activate()
+
+                        if self.isSurfSpecSet == True:
+                            self.model.q[:, age_solve, temp_solve, :, time_solve].unfix()
+                            self.model.dq_dt[:, age_solve, temp_solve, :, time_solve].unfix()
+                            self.model.surf_cons[:, age_solve, temp_solve, :, time_solve].activate()
+                            self.model.dq_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].activate()
+
+                            if self.isSitesSet == True:
+                                self.model.S[:, age_solve, temp_solve, :, time_solve].unfix()
+                                self.model.site_cons[:, age_solve, temp_solve, :, time_solve].activate()
+                        # Make sure the vars that should be fixed, are fixed
+                        #   Fix ICs, BCs, and dCb_dt @ z=0, t=0
+                        self.model.dCb_dt[:,age_solve, temp_solve,self.model.z.first(),self.model.t.first()].fix()
+                        self.model.Cb[:,age_solve, temp_solve, :, self.model.t.first()].fix()
+                        self.model.C[:,age_solve, temp_solve, :, self.model.t.first()].fix()
+                        if self.isSurfSpecSet == True:
+                            self.model.q[:,age_solve, temp_solve, :, self.model.t.first()].fix()
+                        self.model.Cb[:,age_solve, temp_solve,self.model.z.first(), :].fix()
+                        '''
                         for time_hold in self.model.t:
                             if time_solve != time_hold:
                                 # Fix all constraints and vars associated with
                                 #   the 'time_hold' id
+                                start_small = time.time()
                                 self.model.Cb[:, :, :, :, time_hold].fix()
                                 self.model.C[:, :, :, :, time_hold].fix()
                                 self.model.dCb_dt[:, :, :, :, time_hold].fix()
@@ -1192,7 +1245,12 @@ class Isothermal_Monolith_Simulator(object):
                                     if self.isSitesSet == True:
                                         self.model.S[:, :, :, :, time_hold].fix()
                                         self.model.site_cons[:, :, :, :, time_hold].deactivate()
+                                end_small = time.time()
+                                print("\t\tSmallTime="+str(-start_small+end_small))
                             # End time_hold loop
+                        end = time.time()
+                        print("Time="+str(-start+end))
+                        '''
 
                         # Guess new step
 
@@ -1293,6 +1351,8 @@ class Isothermal_Monolith_Simulator(object):
                         solver.options['slack_bound_push'] = 1e-4
                         solver.options['slack_bound_frac'] = 1e-4
                         solver.options['warm_start_init_point'] = 'yes'
+                        end = time.time()
+                        print("Time="+str(-start+end))
 
                         results = solver.solve(self.model, tee=console_out)
                         # TODO: Add check for solver fails
@@ -1302,6 +1362,7 @@ class Isothermal_Monolith_Simulator(object):
                         #   fixed according to our problem definition)
                         #       (i.e., initial conditions, boundary conditions,
                         #               and dCb_dt at (z=0,t=0) )
+                        '''
                         for time_hold in self.model.t:
                             if time_solve != time_hold:
                                 # Fix all constraints and vars associated with
@@ -1326,6 +1387,27 @@ class Isothermal_Monolith_Simulator(object):
                                     if self.isSitesSet == True:
                                         self.model.S[:, age_solve, temp_solve, :, time_hold].unfix()
                                         self.model.site_cons[:, age_solve, temp_solve, :, time_hold].activate()
+                        '''
+                        self.model.Cb[:, age_solve, temp_solve, :, time_solve].fix()
+                        self.model.C[:, age_solve, temp_solve, :, time_solve].fix()
+                        self.model.dCb_dt[:, age_solve, temp_solve, :, time_solve].fix()
+                        self.model.dC_dt[:, age_solve, temp_solve, :, time_solve].fix()
+                        self.model.dCb_dz[:, age_solve, temp_solve, :, time_solve].fix()
+                        self.model.bulk_cons[:, age_solve, temp_solve, :, time_solve].deactivate()
+                        self.model.pore_cons[:, age_solve, temp_solve, :, time_solve].deactivate()
+                        self.model.dCb_dz_disc_eq[:, age_solve, temp_solve, :, time_solve].deactivate()
+                        self.model.dCb_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].deactivate()
+                        self.model.dC_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].deactivate()
+
+                        if self.isSurfSpecSet == True:
+                            self.model.q[:, age_solve, temp_solve, :, time_solve].fix()
+                            self.model.dq_dt[:, age_solve, temp_solve, :, time_solve].fix()
+                            self.model.surf_cons[:, age_solve, temp_solve, :, time_solve].deactivate()
+                            self.model.dq_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].deactivate()
+
+                            if self.isSitesSet == True:
+                                self.model.S[:, age_solve, temp_solve, :, time_solve].fix()
+                                self.model.site_cons[:, age_solve, temp_solve, :, time_solve].deactivate()
 
                             # Make sure the vars that should be fixed, are fixed
                             #   Fix ICs, BCs, and dCb_dt @ z=0, t=0
@@ -1409,6 +1491,34 @@ class Isothermal_Monolith_Simulator(object):
 
             # End temp_solve loop
         # End age_solve loop
+
+        self.model.Cb[:, :, :, :, :].unfix()
+        self.model.C[:, :, :, :, :].unfix()
+        self.model.dCb_dt[:, :, :, :, :].unfix()
+        self.model.dC_dt[:, :, :, :, :].unfix()
+        self.model.dCb_dz[:, :, :, :, :].unfix()
+        self.model.bulk_cons[:, :, :, :, :].activate()
+        self.model.pore_cons[:, :, :, :, :].activate()
+        self.model.dCb_dz_disc_eq[:, :, :, :, :].activate()
+        self.model.dCb_dt_disc_eq[:, :, :, :, :].activate()
+        self.model.dC_dt_disc_eq[:, :, :, :, :].activate()
+
+        if self.isSurfSpecSet == True:
+            self.model.q[:, :, :, :, :].unfix()
+            self.model.dq_dt[:, :, :, :, :].unfix()
+            self.model.surf_cons[:, :, :, :, :].activate()
+            self.model.dq_dt_disc_eq[:, :, :, :, :].activate()
+
+            if self.isSitesSet == True:
+                self.model.S[:, :, :, :, :].unfix()
+                self.model.site_cons[:, :, :, :, :].activate()
+
+        self.model.dCb_dt[:,:,:,self.model.z.first(),self.model.t.first()].fix()
+        self.model.Cb[:,:,:, :, self.model.t.first()].fix()
+        self.model.C[:,:,:, :, self.model.t.first()].fix()
+        if self.isSurfSpecSet == True:
+            self.model.q[:,:,:, :, self.model.t.first()].fix()
+        self.model.Cb[:,:,:,self.model.z.first(), :].fix()
 
         # Add objective function back
         if self.isObjectiveSet == True:
