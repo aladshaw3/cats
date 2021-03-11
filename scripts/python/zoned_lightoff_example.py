@@ -72,6 +72,7 @@ test.set_reaction_zone("r4", (2.5, 5))
 
 # Fix the kinetics to only run a simulation
 test.fix_all_reactions()
+test.initialize_simulator()
 test.run_solver()
 
 test.print_results_of_breakthrough(["CO","NO","O2"], "A0", "T0", file_name="Zoned_breakthrough.txt")

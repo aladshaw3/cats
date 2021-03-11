@@ -69,7 +69,7 @@ test.set_const_BC("NH3","2hr","250C",6.94E-6)
 test.fix_all_reactions()
 
 # Run initializer and solver
-test.initialize_simulator(console_out=True)
+test.initialize_simulator()
 test.run_solver()
 
 test.print_results_all_locations(["NH3"], "Unaged", "250C", file_name="")
