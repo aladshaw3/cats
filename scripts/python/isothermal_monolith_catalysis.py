@@ -195,16 +195,16 @@ class Isothermal_Monolith_Simulator(object):
 
         self.isAgeSet = True
 
-    # Add a param set for isothermal temperatures [Must be reals]
+    # Add a variable set for isothermal temperatures [Must be reals]
     #       Currently expects temperatures in K
     #
     #       Access to model.T param is as follows:
     #       ---------------------------------------
-    #           model.T[age, temperature, time] =
-    #                       isothermal temperature for aging condition at simulation time
+    #           model.T[age, temperature, loc, time] =
+    #                       isothermal temperature for aging condition at simulation location and time
     def add_temperature_set(self, temps):
-        if self.isTimesSet == False:
-            print("Error! Time dimension must be set first!")
+        if self.isTimesSet == False or self.isBoundsSet == False:
+            print("Error! Time and space dimensions must be set first!")
             exit()
 
         if self.isAgeSet == False:
@@ -213,20 +213,12 @@ class Isothermal_Monolith_Simulator(object):
 
         if type(temps) is list:
             self.model.T_set = Set(initialize=temps)
-            self.model.T = Param(self.model.age_set, self.model.T_set, self.model.t,
-                                domain=NonNegativeReals, mutable=True, units=units.K)
-            for age in self.model.age_set:
-                for temperature in self.model.T_set:
-                    for time in self.model.t:
-                        self.model.T[age, temperature, time].set_value(298)
+            self.model.T = Var(self.model.age_set, self.model.T_set, self.model.z, self.model.t,
+                                domain=NonNegativeReals, initialize=298, units=units.K)
         else:
             self.model.T_set = Set(initialize=[temps])
-            self.model.T = Param(self.model.age_set, self.model.T_set, self.model.t,
-                                        domain=NonNegativeReals, mutable=True, units=units.K)
-            for age in self.model.age_set:
-                for temperature in self.model.T_set:
-                    for time in self.model.t:
-                        self.model.T[age, temperature, time].set_value(298)
+            self.model.T = Var(self.model.age_set, self.model.T_set, self.model.z, self.model.t,
+                                domain=NonNegativeReals, initialize=298, units=units.K)
         self.isTempSet = True
 
     # Add gas species (both bulk and washcoat) [Must be strings]
@@ -518,15 +510,12 @@ class Isothermal_Monolith_Simulator(object):
             exit()
         if value < 1e-20:
             value = 1e-20
-        for loc in self.model.z:
-            for time in self.model.t:
-                self.model.Smax[site, age, loc, time].set_value(value)
+        self.model.Smax[site, age, :, :].set_value(value)
 
     # Set the isothermal temperatures for a simulation
     #   Sets all to a constant, can be changed later
     def set_isothermal_temp(self,age,temp,value):
-        for time in self.model.t:
-            self.model.T[age,temp,time].set_value(value)
+        self.model.T[age,temp,:,:].set_value(value)
 
     # Setup site balance information (in needed)
     #       To setup the information for a site balance, pass the name of the
@@ -634,7 +623,7 @@ class Isothermal_Monolith_Simulator(object):
     #       This function assumes the reaction index (rxn) is valid
     def arrhenius_rate_func(self, rxn, model, age, temp, loc, time):
         r = 0
-        k = arrhenius_rate_const(model.A[rxn], model.B[rxn], model.E[rxn], model.T[age,temp,time])
+        k = arrhenius_rate_const(model.A[rxn], model.B[rxn], model.E[rxn], model.T[age,temp,loc,time])
         r=k
         for spec in model.component(rxn+"_reactants"):
             if spec in model.gas_set:
@@ -652,8 +641,8 @@ class Isothermal_Monolith_Simulator(object):
     def equilibrium_arrhenius_rate_func(self, rxn, model, age, temp, loc, time):
         r = 0
         (Ar, Er) = equilibrium_arrhenius_consts(model.Af[rxn], model.Ef[rxn], model.dH[rxn], model.dS[rxn])
-        kf = arrhenius_rate_const(model.Af[rxn], 0, model.Ef[rxn], model.T[age,temp,time])
-        kr = arrhenius_rate_const(Ar, 0, Er, model.T[age,temp,time])
+        kf = arrhenius_rate_const(model.Af[rxn], 0, model.Ef[rxn], model.T[age,temp,loc,time])
+        kr = arrhenius_rate_const(Ar, 0, Er, model.T[age,temp,loc,time])
         rf=kf
         rr=kr
         for spec in model.component(rxn+"_reactants"):
@@ -775,12 +764,6 @@ class Isothermal_Monolith_Simulator(object):
                     val = value(self.model.Cb_in[spec,age,temp,self.model.t.first()])
                     self.model.Cb_in[spec,age,temp, :].set_value(val)
 
-        #       Initialize T
-        for age in self.model.age_set:
-            for temp in self.model.T_set:
-                val = value(self.model.T[age,temp,self.model.t.first()])
-                self.model.T[age,temp,:] = val
-
         #       Initialize age set
         for age in self.model.age_set:
             val = value(self.model.age[age,self.model.t.first()])
@@ -812,6 +795,13 @@ class Isothermal_Monolith_Simulator(object):
                 for temp in self.model.T_set:
                     self.model.dCb_dt[spec,age,temp,self.model.z.first(),self.model.t.first()].set_value(0)
                     self.model.dCb_dt[spec,age,temp,self.model.z.first(),self.model.t.first()].fix()
+
+        # Force temperature to be isothermal
+        self.model.T[:,:,:,:].fix()
+        for age in self.model.age_set:
+            for temp in self.model.T_set:
+                val = value(self.model.T[age,temp,self.model.z.first(),self.model.t.first()])
+                self.model.T[age,temp,:,:] = val
 
         self.isDiscrete = True
         self.build_time = (time.time() - self.build_time)
@@ -926,17 +916,17 @@ class Isothermal_Monolith_Simulator(object):
         if self.isDiscrete == False:
             print("Error! User should call the discretizer before setting a temperature ramp")
             exit()
-        start_temp = value(self.model.T[age,temp,self.model.t.first()])
+        start_temp = value(self.model.T[age,temp,self.model.z.first(),self.model.t.first()])
         previous_time = self.model.t.first()
         for time in self.model.t:
             if time <= start_time:
-                start_temp = value(self.model.T[age,temp,self.model.t.first()])
+                start_temp = value(self.model.T[age,temp,self.model.z.first(),self.model.t.first()])
             else:
                 if time >= end_time:
-                    self.model.T[age,temp,time].set_value(end_temp)
+                    self.model.T[age,temp,:,time].set_value(end_temp)
                 else:
                     slope = (end_temp-start_temp)/(end_time-start_time)
-                    self.model.T[age,temp,time].set_value(start_temp+slope*(time-start_time))
+                    self.model.T[age,temp,:,time].set_value(start_temp+slope*(time-start_time))
             previous_time = time
 
     # Function to define reaction 'zones'
