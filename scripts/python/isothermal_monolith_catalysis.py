@@ -1429,7 +1429,11 @@ class Isothermal_Monolith_Simulator(object):
             file_name+="all_loc"
             file_name+=".txt"
 
-        file = open(file_name,"w")
+        folder="output/"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        file = open(folder+file_name,"w")
 
         # Embeddd helper function
         def _print_all_results(model, var, spec, age, temp, file):
@@ -1498,7 +1502,12 @@ class Isothermal_Monolith_Simulator(object):
             file_name+="loc_z_at_"+str(loc)
             file_name+=".txt"
 
-        file = open(file_name,"w")
+        folder="output/"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        file = open(folder+file_name,"w")
+
         file.write('Results for z='+str(loc)+' at in table below'+'\n')
         file.write('Time\t')
         for spec in spec_list:
@@ -1544,7 +1553,12 @@ class Isothermal_Monolith_Simulator(object):
             file_name+="integral_avg"
             file_name+=".txt"
 
-        file = open(file_name,"w")
+        folder="output/"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        file = open(folder+file_name,"w")
+
         file.write('Integral average results in table below'+'\n')
         file.write('Time\t')
         for spec in spec_list:
