@@ -17,7 +17,11 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius})
 
 test.set_bulk_porosity(0.3309)
 test.set_washcoat_porosity(0.2)
-test.set_linear_velocity(15110)
+test.set_reactor_radius(1)
+test.set_space_velocity("Unaged","150C",1000)
+test.set_space_velocity("Unaged","250C",1500)
+test.set_space_velocity("2hr","150C",500)
+test.set_space_velocity("2hr","250C",750)
 test.set_mass_transfer_coef(1.12)
 test.set_surface_to_volume_ratio(5757.541)
 
@@ -47,6 +51,7 @@ test.set_isothermal_temp("2hr","150C",150+273.15)
 test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.FiniteDifference,
                     tstep=10,elems=5,colpoints=1)
+test.model.v.pprint()
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 test.set_const_IC("NH3","Unaged","150C",0)

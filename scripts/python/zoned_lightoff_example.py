@@ -16,7 +16,8 @@ test.add_reactions({"r1": ReactionType.Arrhenius,
 
 test.set_bulk_porosity(0.3309)
 test.set_washcoat_porosity(0.2)
-test.set_linear_velocity(125.92)            #cm/s
+test.set_reactor_radius(1)                  # cm
+test.set_space_velocity_all_runs(8.333)     # s^-1
 test.set_mass_transfer_coef(0.018667)       #m/s
 test.set_surface_to_volume_ratio(5145)      #m^-1
 

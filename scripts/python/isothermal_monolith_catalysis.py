@@ -103,6 +103,23 @@ def equilibrium_arrhenius_consts(Af, Ef, dH, dS):
 # # TODO: (?) Develop subroutines to automatically down select data (?)
 #               Use relative rate of change between nieghbors do determine
 #               the density of points to select
+#
+# # TODO: Allow users to input boundary conditions for concentrations in ppm
+#        We would need to update to include pressure and use ideal gas law
+#        for conversions (i.e., we introduce unit conversion stuff).
+#
+#               PV = nRT  -->  P = CRT              (concentration changes)
+#               PV = nRT  -->  P*Q = n_dot*R*T      (flow rate changes)
+#                            n_dot = moles/time  <-- should be constant
+#               Q*C = n_dot = constant when temperature and/or pressure change
+#
+#       When temperature changes (if pressure doesn't change, then the inlet
+#       concentration must change OR the inlet flow rate must change)
+#               In most cases, changes in temperature change the concentrations
+#               (or flow rates) and not the pressure. DEFAULT should be to change
+#               the inlet concentration (with an option to change inlet flow rate)
+#
+# # TODO: Add in pressure drop?
 class Isothermal_Monolith_Simulator(object):
     #Default constructor
     # Pass a list of species names (Specs) for the mass balances
@@ -112,9 +129,10 @@ class Isothermal_Monolith_Simulator(object):
 
         # Add the mandatory components to the model
         #       TODO:     (?) Make all parameters into Var objects (?)
+        #       TODO:     (?) Include pressure drop calculation (?)
         self.model.eb = Param(within=NonNegativeReals, initialize=0.3309, mutable=True, units=None)
         self.model.ew = Param(within=NonNegativeReals, initialize=0.2, mutable=True, units=None)
-        self.model.v = Param(within=Reals, initialize=15110, mutable=True, units=units.cm/units.min)
+        self.model.r = Param(within=NonNegativeReals, initialize=1, mutable=True, units=units.cm)
         self.model.km = Param(within=NonNegativeReals, initialize=1.12, mutable=True, units=units.m/units.min)
         self.model.Ga = Param(within=NonNegativeReals, initialize=5757.541, mutable=True, units=units.m**-1)
 
@@ -219,6 +237,13 @@ class Isothermal_Monolith_Simulator(object):
             self.model.T_set = Set(initialize=[temps])
             self.model.T = Var(self.model.age_set, self.model.T_set, self.model.z, self.model.t,
                                 domain=NonNegativeReals, initialize=298, units=units.K)
+        # Create time dependent parameter for space velocity
+        #       NOTE: Space velocity is reactor volumes of gas per unit time
+        #               Different experimental runs may have different space velocities
+        self.model.space_velocity = Var(self.model.age_set, self.model.T_set, self.model.t,
+                                    domain=NonNegativeReals, initialize=1000, units=units.min**-1)
+        self.model.v = Var(self.model.age_set, self.model.T_set, self.model.t,
+                                    domain=NonNegativeReals, initialize=15110, units=units.cm/units.min)
         self.isTempSet = True
 
     # Add gas species (both bulk and washcoat) [Must be strings]
@@ -230,13 +255,6 @@ class Isothermal_Monolith_Simulator(object):
     #                       bulk/pore concentration of given species, at given
     #                       aging condition, at given temperature, at given
     #                       axial location, at given simulation time
-    #
-    #       Access to model.Cb_in Param is as follows:
-    #       ---------------------------------------
-    #           model.Cb_in[species, age, temperature, time] =
-    #                       bulk concentration of given species, at given
-    #                       aging condition, at given temperature, at given
-    #                       simulation time
     def add_gas_species(self, gas_species):
         if self.isTimesSet == False or self.isBoundsSet == False:
             print("Error! Cannot specify gas species until the time and bounds are set")
@@ -263,10 +281,6 @@ class Isothermal_Monolith_Simulator(object):
                             self.model.z, self.model.t,
                             domain=NonNegativeReals, bounds=(1e-20,1e5),
                             initialize=1e-10, units=units.mol/units.L)
-            self.model.Cb_in = Param(self.model.gas_set, self.model.age_set, self.model.T_set,
-                            self.model.t,
-                            within=NonNegativeReals, initialize=1e-10,
-                            mutable=True, units=units.mol/units.L)
         else:
             if isinstance(gas_species, str):
                 self.gas_list[gas_species] = {"bulk": gas_species+"_b",
@@ -281,10 +295,6 @@ class Isothermal_Monolith_Simulator(object):
                                 self.model.z, self.model.t,
                                 domain=NonNegativeReals, bounds=(1e-20,1e5),
                                 initialize=1e-10, units=units.mol/units.L)
-                self.model.Cb_in = Param(self.model.gas_set, self.model.age_set, self.model.T_set,
-                                self.model.t,
-                                within=NonNegativeReals, initialize=1e-10,
-                                mutable=True, units=units.mol/units.L)
             else:
                 print("Error! Gas species must be a string")
                 exit()
@@ -489,8 +499,11 @@ class Isothermal_Monolith_Simulator(object):
             exit()
         self.model.ew.set_value(ew)
 
-    def set_linear_velocity(self, v):
-        self.model.v.set_value(v)
+    def set_reactor_radius(self,rad):
+        self.model.r.set_value(rad)
+
+    #def set_linear_velocity(self, v):
+    #    self.model.v.set_value(v)
 
     def set_mass_transfer_coef(self, km):
         self.model.km.set_value(km)
@@ -516,6 +529,15 @@ class Isothermal_Monolith_Simulator(object):
     #   Sets all to a constant, can be changed later
     def set_isothermal_temp(self,age,temp,value):
         self.model.T[age,temp,:,:].set_value(value)
+
+    # Set the space velocity for a simulation to a given value
+    #   Assumes same value for all times (can be reset later)
+    def set_space_velocity(self,age,temp,value):
+        self.model.space_velocity[age,temp,:].set_value(value)
+
+    # Set a space velocity that is common to all runs
+    def set_space_velocity_all_runs(self,value):
+        self.model.space_velocity[:,:,:].set_value(value)
 
     # Setup site balance information (in needed)
     #       To setup the information for a site balance, pass the name of the
@@ -693,7 +715,7 @@ class Isothermal_Monolith_Simulator(object):
 
     # Bulk mass balance constraint
     def bulk_mb_constraint(self, m, gas, age, temp, z, t):
-        return m.eb*m.dCb_dt[gas, age, temp, z, t] + m.eb*m.v*m.dCb_dz[gas, age, temp, z, t] == -m.Ga*m.km*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t])
+        return m.eb*m.dCb_dt[gas, age, temp, z, t] + m.eb*m.v[age,temp,t]*m.dCb_dz[gas, age, temp, z, t] == -m.Ga*m.km*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t])
 
     # Washcoat mass balance constraint
     def pore_mb_constraint(self, m, gas, age, temp, z, t):
@@ -757,12 +779,15 @@ class Isothermal_Monolith_Simulator(object):
         # Before exiting, we should initialize some additional parameters that
         #   the discretizer doesn't already handle
 
-        #       Initialize Cb_in
-        for spec in self.model.gas_set:
-            for age in self.model.age_set:
-                for temp in self.model.T_set:
-                    val = value(self.model.Cb_in[spec,age,temp,self.model.t.first()])
-                    self.model.Cb_in[spec,age,temp, :].set_value(val)
+        #       Initialize space_velocity and linear velocity
+        self.model.space_velocity[:,:,:].fix()
+        self.model.v[:,:,:].fix()
+        #volume = (self.model.z.last()-self.model.z.first())*3.14159*value(self.model.r)**2
+        for age in self.model.age_set:
+            for temp in self.model.T_set:
+                val = value(self.model.space_velocity[age,temp,self.model.t.first()])
+                self.model.space_velocity[age,temp, :].set_value(val)
+                self.model.v[age,temp, :].set_value(val*(self.model.z.last()-self.model.z.first())/value(self.model.eb))
 
         #       Initialize age set
         for age in self.model.age_set:
@@ -848,7 +873,6 @@ class Isothermal_Monolith_Simulator(object):
         if value < 1e-20:
             value = 1e-20
 
-        self.model.Cb_in[spec,age,temp, :].set_value(value)
         self.model.Cb[spec,age,temp,self.model.z.first(), :].set_value(value)
         self.model.Cb[spec,age,temp,self.model.z.first(), :].fix()
         self.isBoundarySet[spec] = True
@@ -878,7 +902,6 @@ class Isothermal_Monolith_Simulator(object):
             exit()
         if initial_value < 1e-20:
             initial_value = 1e-20
-        self.model.Cb_in[spec,age,temp,self.model.t.first()].set_value(initial_value)
         i=0
         current_bc_time = time_value_pairs[i][0]
         current_bc_value = time_value_pairs[i][1]
@@ -893,7 +916,6 @@ class Isothermal_Monolith_Simulator(object):
                         current_bc_value = 1e-20
                 except:
                     pass
-                self.model.Cb_in[spec,age,temp,time].set_value(current_bc_value)
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(current_bc_value)
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
                 i+=1
@@ -902,7 +924,6 @@ class Isothermal_Monolith_Simulator(object):
                 except:
                     pass
             else:
-                self.model.Cb_in[spec,age,temp,time].set_value(current_bc_value)
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(current_bc_value)
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
 
