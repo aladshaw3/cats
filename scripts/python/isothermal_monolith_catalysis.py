@@ -620,8 +620,7 @@ class Isothermal_Monolith_Simulator(object):
                 u_C_sum -= info["mol_reactants"][spec]
             if spec in info["mol_products"]:
                 u_C_sum += info["mol_products"][spec]
-            for loc in self.model.z:
-                self.model.u_C[spec,rxn,loc].set_value(u_C_sum)
+            self.model.u_C[spec,rxn,:].set_value(u_C_sum)
 
         if self.isSurfSpecSet == True:
             for spec in self.model.surf_set:
@@ -630,14 +629,23 @@ class Isothermal_Monolith_Simulator(object):
                     u_q_sum -= info["mol_reactants"][spec]
                 if spec in info["mol_products"]:
                     u_q_sum += info["mol_products"][spec]
-                for loc in self.model.z:
-                    self.model.u_q[spec,rxn,loc].set_value(u_q_sum)
+                self.model.u_q[spec,rxn,:].set_value(u_q_sum)
 
         # Set reaction order information
         for spec in self.model.all_species_set:
             if spec in info["rxn_orders"]:
                 if spec in info["mol_reactants"] or spec in info["mol_products"]:
                     self.model.rxn_orders[rxn,spec].set_value(info["rxn_orders"][spec])
+
+        # Check for and apply user defined overrides
+        if "override_molar_contribution" in info:
+            print("WARNING! Overriding the molar contributions can result in undefined model behavior.")
+            for spec in info["override_molar_contribution"]:
+                if spec in self.model.gas_set:
+                    self.model.u_C[spec,rxn,:].set_value(info["override_molar_contribution"][spec])
+                if self.isSurfSpecSet == True:
+                    if spec in self.model.surf_set:
+                        self.model.u_q[spec,rxn,:].set_value(info["override_molar_contribution"][spec])
 
         self.isRxnBuilt = True
 

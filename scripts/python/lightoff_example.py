@@ -25,7 +25,14 @@ test.set_surface_to_volume_ratio(5145)      # m^-1
 r1 = {"parameters": {"A": 1.00466E+18, "E": 205901.5765},
           "mol_reactants": {"CO": 1, "O2": 0.5},
           "mol_products": {"CO2": 1},
-          "rxn_orders": {"CO": 1, "O2": 1}
+          "rxn_orders": {"CO": 1, "O2": 1},
+          # The option below is optional and is used to override the value of u_C
+          #     (i.e., the molar contribution of this reaction to a given species'
+          #     mass balance. This may be useful if user wants to specify some
+          #     reaction/species pair as "non-consuming" or "over-consuming")
+
+          #     DO NOT USE UNLESS ABSOLUTELY NECESSARY
+         # "override_molar_contribution": {"O2": 0}
         }
 
 r4 = {"parameters": {"A": 2.816252679, "E": 28675.21769},
