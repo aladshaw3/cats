@@ -276,11 +276,11 @@ class Isothermal_Monolith_Simulator(object):
             self.model.Cb = Var(self.model.gas_set, self.model.age_set, self.model.T_set,
                             self.model.z, self.model.t,
                             domain=NonNegativeReals, bounds=(1e-20,1e5),
-                            initialize=1e-10, units=units.mol/units.L)
+                            initialize=1e-20, units=units.mol/units.L)
             self.model.C = Var(self.model.gas_set, self.model.age_set, self.model.T_set,
                             self.model.z, self.model.t,
                             domain=NonNegativeReals, bounds=(1e-20,1e5),
-                            initialize=1e-10, units=units.mol/units.L)
+                            initialize=1e-20, units=units.mol/units.L)
         else:
             if isinstance(gas_species, str):
                 self.gas_list[gas_species] = {"bulk": gas_species+"_b",
@@ -290,11 +290,11 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.Cb = Var(self.model.gas_set, self.model.age_set, self.model.T_set,
                                 self.model.z, self.model.t,
                                 domain=NonNegativeReals, bounds=(1e-20,1e5),
-                                initialize=1e-10, units=units.mol/units.L)
+                                initialize=1e-20, units=units.mol/units.L)
                 self.model.C = Var(self.model.gas_set, self.model.age_set, self.model.T_set,
                                 self.model.z, self.model.t,
                                 domain=NonNegativeReals, bounds=(1e-20,1e5),
-                                initialize=1e-10, units=units.mol/units.L)
+                                initialize=1e-20, units=units.mol/units.L)
             else:
                 print("Error! Gas species must be a string")
                 exit()
@@ -329,7 +329,7 @@ class Isothermal_Monolith_Simulator(object):
             self.model.q = Var(self.model.surf_set, self.model.age_set, self.model.T_set,
                             self.model.z, self.model.t,
                             domain=NonNegativeReals, bounds=(1e-20,1e5),
-                            initialize=1e-10, units=units.mol/units.L)
+                            initialize=1e-20, units=units.mol/units.L)
         else:
             if isinstance(surf_species, str):
                 self.surf_list[surf_species] = surf_species
@@ -337,7 +337,7 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.q = Var(self.model.surf_set, self.model.age_set, self.model.T_set,
                                 self.model.z, self.model.t,
                                 domain=NonNegativeReals, bounds=(1e-20,1e5),
-                                initialize=1e-10, units=units.mol/units.L)
+                                initialize=1e-20, units=units.mol/units.L)
             else:
                 print("Error! Surface species must be a string")
                 exit()
@@ -375,10 +375,10 @@ class Isothermal_Monolith_Simulator(object):
             self.model.S = Var(self.model.site_set, self.model.age_set, self.model.T_set,
                             self.model.z, self.model.t,
                             domain=NonNegativeReals, bounds=(1e-20,1e5),
-                            initialize=1e-10, units=units.mol/units.L)
+                            initialize=1e-20, units=units.mol/units.L)
             self.model.Smax = Param(self.model.site_set, self.model.age_set,
                             self.model.z, self.model.t,
-                            within=NonNegativeReals, initialize=1e-10,
+                            within=NonNegativeReals, initialize=1e-20,
                             mutable=True, units=units.mol/units.L)
         else:
             if isinstance(sites, str):
@@ -387,10 +387,10 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.S = Var(self.model.site_set, self.model.age_set, self.model.T_set,
                                 self.model.z, self.model.t,
                                 domain=NonNegativeReals, bounds=(1e-20,1e5),
-                                initialize=1e-10, units=units.mol/units.L)
+                                initialize=1e-20, units=units.mol/units.L)
                 self.model.Smax = Param(self.model.site_set, self.model.age_set,
                                 self.model.z, self.model.t,
-                                within=NonNegativeReals, initialize=1e-10,
+                                within=NonNegativeReals, initialize=1e-20,
                                 mutable=True, units=units.mol/units.L)
             else:
                 print("Error! Surface sites must be a string")
@@ -914,6 +914,8 @@ class Isothermal_Monolith_Simulator(object):
         current_bc_time = time_value_pairs[i][0]
         current_bc_value = time_value_pairs[i][1]
         for time in self.model.t:
+            if time == self.model.t.first():
+                current_bc_value = initial_value
             if time >= current_bc_time:
                 try:
                     current_bc_value = time_value_pairs[i][1]
