@@ -49,17 +49,17 @@ class AuxAvgLinearVelocity : public AuxKernel
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Standard MOOSE public constructor
     AuxAvgLinearVelocity(const InputParameters & parameters);
-    
+
 protected:
     /// Required MOOSE function override
     /** This is the function that is called by the MOOSE framework when a calculation of the total
         system pressure is needed. You are required to override this function for any inherited
         AuxKernel. */
     virtual Real computeValue() override;
-    
+
 private:
     const VariableValue & _flow_rate;                ///< Variable for the flow rate (m^3/s)
     const unsigned int _flow_rate_var;               ///< Variable identification for the flow rate
@@ -67,6 +67,5 @@ private:
     const unsigned int _xsec_area_var;               ///< Variable identification for the cross-sectional area
     const VariableValue & _porosity;                ///< Variable for the porosity
     const unsigned int _porosity_var;               ///< Variable identification for the porosity
-    
-};
 
+};
