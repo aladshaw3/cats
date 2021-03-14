@@ -179,7 +179,7 @@
 
   [./vel_y]
       order = FIRST
-      family = LAGRANGE
+      family = MONOMIAL
       initial_condition = 7555.15
   [../]
 
@@ -451,6 +451,19 @@
         start_time = 191.591667
         end_time = 231.425
         end_value = 811.4574615
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./velocity]
+        # NOTE: velocity must use same shape function type as temperature and space-velocity
+        type = GasVelocityCylindricalReactor
+        variable = vel_y
+        porosity = 0.3309
+        space_velocity = 500   #volumes per min
+        inlet_temperature = temp
+        ref_temperature = 423.15
+        radius = 1  #cm
+        length = 5  #cm
         execute_on = 'initial timestep_end'
     [../]
 
