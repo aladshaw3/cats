@@ -161,6 +161,7 @@ class Isothermal_Monolith_Simulator(object):
         self.build_time = time.time()
         self.initialize_time = 0
         self.solve_time = 0
+        self.isVelocityRecalculated = False
 
     # Add a continuous set for spatial dimension (current expected units = cm)
     def add_axial_dim(self, start_point, end_point, point_list=[]):
@@ -244,6 +245,17 @@ class Isothermal_Monolith_Simulator(object):
                                     domain=NonNegativeReals, initialize=1000, units=units.min**-1)
         self.model.v = Var(self.model.age_set, self.model.T_set, self.model.t,
                                     domain=NonNegativeReals, initialize=15110, units=units.cm/units.min)
+        # Adding pressure variable (to track pressure drop) and reference temperature and pressure
+        #       params to modify the flow rate / velocity as temperature and pressure change
+        #       The reference temperature and pressure should be associated with a cooresponding
+        #       space velocity. Default values: 150 C and 1 atm (choosen due to the nature of
+        #       typical exhaust gas experiments, not at STP)
+        self.model.P = Var(self.model.age_set, self.model.T_set, self.model.z, self.model.t,
+                                    domain=NonNegativeReals, initialize=101.35, units=units.kPa)
+        self.model.Tref = Param(self.model.age_set, self.model.T_set, within=NonNegativeReals,
+                                initialize=423.15, mutable=True, units=units.K)
+        self.model.Pref = Param(self.model.age_set, self.model.T_set, within=NonNegativeReals,
+                                initialize=101.35, mutable=True, units=units.kPa)
         self.isTempSet = True
 
     # Add gas species (both bulk and washcoat) [Must be strings]
@@ -529,15 +541,24 @@ class Isothermal_Monolith_Simulator(object):
     #   Sets all to a constant, can be changed later
     def set_isothermal_temp(self,age,temp,value):
         self.model.T[age,temp,:,:].set_value(value)
+        self.isVelocityRecalculated = False
 
     # Set the space velocity for a simulation to a given value
     #   Assumes same value for all times (can be reset later)
-    def set_space_velocity(self,age,temp,value):
+    #       User may also provide reference pressure and temperature
+    #       associated with this space velocity
+    def set_space_velocity(self,age,temp,value,Pref=101.15,Tref=423.15):
         self.model.space_velocity[age,temp,:].set_value(value)
+        self.model.Pref[age,temp].set_value(Pref)
+        self.model.Tref[age,temp].set_value(Tref)
 
     # Set a space velocity that is common to all runs
-    def set_space_velocity_all_runs(self,value):
+    #       User may also provide reference pressure and temperature
+    #       associated with this space velocity
+    def set_space_velocity_all_runs(self,value,Pref=101.15,Tref=423.15):
         self.model.space_velocity[:,:,:].set_value(value)
+        self.model.Pref[:,:].set_value(Pref)
+        self.model.Tref[:,:].set_value(Tref)
 
     # Setup site balance information (in needed)
     #       To setup the information for a site balance, pass the name of the
@@ -787,15 +808,28 @@ class Isothermal_Monolith_Simulator(object):
         # Before exiting, we should initialize some additional parameters that
         #   the discretizer doesn't already handle
 
-        #       Initialize space_velocity and linear velocity
-        self.model.space_velocity[:,:,:].fix()
-        self.model.v[:,:,:].fix()
-        #volume = (self.model.z.last()-self.model.z.first())*3.14159*value(self.model.r)**2
+        # Force temperature to be isothermal
+        self.model.T[:,:,:,:].fix()
         for age in self.model.age_set:
             for temp in self.model.T_set:
+                val = value(self.model.T[age,temp,self.model.z.first(),self.model.t.first()])
+                self.model.T[age,temp,:,:].set_value(val)
+
+        #       Initialize space_velocity, linear velocity, and pressure
+        self.model.space_velocity[:,:,:].fix()
+        self.model.v[:,:,:].fix()
+        self.model.P[:,:,:,:].fix()
+        volume = (self.model.z.last()-self.model.z.first())*3.14159*value(self.model.r)**2
+        for age in self.model.age_set:
+            for temp in self.model.T_set:
+                flow_rate_ref = volume*value(self.model.space_velocity[age,temp,self.model.t.first()])
+                press = value(self.model.P[age,temp,self.model.z.first(),self.model.t.first()])
+                temperature = value(self.model.T[age,temp,self.model.z.first(),self.model.t.first()])
+                self.model.P[age,temp,:,:].set_value(press)
                 val = value(self.model.space_velocity[age,temp,self.model.t.first()])
                 self.model.space_velocity[age,temp, :].set_value(val)
-                self.model.v[age,temp, :].set_value(val*(self.model.z.last()-self.model.z.first())/value(self.model.eb))
+                flow_rate_true = flow_rate_ref*(value(self.model.Pref[age,temp])/press)*(temperature/value(self.model.Tref[age,temp]))
+                self.model.v[age,temp, :].set_value(flow_rate_true/volume/value(self.model.eb)*(self.model.z.last()-self.model.z.first()))
 
         #       Initialize age set
         for age in self.model.age_set:
@@ -828,13 +862,6 @@ class Isothermal_Monolith_Simulator(object):
                 for temp in self.model.T_set:
                     self.model.dCb_dt[spec,age,temp,self.model.z.first(),self.model.t.first()].set_value(0)
                     self.model.dCb_dt[spec,age,temp,self.model.z.first(),self.model.t.first()].fix()
-
-        # Force temperature to be isothermal
-        self.model.T[:,:,:,:].fix()
-        for age in self.model.age_set:
-            for temp in self.model.T_set:
-                val = value(self.model.T[age,temp,self.model.z.first(),self.model.t.first()])
-                self.model.T[age,temp,:,:] = val
 
         self.isDiscrete = True
         self.build_time = (time.time() - self.build_time)
@@ -959,6 +986,7 @@ class Isothermal_Monolith_Simulator(object):
                     slope = (end_temp-start_temp)/(end_time-start_time)
                     self.model.T[age,temp,:,time].set_value(start_temp+slope*(time-start_time))
             previous_time = time
+        self.isVelocityRecalculated = False
 
     # Function to define reaction 'zones'
     #       By default, all reactions occur in all zones. Users can
@@ -998,6 +1026,26 @@ class Isothermal_Monolith_Simulator(object):
                     for spec in self.model.surf_set:
                         self.model.u_q[spec,rxn,loc].set_value(0)
 
+    # This function will recalculate all linear velocities
+    #   based on the space-velocity and temperature and pressure information
+    #       Optional arg: internally_called determines whether or not to consider
+    #                       this function call as definitive. By default, it is
+    #                       set to false. When the function is called internally,
+    #                       then it notes that this doesn't need to be called again
+    def recalculate_linear_velocities(self, interally_called=False):
+        full_area = 3.14159*value(self.model.r)**2
+        volume = (self.model.z.last()-self.model.z.first())*full_area
+        open_area = full_area*value(self.model.eb)
+        for age in self.model.age_set:
+            for temp in self.model.T_set:
+                for time in self.model.t:
+                    Q_ref = volume*value(self.model.space_velocity[age,temp,time])
+                    P = value(self.model.P[age,temp,self.model.z.first(),time])
+                    T = value(self.model.T[age,temp,self.model.z.first(),time])
+                    Q_real = Q_ref*(value(self.model.Pref[age,temp])/P)*(T/value(self.model.Tref[age,temp]))
+                    self.model.v[age,temp,time].set_value(Q_real/open_area)
+        if interally_called == True:
+            self.isVelocityRecalculated = True
 
     # Function to fix all kinetic vars
     def fix_all_reactions(self):
@@ -1069,6 +1117,9 @@ class Isothermal_Monolith_Simulator(object):
             if self.isBoundarySet[spec] == False:
                 print("Error! Must specify boundaries before attempting to solve")
                 exit()
+
+        if self.isVelocityRecalculated == False:
+            self.recalculate_linear_velocities(True)
 
         # Setup a dictionary to determine which reaction to unfix after solve
         self.initialize_time = time.time()
@@ -1319,6 +1370,8 @@ class Isothermal_Monolith_Simulator(object):
         if self.isObjectiveSet == False:
             print("Warning! No objective function set. Forcing all kinetics to be fixed.")
             self.fix_all_reactions()
+        if self.isVelocityRecalculated == False:
+            self.recalculate_linear_velocities(True)
         self.solve_time = time.time()
 
         solver = SolverFactory('ipopt')

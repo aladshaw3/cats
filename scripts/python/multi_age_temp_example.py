@@ -51,7 +51,6 @@ test.set_isothermal_temp("2hr","150C",150+273.15)
 test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.FiniteDifference,
                     tstep=10,elems=5,colpoints=1)
-test.model.v.pprint()
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 test.set_const_IC("NH3","Unaged","150C",0)
