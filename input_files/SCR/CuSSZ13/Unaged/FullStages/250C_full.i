@@ -510,6 +510,12 @@
       initial_condition = 523.15
   [../]
 
+  [./press]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 101.35
+  [../]
+
   [./D]
     order = FIRST
     family = MONOMIAL
@@ -2413,6 +2419,8 @@
         porosity = 0.3309
         space_velocity = 1000   #volumes per min
         inlet_temperature = temp
+        inlet_pressure = press
+        ref_pressure = 101.35
         ref_temperature = 423.15
         radius = 1  #cm
         length = 5  #cm

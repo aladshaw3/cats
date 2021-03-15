@@ -75,6 +75,8 @@ private:
     Real _length;                                   ///< Value for reactor length
     Real _porosity;                                 ///< Value for the porosity
     const VariableValue & _temperature_in;          ///< Variable for inlet temperature (in K)
+    const VariableValue & _pressure_in;             ///< Variable for inlet pressure (in kPa)
     Real _temperature_ref;                          ///< Value of the reference temperature (in K)
+    Real _pressure_ref;                             ///< Value of the reference pressure (in kPa)
 
 };

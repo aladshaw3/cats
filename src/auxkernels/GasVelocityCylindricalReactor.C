@@ -56,7 +56,9 @@ InputParameters GasVelocityCylindricalReactor::validParams()
     params.addRequiredParam< Real >("porosity","Value of bulk porosity");
     params.addRequiredCoupledVar("space_velocity","Name of the space-velocity variable (reactor volumes/time)");
     params.addRequiredCoupledVar("inlet_temperature","Name of the inlet temperature variable (in K)");
+    params.addCoupledVar("inlet_pressure",101.35,"Name of the inlet pressure variable (in kPa)");
     params.addParam< Real >("ref_temperature",298.15,"Reference temperature for the space-velocity (in K)");
+    params.addParam< Real >("ref_pressure",101.35,"Reference pressure for the space-velocity (in kPa)");
     params.addRequiredParam< Real >("radius","Radius of the cylindrical reactor");
     params.addRequiredParam< Real >("length","Length of the cylindrical reactor");
     return params;
@@ -69,7 +71,9 @@ _radius(getParam<Real>("radius")),
 _length(getParam<Real>("length")),
 _porosity(getParam<Real>("porosity")),
 _temperature_in(coupledValue("inlet_temperature")),
-_temperature_ref(getParam<Real>("ref_temperature"))
+_pressure_in(coupledValue("inlet_pressure")),
+_temperature_ref(getParam<Real>("ref_temperature")),
+_pressure_ref(getParam<Real>("ref_pressure"))
 {
 
 }
@@ -78,6 +82,6 @@ Real GasVelocityCylindricalReactor::computeValue()
 {
     Real _area = _radius*_radius*3.14159;
     Real _ref_flow_rate = _space_velocity[_qp]*_length*_area;
-    Real _true_flow_rate = _temperature_in[_qp]*_ref_flow_rate/_temperature_ref;
+    Real _true_flow_rate = _temperature_in[_qp]*_ref_flow_rate/_temperature_ref*_pressure_ref/(_pressure_in[_qp]);
     return _true_flow_rate/_area/_porosity;
 }
