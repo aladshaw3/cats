@@ -68,7 +68,6 @@ def equilibrium_arrhenius_consts(Af, Ef, dH, dS):
     Er = Ef - dH
     return (Ar, Er)
 
-
 # Class object to hold the simulator and all model components
 #       This object will be how a user interfaces with the
 #       pyomo simulator and dictates the form of the model
@@ -93,13 +92,6 @@ def equilibrium_arrhenius_consts(Af, Ef, dH, dS):
 #                   Smax = S + SUM(all qi, u_si*qi) = 0
 #
 
-# # TODO: Add in data and objective functions
-#       # NOTE: In order to be efficient as a simulator and optimizer, the data
-#               given should likely be a sub-set of a full data run. Points should
-#               be selected with high-density where apparent rates of change are
-#               high, but points should be selected with low density where apparent
-#               rates of change are low.
-#
 # # TODO: (?) Develop subroutines to automatically down select data (?)
 #               Use relative rate of change between nieghbors do determine
 #               the density of points to select
@@ -163,21 +155,46 @@ class Isothermal_Monolith_Simulator(object):
         self.solve_time = 0
         self.isVelocityRecalculated = False
 
+        self.isDataBoundsSet = False
+        self.isDataTimesSet = False
+        self.isDataAgeSet = False
+        self.isDataTempSet = False
+        self.isDataGasSpecSet = False
+        self.isDataValuesSet = {}
+
+
     # Add a continuous set for spatial dimension (current expected units = cm)
-    def add_axial_dim(self, start_point, end_point, point_list=[]):
+    def add_axial_dim(self, start_point=0, end_point=1, point_list=[]):
         if point_list == []:
             self.model.z = ContinuousSet(bounds=(start_point,end_point))
         else:
             self.model.z = ContinuousSet(initialize=point_list)
         self.isBoundsSet = True
 
+    # Add axial points for data (if avaialbe)
+    def add_axial_dataset(self, point_set):
+        if type(point_set) is not list:
+            self.model.z_data = Set(initialize=[point_set])
+        else:
+            self.model.z_data = Set(initialize=point_set)
+        self.isDataBoundsSet = True
+
+
     # Add a continuous set for temporal dimension (current expected units = min)
-    def add_temporal_dim(self, start_point, end_point, point_list=[]):
+    def add_temporal_dim(self, start_point=0, end_point=1, point_list=[]):
         if point_list == []:
             self.model.t = ContinuousSet(bounds=(start_point,end_point))
         else:
             self.model.t = ContinuousSet(initialize=point_list)
         self.isTimesSet = True
+
+    # Add time set for data
+    def add_temporal_dataset(self, point_set):
+        if type(point_set) is not list:
+            self.model.t_data = Set(initialize=point_set)
+        else:
+            self.model.t_data = Set(initialize=point_set)
+        self.isDataTimesSet = True
 
 
     # Add a param set for aging times/conditions [Can be reals, ints, or strings]
@@ -214,10 +231,42 @@ class Isothermal_Monolith_Simulator(object):
 
         self.isAgeSet = True
 
+    # Add a data param set for aging times/conditions [Can be reals, ints, or strings]
+    #
+    #       Access to model.age param is as follows:
+    #       ---------------------------------------
+    #           model.age_data[age_data, time_data] =
+    #                       catalyst age at run time
+    def add_data_age_set(self, ages):
+        if self.isDataTimesSet == False:
+            print("Error! Time dimension must be set first!")
+            exit()
+        if self.isAgeSet == False:
+            print("Error! Must set ages for simulation first!")
+            exit()
+
+        if type(ages) is list:
+            i=0
+            for item in ages:
+                key = "age_"+str(i)
+                self.age_list[key] = item
+                i+=1
+            self.model.data_age_set = Set(initialize=ages)
+        else:
+            self.age_list["age_0"] = ages
+            self.model.data_age_set = Set(initialize=[ages])
+
+        # Check to see if each age in the data set has a cooresponding simulation set
+        for age in self.model.data_age_set:
+            if age not in self.model.age_set:
+                print("Error! Data ages must be a sub-set of simulation ages")
+                exit()
+        self.isDataAgeSet = True
+
     # Add a variable set for isothermal temperatures [Must be reals]
     #       Currently expects temperatures in K
     #
-    #       Access to model.T param is as follows:
+    #       Access to model.T var is as follows:
     #       ---------------------------------------
     #           model.T[age, temperature, loc, time] =
     #                       isothermal temperature for aging condition at simulation location and time
@@ -257,6 +306,31 @@ class Isothermal_Monolith_Simulator(object):
         self.model.Pref = Param(self.model.age_set, self.model.T_set, within=NonNegativeReals,
                                 initialize=101.35, mutable=True, units=units.kPa)
         self.isTempSet = True
+
+    # Add a data set for temperatures [Must be reals]
+    def add_data_temperature_set(self, temps):
+        if self.isDataTimesSet == False or self.isDataBoundsSet == False:
+            print("Error! Time and space dimensions for data must be set first!")
+            exit()
+
+        if self.isDataAgeSet == False:
+            print("Error! Catalyst ages for data sets must be set first!")
+            exit()
+
+        if self.isTempSet == False:
+            print("Error! Model must have temperature information set first!")
+            exit()
+
+        if type(temps) is list:
+            self.model.data_T_set = Set(initialize=temps)
+        else:
+            self.model.data_T_set = Set(initialize=[temps])
+        # Check to see if each temp in the data set has a cooresponding simulation set
+        for temp in self.model.data_T_set:
+            if temp not in self.model.T_set:
+                print("Error! Data temps must be a sub-set of simulation temps")
+                exit()
+        self.isDataTempSet = True
 
     # Add gas species (both bulk and washcoat) [Must be strings]
     #       Currently expects species concentrations in mol/L
@@ -316,6 +390,48 @@ class Isothermal_Monolith_Simulator(object):
         self.model.dCb_dz = DerivativeVar(self.model.Cb, wrt=self.model.z, initialize=0, units=units.mol/units.L/units.cm)
         self.model.dCb_dt = DerivativeVar(self.model.Cb, wrt=self.model.t, initialize=0, units=units.mol/units.L/units.min)
         self.model.dC_dt = DerivativeVar(self.model.C, wrt=self.model.t, initialize=0, units=units.mol/units.L/units.min)
+
+    # Add gas species for data observations and a weight factor 'w' to be used for
+    #   changing the behavior of the objective function
+    def add_data_gas_species(self, gas_species):
+        if self.isDataTimesSet == False or self.isDataBoundsSet == False:
+            print("Error! Cannot specify gas species until the data time and spatial observations are set")
+            exit()
+        if self.isDataTempSet == False or self.isDataAgeSet == False:
+            print("Error! Cannot specify gas species until the data temperatures and ages are set")
+            exit()
+
+        if type(gas_species) is list:
+            self.model.data_gas_set = Set(initialize=gas_species)
+            self.model.Cb_data = Param(self.model.data_gas_set, self.model.data_age_set,
+                            self.model.data_T_set, self.model.z_data, self.model.t_data,
+                            within=NonNegativeReals, mutable=True,
+                            initialize=1e-20, units=units.mol/units.L)
+            self.model.w = Param(self.model.data_gas_set, self.model.data_age_set,
+                            self.model.data_T_set,
+                            within=NonNegativeReals, mutable=True,
+                            initialize=1, units=None)
+        else:
+            if isinstance(gas_species, str):
+                self.model.data_gas_set = Set(initialize=[gas_species])
+                self.model.Cb_data = Param(self.model.data_gas_set, self.model.data_age_set,
+                                self.model.data_T_set, self.model.z_data, self.model.t_data,
+                                within=NonNegativeReals, mutable=True,
+                                initialize=1e-20, units=units.mol/units.L)
+                self.model.w = Param(self.model.data_gas_set, self.model.data_age_set,
+                                self.model.data_T_set,
+                                within=NonNegativeReals, mutable=True,
+                                initialize=1, units=None)
+            else:
+                print("Error! Gas species must be a string")
+                exit()
+        # Check to see if each temp in the data set has a cooresponding simulation set
+        for spec in self.model.data_gas_set:
+            self.isDataValuesSet[spec] = False
+            if spec not in self.model.gas_set:
+                print("Error! Data gas species must be a sub-set of simulation species")
+                exit()
+        self.isDataGasSpecSet = True
 
     # Add surface species (optional) [Must be strings]
     #       Currently expects surface concentrations in mol/L
@@ -606,17 +722,63 @@ class Isothermal_Monolith_Simulator(object):
             exit()
         if rxn in self.model.arrhenius_rxns:
             self.model.A[rxn].set_value(info["parameters"]["A"])
+            try:
+                self.model.A[rxn].setlb(info["parameters"]["A_lb"])
+                self.model.A[rxn].setub(info["parameters"]["A_ub"])
+            except:
+                self.model.A[rxn].setlb(info["parameters"]["A"]*0.8)
+                self.model.A[rxn].setub(info["parameters"]["A"]*1.2)
+
             self.model.E[rxn].set_value(info["parameters"]["E"])
             try:
+                self.model.E[rxn].setlb(info["parameters"]["E_lb"])
+                self.model.E[rxn].setub(info["parameters"]["E_ub"])
+            except:
+                self.model.E[rxn].setlb(info["parameters"]["E"]*0.8)
+                self.model.E[rxn].setub(info["parameters"]["E"]*1.2)
+            try:
                 self.model.B[rxn].set_value(info["parameters"]["B"])
+                try:
+                    self.model.B[rxn].setlb(info["parameters"]["B_lb"])
+                    self.model.B[rxn].setub(info["parameters"]["B_ub"])
+                except:
+                    self.model.B[rxn].setlb(info["parameters"]["B"]*0.8)
+                    self.model.B[rxn].setub(info["parameters"]["B"]*1.2)
             except:
                 self.model.B[rxn].set_value(0)
                 self.model.B[rxn].fix()
         elif rxn in self.model.equ_arrhenius_rxns:
             self.model.Af[rxn].set_value(info["parameters"]["A"])
+            try:
+                self.model.Af[rxn].setlb(info["parameters"]["A_lb"])
+                self.model.Af[rxn].setub(info["parameters"]["A_ub"])
+            except:
+                self.model.Af[rxn].setlb(info["parameters"]["A"]*0.8)
+                self.model.Af[rxn].setub(info["parameters"]["A"]*1.2)
+
             self.model.Ef[rxn].set_value(info["parameters"]["E"])
+            try:
+                self.model.Ef[rxn].setlb(info["parameters"]["E_lb"])
+                self.model.Ef[rxn].setub(info["parameters"]["E_ub"])
+            except:
+                self.model.Ef[rxn].setlb(info["parameters"]["E"]*0.8)
+                self.model.Ef[rxn].setub(info["parameters"]["E"]*1.2)
+
             self.model.dH[rxn].set_value(info["parameters"]["dH"])
+            try:
+                self.model.dH[rxn].setlb(info["parameters"]["dH_lb"])
+                self.model.dH[rxn].setub(info["parameters"]["dH_ub"])
+            except:
+                self.model.dH[rxn].setlb(info["parameters"]["dH"]*0.8)
+                self.model.dH[rxn].setub(info["parameters"]["dH"]*1.2)
+
             self.model.dS[rxn].set_value(info["parameters"]["dS"])
+            try:
+                self.model.dS[rxn].setlb(info["parameters"]["dS_lb"])
+                self.model.dS[rxn].setub(info["parameters"]["dS_ub"])
+            except:
+                self.model.dS[rxn].setlb(info["parameters"]["dS"]*0.8)
+                self.model.dS[rxn].setub(info["parameters"]["dS"]*1.2)
         else:
             print("Error! Given reaction name does not exist in model")
             exit()
@@ -669,6 +831,46 @@ class Isothermal_Monolith_Simulator(object):
                         self.model.u_q[spec,rxn,:].set_value(info["override_molar_contribution"][spec])
 
         self.isRxnBuilt = True
+
+
+    # Function to interpolate or extrapolate a model value to a given location and time
+    #       var = variable object in the model
+    #       spec = name of the species (required for scoping into variable)
+    #       age = name of the age set (required for scoping into variable)
+    #       temp = name of the temperature set (required for scoping into variable)
+    #       loc = float for location in spatial domain
+    #       loc = float for location in temporal domain
+    #
+    # # TODO: THIS IS UNFINISHED
+    def interpret_var(self, var, spec, age, temp, loc, time):
+        nearest_loc_index = self.model.z.find_nearest_index(loc)
+        nearest_time_index = self.model.t.find_nearest_index(time)
+
+        if nearest_loc_index == 1:
+            next_nearest_loc_index = 2
+        elif nearest_loc_index == len(self.model.z):
+            next_nearest_loc_index = len(self.model.z)-1
+        else:
+            next_nearest_loc_index = nearest_loc_index - 1
+
+        if nearest_time_index == 1:
+            next_nearest_time_index = 2
+        elif nearest_time_index == len(self.model.t):
+            next_nearest_time_index = len(self.model.t)-1
+        else:
+            next_nearest_time_index = nearest_time_index - 1
+
+        z_dist = (self.model.z[nearest_loc_index] - loc)
+        t_dist = (self.model.t[nearest_time_index] - time)
+        z_slope = -(var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[nearest_time_index]] - var[spec,age,temp,self.model.z[next_nearest_loc_index],self.model.t[nearest_time_index]])/(self.model.z[nearest_loc_index] - self.model.z[next_nearest_loc_index])
+        t_slope = -(var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[nearest_time_index]] - var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[next_nearest_time_index]])/(self.model.t[nearest_time_index] - self.model.t[next_nearest_time_index])
+
+        loc_val = self.model.z[nearest_loc_index]
+        time_val = self.model.t[nearest_time_index]
+
+        print(self.model.z[nearest_loc_index])
+        print(self.model.z[next_nearest_loc_index])
+        return (var[spec,age,temp,loc_val,time_val] + z_slope*z_dist + t_slope*t_dist)
 
     # Define a single arrhenius rate function to be used in the model
     #       This function assumes the reaction index (rxn) is valid
@@ -761,6 +963,18 @@ class Isothermal_Monolith_Simulator(object):
         sum=self.site_sum(site, m, age, temp, z, t)
         return m.Smax[site,age,z,t] - m.S[site, age, temp, z, t] - sum == 0
 
+    # Objective function
+    def norm_objective(self, m):
+        sum = 0
+        for spec in m.data_gas_set:
+            for age in m.data_age_set:
+                for temp in m.data_T_set:
+                    for z in m.z_data:
+                        for t in m.t_data:
+                            sum+=m.w[spec,age,temp]*(m.Cb_data[spec,age,temp,z,t] - self.interpret_var(m.Cb,spec,age,temp,z,t))**2
+        return sum
+
+
     # Build Constraints
     def build_constraints(self):
         if self.isRxnBuilt == False:
@@ -781,6 +995,19 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.site_cons = Constraint(self.model.site_set, self.model.age_set,
                                         self.model.T_set, self.model.z,
                                         self.model.t, rule=self.site_bal_constraint)
+
+        anyFalse = False
+        if self.isDataGasSpecSet == True:
+            for spec in self.model.data_gas_set:
+                if self.isDataValuesSet[spec] == False:
+                    anyFalse = True
+                    break
+            if anyFalse == True:
+                print("Error! Some data for gases not set. Cannot create objective function")
+                exit()
+            self.model.obj = Objective(rule=self.norm_objective)
+            self.isObjectiveSet = True
+
         self.isConBuilt = True
 
     # Apply a discretizer
@@ -1026,6 +1253,40 @@ class Isothermal_Monolith_Simulator(object):
                     for spec in self.model.surf_set:
                         self.model.u_q[spec,rxn,loc].set_value(0)
 
+    # Function to setup data for a specific data species, specific data age,
+    #   specific data temperature run, at a specific location, based on a
+    #   list of time values and cooresponding data values at those times.
+    #
+    #   NOTE: The list of time values and cooresponding data points should be
+    #           in their correct order (we don't check order for you)
+    def set_data_values_for(self, spec, age, temp, loc, times, values):
+        if self.isDataGasSpecSet == False:
+            print("Error! Data gas species must be set in model data before providing values")
+            exit()
+
+        if type(times) is not list:
+            print("Error! Given times must be a list of values")
+            exit()
+
+        if type(values) is not list:
+            print("Error! Values for setting data must be given as a list")
+            exit()
+
+        if loc not in self.model.z_data:
+            print("Error! Location given was not specified during the creation of the spatial data set")
+            exit()
+
+        if len(times) != len(values):
+            print("Error! The 'times' list and 'values' list must be of same size")
+            exit()
+
+        i=0
+        for t in times:
+            self.model.Cb_data[spec, age, temp, loc, t].set_value(values[i])
+            i+=1
+
+        self.isDataValuesSet[spec] = True
+
     # This function will recalculate all linear velocities
     #   based on the space-velocity and temperature and pressure information
     #       Optional arg: internally_called determines whether or not to consider
@@ -1130,8 +1391,7 @@ class Isothermal_Monolith_Simulator(object):
 
         # Run a solve of the model without objective function
         if self.isObjectiveSet == True:
-            # TODO: remove obj
-            pass
+            self.model.obj.deactivate()
 
         # Fix all times not associated with current time step
         self.model.Cb[:, :, :, :, :].fix()
@@ -1341,8 +1601,7 @@ class Isothermal_Monolith_Simulator(object):
 
         # Add objective function back
         if self.isObjectiveSet == True:
-            # TODO: add obj
-            pass
+            self.model.obj.activate()
 
         # After solve, unfix specified reactions
         for rxn in fixed_dict:
@@ -1476,7 +1735,7 @@ class Isothermal_Monolith_Simulator(object):
 
 
     # Function to print out results of variables at all locations and times
-    def print_results_all_locations(self, spec_list, age, temp, file_name=""):
+    def print_results_all_locations(self, spec_list, age, temp, file_name="", include_temp=False):
         if type(spec_list) is not list:
             print("Error! Need to provide species as a list (even if it is just one species)")
             exit()
@@ -1499,7 +1758,7 @@ class Isothermal_Monolith_Simulator(object):
         file = open(folder+file_name,"w")
 
         # Embeddd helper function
-        def _print_all_results(model, var, spec, age, temp, file):
+        def _print_all_results(model, var, spec, age, temp, file, isTemp=False):
             tstart = model.t.first()
             tend = model.t.last()
 
@@ -1523,13 +1782,22 @@ class Isothermal_Monolith_Simulator(object):
 
             #Print x results
             for loc in model.z:
-            	for time in model.t:
-            		if time == tstart:
-            			file.write(str(loc)+'\t'+str(value(var[spec,age,temp,loc,time]))+'\t')
-            		elif time == tend:
-            			file.write(str(value(var[spec,age,temp,loc,time]))+'\n')
-            		else:
-            			file.write(str(value(var[spec,age,temp,loc,time]))+'\t')
+                for time in model.t:
+                    if time == tstart:
+                        if isTemp == False:
+                            file.write(str(loc)+'\t'+str(value(var[spec,age,temp,loc,time]))+'\t')
+                        else:
+                            file.write(str(loc)+'\t'+str(value(var[age,temp,loc,time]))+'\t')
+                    elif time == tend:
+                        if isTemp == False:
+                            file.write(str(value(var[spec,age,temp,loc,time]))+'\n')
+                        else:
+                            file.write(str(value(var[age,temp,loc,time]))+'\n')
+                    else:
+                        if isTemp == False:
+                            file.write(str(value(var[spec,age,temp,loc,time]))+'\t')
+                        else:
+                            file.write(str(value(var[age,temp,loc,time]))+'\t')
             file.write('\n')
 
         for spec in spec_list:
@@ -1544,12 +1812,15 @@ class Isothermal_Monolith_Simulator(object):
             else:
                 file.write('Results for site '+str(spec)+' in table below'+'\n')
                 _print_all_results(self.model, self.model.S, spec, age, temp, file)
+        if include_temp == True:
+            file.write('Results for temperature in the table below'+'\n')
+            _print_all_results(self.model, self.model.T, None, age, temp, file, include_temp)
 
         file.write('\n')
         file.close()
 
     # Function to print a list of species at a given node for all times
-    def print_results_of_location(self, spec_list, age, temp, loc, file_name=""):
+    def print_results_of_location(self, spec_list, age, temp, loc, file_name="", include_temp=False):
         if type(spec_list) is not list:
             print("Error! Need to provide species as a list (even if it is just one species)")
             exit()
@@ -1580,6 +1851,8 @@ class Isothermal_Monolith_Simulator(object):
                 file.write(str(spec)+'\t')
             else:
                 file.write(str(spec)+'\t')
+        if include_temp == True:
+            file.write("T[K]"+'\t')
         file.write('\n')
         for time in self.model.t:
             file.write(str(time) + '\t')
@@ -1590,14 +1863,16 @@ class Isothermal_Monolith_Simulator(object):
                     file.write(str(value(self.model.q[spec,age,temp,loc,time])) + '\t')
                 else:
                     file.write(str(value(self.model.S[spec,age,temp,loc,time])) + '\t')
+            if include_temp == True:
+                file.write(str(value(self.model.T[age,temp,loc,time])) + '\t')
             file.write('\n')
         file.write('\n')
         file.close()
 
 
     # Function to print a list of species at the exit of the domain
-    def print_results_of_breakthrough(self, spec_list, age, temp, file_name=""):
-        self.print_results_of_location(spec_list, age, temp, self.model.z.last(), file_name)
+    def print_results_of_breakthrough(self, spec_list, age, temp, file_name="", include_temp=False):
+        self.print_results_of_location(spec_list, age, temp, self.model.z.last(), file_name, include_temp)
 
     # Print integrated average results over domain for a species
     def print_results_of_integral_average(self, spec_list, age, temp, file_name=""):
