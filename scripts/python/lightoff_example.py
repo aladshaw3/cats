@@ -173,8 +173,10 @@ test.set_temperature_ramp("A0", "T0", 120, 5160, 813.15)
 
 # Fix the kinetics to only run a simulation (leave unfixed for optimization)
 #test.fix_all_reactions()
-test.initialize_simulator()
-test.run_solver()
+status = test.initialize_simulator()
+print(status)
+final_status = test.run_solver()
+print(final_status)
 
 test.print_results_of_breakthrough(["CO","NO","O2"], "A0", "T0", file_name="", include_temp=True)
 

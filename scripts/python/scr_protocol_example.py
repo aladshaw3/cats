@@ -2,15 +2,52 @@
 
 from isothermal_monolith_catalysis import *
 
+# Sample function for reading a file
+def read_data_file(file):
+    Data = {}
+    i = 0
+    ordered_list = []
+    for line in open(file, "r"):
+        # Read in header that contains species names
+        if i==0:
+            for item in line.split():
+                Data[item] = []
+                ordered_list.append(item)
+        # Read in data for each species
+        else:
+            j=0
+            for item in line.split():
+                Data[ordered_list[j]].append(float(item))
+                j+=1
+        i+=1
+
+    return Data
+
+# Read in the data (data is now a dictionary containing the data we want)
+data = read_data_file("scr_sample_input.txt")
+
 # Testing
 test = Isothermal_Monolith_Simulator()
 test.add_axial_dim(0,5)
+test.add_axial_dataset(5)       # Location of observations (in cm)
+
 test.add_temporal_dim(0,212)
+test.add_temporal_dataset(data["time"])   #Temporal observations (in s)
 
 test.add_age_set("Unaged")
+test.add_data_age_set("Unaged")             # Data observations can be a sub-set
+
 test.add_temperature_set("250C")
+test.add_data_temperature_set("250C")     # Data observations can be a sub-set
 
 test.add_gas_species(["NH3","H2O","O2","NO","NO2","N2O","N2"])
+test.add_data_gas_species(["NH3","NO","NO2","N2O"])    # Data observations can be a sub-set
+
+test.set_data_values_for("NH3","Unaged","250C",5,data["time"],data["NH3"])
+test.set_data_values_for("NO","Unaged","250C",5,data["time"],data["NO"])
+test.set_data_values_for("NO2","Unaged","250C",5,data["time"],data["NO2"])
+test.set_data_values_for("N2O","Unaged","250C",5,data["time"],data["N2O"])
+
 test.add_surface_species(["q1","q2a","q2b","q3a","q3b","q3c","q4a","q4b"])
 test.add_surface_sites(["S1","S2","S3a","S3b","S3c"])
 test.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
@@ -23,7 +60,8 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
                     "r4b": ReactionType.EquilibriumArrhenius,
                     "r5": ReactionType.Arrhenius,
                     "r6": ReactionType.Arrhenius,
-                    "r7": ReactionType.Arrhenius,
+                    "r7f": ReactionType.Arrhenius,
+                    "r7r": ReactionType.Arrhenius,
                     "r8": ReactionType.Arrhenius,
                     "r9": ReactionType.Arrhenius,
                     "r10": ReactionType.Arrhenius,
@@ -31,7 +69,8 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
                     "r12": ReactionType.Arrhenius,
                     "r13a": ReactionType.Arrhenius,
                     "r14a": ReactionType.Arrhenius,
-                    "r15a": ReactionType.Arrhenius,
+                    "r15af": ReactionType.Arrhenius,
+                    "r15ar": ReactionType.Arrhenius,
                     "r16a": ReactionType.Arrhenius,
                     "r17a": ReactionType.Arrhenius,
                     "r18a": ReactionType.Arrhenius,
@@ -39,7 +78,8 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
                     "r20a": ReactionType.Arrhenius,
                     "r13b": ReactionType.Arrhenius,
                     "r14b": ReactionType.Arrhenius,
-                    "r15b": ReactionType.Arrhenius,
+                    "r15bf": ReactionType.Arrhenius,
+                    "r15br": ReactionType.Arrhenius,
                     "r16b": ReactionType.Arrhenius,
                     "r17b": ReactionType.Arrhenius,
                     "r18b": ReactionType.Arrhenius,
@@ -47,7 +87,8 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
                     "r20b": ReactionType.Arrhenius,
                     "r21": ReactionType.Arrhenius,
                     "r22": ReactionType.Arrhenius,
-                    "r23": ReactionType.Arrhenius,
+                    "r23f": ReactionType.Arrhenius,
+                    "r23r": ReactionType.Arrhenius,
                     "r24": ReactionType.Arrhenius,
                     "r25": ReactionType.Arrhenius,
                     "r26": ReactionType.Arrhenius,
@@ -55,7 +96,8 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
                     "r28": ReactionType.Arrhenius,
                     "r29": ReactionType.Arrhenius,
                     "r30": ReactionType.Arrhenius,
-                    "r31": ReactionType.Arrhenius,
+                    "r31f": ReactionType.Arrhenius,
+                    "r31r": ReactionType.Arrhenius,
                     "r32": ReactionType.Arrhenius,
                     "r33": ReactionType.Arrhenius,
                     "r34": ReactionType.Arrhenius,
@@ -63,7 +105,8 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
                     "r36": ReactionType.Arrhenius,
                     "r37": ReactionType.Arrhenius,
                     "r38": ReactionType.Arrhenius,
-                    "r39": ReactionType.Arrhenius,
+                    "r39f": ReactionType.Arrhenius,
+                    "r39r": ReactionType.Arrhenius,
                     "r40": ReactionType.Arrhenius,
                     "r41": ReactionType.Arrhenius,
                     "r42": ReactionType.Arrhenius,
@@ -150,13 +193,19 @@ r6 = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q1": 1, "O2": 1}
         }
 
-r7 = {"parameters": {"A": 0, "E": 0},
+r7f = {"parameters": {"A": 95.5, "E": 0},
           "mol_reactants": {"S1": 1, "NO": 1, "O2": 0.5},
           "mol_products": {"S1": 1, "NO2": 1},
           "rxn_orders": {"S1": 1, "NO": 1, "O2": 1}
         }
 
-r8 = {"parameters": {"A": 0, "E": 0},
+r7r = {"parameters": {"A": 0.0030557, "E": 0},
+          "mol_reactants": {"S1": 1, "NO2": 1},
+          "mol_products": {"S1": 1, "NO": 1, "O2": 0.5},
+          "rxn_orders": {"S1": 1, "NO2": 1}
+        }
+
+r8 = {"parameters": {"A": 29185410.5, "E": 0},
           "mol_reactants": {"q1": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"S1": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"q1": 1, "NO": 1, "O2": 1}
@@ -188,7 +237,7 @@ r12 = {"parameters": {"A": 0, "E": 0},
 
 
 #  ---------- q2a reactions ------------
-r13a = {"parameters": {"A": 0, "E": 0},
+r13a = {"parameters": {"A": 10.876, "E": 0},
           "mol_reactants": {"q2a": 1, "O2": 0.75},
           "mol_products": {"S2": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"q2a": 1, "O2": 1}
@@ -200,25 +249,31 @@ r14a = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q2a": 1, "O2": 1}
         }
 
-r15a = {"parameters": {"A": 0, "E": 0},
+r15af = {"parameters": {"A": 0, "E": 0},
           "mol_reactants": {"S2": 1, "NO": 1, "O2": 0.5},
           "mol_products": {"S2": 1, "NO2": 1},
           "rxn_orders": {"S2": 1, "NO": 1, "O2": 1}
         }
 
-r16a = {"parameters": {"A": 0, "E": 0},
+r15ar = {"parameters": {"A": 0, "E": 0},
+          "mol_reactants": {"S2": 1, "NO2": 1},
+          "mol_products": {"S2": 1, "NO": 1, "O2": 0.5},
+          "rxn_orders": {"S2": 1, "NO2": 1}
+        }
+
+r16a = {"parameters": {"A": 37921503.8, "E": 0},
           "mol_reactants": {"q2a": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"S2": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"q2a": 1, "NO": 1, "O2": 1}
         }
 
-r17a = {"parameters": {"A": 0, "E": 0},
+r17a = {"parameters": {"A": 5781635.3, "E": 0},
           "mol_reactants": {"q2a": 1, "NO2": 1},
           "mol_products": {"S2": 1, "N2": 1, "H2O": 1.5, "O2": 0.25},
           "rxn_orders": {"q2a": 1, "NO2": 1}
         }
 
-r18a = {"parameters": {"A": 0, "E": 0},
+r18a = {"parameters": {"A": 2872371.2, "E": 0},
           "mol_reactants": {"q2a": 1, "NO2": 1, "O2": 0.25},
           "mol_products": {"S2": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"q2a": 1, "NO2": 1, "O2": 1}
@@ -249,13 +304,19 @@ r14b = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q2b": 1, "O2": 1}
         }
 
-r15b = {"parameters": {"A": 0, "E": 0},
+r15bf = {"parameters": {"A": 0, "E": 0},
           "mol_reactants": {"q2b": 1, "NO": 1, "O2": 0.5},
           "mol_products": {"q2a": 1, "NO2": 1},
           "rxn_orders": {"q2b": 1, "NO": 1, "O2": 1}
         }
 
-r16b = {"parameters": {"A": 0, "E": 0},
+r15br = {"parameters": {"A": 0, "E": 0},
+          "mol_reactants": {"q2a": 1, "NO2": 1},
+          "mol_products": {"q2b": 1, "NO": 1, "O2": 0.5},
+          "rxn_orders": {"q2b": 1, "NO2": 1}
+        }
+
+r16b = {"parameters": {"A": 115523331.4, "E": 0},
           "mol_reactants": {"q2b": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"q2a": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"q2b": 1, "NO": 1, "O2": 1}
@@ -267,13 +328,13 @@ r17b = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q2b": 1, "NO2": 1}
         }
 
-r18b = {"parameters": {"A": 0, "E": 0},
+r18b = {"parameters": {"A": 66820446.5, "E": 0},
           "mol_reactants": {"q2b": 1, "NO2": 1, "O2": 0.25},
           "mol_products": {"q2a": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"q2b": 1, "NO2": 1, "O2": 1}
         }
 
-r19b = {"parameters": {"A": 0, "E": 0},
+r19b = {"parameters": {"A": 15338440.7, "E": 0},
           "mol_reactants": {"q2b": 1, "NO": 1, "O2": 0.75},
           "mol_products": {"q2a": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"q2b": 1, "NO": 1, "O2": 1}
@@ -298,31 +359,37 @@ r22 = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q3a": 1, "O2": 1}
         }
 
-r23 = {"parameters": {"A": 0, "E": 0},
+r23f = {"parameters": {"A": 0, "E": 0},
           "mol_reactants": {"S3a": 1, "NO": 1, "O2": 0.5},
           "mol_products": {"S3a": 1, "NO2": 1},
           "rxn_orders": {"S3a": 1, "NO": 1, "O2": 1}
         }
 
-r24 = {"parameters": {"A": 0, "E": 0},
+r23r = {"parameters": {"A": 0, "E": 0},
+          "mol_reactants": {"S3a": 1, "NO2": 1},
+          "mol_products": {"S3a": 1, "NO": 1, "O2": 0.5},
+          "rxn_orders": {"S3a": 1, "NO2": 1}
+        }
+
+r24 = {"parameters": {"A": 46478388.4, "E": 0},
           "mol_reactants": {"q3a": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"S3a": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"q3a": 1, "NO": 1, "O2": 1}
         }
 
-r25 = {"parameters": {"A": 0, "E": 0},
+r25 = {"parameters": {"A": 453315.1, "E": 0},
           "mol_reactants": {"q3a": 1, "NO2": 1},
           "mol_products": {"S3a": 1, "N2": 1, "H2O": 1.5, "O2": 0.25},
           "rxn_orders": {"q3a": 1, "NO2": 1}
         }
 
-r26 = {"parameters": {"A": 0, "E": 0},
+r26 = {"parameters": {"A": 1.444E-7, "E": 0},
           "mol_reactants": {"q3a": 1, "NO2": 1, "O2": 0.25},
           "mol_products": {"S3a": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"q3a": 1, "NO2": 1, "O2": 1}
         }
 
-r27 = {"parameters": {"A": 0, "E": 0},
+r27 = {"parameters": {"A": 1752309.7, "E": 0},
           "mol_reactants": {"q3a": 1, "NO": 1, "O2": 0.75},
           "mol_products": {"S3a": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"q3a": 1, "NO": 1, "O2": 1}
@@ -335,7 +402,7 @@ r28 = {"parameters": {"A": 0, "E": 0},
         }
 
 #  ---------- q3b reactions ------------
-r29 = {"parameters": {"A": 0, "E": 0},
+r29 = {"parameters": {"A": 46.355, "E": 0},
           "mol_reactants": {"q3b": 1, "O2": 0.75},
           "mol_products": {"S3b": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"q3b": 1, "O2": 1}
@@ -347,13 +414,19 @@ r30 = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q3b": 1, "O2": 1}
         }
 
-r31 = {"parameters": {"A": 0, "E": 0},
+r31f = {"parameters": {"A": 2044887.5, "E": 0},
           "mol_reactants": {"S3b": 1, "NO": 1, "O2": 0.5},
           "mol_products": {"S3b": 1, "NO2": 1},
           "rxn_orders": {"S3b": 1, "NO": 1, "O2": 1}
         }
 
-r32 = {"parameters": {"A": 0, "E": 0},
+r31r = {"parameters": {"A": 274.039, "E": 0},
+          "mol_reactants": {"S3b": 1, "NO2": 1},
+          "mol_products": {"S3b": 1, "NO": 1, "O2": 0.5},
+          "rxn_orders": {"S3b": 1, "NO2": 1}
+        }
+
+r32 = {"parameters": {"A": 487708871.7, "E": 0},
           "mol_reactants": {"q3b": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"S3b": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"q3b": 1, "NO": 1, "O2": 1}
@@ -365,7 +438,7 @@ r33 = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q3b": 1, "NO2": 1}
         }
 
-r34 = {"parameters": {"A": 0, "E": 0},
+r34 = {"parameters": {"A": 480939227.2, "E": 0},
           "mol_reactants": {"q3b": 1, "NO2": 1, "O2": 0.25},
           "mol_products": {"S3b": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"q3b": 1, "NO2": 1, "O2": 1}
@@ -384,7 +457,7 @@ r36 = {"parameters": {"A": 0, "E": 0},
         }
 
 #  ---------- q3c reactions ------------
-r37 = {"parameters": {"A": 0, "E": 0},
+r37 = {"parameters": {"A": 0.15775, "E": 0},
           "mol_reactants": {"q3c": 1, "O2": 0.75},
           "mol_products": {"S3c": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"q3c": 1, "O2": 1}
@@ -396,19 +469,25 @@ r38 = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q3c": 1, "O2": 1}
         }
 
-r39 = {"parameters": {"A": 0, "E": 0},
+r39f = {"parameters": {"A": 1118261.3, "E": 0},
           "mol_reactants": {"S3c": 1, "NO": 1, "O2": 0.5},
           "mol_products": {"S3c": 1, "NO2": 1},
           "rxn_orders": {"S3c": 1, "NO": 1, "O2": 1}
         }
 
-r40 = {"parameters": {"A": 0, "E": 0},
+r39r = {"parameters": {"A": 113.703, "E": 0},
+          "mol_reactants": {"S3c": 1, "NO2": 1},
+          "mol_products": {"S3c": 1, "NO": 1, "O2": 0.5},
+          "rxn_orders": {"S3c": 1, "NO2": 1}
+        }
+
+r40 = {"parameters": {"A": 942488128.7, "E": 0},
           "mol_reactants": {"q3c": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"S3c": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"q3c": 1, "NO": 1, "O2": 1}
         }
 
-r41 = {"parameters": {"A": 0, "E": 0},
+r41 = {"parameters": {"A": 3952095.5, "E": 0},
           "mol_reactants": {"q3c": 1, "NO2": 1},
           "mol_products": {"S3c": 1, "N2": 1, "H2O": 1.5, "O2": 0.25},
           "rxn_orders": {"q3c": 1, "NO2": 1}
@@ -420,7 +499,7 @@ r42 = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q3c": 1, "NO2": 1, "O2": 1}
         }
 
-r43 = {"parameters": {"A": 0, "E": 0},
+r43 = {"parameters": {"A": 13814346.1, "E": 0},
           "mol_reactants": {"q3c": 1, "NO": 1, "O2": 0.75},
           "mol_products": {"S3c": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"q3c": 1, "NO": 1, "O2": 1}
@@ -443,7 +522,8 @@ test.set_reaction_info("r4b", r4b_equ)
 
 test.set_reaction_info("r5", r5)
 test.set_reaction_info("r6", r6)
-test.set_reaction_info("r7", r7)
+test.set_reaction_info("r7f", r7f)
+test.set_reaction_info("r7r", r7r)
 test.set_reaction_info("r8", r8)
 test.set_reaction_info("r9", r9)
 test.set_reaction_info("r10", r10)
@@ -452,7 +532,8 @@ test.set_reaction_info("r12", r12)
 
 test.set_reaction_info("r13a", r13a)
 test.set_reaction_info("r14a", r14a)
-test.set_reaction_info("r15a", r15a)
+test.set_reaction_info("r15af", r15af)
+test.set_reaction_info("r15ar", r15ar)
 test.set_reaction_info("r16a", r16a)
 test.set_reaction_info("r17a", r17a)
 test.set_reaction_info("r18a", r18a)
@@ -461,7 +542,8 @@ test.set_reaction_info("r20a", r20a)
 
 test.set_reaction_info("r13b", r13b)
 test.set_reaction_info("r14b", r14b)
-test.set_reaction_info("r15b", r15b)
+test.set_reaction_info("r15bf", r15bf)
+test.set_reaction_info("r15br", r15br)
 test.set_reaction_info("r16b", r16b)
 test.set_reaction_info("r17b", r17b)
 test.set_reaction_info("r18b", r18b)
@@ -470,7 +552,8 @@ test.set_reaction_info("r20b", r20b)
 
 test.set_reaction_info("r21", r21)
 test.set_reaction_info("r22", r22)
-test.set_reaction_info("r23", r23)
+test.set_reaction_info("r23f", r23f)
+test.set_reaction_info("r23r", r23r)
 test.set_reaction_info("r24", r24)
 test.set_reaction_info("r25", r25)
 test.set_reaction_info("r26", r26)
@@ -479,7 +562,8 @@ test.set_reaction_info("r28", r28)
 
 test.set_reaction_info("r29", r29)
 test.set_reaction_info("r30", r30)
-test.set_reaction_info("r31", r31)
+test.set_reaction_info("r31f", r31f)
+test.set_reaction_info("r31r", r31r)
 test.set_reaction_info("r32", r32)
 test.set_reaction_info("r33", r33)
 test.set_reaction_info("r34", r34)
@@ -488,7 +572,8 @@ test.set_reaction_info("r36", r36)
 
 test.set_reaction_info("r37", r37)
 test.set_reaction_info("r38", r38)
-test.set_reaction_info("r39", r39)
+test.set_reaction_info("r39f", r39f)
+test.set_reaction_info("r39r", r39r)
 test.set_reaction_info("r40", r40)
 test.set_reaction_info("r41", r41)
 test.set_reaction_info("r42", r42)
@@ -506,7 +591,7 @@ test.set_isothermal_temp("Unaged","250C",250+273.15)
 # Build the constraints then discretize
 test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=100,elems=2,colpoints=1)
+                    tstep=200,elems=5,colpoints=1)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 test.set_const_IC("O2","Unaged","250C",0.002330029)
@@ -562,18 +647,29 @@ test.set_const_BC("N2O","Unaged","250C",0)
 
 test.set_const_BC("N2","Unaged","250C",0.0184)
 
-#test.model.Cb[:,:,:,test.model.z.first(),:].pprint()
-#exit()
-
-# # TODO: FIGURE OUT WHY BCs are not correctly set
-
 # Fix the kinetics to only run a simulation
-test.fix_all_reactions()
-#test.initialize_simulator()
-#test.run_solver()
+test.fix_reaction("r1")
+test.fix_reaction("r2a")
+test.fix_reaction("r2b")
+test.fix_reaction("r3a")
+test.fix_reaction("r3b")
+test.fix_reaction("r3c")
+test.fix_reaction("r4a")
+test.fix_reaction("r4b")
+
+# Set weight factors for objectives
+test.set_weight_factor("NH3","Unaged","250C",1e6)
+test.set_weight_factor("NO","Unaged","250C",1e6)
+test.set_weight_factor("NO2","Unaged","250C",1e6)
+test.set_weight_factor("N2O","Unaged","250C",1e6)
+
+#test.fix_all_reactions()
+
+test.initialize_simulator()
+test.run_solver()
 
 test.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", file_name="")
-test.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", test.model.z.first(), file_name="protocol.txt")
-test.print_results_all_locations(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", file_name="")
+#test.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", test.model.z.first(), file_name="protocol.txt")
+#test.print_results_all_locations(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", file_name="")
 test.print_results_of_integral_average(["q1","q2a","q2b","q3a","q3b","q3c"],
                                         "Unaged", "250C", file_name="")

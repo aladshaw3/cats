@@ -25,7 +25,7 @@ from enum import Enum
 import time
 
 # IDAES is not installed, then the script will search for any other available 'ipopt' library
-if os.environ['CONDA_DEFAULT_ENV'] == "idaes" or os.environ['CONDA_DEFAULT_ENV'] == "idaes2":
+if "idaes" in os.environ['CONDA_DEFAULT_ENV']:
     from idaes.core import *
 
 # Define an Enum class for reaction types
@@ -405,7 +405,7 @@ class Isothermal_Monolith_Simulator(object):
             self.model.data_gas_set = Set(initialize=gas_species)
             self.model.Cb_data = Param(self.model.data_gas_set, self.model.data_age_set,
                             self.model.data_T_set, self.model.z_data, self.model.t_data,
-                            within=NonNegativeReals, mutable=True,
+                            within=Reals, mutable=True,
                             initialize=1e-20, units=units.mol/units.L)
             self.model.w = Param(self.model.data_gas_set, self.model.data_age_set,
                             self.model.data_T_set,
@@ -416,7 +416,7 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.data_gas_set = Set(initialize=[gas_species])
                 self.model.Cb_data = Param(self.model.data_gas_set, self.model.data_age_set,
                                 self.model.data_T_set, self.model.z_data, self.model.t_data,
-                                within=NonNegativeReals, mutable=True,
+                                within=Reals, mutable=True,
                                 initialize=1e-20, units=units.mol/units.L)
                 self.model.w = Param(self.model.data_gas_set, self.model.data_age_set,
                                 self.model.data_T_set,
@@ -832,6 +832,14 @@ class Isothermal_Monolith_Simulator(object):
 
         self.isRxnBuilt = True
 
+    # Function to define weight factors to be used in the objective function
+    def set_weight_factor(self, spec, age, temp, value):
+        if self.isDataGasSpecSet == False:
+            print("Error! Cannot specify weight factors prior to setting up the data")
+            exit()
+
+        self.model.w[spec,age,temp].set_value(value)
+
 
     # Function to interpolate or extrapolate a model value to a given location and time
     #       var = variable object in the model
@@ -841,7 +849,6 @@ class Isothermal_Monolith_Simulator(object):
     #       loc = float for location in spatial domain
     #       loc = float for location in temporal domain
     #
-    # # TODO: THIS IS UNFINISHED
     def interpret_var(self, var, spec, age, temp, loc, time):
         nearest_loc_index = self.model.z.find_nearest_index(loc)
         nearest_time_index = self.model.t.find_nearest_index(time)
@@ -1493,7 +1500,7 @@ class Isothermal_Monolith_Simulator(object):
                         #           solver libraries
                         if 'linear_solver' in options:
                             # Force the use of MUMPS if conda environment is not setup for 'idaes'
-                            if os.environ['CONDA_DEFAULT_ENV'] != "idaes" and os.environ['CONDA_DEFAULT_ENV'] != "idaes2":
+                            if "idaes" not in os.environ['CONDA_DEFAULT_ENV']:
                                 options['linear_solver'] = LinearSolverMethod.MUMPS
                             if options['linear_solver'] == LinearSolverMethod.MUMPS:
                                 # Only available option without 'idaes' enviroment or
@@ -1540,8 +1547,17 @@ class Isothermal_Monolith_Simulator(object):
                         solver.options['slack_bound_frac'] = 1e-2
                         solver.options['warm_start_init_point'] = 'yes'
 
-                        results = solver.solve(self.model, tee=console_out)
-                        # TODO: Add check for solver fails
+                        results = solver.solve(self.model, tee=console_out, load_solutions=False)
+                        if results.solver.status == SolverStatus.ok:
+                            self.model.solutions.load_from(results)
+                        elif results.solver.status == SolverStatus.warning:
+                            print("WARNING: Solver did not exit normally at (" + str(age_solve) + ", " + str(temp_solve) + ", " + str(time_solve) + ")")
+                            print("\tResults are loaded, but need to be checked")
+                            self.model.solutions.load_from(results)
+                        else:
+                            print("An Error has occurred at (" + str(age_solve) + ", " + str(temp_solve) + ", " + str(time_solve) + ")")
+                            print("\tStatus: " + str(results.solver.status))
+                            print("\tTermination Condition: " + str(results.solver.termination_condition))
 
                         # Fix the steps that were just solved
                         self.model.Cb[:, age_solve, temp_solve, :, time_solve].fix()
@@ -1614,6 +1630,7 @@ class Isothermal_Monolith_Simulator(object):
 
         self.isInitialized = True
         self.initialize_time = (time.time() - self.initialize_time)
+        return (results.solver.status, results.solver.termination_condition)
         # End Initializer
 
     # Function to run the solver
@@ -1667,7 +1684,7 @@ class Isothermal_Monolith_Simulator(object):
         #           solver libraries
         if 'linear_solver' in options:
             # Force the use of MUMPS if conda environment is not setup for 'idaes'
-            if os.environ['CONDA_DEFAULT_ENV'] != "idaes" and os.environ['CONDA_DEFAULT_ENV'] != "idaes2":
+            if "idaes" not in os.environ['CONDA_DEFAULT_ENV']:
                 options['linear_solver'] = LinearSolverMethod.MUMPS
             if options['linear_solver'] == LinearSolverMethod.MUMPS:
                 # Only available option without 'idaes' enviroment or
@@ -1725,7 +1742,17 @@ class Isothermal_Monolith_Simulator(object):
             solver.options['slack_bound_push'] = 1e-6
             solver.options['slack_bound_frac'] = 1e-6
             solver.options['warm_start_init_point'] = 'yes'
-        results = solver.solve(self.model, tee=console_out)
+        results = solver.solve(self.model, tee=console_out, load_solutions=False)
+        if results.solver.status == SolverStatus.ok:
+            self.model.solutions.load_from(results)
+        elif results.solver.status == SolverStatus.warning:
+            print("WARNING: Solver did not exit normally...")
+            print("\tResults are loaded, but need to be checked")
+            self.model.solutions.load_from(results)
+        else:
+            print("An Error has occurred!")
+            print("\tStatus: " + str(results.solver.status))
+            print("\tTermination Condition: " + str(results.solver.termination_condition))
 
         self.solve_time = (time.time() - self.solve_time)
 
@@ -1735,7 +1762,7 @@ class Isothermal_Monolith_Simulator(object):
         print("\tInitialize Time (s) = " + str(self.initialize_time))
         print("\tSolve Time (s)      = " + str(self.solve_time))
         print()
-        # TODO: Add check for solver fails
+        return (results.solver.status, results.solver.termination_condition)
 
 
     # Function to print out results of variables at all locations and times
