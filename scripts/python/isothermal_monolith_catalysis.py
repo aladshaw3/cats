@@ -851,14 +851,20 @@ class Isothermal_Monolith_Simulator(object):
         elif nearest_loc_index == len(self.model.z):
             next_nearest_loc_index = len(self.model.z)-1
         else:
-            next_nearest_loc_index = nearest_loc_index - 1
+            if self.model.z[nearest_loc_index] >= loc:
+                next_nearest_loc_index = nearest_loc_index - 1
+            else:
+                next_nearest_loc_index = nearest_loc_index + 1
 
         if nearest_time_index == 1:
             next_nearest_time_index = 2
         elif nearest_time_index == len(self.model.t):
             next_nearest_time_index = len(self.model.t)-1
         else:
-            next_nearest_time_index = nearest_time_index - 1
+            if self.model.t[nearest_time_index] >= time:
+                next_nearest_time_index = nearest_time_index - 1
+            else:
+                next_nearest_time_index = nearest_time_index + 1
 
         z_dist = (self.model.z[nearest_loc_index] - loc)
         t_dist = (self.model.t[nearest_time_index] - time)
@@ -868,8 +874,6 @@ class Isothermal_Monolith_Simulator(object):
         loc_val = self.model.z[nearest_loc_index]
         time_val = self.model.t[nearest_time_index]
 
-        print(self.model.z[nearest_loc_index])
-        print(self.model.z[next_nearest_loc_index])
         return (var[spec,age,temp,loc_val,time_val] + z_slope*z_dist + t_slope*t_dist)
 
     # Define a single arrhenius rate function to be used in the model

@@ -24,30 +24,30 @@ data_co = [5048.132494,
         37.18506374,
         42.91591482,
         50.73264931]
-data_times = [120,
-            360,
-            600,
-            840,
-            1080,
+data_times = [110,
+            350,
+            590,
+            850,
+            1100,
             1320,
-            1560,
+            1550,
             1800,
             2040,
-            2280,
+            2290,
             2520,
-            2760,
+            2860,
             3000,
-            3240,
+            3280,
             3480,
-            3720,
-            3960,
-            4200,
-            4440,
-            4680,
-            4920]
+            3820,
+            3950,
+            4250,
+            4470,
+            4690,
+            4930]
 # Must add initial time to time set (won't necessarily be in data)
 sim_times = [0,
-            120,
+            100,
             360,
             600,
             840,
@@ -71,7 +71,7 @@ sim_times = [0,
 
 # Data dictionary
 dict = {"set_1":
-            {"location": 5,
+            {"location": 5.1,
             "age": "A0",
             "temp": "T0",
             "data":
@@ -181,4 +181,4 @@ test.print_results_of_breakthrough(["CO","NO","O2"], "A0", "T0", file_name="", i
 test.print_results_all_locations(["CO","NO","O2"], "A0", "T0", file_name="", include_temp=True)
 
 #test.model.obj.pprint()
-print(test.interpret_var(test.model.Cb,"CO","A0","T0",4.0,0))
+#print(test.interpret_var(test.model.Cb,"CO","A0","T0",4.4,4900))
