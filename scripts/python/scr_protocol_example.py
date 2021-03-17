@@ -657,16 +657,19 @@ test.fix_reaction("r3c")
 test.fix_reaction("r4a")
 test.fix_reaction("r4b")
 
-# Set weight factors for objectives
-test.set_weight_factor("NH3","Unaged","250C",1e6)
-test.set_weight_factor("NO","Unaged","250C",1e6)
-test.set_weight_factor("NO2","Unaged","250C",1e6)
-test.set_weight_factor("N2O","Unaged","250C",1e6)
+# Set weight factors for objectives (this doesn't fix optimization issue)
+#test.set_weight_factor("NH3","Unaged","250C",1e6)
+#test.set_weight_factor("NO","Unaged","250C",1e6)
+#test.set_weight_factor("NO2","Unaged","250C",1e6)
+#test.set_weight_factor("N2O","Unaged","250C",1e6)
 
-#test.fix_all_reactions()
+# Fix all kinetics, then only unfix 1 reaction
+test.fix_all_reactions()
+# This worked, but the result is bad...
+#test.unfix_reaction("r43")
 
 test.initialize_simulator()
-test.run_solver()
+test.run_solver(options={'max_iter': 3000})
 
 test.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", file_name="")
 #test.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", test.model.z.first(), file_name="protocol.txt")

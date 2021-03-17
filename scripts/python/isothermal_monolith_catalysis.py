@@ -17,6 +17,13 @@
 from pyomo.environ import *
 from pyomo.dae import *
 
+# Import some scipy tools (for black box evaluations)
+from scipy.optimize import least_squares
+
+# Import array and plotting tools 
+import numpy as np
+import matplotlib.pyplot as plt
+
 # Other import statements
 import yaml
 import os.path
@@ -769,16 +776,24 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.dH[rxn].setlb(info["parameters"]["dH_lb"])
                 self.model.dH[rxn].setub(info["parameters"]["dH_ub"])
             except:
-                self.model.dH[rxn].setlb(info["parameters"]["dH"]*0.8)
-                self.model.dH[rxn].setub(info["parameters"]["dH"]*1.2)
+                if info["parameters"]["dH"] >= 0.0:
+                    self.model.dH[rxn].setlb(info["parameters"]["dH"]*0.8)
+                    self.model.dH[rxn].setub(info["parameters"]["dH"]*1.2)
+                else:
+                    self.model.dH[rxn].setlb(info["parameters"]["dH"]*1.2)
+                    self.model.dH[rxn].setub(info["parameters"]["dH"]*0.8)
 
             self.model.dS[rxn].set_value(info["parameters"]["dS"])
             try:
                 self.model.dS[rxn].setlb(info["parameters"]["dS_lb"])
                 self.model.dS[rxn].setub(info["parameters"]["dS_ub"])
             except:
-                self.model.dS[rxn].setlb(info["parameters"]["dS"]*0.8)
-                self.model.dS[rxn].setub(info["parameters"]["dS"]*1.2)
+                if info["parameters"]["dS"] >= 0.0:
+                    self.model.dS[rxn].setlb(info["parameters"]["dS"]*0.8)
+                    self.model.dS[rxn].setub(info["parameters"]["dS"]*1.2)
+                else:
+                    self.model.dS[rxn].setlb(info["parameters"]["dS"]*1.2)
+                    self.model.dS[rxn].setub(info["parameters"]["dS"]*0.8)
         else:
             print("Error! Given reaction name does not exist in model")
             exit()
@@ -1742,6 +1757,18 @@ class Isothermal_Monolith_Simulator(object):
             solver.options['slack_bound_push'] = 1e-6
             solver.options['slack_bound_frac'] = 1e-6
             solver.options['warm_start_init_point'] = 'yes'
+
+            # Strictly enfore to ipopt that the variables are not to move
+            #       from their given initial states. This is needed if the
+            #       objective function is set because of how complex it is
+            #       for the model to converge when changing kinetic parameters.
+            if self.isObjectiveSet == True:
+                solver.options['bound_push'] = 1e-16
+                solver.options['bound_frac'] = 1e-16
+                solver.options['slack_bound_push'] = 1e-16
+                solver.options['slack_bound_frac'] = 1e-16
+                solver.options['warm_start_init_point'] = 'yes'
+
         results = solver.solve(self.model, tee=console_out, load_solutions=False)
         if results.solver.status == SolverStatus.ok:
             self.model.solutions.load_from(results)
