@@ -661,12 +661,25 @@ test.fix_reaction("r4b")
 #test.set_weight_factor("NH3","Unaged","250C",1e6)
 #test.set_weight_factor("NO","Unaged","250C",1e6)
 #test.set_weight_factor("NO2","Unaged","250C",1e6)
-#test.set_weight_factor("N2O","Unaged","250C",1e6)
+test.set_weight_factor("N2O","Unaged","250C",1e12)  # THIS WORKS NOW!!!
 
 # Fix all kinetics, then only unfix 1 reaction
 test.fix_all_reactions()
 # This worked, but the result is bad...
-#test.unfix_reaction("r43")
+test.unfix_reaction("r43")
+
+# FOUND ERROR: Objective function CANNOT be declared BEFORE discretizing the model
+'''
+What happened is snipped below...
+
+    The model Cb values only exist at time 0 and time 212 when the objective
+    is created. Thus, the objective function is not accurately representing the
+    comparison between model and data.
+
+w[N2O,Unaged,250C]*(Cb_data[N2O,Unaged,250C,5,209.091667] -
+(Cb[N2O,Unaged,250C,5,212] - (Cb[N2O,Unaged,250C,5,212] - Cb[N2O,Unaged,250C,5,0])/212*2.908332999999999))**2
+'''
+#test.model.obj.pprint()
 
 test.initialize_simulator()
 test.run_solver(options={'max_iter': 3000})

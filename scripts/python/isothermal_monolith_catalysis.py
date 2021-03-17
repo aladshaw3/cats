@@ -20,7 +20,7 @@ from pyomo.dae import *
 # Import some scipy tools (for black box evaluations)
 from scipy.optimize import least_squares
 
-# Import array and plotting tools 
+# Import array and plotting tools
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -1022,18 +1022,6 @@ class Isothermal_Monolith_Simulator(object):
                                         self.model.T_set, self.model.z,
                                         self.model.t, rule=self.site_bal_constraint)
 
-        anyFalse = False
-        if self.isDataGasSpecSet == True:
-            for spec in self.model.data_gas_set:
-                if self.isDataValuesSet[spec] == False:
-                    anyFalse = True
-                    break
-            if anyFalse == True:
-                print("Error! Some data for gases not set. Cannot create objective function")
-                exit()
-            self.model.obj = Objective(rule=self.norm_objective)
-            self.isObjectiveSet = True
-
         self.isConBuilt = True
 
     # Apply a discretizer
@@ -1117,6 +1105,20 @@ class Isothermal_Monolith_Simulator(object):
                     self.model.dCb_dt[spec,age,temp,self.model.z.first(),self.model.t.first()].fix()
 
         self.isDiscrete = True
+
+        # Build the objective function (if possible)
+        anyFalse = False
+        if self.isDataGasSpecSet == True:
+            for spec in self.model.data_gas_set:
+                if self.isDataValuesSet[spec] == False:
+                    anyFalse = True
+                    break
+            if anyFalse == True:
+                print("Error! Some data for gases not set. Cannot create objective function")
+                exit()
+            self.model.obj = Objective(rule=self.norm_objective)
+            self.isObjectiveSet = True
+
         self.build_time = (time.time() - self.build_time)
 
     # Set constant initial conditions
@@ -1768,6 +1770,12 @@ class Isothermal_Monolith_Simulator(object):
                 solver.options['slack_bound_push'] = 1e-16
                 solver.options['slack_bound_frac'] = 1e-16
                 solver.options['warm_start_init_point'] = 'yes'
+
+        # Check if model has scaling factors
+        if self.model.find_component('scaling_factor'):
+            solver.options['nlp_scaling_method'] = 'user-scaling'
+        else:
+            solver.options['nlp_scaling_method'] = 'gradient-based'
 
         results = solver.solve(self.model, tee=console_out, load_solutions=False)
         if results.solver.status == SolverStatus.ok:
