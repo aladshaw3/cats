@@ -1392,6 +1392,322 @@ class Isothermal_Monolith_Simulator(object):
             self.model.dS[rxn].fix()
             self.rxn_list[rxn]["fixed"]=True
 
+    # Function to initialize automatic scaling
+    #       This function is not required, but in
+    #       practice, should be called before running
+    #       the 'initialize_simulator' function below
+    def initialize_auto_scaling(self):
+        for spec in self.model.gas_set:
+            if self.isBoundarySet[spec] == False:
+                print("Error! Must specify boundaries before attempting to initialize scaling")
+                exit()
+
+        self.model.scaling_factor = Suffix(direction=Suffix.EXPORT)
+
+        # set initial scaling factor to inverse of max values
+        maxkey = max(self.model.Cb.get_values(), key=self.model.Cb.get_values().get)
+        maxval = self.model.Cb[maxkey].value
+        self.model.scaling_factor.set_value(self.model.Cb, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.C, 1/maxval)
+
+        # set scaling for surface species and sites
+        if self.isSurfSpecSet == True:
+            if self.isSitesSet == True:
+                maxkey = max(self.model.Smax.extract_values(), key=self.model.Smax.extract_values().get)
+                maxval = self.model.Smax[maxkey].value
+                self.model.scaling_factor.set_value(self.model.q, 1/maxval)
+                self.model.scaling_factor.set_value(self.model.S, 1/maxval)
+            else:
+                maxkey = max(self.model.q.get_values(), key=self.model.q.get_values().get)
+                maxval = self.model.q[maxkey].value
+                if maxval < 1e-10:
+                    maxval = 1
+                self.model.scaling_factor.set_value(self.model.q, 1/maxval)
+
+        # set scaling for reaction variables
+        for r in self.model.arrhenius_rxns:
+            Aval = self.model.A[r].value
+            if Aval < 1e-6:
+                Aval = 1
+            self.model.scaling_factor.set_value(self.model.A[r], 1/Aval)
+
+            Bval = abs(self.model.B[r].value)
+            if Bval < 1e-2:
+                Bval = 1
+            self.model.scaling_factor.set_value(self.model.B[r], 1/Bval)
+
+            Eval = abs(self.model.E[r].value)
+            if Eval < 1e-2:
+                Eval = 1
+            self.model.scaling_factor.set_value(self.model.E[r], 1/Eval)
+        for re in self.model.equ_arrhenius_rxns:
+            Aval = self.model.Af[re].value
+            if Aval < 1e-6:
+                Aval = 1
+            self.model.scaling_factor.set_value(self.model.Af[re], 1/Aval)
+
+            Eval = abs(self.model.Ef[re].value)
+            if Eval < 1e-2:
+                Eval = 1
+            self.model.scaling_factor.set_value(self.model.Ef[re], 1/Eval)
+
+            dHval = abs(self.model.dH[re].value)
+            if dHval < 1e-2:
+                dHval = 1
+            self.model.scaling_factor.set_value(self.model.dH[re], 1/dHval)
+
+            dSval = abs(self.model.dS[re].value)
+            if dSval < 1e-2:
+                dSval = 1
+            self.model.scaling_factor.set_value(self.model.dS[re], 1/dSval)
+
+        # set scaling for bulk constraints
+        maxval = 0
+        for key in self.model.bulk_cons:
+            newval = abs(value(self.model.bulk_cons[key]))
+            if newval > maxval:
+                maxval = newval
+        if maxval < 1e-5:
+            maxval = 1e-5
+        self.model.scaling_factor.set_value(self.model.bulk_cons, 1/maxval)
+
+        # set scaling for pore constraints
+        maxval = 0
+        for key in self.model.pore_cons:
+            newval = abs(value(self.model.pore_cons[key]))
+            if newval > maxval:
+                maxval = newval
+        if maxval < 1e-5:
+            maxval = 1e-5
+        self.model.scaling_factor.set_value(self.model.pore_cons, 1/maxval)
+
+        # set scaling for surf constraints
+        if self.isSurfSpecSet == True:
+            if self.isSitesSet == True:
+                maxval = 0
+                for key in self.model.site_cons:
+                    newval = abs(value(self.model.site_cons[key]))
+                    if newval > maxval:
+                        maxval = newval
+                if maxval < 1e-2:
+                    maxval = 1e-2
+                self.model.scaling_factor.set_value(self.model.site_cons, 1/maxval)
+                self.model.scaling_factor.set_value(self.model.surf_cons, 1/maxval)
+            else:
+                maxval = 0
+                for key in self.model.surf_cons:
+                    newval = abs(value(self.model.surf_cons[key]))
+                    if newval > maxval:
+                        maxval = newval
+                if maxval < 1e-2:
+                    maxval = 1e-2
+                self.model.scaling_factor.set_value(self.model.surf_cons, 1/maxval)
+
+        # set scaling for derivative variables and constraints
+        maxval = 0
+        for key in self.model.dCb_dz_disc_eq:
+            newval = abs(value(self.model.dCb_dz_disc_eq[key]))
+            if newval > maxval:
+                maxval = newval
+        if maxval < 1e-5:
+            maxval = 1e-5
+        self.model.scaling_factor.set_value(self.model.dCb_dz_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dCb_dz, 1/maxval)
+
+        maxval = 0
+        for key in self.model.dCb_dt_disc_eq:
+            newval = abs(value(self.model.dCb_dt_disc_eq[key]))
+            if newval > maxval:
+                maxval = newval
+        if maxval < 1e-5:
+            maxval = 1e-5
+        self.model.scaling_factor.set_value(self.model.dCb_dt_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dCb_dt, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dC_dt_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dC_dt, 1/maxval)
+
+        # surface and site constraints for derivatives
+        if self.isSurfSpecSet == True:
+            maxval = 0
+            for key in self.model.dq_dt_disc_eq:
+                newval = abs(value(self.model.dq_dt_disc_eq[key]))
+                if newval > maxval:
+                    maxval = newval
+            if maxval < 1e-2:
+                maxval = 1e-2
+            self.model.scaling_factor.set_value(self.model.dq_dt_disc_eq, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.dq_dt, 1/maxval)
+
+
+    # Function to finialize the scaling of system variables
+    def finalize_auto_scaling(self):
+        if self.isInitialized == False:
+            print("Error! Cannot automate final variable scaling if variables not initialized")
+            exit()
+
+        rescaleConstraint = False
+        # add the scaling_factor if it doesn't already exist
+        if self.model.find_component('scaling_factor'):
+            rescaleConstraint = False
+        else:
+            rescaleConstraint = True
+            self.model.scaling_factor = Suffix(direction=Suffix.EXPORT)
+
+        # set scaling for objective function
+        maxobj = value(self.model.obj)
+        if maxobj >= 100:
+            self.model.scaling_factor.set_value(self.model.obj, 0.1 )
+        else:
+            self.model.scaling_factor.set_value(self.model.obj, 1/(maxobj*100) )
+
+        # Reset constraints for variables and derivative variables
+        #       NOT for the constraints though (these should not be rescaled)
+        maxkey = max(self.model.Cb.get_values(), key=self.model.Cb.get_values().get)
+        maxval = self.model.Cb[maxkey].value
+        self.model.scaling_factor.set_value(self.model.Cb, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.C, 1/maxval)
+
+        # set scaling for surface species and sites
+        if self.isSurfSpecSet == True:
+            maxkey = max(self.model.q.get_values(), key=self.model.q.get_values().get)
+            maxval = self.model.q[maxkey].value
+            if maxval < 1e-10:
+                maxval = 1
+            self.model.scaling_factor.set_value(self.model.q, 1/maxval)
+
+            if self.isSitesSet == True:
+                maxkey = max(self.model.S.get_values(), key=self.model.S.get_values().get)
+                maxval = self.model.S[maxkey].value
+                self.model.scaling_factor.set_value(self.model.S, 1/maxval)
+
+        # set scaling for derivative vars
+        maxkey = max(self.model.dCb_dz.get_values(), key=self.model.dCb_dz.get_values().get)
+        minkey = min(self.model.dCb_dz.get_values(), key=self.model.dCb_dz.get_values().get)
+
+        if abs(self.model.dCb_dz[maxkey].value) >= abs(self.model.dCb_dz[minkey].value):
+            maxval = abs(self.model.dCb_dz[maxkey].value)
+        else:
+            maxval = abs(self.model.dCb_dz[minkey].value)
+        self.model.scaling_factor.set_value(self.model.dCb_dz, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dCb_dz_disc_eq, 1/maxval)
+
+        maxkey = max(self.model.dCb_dt.get_values(), key=self.model.dCb_dt.get_values().get)
+        minkey = min(self.model.dCb_dt.get_values(), key=self.model.dCb_dt.get_values().get)
+
+        if abs(self.model.dCb_dt[maxkey].value) >= abs(self.model.dCb_dt[minkey].value):
+            maxval = abs(self.model.dCb_dt[maxkey].value)
+        else:
+            maxval = abs(self.model.dCb_dt[minkey].value)
+        self.model.scaling_factor.set_value(self.model.dCb_dt, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dCb_dt_disc_eq, 1/maxval)
+
+        maxkey = max(self.model.dC_dt.get_values(), key=self.model.dC_dt.get_values().get)
+        minkey = min(self.model.dC_dt.get_values(), key=self.model.dC_dt.get_values().get)
+
+        if abs(self.model.dC_dt[maxkey].value) >= abs(self.model.dC_dt[minkey].value):
+            maxval = abs(self.model.dC_dt[maxkey].value)
+        else:
+            maxval = abs(self.model.dC_dt[minkey].value)
+        self.model.scaling_factor.set_value(self.model.dC_dt, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dC_dt_disc_eq, 1/maxval)
+
+        if self.isSurfSpecSet == True:
+            maxkey = max(self.model.dq_dt.get_values(), key=self.model.dq_dt.get_values().get)
+            minkey = min(self.model.dq_dt.get_values(), key=self.model.dq_dt.get_values().get)
+
+            if abs(self.model.dq_dt[maxkey].value) >= abs(self.model.dq_dt[minkey].value):
+                maxval = abs(self.model.dq_dt[maxkey].value)
+            else:
+                maxval = abs(self.model.dq_dt[minkey].value)
+            self.model.scaling_factor.set_value(self.model.dq_dt, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.dq_dt_disc_eq, 1/maxval)
+
+
+        # Rescale the parameters just in case
+        # set scaling for reaction variables
+        for r in self.model.arrhenius_rxns:
+            Aval = self.model.A[r].value
+            if Aval < 1e-6:
+                Aval = 1
+            self.model.scaling_factor.set_value(self.model.A[r], 1/Aval)
+
+            Bval = abs(self.model.B[r].value)
+            if Bval < 1e-2:
+                Bval = 1
+            self.model.scaling_factor.set_value(self.model.B[r], 1/Bval)
+
+            Eval = abs(self.model.E[r].value)
+            if Eval < 1e-2:
+                Eval = 1
+            self.model.scaling_factor.set_value(self.model.E[r], 1/Eval)
+        for re in self.model.equ_arrhenius_rxns:
+            Aval = self.model.Af[re].value
+            if Aval < 1e-6:
+                Aval = 1
+            self.model.scaling_factor.set_value(self.model.Af[re], 1/Aval)
+
+            Eval = abs(self.model.Ef[re].value)
+            if Eval < 1e-2:
+                Eval = 1
+            self.model.scaling_factor.set_value(self.model.Ef[re], 1/Eval)
+
+            dHval = abs(self.model.dH[re].value)
+            if dHval < 1e-2:
+                dHval = 1
+            self.model.scaling_factor.set_value(self.model.dH[re], 1/dHval)
+
+            dSval = abs(self.model.dS[re].value)
+            if dSval < 1e-2:
+                dSval = 1
+            self.model.scaling_factor.set_value(self.model.dS[re], 1/dSval)
+
+
+        # Only rescale constraints if they were not scaled before
+        if rescaleConstraint == True:
+            # set scaling for bulk constraints
+            maxval = 0
+            for key in self.model.bulk_cons:
+                newval = abs(value(self.model.bulk_cons[key]))
+                if newval > maxval:
+                    maxval = newval
+            if maxval < 1e-5:
+                maxval = 1e-5
+            self.model.scaling_factor.set_value(self.model.bulk_cons, 1/maxval)
+
+            # set scaling for pore constraints
+            maxval = 0
+            for key in self.model.pore_cons:
+                newval = abs(value(self.model.pore_cons[key]))
+                if newval > maxval:
+                    maxval = newval
+            if maxval < 1e-5:
+                maxval = 1e-5
+            self.model.scaling_factor.set_value(self.model.pore_cons, 1/maxval)
+
+            # set scaling for surf constraints
+            if self.isSurfSpecSet == True:
+                if self.isSitesSet == True:
+                    maxval = 0
+                    for key in self.model.site_cons:
+                        newval = abs(value(self.model.site_cons[key]))
+                        if newval > maxval:
+                            maxval = newval
+                    if maxval < 1e-2:
+                        maxval = 1e-2
+                    self.model.scaling_factor.set_value(self.model.site_cons, 1/maxval)
+                    self.model.scaling_factor.set_value(self.model.surf_cons, 1/maxval)
+                else:
+                    maxval = 0
+                    for key in self.model.surf_cons:
+                        newval = abs(value(self.model.surf_cons[key]))
+                        if newval > maxval:
+                            maxval = newval
+                    if maxval < 1e-2:
+                        maxval = 1e-2
+                    self.model.scaling_factor.set_value(self.model.surf_cons, 1/maxval)
+
+
+
     # Function to initilize the simulator
     def initialize_simulator(self, console_out=False, options={'print_user_options': 'yes',
                                                     'linear_solver': LinearSolverMethod.MA97,
@@ -1563,6 +1879,11 @@ class Isothermal_Monolith_Simulator(object):
                         solver.options['slack_bound_push'] = 1e-2
                         solver.options['slack_bound_frac'] = 1e-2
                         solver.options['warm_start_init_point'] = 'yes'
+
+                        if self.model.find_component('scaling_factor'):
+                            solver.options['nlp_scaling_method'] = 'user-scaling'
+                        else:
+                            solver.options['nlp_scaling_method'] = 'gradient-based'
 
                         results = solver.solve(self.model, tee=console_out, load_solutions=False)
                         if results.solver.status == SolverStatus.ok:

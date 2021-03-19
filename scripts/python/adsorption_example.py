@@ -83,7 +83,8 @@ test.set_site_balance("S1",s1_data)
 # Reaction specification information (must correspond to correct reaction type)
 
 #   EquilibriumArrhenius
-r1_equ = {"parameters": {"A": 2500000000, "E": 0, "dH": -54000, "dS": 30},
+r1_equ = {"parameters": {"A": 25000, "E": 0, "A_lb": 2500, "A_ub": 2500000000,
+                        "dH": -54000, "dS": 30},
           "mol_reactants": {"S1": 1, "NH3": 1},
           "mol_products": {"q1": 1},
           "rxn_orders": {"S1": 1, "NH3": 1, "q1": 1}
@@ -109,42 +110,11 @@ test.set_time_dependent_BC("NH3","Unaged","250C",
 # Fix the kinetics to only run a simulation
 #test.fix_all_reactions()
 
-# Objective weight factor
-#test.set_weight_factor("NH3","Unaged","250C",1e10)
+#test.initialize_auto_scaling()
+test.initialize_simulator(console_out=False)
 
-# Manually adding scaling factors to the model
-test.model.scaling_factor = Suffix(direction=Suffix.EXPORT)
-
-
-test.model.scaling_factor.set_value(test.model.Cb, 1e6)
-test.model.scaling_factor.set_value(test.model.C, 1e6)
-test.model.scaling_factor.set_value(test.model.q, 10)
-test.model.scaling_factor.set_value(test.model.S, 10)
-#test.model.scaling_factor.set_value(test.model.dCb_dt, 1e6)
-#test.model.scaling_factor.set_value(test.model.dCb_dz, 1e6)
-#test.model.scaling_factor.set_value(test.model.dC_dt, 1e6)
-#test.model.scaling_factor.set_value(test.model.dq_dt, 1e6)
-
-
-test.model.scaling_factor.set_value(test.model.obj, 1e12)
-'''
-test.model.scaling_factor.set_value(test.model.bulk_cons, 1e4)
-test.model.scaling_factor.set_value(test.model.pore_cons, 1e4)
-test.model.scaling_factor.set_value(test.model.surf_cons, 1e4)
-test.model.scaling_factor.set_value(test.model.site_cons, 1e4)
-'''
-
-test.model.scaling_factor.set_value(test.model.Af, 1/2500000000)
-test.model.scaling_factor.set_value(test.model.Ef, 1)
-test.model.scaling_factor.set_value(test.model.dH, 1/54000)
-test.model.scaling_factor.set_value(test.model.dS, 1/30)
-
-# Reasonable solutions cannot be obtained without variable scaling 
-
-test.initialize_simulator()
+#test.finalize_auto_scaling()
 test.run_solver()
-
-#test.model.obj.pprint()
 
 test.print_results_of_breakthrough(["NH3"], "Unaged", "250C", file_name="")
 test.print_results_of_integral_average(["q1","S1"], "Unaged", "250C", file_name="")

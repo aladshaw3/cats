@@ -591,7 +591,7 @@ test.set_isothermal_temp("Unaged","250C",250+273.15)
 # Build the constraints then discretize
 test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=200,elems=5,colpoints=1)
+                    tstep=100,elems=5,colpoints=1)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 test.set_const_IC("O2","Unaged","250C",0.002330029)
@@ -657,32 +657,22 @@ test.fix_reaction("r3c")
 test.fix_reaction("r4a")
 test.fix_reaction("r4b")
 
-# Set weight factors for objectives (this doesn't fix optimization issue)
-#test.set_weight_factor("NH3","Unaged","250C",1e6)
-#test.set_weight_factor("NO","Unaged","250C",1e6)
-#test.set_weight_factor("NO2","Unaged","250C",1e6)
-test.set_weight_factor("N2O","Unaged","250C",1e12)  # THIS WORKS NOW!!!
-
-# Fix all kinetics, then only unfix 1 reaction
+# Fix all kinetics, then only unfix some reactions
 test.fix_all_reactions()
-# This worked, but the result is bad...
+
+#test.unfix_reaction("r8")
+#test.unfix_reaction("r16a")
+#test.unfix_reaction("r16b")
+#test.unfix_reaction("r24")
+#test.unfix_reaction("r32")
+#test.unfix_reaction("r40")
 test.unfix_reaction("r43")
 
-# FOUND ERROR: Objective function CANNOT be declared BEFORE discretizing the model
-'''
-What happened is snipped below...
 
-    The model Cb values only exist at time 0 and time 212 when the objective
-    is created. Thus, the objective function is not accurately representing the
-    comparison between model and data.
-
-w[N2O,Unaged,250C]*(Cb_data[N2O,Unaged,250C,5,209.091667] -
-(Cb[N2O,Unaged,250C,5,212] - (Cb[N2O,Unaged,250C,5,212] - Cb[N2O,Unaged,250C,5,0])/212*2.908332999999999))**2
-'''
-#test.model.obj.pprint()
-
+test.initialize_auto_scaling()
 test.initialize_simulator()
-test.run_solver(options={'max_iter': 3000})
+test.finalize_auto_scaling()
+test.run_solver()
 
 test.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", file_name="")
 #test.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", test.model.z.first(), file_name="protocol.txt")

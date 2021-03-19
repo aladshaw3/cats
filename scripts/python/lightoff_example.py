@@ -173,14 +173,13 @@ test.set_temperature_ramp("A0", "T0", 120, 5160, 813.15)
 
 # Fix the kinetics to only run a simulation (leave unfixed for optimization)
 #test.fix_all_reactions()
+test.initialize_auto_scaling()
 status = test.initialize_simulator()
 print(status)
+test.finalize_auto_scaling()
 final_status = test.run_solver()
 print(final_status)
 
 test.print_results_of_breakthrough(["CO","NO","O2"], "A0", "T0", file_name="", include_temp=True)
 
 test.print_results_all_locations(["CO","NO","O2"], "A0", "T0", file_name="", include_temp=True)
-
-#test.model.obj.pprint()
-#print(test.interpret_var(test.model.Cb,"CO","A0","T0",4.4,4900))
