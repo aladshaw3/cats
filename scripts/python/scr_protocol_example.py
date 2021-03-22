@@ -117,9 +117,8 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
 test.set_bulk_porosity(0.3309)
 test.set_washcoat_porosity(0.2)
 test.set_reactor_radius(1)
-test.set_space_velocity_all_runs(1000)
-test.set_mass_transfer_coef(1.12)
-test.set_surface_to_volume_ratio(5145)
+test.set_space_velocity_all_runs(1000)      #volumes/min
+test.set_cell_density(62)                   # 62 cells per cm^2 (~400 cpsi)
 
 # Setting up site balances using dicts
 s1_data = {"mol_occupancy": {"q1": 1, "q4a": 1}}
@@ -591,7 +590,7 @@ test.set_isothermal_temp("Unaged","250C",250+273.15)
 # Build the constraints then discretize
 test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=100,elems=5,colpoints=1)
+                    tstep=200,elems=5,colpoints=1)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 test.set_const_IC("O2","Unaged","250C",0.002330029)

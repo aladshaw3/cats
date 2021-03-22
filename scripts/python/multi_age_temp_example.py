@@ -17,13 +17,12 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius})
 
 test.set_bulk_porosity(0.3309)
 test.set_washcoat_porosity(0.2)
-test.set_reactor_radius(1)
-test.set_space_velocity("Unaged","150C",1000)
+test.set_reactor_radius(1)                      #cm
+test.set_space_velocity("Unaged","150C",1000)   #volumes / min
 test.set_space_velocity("Unaged","250C",1500)
 test.set_space_velocity("2hr","150C",500)
 test.set_space_velocity("2hr","250C",750)
-test.set_mass_transfer_coef(1.12)
-test.set_surface_to_volume_ratio(5757.541)
+test.set_cell_density(62)                   # 62 cells per cm^2 (~400 cpsi)
 
 # Setting up site balances using dicts
 s1_data = {"mol_occupancy": {"q1": 1}}

@@ -24,50 +24,50 @@ data_co = [5048.132494,
         37.18506374,
         42.91591482,
         50.73264931]
-data_times = [110,
-            350,
-            590,
-            850,
-            1100,
-            1320,
-            1550,
-            1800,
-            2040,
-            2290,
-            2520,
-            2860,
-            3000,
-            3280,
-            3480,
-            3820,
-            3950,
-            4250,
-            4470,
-            4690,
-            4930]
+data_times = [1.83,
+            5.83,
+            9.83,
+            14.17,
+            18.33,
+            22,
+            25.83,
+            30,
+            34,
+            38.17,
+            42,
+            47.67,
+            50,
+            54.67,
+            58,
+            63.67,
+            65.83,
+            70.833,
+            74.5,
+            78.17,
+            82.17]
 # Must add initial time to time set (won't necessarily be in data)
 sim_times = [0,
-            100,
-            360,
-            600,
-            840,
-            1080,
-            1320,
-            1560,
-            1800,
-            2040,
-            2280,
-            2520,
-            2760,
-            3000,
-            3240,
-            3480,
-            3720,
-            3960,
-            4200,
-            4440,
-            4680,
-            4920]
+            1.67,
+            6,
+            10,
+            14,
+            18,
+            22,
+            26,
+            30,
+            34,
+            38,
+            42,
+            46,
+            50,
+            54,
+            58,
+            62,
+            66,
+            70,
+            74,
+            78,
+            82]
 
 # Data dictionary
 dict = {"set_1":
@@ -92,8 +92,8 @@ test = Isothermal_Monolith_Simulator()
 test.add_axial_dim(0,5)         #cm
 test.add_axial_dataset(5)       # Location of observations (in cm)
 
-test.add_temporal_dim(point_list=sim_times)   #s
-test.add_temporal_dataset(data_times)         #Temporal observations (in s)
+test.add_temporal_dim(point_list=sim_times)   #min
+test.add_temporal_dataset(data_times)         #Temporal observations (in min)
 
 
 
@@ -116,15 +116,14 @@ test.set_data_values_for("CO","A0","T0",5,data_times,data_co)
 test.set_bulk_porosity(0.3309)
 test.set_washcoat_porosity(0.2)
 test.set_reactor_radius(1)                  # cm
-test.set_space_velocity_all_runs(8.333)     # s^-1
-test.set_mass_transfer_coef(0.018667)       # m/s
-test.set_surface_to_volume_ratio(5145)      # m^-1
+test.set_space_velocity_all_runs(500)     # volumes per min
+test.set_cell_density(62)                   # 62 cells per cm^2 (~400 cpsi)
 
 #   Arrhenius
 #       Users may specify controls on the upper and lower bounds for each parameter
 #       This is optional. The routine will assume bounds of +/- 20% if no option is given
-r1 = {"parameters": {"A": 5.00466E+17, "E": 205901.5765,
-                    "A_lb": 1.00466E+17, "A_ub": 1.00466E+19,
+r1 = {"parameters": {"A": 3.002796E19, "E": 205901.5765,
+                    "A_lb": 1.00466E+19, "A_ub": 1.00466E+21,
                     "E_lb": 200000, "E_ub": 210000},
           "mol_reactants": {"CO": 1, "O2": 0.5},
           "mol_products": {"CO2": 1},
@@ -138,7 +137,7 @@ r1 = {"parameters": {"A": 5.00466E+17, "E": 205901.5765,
          # "override_molar_contribution": {"O2": 0}
         }
 
-r4 = {"parameters": {"A": 1.816252679, "E": 28675.21769},
+r4 = {"parameters": {"A": 108.975, "E": 28675.21769},
           "mol_reactants": {"CO": 1, "NO": 1},
           "mol_products": {"CO2": 1, "N2": 0.5},
           "rxn_orders": {"CO": 1, "NO": 1}
@@ -169,14 +168,14 @@ test.set_const_BC("N2","A0","T0",0)
 test.set_const_BC("CO2","A0","T0",0)
 
 # Setup temperature ramp
-test.set_temperature_ramp("A0", "T0", 120, 5160, 813.15)
+test.set_temperature_ramp("A0", "T0", 2, 86, 813.15)
 
 # Fix the kinetics to only run a simulation (leave unfixed for optimization)
-#test.fix_all_reactions()
-test.initialize_auto_scaling()
-status = test.initialize_simulator()
+#test.initialize_auto_scaling()     #NOTE: Autoscaling does not work well with ppm units
+status = test.initialize_simulator(console_out=False)
 print(status)
-test.finalize_auto_scaling()
+
+#test.finalize_auto_scaling()       #NOTE: Autoscaling does not work well with ppm units
 final_status = test.run_solver()
 print(final_status)
 

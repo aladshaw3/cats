@@ -51,7 +51,7 @@ test.add_axial_dim(0,5)
 test.add_axial_dataset(5)       # Location of observations (in cm)
 
 test.add_temporal_dim(0,60)
-test.add_temporal_dataset(times)         #Temporal observations (in s)
+test.add_temporal_dataset(times)         #Temporal observations (in min)
 
 test.add_age_set("Unaged")
 test.add_data_age_set("Unaged")             # Data observations can be a sub-set
@@ -71,10 +71,9 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius})
 
 test.set_bulk_porosity(0.3309)
 test.set_washcoat_porosity(0.2)
-test.set_reactor_radius(1)
-test.set_space_velocity_all_runs(1000)
-test.set_mass_transfer_coef(1.12)
-test.set_surface_to_volume_ratio(5757.541)
+test.set_reactor_radius(1)                      #cm
+test.set_space_velocity_all_runs(1000)          #volumes per min
+test.set_cell_density(62)                       # 62 cells per cm^2 (~400 cpsi)
 
 # Setting up site balances using dicts
 s1_data = {"mol_occupancy": {"q1": 1}}
@@ -110,10 +109,10 @@ test.set_time_dependent_BC("NH3","Unaged","250C",
 # Fix the kinetics to only run a simulation
 #test.fix_all_reactions()
 
-#test.initialize_auto_scaling()
+test.initialize_auto_scaling()
 test.initialize_simulator(console_out=False)
 
-#test.finalize_auto_scaling()
+test.finalize_auto_scaling()
 test.run_solver()
 
 test.print_results_of_breakthrough(["NH3"], "Unaged", "250C", file_name="")
