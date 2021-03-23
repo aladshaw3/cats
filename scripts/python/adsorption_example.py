@@ -1,6 +1,7 @@
 # This file is a demo for the 'Isothermal_Monolith_Simulator' object
 
 from isothermal_monolith_catalysis import *
+import json
 
 # Fake data for testing
 times = [3,
@@ -88,7 +89,6 @@ r1_equ = {"parameters": {"A": 25000, "E": 0, "A_lb": 2500, "A_ub": 2500000000,
           "mol_products": {"q1": 1},
           "rxn_orders": {"S1": 1, "NH3": 1, "q1": 1}
         }
-
 test.set_reaction_info("r1", r1_equ)
 
 test.set_site_density("S1","Unaged",0.1152619)
@@ -110,7 +110,7 @@ test.set_time_dependent_BC("NH3","Unaged","250C",
 #test.fix_all_reactions()
 
 test.initialize_auto_scaling()
-test.initialize_simulator(console_out=False)
+test.initialize_simulator()
 
 test.finalize_auto_scaling()
 test.run_solver()
@@ -118,3 +118,14 @@ test.run_solver()
 test.print_results_of_breakthrough(["NH3"], "Unaged", "250C", file_name="")
 test.print_results_of_integral_average(["q1","S1"], "Unaged", "250C", file_name="")
 test.print_results_all_locations(["NH3","q1","S1"], "Unaged", "250C", file_name="")
+
+test.save_model_state(file_name="example.json")
+
+# Plan: Save model as json dict, then load model from json dict
+#di = json.load(open('output/example.json'))
+#print(di)
+
+#test.model.Cb.pprint()
+#key = ('NH3', 'Unaged', '250C', 0, 0)
+#print(test.model.Cb[key].value)
+#display(test.model)

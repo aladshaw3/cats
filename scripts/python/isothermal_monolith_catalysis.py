@@ -30,6 +30,9 @@ import os.path
 from os import path
 from enum import Enum
 import time
+import datetime
+import json
+from ast import literal_eval
 
 # IDAES is not installed, then the script will search for any other available 'ipopt' library
 if "idaes" in os.environ['CONDA_DEFAULT_ENV']:
@@ -141,7 +144,6 @@ class Isothermal_Monolith_Simulator(object):
         self.isBoundsSet = False
         self.isTimesSet = False
         self.isTempSet = False
-        self.temp_list = {}
         self.isAgeSet = False
         self.age_list = {}
         self.isGasSpecSet = False
@@ -217,6 +219,7 @@ class Isothermal_Monolith_Simulator(object):
             print("Error! Time dimension must be set first!")
             exit()
 
+        # # TODO: Remove the 'age' Param (it is unused)
         if type(ages) is list:
             i=0
             for item in ages:
@@ -224,19 +227,9 @@ class Isothermal_Monolith_Simulator(object):
                 self.age_list[key] = item
                 i+=1
             self.model.age_set = Set(initialize=ages)
-            self.model.age = Param(self.model.age_set, self.model.t,
-                                within=Any, mutable=True, units=None)
-            for age in self.model.age_set:
-                for time in self.model.t:
-                    self.model.age[age, time].set_value(age)
         else:
             self.age_list["age_0"] = ages
             self.model.age_set = Set(initialize=[ages])
-            self.model.age = Param(self.model.age_set, self.model.t,
-                                    within=Any, mutable=True, units=units.K)
-            for age in self.model.age_set:
-                for time in self.model.t:
-                    self.model.age[age, time].set_value(age)
 
         self.isAgeSet = True
 
@@ -603,7 +596,7 @@ class Isothermal_Monolith_Simulator(object):
             self.model.u_q = Param(self.model.surf_set, self.model.all_rxns, self.model.z, domain=Reals,
                                     initialize=0, mutable=True)
 
-        # # TODO: Specify units for these variables 
+        # # TODO: Specify units for these variables
         # Variables for the Arrhenius type
         self.model.A = Var(self.model.arrhenius_rxns, domain=NonNegativeReals, initialize=0)
         self.model.B = Var(self.model.arrhenius_rxns, domain=Reals, initialize=0)
@@ -1011,6 +1004,8 @@ class Isothermal_Monolith_Simulator(object):
         return m.eb*m.dCb_dt[gas, age, temp, z, t] + m.eb*m.v[age,temp,t]*m.dCb_dz[gas, age, temp, z, t] == -m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t])
 
     # Washcoat mass balance constraint
+    # # TODO: Update rxn_sum_gas to automatically update u values
+    #           based on whether the reaction is surface or not
     def pore_mb_constraint(self, m, gas, age, temp, z, t):
         rxn_sum=self.reaction_sum_gas(gas, m, age, temp, z, t)
         return m.ew*(1-m.eb)*m.dC_dt[gas, age, temp, z, t] == m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t]) + (1-m.eb)*rxn_sum
@@ -1142,7 +1137,7 @@ class Isothermal_Monolith_Simulator(object):
 
                     self.model.Sc[spec,age,temp,:].set_value(Sc)
 
-                    Sh = 0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5)
+                    Sh = (0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5))/2
                     self.model.Sh[spec,age,temp,:].set_value(Sh)
 
         #       Initialize mass transfer rates
@@ -1153,12 +1148,6 @@ class Isothermal_Monolith_Simulator(object):
                     val = self.model.Sh[spec,age,temp,self.model.t.first()].value*self.model.ew.value* \
                             self.model.Dm[spec].value*60 / self.model.dh.value
                     self.model.km[spec,age,temp,:,:].set_value(val)
-
-
-        #       Initialize age set
-        for age in self.model.age_set:
-            val = value(self.model.age[age,self.model.t.first()])
-            self.model.age[age,:].set_value(val)
 
         #       Initialize Smax
         if self.isSitesSet == True:
@@ -1441,9 +1430,9 @@ class Isothermal_Monolith_Simulator(object):
 
                         self.model.Sc[spec,age,temp,time].set_value(Sc)
                         if isMonolith == True:
-                            Sh = 0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5)
+                            Sh = (0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5))/2
                         else:
-                            Sh = 2+(0.4*Re**0.5+0.06*Re**0.67)*Sc**0.4
+                            Sh = (2+(0.4*Re**0.5+0.06*Re**0.67)*Sc**0.4)/2
                         self.model.Sh[spec,age,temp,time].set_value(Sh)
 
         for spec in self.model.gas_set:
@@ -1452,6 +1441,9 @@ class Isothermal_Monolith_Simulator(object):
                     for time in self.model.t:
                         val = self.model.Sh[spec,age,temp,time].value*self.model.ew.value* \
                             self.model.Dm[spec].value*60 / self.model.dh.value
+                        ## TODO: Add unit conversions for time
+                        ## TODO: Add unit conversions for space
+                        #   val = cm/min
                         self.model.km[spec,age,temp,:,time].set_value(val)
 
         if interally_called == True:
@@ -2474,6 +2466,193 @@ class Isothermal_Monolith_Simulator(object):
                     file.write(str(avg) + '\t')
             file.write('\n')
         file.write('\n')
+        file.close()
+
+    # Define function to unload/save a model state
+    def save_model_state(self, file_name=""):
+        if file_name == "":
+            file_name+="saved_iso_cat_model_"
+            s = str(datetime.datetime.now()).split()
+            file_name+=s[0]+"--"
+            s2 = s[1].split(".")[0].split(":")
+            file_name+=s2[0]+"-"+s2[1]+"-"+s2[2]
+            file_name+=".json"
+
+        folder="output/"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        file = open(folder+file_name,"w")
+
+        # Now, create a dictionary in json based on current model state
+        obj = {}
+        # Adding time states to top of dictionary for user
+        #   User will likely want to specify a time state at restart
+        #   Most common will likely be the final state
+        obj['valid_time_states_for_restart'] = self.model.t.get_finite_elements()
+        for attr in dir(self):
+            if not callable(getattr(self, attr)) and not attr.startswith("__"):
+                if attr!='model' and attr!='rxn_list':
+                    obj[attr] = getattr(self, attr)
+                #Special treatment is needed for enums in dictionaries
+                elif attr=='rxn_list':
+                    obj[attr] = {}
+                    for rxn in getattr(self, attr):
+                        obj[attr][rxn] = {}
+                        obj[attr][rxn]['fixed'] = getattr(self, attr)[rxn]['fixed']
+                        obj[attr][rxn]['type'] = str(getattr(self, attr)[rxn]['type'])
+                #Special treatment is needed for embedded pyomo objects
+                else:
+                    obj['model'] = {}
+                    # Grab as much relevant pyomo model information as possible
+                    #   WILL be required to rebuild constraints and rediscretize model
+                    '''
+                        Only will save minimum needed components to rebuild a model and
+                        load states. Thus, there will be numerous items that get autobuilt
+                        by pyomo that we will not include here. A custom load_state function
+                        will be necessary to interpret the saved data. Unforetunately, I see
+                        no current way to automate this.
+
+                        Below is the list of model objects we will save
+                        ------------------------------------------------
+                            model.eb            scalar      Param
+                            model.ew            scalar      Param
+                            model.r             scalar      Param
+                            model.Ga            scalar      Param
+                            model.cell_density  scalar      Param
+                            model.dh            scalar      Param
+                            model.z             list        ContinuousSet
+                            model.z_data        list        Set
+                            model.t             list        ContinuousSet
+                            model.t_data        list        Set
+                            model.age_set       list        Set
+                            model.data_age_set  list        Set
+                            model.T_set         list        Set
+                            model.T             dict        Var(age_set,T_set,t)
+                            model.space_velocity dict       Var(age_set,T_set,t)
+                            model.v             dict        Var(age_set,T_set,t)
+                            model.P             dict        Var(age_set,T_set,z,t)
+                            model.Tref          dict        Param(age_set,T_set)
+                            model.Pref          dict        Param(age_set,T_set)
+                            model.rho           dict        Var(age_set,T_set,t)
+                            model.mu            dict        Var(age_set,T_set,t)
+                            model.Re            dict        Var(age_set,T_set,t)
+                            model.data_T_set    list        Set
+                            model.gas_set       list        Set
+                            model.Cb            dict        Var(gas_set,age_set,T_set,z,t)
+                            model.C             dict        Var(gas_set,age_set,T_set,z,t)
+                            model.dCb_dz        dict        DerivativeVar(gas_set,age_set,T_set,z,t)
+                            model.dCb_dt        dict        DerivativeVar(gas_set,age_set,T_set,z,t)
+                            model.dC_dt         dict        DerivativeVar(gas_set,age_set,T_set,z,t)
+                            model.km            dict        Var(gas_set,age_set,T_set,z,t)
+                            model.Dm            dict        Param(gas_set)
+                            model.Sc            dict        Var(gas_set,age_set,T_set,t)
+                            model.Sh            dict        Var(gas_set,age_set,T_set,t)
+                            model.Cb_data       dict        Param(data_gas_set,data_age_set,data_T_set,z_data,t_data)
+                            model.w             dict        Param(data_gas_set,data_age_set,data_T_set)
+                            model.surf_set      list        Set
+                            model.q             dict        Var(surf_set,age_set,T_set,z,t)
+                            model.dq_dt         dict        DerivativeVar(surf_set,age_set,T_set,z,t)
+                            model.site_set      list        Set
+                            model.S             dict        Var(site_set,age_set,T_set,z,t)
+                            model.Smax          dict        Param(site_set,age_set,z,t)
+                            model.u_S           dict        Param(site_set,surf_set)
+                            model.all_rxns      list        Set
+                            model.arrhenius_rxns list       Set
+                            model.equ_arrhenius_rxns list   Set
+                            model.u_C           dict        Param(gas_set,all_rxns,z)
+                            model.u_q           dict        Param(surf_set,all_rxns,z)
+                            model.A             dict        Var(arrhenius_rxns)
+                            model.B             dict        Var(arrhenius_rxns)
+                            model.E             dict        Var(arrhenius_rxns)
+                            model.Af            dict        Var(equ_arrhenius_rxns)
+                            model.Ef            dict        Var(equ_arrhenius_rxns)
+                            model.dH            dict        Var(equ_arrhenius_rxns)
+                            model.dS            dict        Var(equ_arrhenius_rxns)
+                            model.all_species_set list      Set
+                            model.rxn_orders    dict        Param(all_rxns,all_species_set)
+
+                            model.add_component(rxn+"_reactants", Set(initialize=react_list))
+                            model.add_component(rxn+"_products", Set(initialize=prod_list))
+
+                    '''
+                    obj['model']['eb'] = self.model.eb.value
+                    obj['model']['ew'] = self.model.ew.value
+                    obj['model']['r'] = self.model.r.value
+                    obj['model']['Ga'] = self.model.Ga.value
+                    obj['model']['cell_density'] = self.model.cell_density.value
+                    obj['model']['dh'] = self.model.dh.value
+                    obj['model']['z'] = self.model.z.get_finite_elements()
+                    if self.isDataBoundsSet == True:
+                        obj['model']['z_data'] = []
+                        for item in self.model.z_data:
+                            obj['model']['z_data'].append(item)
+                    obj['model']['t'] = self.model.t.get_finite_elements()
+                    if self.isDataTimesSet == True:
+                        obj['model']['t_data'] = []
+                        for item in self.model.t_data:
+                            obj['model']['t_data'].append(item)
+
+                    obj['model']['age_set'] = []
+                    for item in self.model.age_set:
+                        obj['model']['age_set'].append(item)
+
+                    if self.isDataAgeSet == True:
+                        obj['model']['data_age_set'] = []
+                        for item in self.model.data_age_set:
+                            obj['model']['data_age_set'].append(item)
+
+                    obj['model']['T_set'] = []
+                    for item in self.model.T_set:
+                        obj['model']['T_set'].append(item)
+
+                    if self.isDataTempSet == True:
+                        obj['model']['data_T_set'] = []
+                        for item in self.model.data_T_set:
+                            obj['model']['data_T_set'].append(item)
+
+                    obj['model']['gas_set'] = []
+                    for item in self.model.gas_set:
+                        obj['model']['gas_set'].append(item)
+
+                    #NOTE: tuple keys must be saved as strings
+                    obj['model']['T'] = {str(k):v for k, v in self.model.T.extract_values().items()}
+
+                    #Sample Code below shows how to access model data
+                    #   when keys are saved as strings
+                    #for key in obj['model']['T']:
+                    #    print(key)
+                    #    print(literal_eval(key))
+                    #    print(self.model.T[literal_eval(key)].value)
+
+                    obj['model']['space_velocity'] = {str(k):v for k, v in self.model.space_velocity.extract_values().items()}
+                    obj['model']['v'] = {str(k):v for k, v in self.model.v.extract_values().items()}
+                    obj['model']['P'] = {str(k):v for k, v in self.model.P.extract_values().items()}
+                    obj['model']['Tref'] = {str(k):v for k, v in self.model.Tref.extract_values().items()}
+                    obj['model']['Pref'] = {str(k):v for k, v in self.model.Pref.extract_values().items()}
+                    obj['model']['rho'] = {str(k):v for k, v in self.model.rho.extract_values().items()}
+                    obj['model']['mu'] = {str(k):v for k, v in self.model.mu.extract_values().items()}
+                    obj['model']['Re'] = {str(k):v for k, v in self.model.Re.extract_values().items()}
+                    obj['model']['Cb'] = {str(k):v for k, v in self.model.Cb.extract_values().items()}
+                    obj['model']['C'] = {str(k):v for k, v in self.model.C.extract_values().items()}
+                    obj['model']['dCb_dz'] = {str(k):v for k, v in self.model.dCb_dz.extract_values().items()}
+                    obj['model']['dCb_dt'] = {str(k):v for k, v in self.model.dCb_dt.extract_values().items()}
+                    obj['model']['dC_dt'] = {str(k):v for k, v in self.model.dC_dt.extract_values().items()}
+                    obj['model']['km'] = {str(k):v for k, v in self.model.km.extract_values().items()}
+                    obj['model']['Dm'] = {str(k):v for k, v in self.model.Dm.extract_values().items()}
+                    obj['model']['Sc'] = {str(k):v for k, v in self.model.Sc.extract_values().items()}
+                    obj['model']['Sh'] = {str(k):v for k, v in self.model.Sh.extract_values().items()}
+
+                    if self.isDataGasSpecSet == True:
+                        obj['model']['Cb_data'] = {str(k):v for k, v in self.model.Cb_data.extract_values().items()}
+                        obj['model']['w'] = {str(k):v for k, v in self.model.w.extract_values().items()}
+
+                    if self.isSurfSpecSet == True:
+                        pass
+                        if self.isSitesSet == True:
+                            pass
+
+        json.dump(obj,file)
         file.close()
 
 

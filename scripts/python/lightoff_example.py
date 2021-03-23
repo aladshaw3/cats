@@ -69,22 +69,6 @@ sim_times = [0,
             78,
             82]
 
-# Data dictionary
-dict = {"set_1":
-            {"location": 5.1,
-            "age": "A0",
-            "temp": "T0",
-            "data":
-                {"CO":
-                    {"values": data_co,
-                     "times": data_times
-                    }
-                #add more species
-                }
-            }
-        #add more sets at different locations
-        }
-
 # Testing
 test = Isothermal_Monolith_Simulator()
 
