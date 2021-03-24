@@ -166,3 +166,5 @@ print(final_status)
 test.print_results_of_breakthrough(["CO","NO","O2"], "A0", "T0", file_name="", include_temp=True)
 
 test.print_results_all_locations(["CO","NO","O2"], "A0", "T0", file_name="", include_temp=True)
+
+test.save_model_state(file_name="example2.json")

@@ -1,7 +1,6 @@
 # This file is a demo for the 'Isothermal_Monolith_Simulator' object
 
 from isothermal_monolith_catalysis import *
-import json
 
 # Fake data for testing
 times = [3,
@@ -23,7 +22,9 @@ times = [3,
         51,
         54,
         57,
-        60]
+        60,
+        65,
+        70]
 
 data = [9.66E-21,
         1.36E-07,
@@ -44,7 +45,9 @@ data = [9.66E-21,
         2.91E-07,
         2.95E-07,
         1.52E-07,
-        1.97E-07]
+        1.97E-07,
+        1e-8,
+        1e-9]
 
 # Testing
 test = Isothermal_Monolith_Simulator()

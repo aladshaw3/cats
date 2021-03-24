@@ -171,6 +171,8 @@ class Isothermal_Monolith_Simulator(object):
         self.isDataTempSet = False
         self.isDataGasSpecSet = False
         self.isDataValuesSet = {}
+        self.DiscType = "DiscretizationMethod.FiniteDifference"
+        self.colpoints = 1
 
 
     # Add a continuous set for spatial dimension (current expected units = cm)
@@ -200,10 +202,17 @@ class Isothermal_Monolith_Simulator(object):
 
     # Add time set for data
     def add_temporal_dataset(self, point_set):
-        if type(point_set) is not list:
-            self.model.t_data = Set(initialize=point_set)
-        else:
-            self.model.t_data = Set(initialize=point_set)
+        if self.isTimesSet == False:
+            print("Error! Cannot setup data times without first specifying model times")
+            exit()
+        # Modify the point_set such that all data points are within the model
+        #       simulation time window (model.t.first(), model.t.last())
+        new_list = []
+        for time in point_set:
+            if time >= self.model.t.first() and time <= self.model.t.last():
+                new_list.append(time)
+        self.model.t_data = Set(initialize=new_list)
+        self.model.t_data_full = Set(initialize=point_set)
         self.isDataTimesSet = True
 
 
@@ -422,6 +431,10 @@ class Isothermal_Monolith_Simulator(object):
                             self.model.data_T_set, self.model.z_data, self.model.t_data,
                             within=Reals, mutable=True,
                             initialize=1e-20, units=units.mol/units.L)
+            self.model.Cb_data_full = Param(self.model.data_gas_set, self.model.data_age_set,
+                            self.model.data_T_set, self.model.z_data, self.model.t_data_full,
+                            within=Reals, mutable=True,
+                            initialize=1e-20, units=units.mol/units.L)
             self.model.w = Param(self.model.data_gas_set, self.model.data_age_set,
                             self.model.data_T_set,
                             within=NonNegativeReals, mutable=True,
@@ -431,6 +444,10 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.data_gas_set = Set(initialize=[gas_species])
                 self.model.Cb_data = Param(self.model.data_gas_set, self.model.data_age_set,
                                 self.model.data_T_set, self.model.z_data, self.model.t_data,
+                                within=Reals, mutable=True,
+                                initialize=1e-20, units=units.mol/units.L)
+                self.model.Cb_data_full = Param(self.model.data_gas_set, self.model.data_age_set,
+                                self.model.data_T_set, self.model.z_data, self.model.t_data_full,
                                 within=Reals, mutable=True,
                                 initialize=1e-20, units=units.mol/units.L)
                 self.model.w = Param(self.model.data_gas_set, self.model.data_age_set,
@@ -446,6 +463,7 @@ class Isothermal_Monolith_Simulator(object):
             if spec not in self.model.gas_set:
                 print("Error! Data gas species must be a sub-set of simulation species")
                 exit()
+
         self.isDataGasSpecSet = True
 
     # Add surface species (optional) [Must be strings]
@@ -1063,8 +1081,11 @@ class Isothermal_Monolith_Simulator(object):
 
         if method == DiscretizationMethod.FiniteDifference:
             fd_discretizer.apply_to(self.model,nfe=elems,wrt=self.model.z,scheme='BACKWARD')
+            self.DiscType = "DiscretizationMethod.FiniteDifference"
         elif method == DiscretizationMethod.OrthogonalCollocation:
             oc_discretizer.apply_to(self.model,nfe=elems,wrt=self.model.z,ncp=colpoints,scheme='LAGRANGE-RADAU')
+            self.DiscType = "DiscretizationMethod.OrthogonalCollocation"
+            self.colpoints = colpoints
         else:
             print("Error! Unrecognized discretization method")
             exit()
@@ -1374,7 +1395,9 @@ class Isothermal_Monolith_Simulator(object):
 
         i=0
         for t in times:
-            self.model.Cb_data[spec, age, temp, loc, t].set_value(values[i])
+            self.model.Cb_data_full[spec, age, temp, loc, t].set_value(values[i])
+            if t >= self.model.t.first() and t <= self.model.t.last():
+                self.model.Cb_data[spec, age, temp, loc, t].set_value(values[i])
             i+=1
 
         self.isDataValuesSet[spec] = True
@@ -2517,6 +2540,7 @@ class Isothermal_Monolith_Simulator(object):
                             model.z_data        list        Set
                             model.t             list        ContinuousSet
                             model.t_data        list        Set
+                            model.t_data_full   list        Set
                             model.age_set       list        Set
                             model.data_age_set  list        Set
                             model.T_set         list        Set
@@ -2540,7 +2564,9 @@ class Isothermal_Monolith_Simulator(object):
                             model.Dm            dict        Param(gas_set)
                             model.Sc            dict        Var(gas_set,age_set,T_set,t)
                             model.Sh            dict        Var(gas_set,age_set,T_set,t)
+                            model.data_gas_set  list        Set
                             model.Cb_data       dict        Param(data_gas_set,data_age_set,data_T_set,z_data,t_data)
+                            model.Cb_data_full  dict        Param(data_gas_set,data_age_set,data_T_set,z_data,t_data_full)
                             model.w             dict        Param(data_gas_set,data_age_set,data_T_set)
                             model.surf_set      list        Set
                             model.q             dict        Var(surf_set,age_set,T_set,z,t)
@@ -2566,7 +2592,6 @@ class Isothermal_Monolith_Simulator(object):
 
                             model.add_component(rxn+"_reactants", Set(initialize=react_list))
                             model.add_component(rxn+"_products", Set(initialize=prod_list))
-
                     '''
                     obj['model']['eb'] = self.model.eb.value
                     obj['model']['ew'] = self.model.ew.value
@@ -2584,6 +2609,9 @@ class Isothermal_Monolith_Simulator(object):
                         obj['model']['t_data'] = []
                         for item in self.model.t_data:
                             obj['model']['t_data'].append(item)
+                        obj['model']['t_data_full'] = []
+                        for item in self.model.t_data_full:
+                            obj['model']['t_data_full'].append(item)
 
                     obj['model']['age_set'] = []
                     for item in self.model.age_set:
@@ -2607,16 +2635,13 @@ class Isothermal_Monolith_Simulator(object):
                     for item in self.model.gas_set:
                         obj['model']['gas_set'].append(item)
 
+                    if self.isDataGasSpecSet == True:
+                        obj['model']['data_gas_set'] = []
+                        for item in self.model.data_gas_set:
+                            obj['model']['data_gas_set'].append(item)
+
                     #NOTE: tuple keys must be saved as strings
                     obj['model']['T'] = {str(k):v for k, v in self.model.T.extract_values().items()}
-
-                    #Sample Code below shows how to access model data
-                    #   when keys are saved as strings
-                    #for key in obj['model']['T']:
-                    #    print(key)
-                    #    print(literal_eval(key))
-                    #    print(self.model.T[literal_eval(key)].value)
-
                     obj['model']['space_velocity'] = {str(k):v for k, v in self.model.space_velocity.extract_values().items()}
                     obj['model']['v'] = {str(k):v for k, v in self.model.v.extract_values().items()}
                     obj['model']['P'] = {str(k):v for k, v in self.model.P.extract_values().items()}
@@ -2638,6 +2663,7 @@ class Isothermal_Monolith_Simulator(object):
 
                     if self.isDataGasSpecSet == True:
                         obj['model']['Cb_data'] = {str(k):v for k, v in self.model.Cb_data.extract_values().items()}
+                        obj['model']['Cb_data_full'] = {str(k):v for k, v in self.model.Cb_data_full.extract_values().items()}
                         obj['model']['w'] = {str(k):v for k, v in self.model.w.extract_values().items()}
 
                     if self.isSurfSpecSet == True:
@@ -2716,6 +2742,237 @@ class Isothermal_Monolith_Simulator(object):
 
         json.dump(obj,file)
         file.close()
+
+    # Function to load full model from json file
+    def load_model_full(self, file_name):
+        # Attempt to load json file
+        obj = json.load(open(file_name))
+
+        # Dig into the obj dictionary and setup the model
+        self.set_bulk_porosity(obj['model']['eb'])
+        self.set_washcoat_porosity(obj['model']['ew'])
+        self.set_reactor_radius(obj['model']['ew'])
+        self.set_cell_density(obj['model']['cell_density'])
+        try:
+            self.add_axial_dim(point_list=obj['model']['z'])
+        except:
+            print(file_name+" does not contain axial dimension")
+        try:
+            self.add_axial_dataset(obj['model']['z_data'])
+        except:
+            print(file_name+" does not contain data set in axial dimension")
+        try:
+            self.add_temporal_dim(point_list=obj['model']['t'])
+        except:
+            print(file_name+" does not contain temporal dimension")
+        try:
+            self.add_temporal_dataset(obj['model']['t_data_full'])
+        except:
+            print(file_name+" does not contain data set in temporal dimension")
+        try:
+            self.add_age_set(obj['model']['age_set'])
+        except:
+            print(file_name+" does not contain age set")
+        try:
+            self.add_data_age_set(obj['model']['data_age_set'])
+        except:
+            print(file_name+" does not contain data age set")
+        try:
+            self.add_temperature_set(obj['model']['T_set'])
+        except:
+            print(file_name+" does not contain temperature set")
+        try:
+            self.add_data_temperature_set(obj['model']['data_T_set'])
+        except:
+            print(file_name+" does not contain data temperature set")
+        try:
+            self.add_gas_species(obj['model']['gas_set'])
+        except:
+            print(file_name+" does not contain gas species set")
+        try:
+            self.add_data_gas_species(obj['model']['data_gas_set'])
+        except:
+            print(file_name+" does not contain data gas species set")
+        try:
+            self.add_surface_species(obj['model']['surf_set'])
+        except:
+            print(file_name+" does not contain surface species set")
+        try:
+            self.add_surface_sites(obj['model']['site_set'])
+        except:
+            print(file_name+" does not contain site species set")
+
+        try:
+            rxn_dict = {}
+            for rxn in obj['rxn_list']:
+                if obj['rxn_list'][rxn]['type'] == "ReactionType.EquilibriumArrhenius":
+                    rxn_dict[rxn] = ReactionType.EquilibriumArrhenius
+                elif obj['rxn_list'][rxn]['type'] == "ReactionType.Arrhenius":
+                    rxn_dict[rxn] = ReactionType.Arrhenius
+                else:
+                    print("Error! Unrecognized reaction type upon loading")
+                    exit()
+            self.add_reactions(rxn_dict)
+            for rxn in obj['rxn_list']:
+                if obj['rxn_list'][rxn]['fixed'] == True:
+                    self.fix_reaction(rxn)
+                else:
+                    self.unfix_reaction(rxn)
+        except:
+            print(file_name+" does not contain reaction set")
+
+        # Set functions to perform BEFORE discretization
+        try:
+            for rxn in obj['model']['all_rxns']:
+                self.model.add_component(rxn+"_reactants", Set(initialize=obj['model'][rxn+"_reactants"]))
+                self.model.add_component(rxn+"_products", Set(initialize=obj['model'][rxn+"_products"]))
+            self.isRxnBuilt = True
+        except:
+            print(file_name+" does not contain reaction info for reactants and products")
+
+        #Manually set data from file
+        try:
+            for key in obj['model']['Cb_data_full']:
+                self.model.Cb_data_full[literal_eval(key)].set_value(obj['model']['Cb_data_full'][key])
+            #Use manually set data to call the sub-routine to automate selection of data sub-set
+            for spec in self.model.data_gas_set:
+                for age in self.model.data_age_set:
+                    for temp in self.model.data_T_set:
+                        for loc in self.model.z_data:
+                            times = []
+                            values = []
+                            for time in self.model.t_data_full:
+                                times.append(time)
+                                values.append(self.model.Cb_data_full[spec,age,temp,loc,time].value)
+                            self.set_data_values_for(spec,age,temp,loc,times,values)
+        except:
+            print(file_name+" does not contain proper data for optimization")
+
+        try:
+            cp = 1
+            dt = DiscretizationMethod.FiniteDifference
+            if obj['DiscType'] == "DiscretizationMethod.FiniteDifference":
+                cp = 1
+                dt = DiscretizationMethod.FiniteDifference
+            elif obj['DiscType'] == "DiscretizationMethod.OrthogonalCollocation":
+                cp = obj['colpoints']
+                dt = DiscretizationMethod.OrthogonalCollocation
+            else:
+                print("Error! Model did not have a valid discretization method")
+                exit()
+            tstep = len(self.model.t.get_finite_elements())-1
+            elems = len(self.model.z.get_finite_elements())-1
+            self.build_constraints()
+            self.discretize_model(method=dt, elems=elems, tstep=tstep, colpoints=cp)
+        except:
+            print(file_name+" does not contain necessary information for rebuilding and discretization")
+
+        # Set functions to perform AFTER discretization
+        for key in obj['model']['T']:
+            self.model.T[literal_eval(key)].set_value(obj['model']['T'][key])
+        for key in obj['model']['space_velocity']:
+            self.model.space_velocity[literal_eval(key)].set_value(obj['model']['space_velocity'][key])
+        for key in obj['model']['v']:
+            self.model.v[literal_eval(key)].set_value(obj['model']['v'][key])
+        for key in obj['model']['P']:
+            self.model.P[literal_eval(key)].set_value(obj['model']['P'][key])
+        for key in obj['model']['Tref']:
+            self.model.Tref[literal_eval(key)].set_value(obj['model']['Tref'][key])
+        for key in obj['model']['Pref']:
+            self.model.Pref[literal_eval(key)].set_value(obj['model']['Pref'][key])
+        for key in obj['model']['rho']:
+            self.model.rho[literal_eval(key)].set_value(obj['model']['rho'][key])
+        for key in obj['model']['mu']:
+            self.model.mu[literal_eval(key)].set_value(obj['model']['mu'][key])
+        for key in obj['model']['Re']:
+            self.model.Re[literal_eval(key)].set_value(obj['model']['Re'][key])
+        for key in obj['model']['Cb']:
+            self.model.Cb[literal_eval(key)].set_value(obj['model']['Cb'][key])
+        for key in obj['model']['C']:
+            self.model.C[literal_eval(key)].set_value(obj['model']['C'][key])
+        for key in obj['model']['dCb_dz']:
+            self.model.dCb_dz[literal_eval(key)].set_value(obj['model']['dCb_dz'][key])
+        for key in obj['model']['dCb_dt']:
+            self.model.dCb_dt[literal_eval(key)].set_value(obj['model']['dCb_dt'][key])
+        for key in obj['model']['dC_dt']:
+            self.model.dC_dt[literal_eval(key)].set_value(obj['model']['dC_dt'][key])
+        for key in obj['model']['km']:
+            self.model.km[literal_eval(key)].set_value(obj['model']['km'][key])
+
+        #NOTE: There is only a single key for Dm, so we don't use 'literal_eval'
+        for key in obj['model']['Dm']:
+            self.model.Dm[key].set_value(obj['model']['Dm'][key])
+
+        for key in obj['model']['Sc']:
+            self.model.Sc[literal_eval(key)].set_value(obj['model']['Sc'][key])
+        for key in obj['model']['Sh']:
+            self.model.Sh[literal_eval(key)].set_value(obj['model']['Sh'][key])
+        if self.isDataGasSpecSet == True:
+            for key in obj['model']['w']:
+                self.model.w[literal_eval(key)].set_value(obj['model']['w'][key])
+        if self.isSurfSpecSet == True:
+            for key in obj['model']['q']:
+                self.model.q[literal_eval(key)].set_value(obj['model']['q'][key])
+            for key in obj['model']['dq_dt']:
+                self.model.dq_dt[literal_eval(key)].set_value(obj['model']['dq_dt'][key])
+            for key in obj['model']['u_q']:
+                self.model.u_q[literal_eval(key)].set_value(obj['model']['u_q'][key])
+
+            if self.isSitesSet == True:
+                for key in obj['model']['S']:
+                    self.model.S[literal_eval(key)].set_value(obj['model']['S'][key])
+                for key in obj['model']['Smax']:
+                    self.model.Smax[literal_eval(key)].set_value(obj['model']['Smax'][key])
+                for key in obj['model']['u_S']:
+                    self.model.u_S[literal_eval(key)].set_value(obj['model']['u_S'][key])
+
+        for key in obj['model']['u_C']:
+            self.model.u_C[literal_eval(key)].set_value(obj['model']['u_C'][key])
+        for key in obj['model']['rxn_orders']:
+            self.model.rxn_orders[literal_eval(key)].set_value(obj['model']['rxn_orders'][key])
+
+        # Need special treatment for reaction values
+        for key in obj['model']['A']:
+            self.model.A[key].set_value(obj['model']['A'][key]['value'])
+            self.model.A[key].setlb(obj['model']['A'][key]['lower'])
+            self.model.A[key].setub(obj['model']['A'][key]['upper'])
+        for key in obj['model']['B']:
+            self.model.B[key].set_value(obj['model']['B'][key]['value'])
+            self.model.B[key].setlb(obj['model']['B'][key]['lower'])
+            self.model.B[key].setub(obj['model']['B'][key]['upper'])
+        for key in obj['model']['E']:
+            self.model.E[key].set_value(obj['model']['E'][key]['value'])
+            self.model.E[key].setlb(obj['model']['E'][key]['lower'])
+            self.model.E[key].setub(obj['model']['E'][key]['upper'])
+        for key in obj['model']['Af']:
+            self.model.Af[key].set_value(obj['model']['Af'][key]['value'])
+            self.model.Af[key].setlb(obj['model']['Af'][key]['lower'])
+            self.model.Af[key].setub(obj['model']['Af'][key]['upper'])
+        for key in obj['model']['Ef']:
+            self.model.Ef[key].set_value(obj['model']['Ef'][key]['value'])
+            self.model.Ef[key].setlb(obj['model']['Ef'][key]['lower'])
+            self.model.Ef[key].setub(obj['model']['Ef'][key]['upper'])
+        for key in obj['model']['dH']:
+            self.model.dH[key].set_value(obj['model']['dH'][key]['value'])
+            self.model.dH[key].setlb(obj['model']['dH'][key]['lower'])
+            self.model.dH[key].setub(obj['model']['dH'][key]['upper'])
+        for key in obj['model']['dS']:
+            self.model.dS[key].set_value(obj['model']['dS'][key]['value'])
+            self.model.dS[key].setlb(obj['model']['dS'][key]['lower'])
+            self.model.dS[key].setub(obj['model']['dS'][key]['upper'])
+
+        #Fix ICs and BCs
+        self.model.Cb[:,:,:, :, self.model.t.first()].fix()
+        self.model.C[:,:,:, :, self.model.t.first()].fix()
+        if self.isSurfSpecSet == True:
+            self.model.q[:,:,:, :, self.model.t.first()].fix()
+        for spec in self.isInitialSet:
+            self.isInitialSet[spec] = True
+
+        self.model.Cb[:,:,:,self.model.z.first(), :].fix()
+        for spec in self.isBoundarySet:
+            self.isBoundarySet[spec] = True
+
 
 
     # # TODO: Add plotting functionality?
