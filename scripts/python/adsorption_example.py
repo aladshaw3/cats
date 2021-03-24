@@ -121,6 +121,10 @@ test.print_results_all_locations(["NH3","q1","S1"], "Unaged", "250C", file_name=
 
 test.save_model_state(file_name="example.json")
 
+#test.model.Af.pprint()
+#print(test.model.Af['r1'].lb)
+#print(test.model.Af.extract_values())
+
 # Plan: Save model as json dict, then load model from json dict
 #di = json.load(open('output/example.json'))
 #print(di)

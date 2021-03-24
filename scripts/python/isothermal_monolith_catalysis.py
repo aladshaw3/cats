@@ -149,7 +149,6 @@ class Isothermal_Monolith_Simulator(object):
         self.isGasSpecSet = False
         self.gas_list = {}
         self.isSurfSpecSet = False
-        self.surf_list = {}
         self.isSitesSet = False
         self.site_list = {}
         self.isRxnSet = False
@@ -463,12 +462,6 @@ class Isothermal_Monolith_Simulator(object):
             print("Error! Cannot specify surface species without having gas species")
             exit()
         if type(surf_species) is list:
-            for item in surf_species:
-                if isinstance(item, str):
-                    self.surf_list[item] = item
-                else:
-                    print("Error! Surface species must be a string")
-                    exit()
             self.model.surf_set = Set(initialize=surf_species)
             self.model.q = Var(self.model.surf_set, self.model.age_set, self.model.T_set,
                             self.model.z, self.model.t,
@@ -476,7 +469,6 @@ class Isothermal_Monolith_Simulator(object):
                             initialize=1e-20, units=units.mol/units.L)
         else:
             if isinstance(surf_species, str):
-                self.surf_list[surf_species] = surf_species
                 self.model.surf_set = Set(initialize=[surf_species])
                 self.model.q = Var(self.model.surf_set, self.model.age_set, self.model.T_set,
                                 self.model.z, self.model.t,
@@ -2642,15 +2634,85 @@ class Isothermal_Monolith_Simulator(object):
                     obj['model']['Dm'] = {str(k):v for k, v in self.model.Dm.extract_values().items()}
                     obj['model']['Sc'] = {str(k):v for k, v in self.model.Sc.extract_values().items()}
                     obj['model']['Sh'] = {str(k):v for k, v in self.model.Sh.extract_values().items()}
+                    obj['model']['u_C'] = {str(k):v for k, v in self.model.u_C.extract_values().items()}
 
                     if self.isDataGasSpecSet == True:
                         obj['model']['Cb_data'] = {str(k):v for k, v in self.model.Cb_data.extract_values().items()}
                         obj['model']['w'] = {str(k):v for k, v in self.model.w.extract_values().items()}
 
                     if self.isSurfSpecSet == True:
-                        pass
+                        obj['model']['surf_set'] = []
+                        for item in self.model.surf_set:
+                            obj['model']['surf_set'].append(item)
+                        obj['model']['q'] = {str(k):v for k, v in self.model.q.extract_values().items()}
+                        obj['model']['dq_dt'] = {str(k):v for k, v in self.model.dq_dt.extract_values().items()}
+                        obj['model']['u_q'] = {str(k):v for k, v in self.model.u_q.extract_values().items()}
                         if self.isSitesSet == True:
-                            pass
+                            obj['model']['site_set'] = []
+                            for item in self.model.site_set:
+                                obj['model']['site_set'].append(item)
+                            obj['model']['S'] = {str(k):v for k, v in self.model.S.extract_values().items()}
+                            obj['model']['Smax'] = {str(k):v for k, v in self.model.Smax.extract_values().items()}
+                            obj['model']['u_S'] = {str(k):v for k, v in self.model.u_S.extract_values().items()}
+
+                    obj['model']['all_rxns'] = []
+                    for item in self.model.all_rxns:
+                        obj['model']['all_rxns'].append(item)
+                        obj['model'][item+"_reactants"] = []
+                        for item2 in self.model.component(item+"_reactants"):
+                            obj['model'][item+"_reactants"].append(item2)
+                        obj['model'][item+"_products"] = []
+                        for item2 in self.model.component(item+"_products"):
+                            obj['model'][item+"_products"].append(item2)
+
+                    obj['model']['arrhenius_rxns'] = []
+                    obj['model']['A'] = {}
+                    obj['model']['B'] = {}
+                    obj['model']['E'] = {}
+                    for item in self.model.arrhenius_rxns:
+                        obj['model']['arrhenius_rxns'].append(item)
+                        obj['model']['A'][item] = {}
+                        obj['model']['A'][item]['lower'] = self.model.A[item].lb
+                        obj['model']['A'][item]['value'] = self.model.A[item].value
+                        obj['model']['A'][item]['upper'] = self.model.A[item].ub
+                        obj['model']['B'][item] = {}
+                        obj['model']['B'][item]['lower'] = self.model.B[item].lb
+                        obj['model']['B'][item]['value'] = self.model.B[item].value
+                        obj['model']['B'][item]['upper'] = self.model.B[item].ub
+                        obj['model']['E'][item] = {}
+                        obj['model']['E'][item]['lower'] = self.model.E[item].lb
+                        obj['model']['E'][item]['value'] = self.model.E[item].value
+                        obj['model']['E'][item]['upper'] = self.model.E[item].ub
+
+                    obj['model']['equ_arrhenius_rxns'] = []
+                    obj['model']['Af'] = {}
+                    obj['model']['Ef'] = {}
+                    obj['model']['dH'] = {}
+                    obj['model']['dS'] = {}
+                    for item in self.model.equ_arrhenius_rxns:
+                        obj['model']['equ_arrhenius_rxns'].append(item)
+                        obj['model']['Af'][item] = {}
+                        obj['model']['Af'][item]['lower'] = self.model.Af[item].lb
+                        obj['model']['Af'][item]['value'] = self.model.Af[item].value
+                        obj['model']['Af'][item]['upper'] = self.model.Af[item].ub
+                        obj['model']['Ef'][item] = {}
+                        obj['model']['Ef'][item]['lower'] = self.model.Ef[item].lb
+                        obj['model']['Ef'][item]['value'] = self.model.Ef[item].value
+                        obj['model']['Ef'][item]['upper'] = self.model.Ef[item].ub
+                        obj['model']['dH'][item] = {}
+                        obj['model']['dH'][item]['lower'] = self.model.dH[item].lb
+                        obj['model']['dH'][item]['value'] = self.model.dH[item].value
+                        obj['model']['dH'][item]['upper'] = self.model.dH[item].ub
+                        obj['model']['dS'][item] = {}
+                        obj['model']['dS'][item]['lower'] = self.model.dS[item].lb
+                        obj['model']['dS'][item]['value'] = self.model.dS[item].value
+                        obj['model']['dS'][item]['upper'] = self.model.dS[item].ub
+
+                    obj['model']['all_species_set'] = []
+                    for item in self.model.all_species_set:
+                        obj['model']['all_species_set'].append(item)
+
+                    obj['model']['rxn_orders'] = {str(k):v for k, v in self.model.rxn_orders.extract_values().items()}
 
         json.dump(obj,file)
         file.close()
