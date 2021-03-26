@@ -2238,6 +2238,7 @@ class Isothermal_Monolith_Simulator(object):
             print("\tResults are loaded, but need to be checked")
             self.model.solutions.load_from(results)
         else:
+            self.model.solutions.load_from(results)
             print("An Error has occurred!")
             print("\tStatus: " + str(results.solver.status))
             print("\tTermination Condition: " + str(results.solver.termination_condition))
@@ -2973,6 +2974,29 @@ class Isothermal_Monolith_Simulator(object):
         for spec in self.isBoundarySet:
             self.isBoundarySet[spec] = True
 
+
+    # Function to load a model state as an initial condition to next simulation
+    #   User must provide the following:
+    #   -------------------------------
+    #       file_name = location and name of json file to load
+    #       new_time_window = a tuple of start and end times for new simulation
+    #                       (or a list of new time points to simulate)
+    #
+    #       Optional Arg:   state = time state to use as IC from the loaded model
+    #                               (default = final state)
+    #
+    #   NOTE: User cannot provide new data at this stage. All data should have
+    #           been provided in the prior model you attempt to load.
+    #
+    #   NOTE: User MUST setup new BCs before attempting to solve this loaded model
+    #
+    #   NOTE: User MUST also provide new temperature profiles and/or space-velocities
+    #           (if applicable). Simulation will otherwise assume new temperatures
+    #           are the prior temperatures extended from the final state.
+    def load_model_state_as_IC(self, file_name, new_time_window, state=None):
+        ## TODO: Make sure that if state is in new_time_window, that additional
+        #           information is carried over
+        pass
 
 
     # # TODO: Add plotting functionality?
