@@ -2993,10 +2993,283 @@ class Isothermal_Monolith_Simulator(object):
     #   NOTE: User MUST also provide new temperature profiles and/or space-velocities
     #           (if applicable). Simulation will otherwise assume new temperatures
     #           are the prior temperatures extended from the final state.
-    def load_model_state_as_IC(self, file_name, new_time_window, state=None):
+    def load_model_state_as_IC(self, file_name, new_time_window, tstep=None, state=None):
         ## TODO: Make sure that if state is in new_time_window, that additional
         #           information is carried over
-        pass
+
+        # Attempt to load json file
+        obj = json.load(open(file_name))
+
+        # Check the new time window
+        if type(new_time_window) is list:
+            self.add_temporal_dim(point_list=new_time_window)
+            tstep = len(new_time_window)
+        elif type(new_time_window) is tuple:
+            if tstep==None:
+                print("Error! Cannot discretize if user does not provide number of time steps in 'tstep' arg")
+                exit()
+            self.add_temporal_dim(start_point=new_time_window[0], end_point=new_time_window[1])
+        else:
+            print("Error! Argument 'new_time_window' must be tuple (start, end) or list of discrete points")
+            exit()
+
+
+        # Check the state desired
+        if state == None:
+            try:
+                IC_time = obj['valid_time_states_for_restart'][-1]
+            except:
+                print("Error! json file may not be configured correctly... No 'valid_time_states_for_restart' key found")
+                exit()
+        else:
+            try:
+                if state not in obj['valid_time_states_for_restart']:
+                    print("WARNING! Desired state not found in json file. Using closest available state")
+                    for time in obj['valid_time_states_for_restart']:
+                        if time >= state:
+                            IC_time = time
+                            break
+                else:
+                    IC_time = obj['valid_time_states_for_restart'][obj['valid_time_states_for_restart'].index(state)]
+            except:
+                print("Error! json file may not be configured correctly... No 'valid_time_states_for_restart' key found")
+                exit()
+
+        # Dig into the obj dictionary and setup the model
+        self.set_bulk_porosity(obj['model']['eb'])
+        self.set_washcoat_porosity(obj['model']['ew'])
+        self.set_reactor_radius(obj['model']['ew'])
+        self.set_cell_density(obj['model']['cell_density'])
+        try:
+            self.add_axial_dim(point_list=obj['model']['z'])
+        except:
+            print(file_name+" does not contain axial dimension")
+        try:
+            self.add_axial_dataset(obj['model']['z_data'])
+        except:
+            print(file_name+" does not contain data set in axial dimension")
+        try:
+            self.add_temporal_dataset(obj['model']['t_data_full'])
+        except:
+            print(file_name+" does not contain data set in temporal dimension")
+        try:
+            self.add_age_set(obj['model']['age_set'])
+        except:
+            print(file_name+" does not contain age set")
+        try:
+            self.add_data_age_set(obj['model']['data_age_set'])
+        except:
+            print(file_name+" does not contain data age set")
+        try:
+            self.add_temperature_set(obj['model']['T_set'])
+        except:
+            print(file_name+" does not contain temperature set")
+        try:
+            self.add_data_temperature_set(obj['model']['data_T_set'])
+        except:
+            print(file_name+" does not contain data temperature set")
+        try:
+            self.add_gas_species(obj['model']['gas_set'])
+        except:
+            print(file_name+" does not contain gas species set")
+        try:
+            self.add_data_gas_species(obj['model']['data_gas_set'])
+        except:
+            print(file_name+" does not contain data gas species set")
+        try:
+            self.add_surface_species(obj['model']['surf_set'])
+        except:
+            print(file_name+" does not contain surface species set")
+        try:
+            self.add_surface_sites(obj['model']['site_set'])
+        except:
+            print(file_name+" does not contain site species set")
+
+        try:
+            rxn_dict = {}
+            for rxn in obj['rxn_list']:
+                if obj['rxn_list'][rxn]['type'] == "ReactionType.EquilibriumArrhenius":
+                    rxn_dict[rxn] = ReactionType.EquilibriumArrhenius
+                elif obj['rxn_list'][rxn]['type'] == "ReactionType.Arrhenius":
+                    rxn_dict[rxn] = ReactionType.Arrhenius
+                else:
+                    print("Error! Unrecognized reaction type upon loading")
+                    exit()
+            self.add_reactions(rxn_dict)
+            for rxn in obj['rxn_list']:
+                if obj['rxn_list'][rxn]['fixed'] == True:
+                    self.fix_reaction(rxn)
+                else:
+                    self.unfix_reaction(rxn)
+        except:
+            print(file_name+" does not contain reaction set")
+
+        # Set functions to perform BEFORE discretization
+        try:
+            for rxn in obj['model']['all_rxns']:
+                self.model.add_component(rxn+"_reactants", Set(initialize=obj['model'][rxn+"_reactants"]))
+                self.model.add_component(rxn+"_products", Set(initialize=obj['model'][rxn+"_products"]))
+            self.isRxnBuilt = True
+        except:
+            print(file_name+" does not contain reaction info for reactants and products")
+
+        #Manually set data from file
+        try:
+            for key in obj['model']['Cb_data_full']:
+                self.model.Cb_data_full[literal_eval(key)].set_value(obj['model']['Cb_data_full'][key])
+            #Use manually set data to call the sub-routine to automate selection of data sub-set
+            for spec in self.model.data_gas_set:
+                for age in self.model.data_age_set:
+                    for temp in self.model.data_T_set:
+                        for loc in self.model.z_data:
+                            times = []
+                            values = []
+                            for time in self.model.t_data_full:
+                                times.append(time)
+                                values.append(self.model.Cb_data_full[spec,age,temp,loc,time].value)
+                            self.set_data_values_for(spec,age,temp,loc,times,values)
+        except:
+            print(file_name+" does not contain proper data for optimization")
+
+        try:
+            cp = 1
+            dt = DiscretizationMethod.FiniteDifference
+            if obj['DiscType'] == "DiscretizationMethod.FiniteDifference":
+                cp = 1
+                dt = DiscretizationMethod.FiniteDifference
+            elif obj['DiscType'] == "DiscretizationMethod.OrthogonalCollocation":
+                cp = obj['colpoints']
+                dt = DiscretizationMethod.OrthogonalCollocation
+            else:
+                print("Error! Model did not have a valid discretization method")
+                exit()
+            elems = len(self.model.z.get_finite_elements())-1
+            self.build_constraints()
+            self.discretize_model(method=dt, elems=elems, tstep=tstep, colpoints=cp)
+        except:
+            print(file_name+" does not contain necessary information for rebuilding and discretization")
+
+        # Set functions to perform AFTER discretization
+        for key in obj['model']['T']:
+            if literal_eval(key)[-1] == IC_time:
+                self.model.T[literal_eval(key)].set_value(obj['model']['T'][key])
+        for age in self.model.age_set:
+            for temp in self.model.T_set:
+                for loc in self.model.z:
+                    for time in self.model.t:
+                        self.model.T[age,temp,loc,time].set_value(self.model.T[age,temp,loc,IC_time].value)
+        '''
+        for key in obj['model']['space_velocity']:
+            self.model.space_velocity[literal_eval(key)].set_value(obj['model']['space_velocity'][key])
+        for key in obj['model']['v']:
+            self.model.v[literal_eval(key)].set_value(obj['model']['v'][key])
+        for key in obj['model']['P']:
+            self.model.P[literal_eval(key)].set_value(obj['model']['P'][key])
+        for key in obj['model']['Tref']:
+            self.model.Tref[literal_eval(key)].set_value(obj['model']['Tref'][key])
+        for key in obj['model']['Pref']:
+            self.model.Pref[literal_eval(key)].set_value(obj['model']['Pref'][key])
+        for key in obj['model']['rho']:
+            self.model.rho[literal_eval(key)].set_value(obj['model']['rho'][key])
+        for key in obj['model']['mu']:
+            self.model.mu[literal_eval(key)].set_value(obj['model']['mu'][key])
+        for key in obj['model']['Re']:
+            self.model.Re[literal_eval(key)].set_value(obj['model']['Re'][key])
+        for key in obj['model']['Cb']:
+            self.model.Cb[literal_eval(key)].set_value(obj['model']['Cb'][key])
+        for key in obj['model']['C']:
+            self.model.C[literal_eval(key)].set_value(obj['model']['C'][key])
+        for key in obj['model']['dCb_dz']:
+            self.model.dCb_dz[literal_eval(key)].set_value(obj['model']['dCb_dz'][key])
+        for key in obj['model']['dCb_dt']:
+            self.model.dCb_dt[literal_eval(key)].set_value(obj['model']['dCb_dt'][key])
+        for key in obj['model']['dC_dt']:
+            self.model.dC_dt[literal_eval(key)].set_value(obj['model']['dC_dt'][key])
+        for key in obj['model']['km']:
+            self.model.km[literal_eval(key)].set_value(obj['model']['km'][key])
+        '''
+
+        #NOTE: There is only a single key for Dm, so we don't use 'literal_eval'
+        '''
+        for key in obj['model']['Dm']:
+            self.model.Dm[key].set_value(obj['model']['Dm'][key])
+        '''
+
+        '''
+        for key in obj['model']['Sc']:
+            self.model.Sc[literal_eval(key)].set_value(obj['model']['Sc'][key])
+        for key in obj['model']['Sh']:
+            self.model.Sh[literal_eval(key)].set_value(obj['model']['Sh'][key])
+        if self.isDataGasSpecSet == True:
+            for key in obj['model']['w']:
+                self.model.w[literal_eval(key)].set_value(obj['model']['w'][key])
+        if self.isSurfSpecSet == True:
+            for key in obj['model']['q']:
+                self.model.q[literal_eval(key)].set_value(obj['model']['q'][key])
+            for key in obj['model']['dq_dt']:
+                self.model.dq_dt[literal_eval(key)].set_value(obj['model']['dq_dt'][key])
+            for key in obj['model']['u_q']:
+                self.model.u_q[literal_eval(key)].set_value(obj['model']['u_q'][key])
+
+            if self.isSitesSet == True:
+                for key in obj['model']['S']:
+                    self.model.S[literal_eval(key)].set_value(obj['model']['S'][key])
+                for key in obj['model']['Smax']:
+                    self.model.Smax[literal_eval(key)].set_value(obj['model']['Smax'][key])
+                for key in obj['model']['u_S']:
+                    self.model.u_S[literal_eval(key)].set_value(obj['model']['u_S'][key])
+
+        for key in obj['model']['u_C']:
+            self.model.u_C[literal_eval(key)].set_value(obj['model']['u_C'][key])
+        for key in obj['model']['rxn_orders']:
+            self.model.rxn_orders[literal_eval(key)].set_value(obj['model']['rxn_orders'][key])
+        '''
+
+        # Need special treatment for reaction values
+        '''
+        for key in obj['model']['A']:
+            self.model.A[key].set_value(obj['model']['A'][key]['value'])
+            self.model.A[key].setlb(obj['model']['A'][key]['lower'])
+            self.model.A[key].setub(obj['model']['A'][key]['upper'])
+        for key in obj['model']['B']:
+            self.model.B[key].set_value(obj['model']['B'][key]['value'])
+            self.model.B[key].setlb(obj['model']['B'][key]['lower'])
+            self.model.B[key].setub(obj['model']['B'][key]['upper'])
+        for key in obj['model']['E']:
+            self.model.E[key].set_value(obj['model']['E'][key]['value'])
+            self.model.E[key].setlb(obj['model']['E'][key]['lower'])
+            self.model.E[key].setub(obj['model']['E'][key]['upper'])
+        for key in obj['model']['Af']:
+            self.model.Af[key].set_value(obj['model']['Af'][key]['value'])
+            self.model.Af[key].setlb(obj['model']['Af'][key]['lower'])
+            self.model.Af[key].setub(obj['model']['Af'][key]['upper'])
+        for key in obj['model']['Ef']:
+            self.model.Ef[key].set_value(obj['model']['Ef'][key]['value'])
+            self.model.Ef[key].setlb(obj['model']['Ef'][key]['lower'])
+            self.model.Ef[key].setub(obj['model']['Ef'][key]['upper'])
+        for key in obj['model']['dH']:
+            self.model.dH[key].set_value(obj['model']['dH'][key]['value'])
+            self.model.dH[key].setlb(obj['model']['dH'][key]['lower'])
+            self.model.dH[key].setub(obj['model']['dH'][key]['upper'])
+        for key in obj['model']['dS']:
+            self.model.dS[key].set_value(obj['model']['dS'][key]['value'])
+            self.model.dS[key].setlb(obj['model']['dS'][key]['lower'])
+            self.model.dS[key].setub(obj['model']['dS'][key]['upper'])
+        '''
+
+        #Fix ICs and BCs
+        '''
+        self.model.Cb[:,:,:, :, self.model.t.first()].fix()
+        self.model.C[:,:,:, :, self.model.t.first()].fix()
+        if self.isSurfSpecSet == True:
+            self.model.q[:,:,:, :, self.model.t.first()].fix()
+        for spec in self.isInitialSet:
+            self.isInitialSet[spec] = True
+
+        self.model.Cb[:,:,:,self.model.z.first(), :].fix()
+        for spec in self.isBoundarySet:
+            self.isBoundarySet[spec] = True
+        '''
 
 
     # # TODO: Add plotting functionality?
