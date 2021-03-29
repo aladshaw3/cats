@@ -12,6 +12,7 @@ test.finalize_auto_scaling()
 test.run_solver()
 
 test.print_results_of_breakthrough(["NH3"], "Unaged", "250C", file_name="loaded_breakthrough.txt")
+test.print_results_of_integral_average(["q1"], "Unaged", "250C", file_name="loaded_integral.txt")
 
 test2 = Isothermal_Monolith_Simulator()
 test2.load_model_full('output/example2.json')

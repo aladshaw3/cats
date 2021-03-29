@@ -3158,75 +3158,78 @@ class Isothermal_Monolith_Simulator(object):
                 for loc in self.model.z:
                     for time in self.model.t:
                         self.model.T[age,temp,loc,time].set_value(self.model.T[age,temp,loc,IC_time].value)
-        '''
-        for key in obj['model']['space_velocity']:
-            self.model.space_velocity[literal_eval(key)].set_value(obj['model']['space_velocity'][key])
-        for key in obj['model']['v']:
-            self.model.v[literal_eval(key)].set_value(obj['model']['v'][key])
         for key in obj['model']['P']:
-            self.model.P[literal_eval(key)].set_value(obj['model']['P'][key])
+            if literal_eval(key)[-1] == IC_time:
+                self.model.P[literal_eval(key)].set_value(obj['model']['P'][key])
+        for age in self.model.age_set:
+            for temp in self.model.T_set:
+                for loc in self.model.z:
+                    for time in self.model.t:
+                        self.model.P[age,temp,loc,time].set_value(self.model.P[age,temp,loc,IC_time].value)
         for key in obj['model']['Tref']:
             self.model.Tref[literal_eval(key)].set_value(obj['model']['Tref'][key])
         for key in obj['model']['Pref']:
             self.model.Pref[literal_eval(key)].set_value(obj['model']['Pref'][key])
-        for key in obj['model']['rho']:
-            self.model.rho[literal_eval(key)].set_value(obj['model']['rho'][key])
-        for key in obj['model']['mu']:
-            self.model.mu[literal_eval(key)].set_value(obj['model']['mu'][key])
-        for key in obj['model']['Re']:
-            self.model.Re[literal_eval(key)].set_value(obj['model']['Re'][key])
-        for key in obj['model']['Cb']:
-            self.model.Cb[literal_eval(key)].set_value(obj['model']['Cb'][key])
-        for key in obj['model']['C']:
-            self.model.C[literal_eval(key)].set_value(obj['model']['C'][key])
-        for key in obj['model']['dCb_dz']:
-            self.model.dCb_dz[literal_eval(key)].set_value(obj['model']['dCb_dz'][key])
-        for key in obj['model']['dCb_dt']:
-            self.model.dCb_dt[literal_eval(key)].set_value(obj['model']['dCb_dt'][key])
-        for key in obj['model']['dC_dt']:
-            self.model.dC_dt[literal_eval(key)].set_value(obj['model']['dC_dt'][key])
-        for key in obj['model']['km']:
-            self.model.km[literal_eval(key)].set_value(obj['model']['km'][key])
-        '''
-
-        #NOTE: There is only a single key for Dm, so we don't use 'literal_eval'
-        '''
+        for key in obj['model']['space_velocity']:
+            if literal_eval(key)[-1] == IC_time:
+                self.model.space_velocity[literal_eval(key)].set_value(obj['model']['space_velocity'][key])
+        for age in self.model.age_set:
+            for temp in self.model.T_set:
+                self.set_space_velocity(age,temp,self.model.space_velocity[age,temp,IC_time].value,self.model.Pref[age,temp].value,self.model.Tref[age,temp].value)
         for key in obj['model']['Dm']:
             self.model.Dm[key].set_value(obj['model']['Dm'][key])
-        '''
+        self.isVelocityRecalculated = False
 
-        '''
-        for key in obj['model']['Sc']:
-            self.model.Sc[literal_eval(key)].set_value(obj['model']['Sc'][key])
-        for key in obj['model']['Sh']:
-            self.model.Sh[literal_eval(key)].set_value(obj['model']['Sh'][key])
         if self.isDataGasSpecSet == True:
             for key in obj['model']['w']:
                 self.model.w[literal_eval(key)].set_value(obj['model']['w'][key])
-        if self.isSurfSpecSet == True:
-            for key in obj['model']['q']:
-                self.model.q[literal_eval(key)].set_value(obj['model']['q'][key])
-            for key in obj['model']['dq_dt']:
-                self.model.dq_dt[literal_eval(key)].set_value(obj['model']['dq_dt'][key])
-            for key in obj['model']['u_q']:
-                self.model.u_q[literal_eval(key)].set_value(obj['model']['u_q'][key])
 
-            if self.isSitesSet == True:
-                for key in obj['model']['S']:
-                    self.model.S[literal_eval(key)].set_value(obj['model']['S'][key])
-                for key in obj['model']['Smax']:
-                    self.model.Smax[literal_eval(key)].set_value(obj['model']['Smax'][key])
-                for key in obj['model']['u_S']:
-                    self.model.u_S[literal_eval(key)].set_value(obj['model']['u_S'][key])
+        for key in obj['model']['Cb']:
+            if literal_eval(key)[-1] == IC_time:
+                self.model.Cb[literal_eval(key)].set_value(obj['model']['Cb'][key])
+        for key in obj['model']['C']:
+            if literal_eval(key)[-1] == IC_time:
+                self.model.C[literal_eval(key)].set_value(obj['model']['C'][key])
+        for key in obj['model']['dCb_dz']:
+            if literal_eval(key)[-1] == IC_time:
+                self.model.dCb_dz[literal_eval(key)].set_value(obj['model']['dCb_dz'][key])
+        for key in obj['model']['dCb_dt']:
+            if literal_eval(key)[-1] == IC_time:
+                self.model.dCb_dt[literal_eval(key)].set_value(obj['model']['dCb_dt'][key])
+        for key in obj['model']['dC_dt']:
+            if literal_eval(key)[-1] == IC_time:
+                self.model.dC_dt[literal_eval(key)].set_value(obj['model']['dC_dt'][key])
 
         for key in obj['model']['u_C']:
             self.model.u_C[literal_eval(key)].set_value(obj['model']['u_C'][key])
         for key in obj['model']['rxn_orders']:
             self.model.rxn_orders[literal_eval(key)].set_value(obj['model']['rxn_orders'][key])
-        '''
+
+        if self.isSurfSpecSet == True:
+            for key in obj['model']['q']:
+                if literal_eval(key)[-1] == IC_time:
+                    self.model.q[literal_eval(key)].set_value(obj['model']['q'][key])
+            for key in obj['model']['dq_dt']:
+                if literal_eval(key)[-1] == IC_time:
+                    self.model.dq_dt[literal_eval(key)].set_value(obj['model']['dq_dt'][key])
+            for key in obj['model']['u_q']:
+                self.model.u_q[literal_eval(key)].set_value(obj['model']['u_q'][key])
+
+            if self.isSitesSet == True:
+                for key in obj['model']['S']:
+                    if literal_eval(key)[-1] == IC_time:
+                        self.model.S[literal_eval(key)].set_value(obj['model']['S'][key])
+                for key in obj['model']['Smax']:
+                    if literal_eval(key)[-1] == IC_time:
+                        self.model.Smax[literal_eval(key)].set_value(obj['model']['Smax'][key])
+                for site in self.model.site_set:
+                    for age in self.model.age_set:
+                        for loc in self.model.z:
+                            self.set_site_density(site, age, self.model.Smax[site,age,loc,IC_time].value)
+                for key in obj['model']['u_S']:
+                    self.model.u_S[literal_eval(key)].set_value(obj['model']['u_S'][key])
 
         # Need special treatment for reaction values
-        '''
         for key in obj['model']['A']:
             self.model.A[key].set_value(obj['model']['A'][key]['value'])
             self.model.A[key].setlb(obj['model']['A'][key]['lower'])
@@ -3255,21 +3258,14 @@ class Isothermal_Monolith_Simulator(object):
             self.model.dS[key].set_value(obj['model']['dS'][key]['value'])
             self.model.dS[key].setlb(obj['model']['dS'][key]['lower'])
             self.model.dS[key].setub(obj['model']['dS'][key]['upper'])
-        '''
 
         #Fix ICs and BCs
-        '''
         self.model.Cb[:,:,:, :, self.model.t.first()].fix()
         self.model.C[:,:,:, :, self.model.t.first()].fix()
         if self.isSurfSpecSet == True:
             self.model.q[:,:,:, :, self.model.t.first()].fix()
         for spec in self.isInitialSet:
             self.isInitialSet[spec] = True
-
-        self.model.Cb[:,:,:,self.model.z.first(), :].fix()
-        for spec in self.isBoundarySet:
-            self.isBoundarySet[spec] = True
-        '''
 
 
     # # TODO: Add plotting functionality?
