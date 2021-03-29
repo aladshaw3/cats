@@ -1,6 +1,7 @@
 # This file is a demo for the 'Isothermal_Monolith_Simulator' object
-
-from isothermal_monolith_catalysis import *
+import sys
+sys.path.append('../..')
+from catalyst.isothermal_monolith_catalysis import *
 
 # Sample function for reading a file
 def read_data_file(file):
@@ -24,14 +25,14 @@ def read_data_file(file):
     return Data
 
 # Read in the data (data is now a dictionary containing the data we want)
-data = read_data_file("scr_sample_input.txt")
+data = read_data_file("inputfiles/scr_sample_input.txt")
 
 # Testing
 test = Isothermal_Monolith_Simulator()
 test.add_axial_dim(0,5)
 test.add_axial_dataset(5)       # Location of observations (in cm)
 
-test.add_temporal_dim(54,113)
+test.add_temporal_dim(0,212)
 test.add_temporal_dataset(data["time"])   #Temporal observations (in s)
 
 test.add_age_set("Unaged")
@@ -590,13 +591,13 @@ test.set_isothermal_temp("Unaged","250C",250+273.15)
 # Build the constraints then discretize
 test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=100,elems=5,colpoints=1)
+                    tstep=200,elems=5,colpoints=1)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 test.set_const_IC("O2","Unaged","250C",0.002330029)
-test.set_const_IC("H2O","Unaged","250C",0.001144255)
+test.set_const_IC("H2O","Unaged","250C",0.001174)
 test.set_const_IC("NH3","Unaged","250C",0)
-test.set_const_IC("NO","Unaged","250C",6.9239E-6)
+test.set_const_IC("NO","Unaged","250C",0)
 test.set_const_IC("NO2","Unaged","250C",0)
 test.set_const_IC("N2O","Unaged","250C",0)
 test.set_const_IC("N2","Unaged","250C",0.0184)
@@ -665,12 +666,6 @@ test.unfix_reaction("r16b")
 test.unfix_reaction("r24")
 test.unfix_reaction("r32")
 test.unfix_reaction("r40")
-
-test.unfix_reaction("r11")
-test.unfix_reaction("r19a")
-test.unfix_reaction("r19b")
-test.unfix_reaction("r27")
-test.unfix_reaction("r35")
 test.unfix_reaction("r43")
 
 
@@ -679,8 +674,8 @@ test.initialize_simulator()
 test.finalize_auto_scaling()
 test.run_solver()
 
-test.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", file_name="scr_partial_break.txt")
+test.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", file_name="")
 #test.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", test.model.z.first(), file_name="protocol.txt")
 #test.print_results_all_locations(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", file_name="")
 test.print_results_of_integral_average(["q1","q2a","q2b","q3a","q3b","q3c"],
-                                        "Unaged", "250C", file_name="scr_partial_int.txt")
+                                        "Unaged", "250C", file_name="")

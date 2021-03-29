@@ -1,6 +1,7 @@
 # This file is a demo for the 'Isothermal_Monolith_Simulator' object
-
-from isothermal_monolith_catalysis import *
+import sys
+sys.path.append('../..')
+from catalyst.isothermal_monolith_catalysis import *
 
 # Testing
 test = Isothermal_Monolith_Simulator()

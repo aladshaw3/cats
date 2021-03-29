@@ -1,4 +1,6 @@
-from isothermal_monolith_catalysis import *
+import sys
+sys.path.append('../..')
+from catalyst.isothermal_monolith_catalysis import *
 
 # Create a simulator object and Load a full model from json
 test = Isothermal_Monolith_Simulator()

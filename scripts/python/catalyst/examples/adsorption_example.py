@@ -1,6 +1,8 @@
 # This file is a demo for the 'Isothermal_Monolith_Simulator' object
+import sys
+sys.path.append('../..')
 
-from isothermal_monolith_catalysis import *
+from catalyst.isothermal_monolith_catalysis import *
 
 # Fake data for testing
 times = [3,
