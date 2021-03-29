@@ -156,7 +156,7 @@ class Isothermal_Monolith_Simulator(object):
         self.rxn_list = {}
         self.isConBuilt = False
         self.isDiscrete = False
-        self.isInitialSet = {}
+        self.isInitialSet = {}  ## TODO: Fix these to be for species, age, and temp 
         self.isBoundarySet = {}
         self.isObjectiveSet = False
         self.isInitialized = False
@@ -1686,11 +1686,12 @@ class Isothermal_Monolith_Simulator(object):
             self.model.scaling_factor = Suffix(direction=Suffix.EXPORT)
 
         # set scaling for objective function
-        maxobj = value(self.model.obj)
-        if maxobj >= 100:
-            self.model.scaling_factor.set_value(self.model.obj, 0.1 )
-        else:
-            self.model.scaling_factor.set_value(self.model.obj, 1/(maxobj*100) )
+        if self.model.find_component('obj'):
+            maxobj = value(self.model.obj)
+            if maxobj >= 100:
+                self.model.scaling_factor.set_value(self.model.obj, 0.1 )
+            else:
+                self.model.scaling_factor.set_value(self.model.obj, 1/(maxobj*100) )
 
         # Reset constraints for variables and derivative variables
         #       NOT for the constraints though (these should not be rescaled)

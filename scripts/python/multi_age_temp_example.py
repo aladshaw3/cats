@@ -75,6 +75,8 @@ test.fix_all_reactions()
 test.initialize_simulator()
 test.run_solver()
 
+test.save_model_state(file_name="example3.json")
+
 test.print_results_all_locations(["NH3"], "Unaged", "250C", file_name="")
 
 test.print_results_of_breakthrough(["NH3"], "Unaged", "150C", file_name="")
