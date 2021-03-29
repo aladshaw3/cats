@@ -3,29 +3,8 @@ import sys
 sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
-# Sample function for reading a file
-def read_data_file(file):
-    Data = {}
-    i = 0
-    ordered_list = []
-    for line in open(file, "r"):
-        # Read in header that contains species names
-        if i==0:
-            for item in line.split():
-                Data[item] = []
-                ordered_list.append(item)
-        # Read in data for each species
-        else:
-            j=0
-            for item in line.split():
-                Data[ordered_list[j]].append(float(item))
-                j+=1
-        i+=1
-
-    return Data
-
 # Read in the data (data is now a dictionary containing the data we want)
-data = read_data_file("inputfiles/scr_sample_input.txt")
+data = naively_read_data_file("inputfiles/scr_sample_input.txt", factor=1)
 
 # Testing
 test = Isothermal_Monolith_Simulator()
@@ -48,6 +27,9 @@ test.set_data_values_for("NH3","Unaged","250C",5,data["time"],data["NH3"])
 test.set_data_values_for("NO","Unaged","250C",5,data["time"],data["NO"])
 test.set_data_values_for("NO2","Unaged","250C",5,data["time"],data["NO2"])
 test.set_data_values_for("N2O","Unaged","250C",5,data["time"],data["N2O"])
+
+#Clear up memory space after we don't need the dictionary anymore
+data.clear()
 
 test.add_surface_species(["q1","q2a","q2b","q3a","q3b","q3c","q4a","q4b"])
 test.add_surface_sites(["S1","S2","S3a","S3b","S3c"])

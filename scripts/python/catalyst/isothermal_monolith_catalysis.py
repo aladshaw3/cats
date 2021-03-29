@@ -205,6 +205,9 @@ class Isothermal_Monolith_Simulator(object):
         if self.isTimesSet == False:
             print("Error! Cannot setup data times without first specifying model times")
             exit()
+        #if self.isDataTempSet == False:
+        #    print("Error! Cannot setup data times without first specifying age and temperature data sets")
+        #    exit()
         # Modify the point_set such that all data points are within the model
         #       simulation time window (model.t.first(), model.t.last())
         new_list = []
@@ -227,7 +230,6 @@ class Isothermal_Monolith_Simulator(object):
             print("Error! Time dimension must be set first!")
             exit()
 
-        # # TODO: Remove the 'age' Param (it is unused)
         if type(ages) is list:
             i=0
             for item in ages:
@@ -1409,6 +1411,7 @@ class Isothermal_Monolith_Simulator(object):
             i+=1
 
         self.isDataValuesSet[spec] = True
+
 
     # This function will recalculate all linear velocities
     #   based on the space-velocity and temperature and pressure information
@@ -3304,3 +3307,64 @@ class Isothermal_Monolith_Simulator(object):
 
 
     # # TODO: Add plotting functionality?
+
+# Function to read in data values to be used in objective functions
+#   This is the naive read function, which just reads in all information
+#   given by the user. There is an optional 'factor' argument that can
+#   be used to compress some of the data.
+#
+#   The data file should contain all time series data for each species
+#   that was declared to have data associated with it. User should also
+#   use names of the species that make sense in the context of the data.
+#   One suggestion is the give a column name as species_age_temp since
+#   the data needs to be set for each species at all aging conditions
+#   and temperatures. Then, this function returns a dictionary of that
+#   information that the user can use to setup the data in the model.
+#
+#   Input file structure:
+#   ---------------------
+#   time    Spec1   Spec2
+#   val     val_s1  val_s2
+#   ...     ...     ...
+#
+#   First column name must be "time" or "Time" or at least contain
+#   the time. Each subsequent column must have an associated species
+#   name from the declared set of data names. Below each column header
+#   should be the time stamped data.
+#
+#   # TODO: Figure out a way to time-shift all data to a common time window
+def naively_read_data_file(data_file, factor=1):
+    Data = {}
+    Values = {}
+    i = 0
+    ordered_list = []
+    # Read in file and save to dictionary
+    reset = {}
+    for line in open(data_file, "r"):
+        # Read in header that contains species names
+        if i==0:
+            for item in line.split():
+                Data[item] = []
+                Values[item] = 0
+                reset[item] = 1
+                ordered_list.append(item)
+        # Read in data for each species
+        else:
+            j=0
+            for value in line.split():
+                Values[ordered_list[j]] += float(value)
+                j+=1
+            #End column loop
+            for item in Data:
+
+                if reset[item] == factor:
+                    Values[item] = Values[item]/float(factor)
+                    reset[item] = 1
+                    Data[item].append(Values[item])
+                    Values[item] = 0
+                else:
+                    reset[item]+=1
+        i+=1
+    #End line loop
+
+    return Data
