@@ -156,7 +156,7 @@ class Isothermal_Monolith_Simulator(object):
         self.rxn_list = {}
         self.isConBuilt = False
         self.isDiscrete = False
-        self.isInitialSet = {}  ## TODO: Fix these to be for species, age, and temp 
+        self.isInitialSet = {}  ## TODO: Fix these to be for species, age, and temp
         self.isBoundarySet = {}
         self.isObjectiveSet = False
         self.isInitialized = False
@@ -402,7 +402,11 @@ class Isothermal_Monolith_Simulator(object):
                 exit()
         self.isGasSpecSet = True
         for spec in self.model.gas_set:
-            self.isBoundarySet[spec] = False
+            self.isBoundarySet[spec] = {}
+            for age in self.model.age_set:
+                self.isBoundarySet[spec][age] = {}
+                for temp in self.model.T_set:
+                    self.isBoundarySet[spec][age][temp] = False
         self.model.dCb_dz = DerivativeVar(self.model.Cb, wrt=self.model.z, initialize=0, units=units.mol/units.L/units.cm)
         self.model.dCb_dt = DerivativeVar(self.model.Cb, wrt=self.model.t, initialize=0, units=units.mol/units.L/units.min)
         self.model.dC_dt = DerivativeVar(self.model.C, wrt=self.model.t, initialize=0, units=units.mol/units.L/units.min)
@@ -630,7 +634,11 @@ class Isothermal_Monolith_Simulator(object):
 
         self.model.all_species_set = Set(initialize=full_species_list)
         for spec in self.model.all_species_set:
-            self.isInitialSet[spec] = False
+            self.isInitialSet[spec] = {}
+            for age in self.model.age_set:
+                self.isInitialSet[spec][age] = {}
+                for temp in self.model.T_set:
+                    self.isInitialSet[spec][age][temp] = False
         #       Access is [rxn, species]
         self.model.rxn_orders = Param(self.model.all_rxns, self.model.all_species_set,
                                     domain=Reals, initialize=0, mutable=True)
@@ -1221,16 +1229,16 @@ class Isothermal_Monolith_Simulator(object):
             self.model.Cb[spec,age,temp, :, self.model.t.first()].fix()
             self.model.C[spec,age,temp, :, self.model.t.first()].set_value(value)
             self.model.C[spec,age,temp, :, self.model.t.first()].fix()
-            self.isInitialSet[spec] = True
+            self.isInitialSet[spec][age][temp] = True
         if self.isSurfSpecSet == True:
             if spec in self.model.surf_set:
                 self.model.q[spec,age,temp, :, self.model.t.first()].set_value(value)
                 self.model.q[spec,age,temp, :, self.model.t.first()].fix()
-                self.isInitialSet[spec] = True
+                self.isInitialSet[spec][age][temp] = True
             if self.isSitesSet == True:
                 if spec in self.model.site_set:
                     # Do not set this initial value (not a time dependent variable)
-                    self.isInitialSet[spec] = True
+                    self.isInitialSet[spec][age][temp] = True
 
     # Set constant boundary conditions
     def set_const_BC(self,spec,age,temp,value):
@@ -1238,7 +1246,7 @@ class Isothermal_Monolith_Simulator(object):
             print("Error! Cannot specify boundary value for non-gas species")
             exit()
 
-        if self.isInitialSet[spec] == False:
+        if self.isInitialSet[spec][age][temp] == False:
             print("Error! User must specify initial conditions before boundary conditions")
             exit()
 
@@ -1250,7 +1258,7 @@ class Isothermal_Monolith_Simulator(object):
 
         self.model.Cb[spec,age,temp,self.model.z.first(), :].set_value(value)
         self.model.Cb[spec,age,temp,self.model.z.first(), :].fix()
-        self.isBoundarySet[spec] = True
+        self.isBoundarySet[spec][age][temp] = True
 
     # Set time dependent BCs using a 'time_value_pairs' list of tuples
     #       If user does not provide an initial value, it will be assumed 1e-20
@@ -1259,7 +1267,7 @@ class Isothermal_Monolith_Simulator(object):
             print("Error! Cannot specify boundary value for non-gas species")
             exit()
 
-        if self.isInitialSet[spec] == False:
+        if self.isInitialSet[spec][age][temp] == False:
             print("Error! User must specify initial conditions before boundary conditions")
             exit()
 
@@ -1304,7 +1312,7 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(current_bc_value)
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
 
-        self.isBoundarySet[spec] = True
+        self.isBoundarySet[spec][age][temp] = True
 
     # Function to add linear temperature ramp section
     #       Starting temperature will be whatever the temperature is
@@ -1530,9 +1538,11 @@ class Isothermal_Monolith_Simulator(object):
     #           the autoscaling feature tends to fail
     def initialize_auto_scaling(self):
         for spec in self.model.gas_set:
-            if self.isBoundarySet[spec] == False:
-                print("Error! Must specify boundaries before attempting to initialize scaling")
-                exit()
+            for age in self.model.age_set:
+                for temp in self.model.T_set:
+                    if self.isBoundarySet[spec][age][temp] == False:
+                        print("Error! Must specify boundaries before attempting to initialize scaling")
+                        exit()
 
         self.model.scaling_factor = Suffix(direction=Suffix.EXPORT)
 
@@ -1852,9 +1862,18 @@ class Isothermal_Monolith_Simulator(object):
                                                     'obj_scaling_factor': 1,
                                                     'diverging_iterates_tol': 1e50}):
         for spec in self.model.gas_set:
-            if self.isBoundarySet[spec] == False:
-                print("Error! Must specify boundaries before attempting to solve")
-                exit()
+            for age in self.model.age_set:
+                for temp in self.model.T_set:
+                    if self.isBoundarySet[spec][age][temp] == False:
+                        print("Error! Must specify boundaries before attempting to solve")
+                        exit()
+        if self.isSurfSpecSet == True:
+            for spec in self.model.surf_set:
+                for age in self.model.age_set:
+                    for temp in self.model.T_set:
+                        if self.isInitialSet[spec][age][temp] == False:
+                            print("Error! Must specify initial conditions before attempting to solve")
+                            exit()
 
         if self.isVelocityRecalculated == False:
             self.recalculate_linear_velocities(True)
@@ -2115,9 +2134,18 @@ class Isothermal_Monolith_Simulator(object):
                                                     'obj_scaling_factor': 1,
                                                     'diverging_iterates_tol': 1e50}):
         for spec in self.model.gas_set:
-            if self.isBoundarySet[spec] == False:
-                print("Error! Must specify boundaries before attempting to solve")
-                exit()
+            for age in self.model.age_set:
+                for temp in self.model.T_set:
+                    if self.isBoundarySet[spec][age][temp] == False:
+                        print("Error! Must specify boundaries before attempting to solve")
+                        exit()
+        if self.isSurfSpecSet == True:
+            for spec in self.model.surf_set:
+                for age in self.model.age_set:
+                    for temp in self.model.T_set:
+                        if self.isInitialSet[spec][age][temp] == False:
+                            print("Error! Must specify initial conditions before attempting to solve")
+                            exit()
         if self.isObjectiveSet == False:
             print("Warning! No objective function set. Forcing all kinetics to be fixed.")
             self.fix_all_reactions()
@@ -2969,11 +2997,15 @@ class Isothermal_Monolith_Simulator(object):
         if self.isSurfSpecSet == True:
             self.model.q[:,:,:, :, self.model.t.first()].fix()
         for spec in self.isInitialSet:
-            self.isInitialSet[spec] = True
+            for age in self.model.age_set:
+                for temp in self.model.T_set:
+                    self.isInitialSet[spec][age][temp] = True
 
         self.model.Cb[:,:,:,self.model.z.first(), :].fix()
         for spec in self.isBoundarySet:
-            self.isBoundarySet[spec] = True
+            for age in self.model.age_set:
+                for temp in self.model.T_set:
+                    self.isBoundarySet[spec][age][temp] = True
 
 
     # Function to load a model state as an initial condition to next simulation
@@ -3266,7 +3298,9 @@ class Isothermal_Monolith_Simulator(object):
         if self.isSurfSpecSet == True:
             self.model.q[:,:,:, :, self.model.t.first()].fix()
         for spec in self.isInitialSet:
-            self.isInitialSet[spec] = True
+            for age in self.model.age_set:
+                for temp in self.model.T_set:
+                    self.isInitialSet[spec][age][temp] = True
 
 
     # # TODO: Add plotting functionality?
