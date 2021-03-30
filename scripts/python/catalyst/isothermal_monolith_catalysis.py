@@ -1083,6 +1083,8 @@ class Isothermal_Monolith_Simulator(object):
             print("Error! Must build the constraints before calling a discretizer")
             exit()
 
+        print("Starting discretizer. Please wait...")
+
         # Apply the discretizer method
         fd_discretizer = TransformationFactory('dae.finite_difference')
         # Secondary discretizer is for orthogonal collocation methods (if desired)
@@ -1217,6 +1219,7 @@ class Isothermal_Monolith_Simulator(object):
             self.isObjectiveSet = True
 
         self.build_time = (time.time() - self.build_time)
+        print("\tComplete! Elapsed time (s) = "+str(self.build_time))
 
     # Set constant initial conditions
     def set_const_IC(self,spec,age,temp,value):
@@ -1404,6 +1407,9 @@ class Isothermal_Monolith_Simulator(object):
         if len(times) != len(values):
             print("Error! The 'times' list and 'values' list must be of same size")
             exit()
+
+        if len(times) > 500:
+            print("Setting up large data space for "+spec+"->"+str(age)+"->"+str(temp)+" at loc = "+str(loc)+"...")
 
         i=0
         for t in times:
