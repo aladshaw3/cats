@@ -640,15 +640,15 @@ test.fix_reaction("r4a")
 test.fix_reaction("r4b")
 
 # Fix all kinetics, then only unfix some reactions
-test.fix_all_reactions()
+#test.fix_all_reactions()
 
-test.unfix_reaction("r8")
-test.unfix_reaction("r16a")
-test.unfix_reaction("r16b")
-test.unfix_reaction("r24")
-test.unfix_reaction("r32")
-test.unfix_reaction("r40")
-test.unfix_reaction("r43")
+#test.unfix_reaction("r8")
+#test.unfix_reaction("r16a")
+#test.unfix_reaction("r16b")
+#test.unfix_reaction("r24")
+#test.unfix_reaction("r32")
+#test.unfix_reaction("r40")
+#test.unfix_reaction("r43")
 
 
 test.initialize_auto_scaling()
@@ -661,3 +661,4 @@ test.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Un
 #test.print_results_all_locations(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Unaged", "250C", file_name="")
 test.print_results_of_integral_average(["q1","q2a","q2b","q3a","q3b","q3c"],
                                         "Unaged", "250C", file_name="")
+test.print_kinetic_parameter_info(file_name="scr_full_example_params.txt")

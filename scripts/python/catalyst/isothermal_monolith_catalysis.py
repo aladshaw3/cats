@@ -789,6 +789,8 @@ class Isothermal_Monolith_Simulator(object):
                     self.model.B[rxn].setub(info["parameters"]["B"]*1.2)
             except:
                 self.model.B[rxn].set_value(0)
+                self.model.B[rxn].setlb(0)
+                self.model.B[rxn].setub(0)
                 self.model.B[rxn].fix()
         elif rxn in self.model.equ_arrhenius_rxns:
             self.model.Af[rxn].set_value(info["parameters"]["A"])
@@ -1704,7 +1706,7 @@ class Isothermal_Monolith_Simulator(object):
             if maxobj >= 100:
                 self.model.scaling_factor.set_value(self.model.obj, 0.1 )
             else:
-                self.model.scaling_factor.set_value(self.model.obj, 1/(maxobj*100) )
+                self.model.scaling_factor.set_value(self.model.obj, 1/(maxobj) )
 
         # Reset constraints for variables and derivative variables
         #       NOT for the constraints though (these should not be rescaled)
@@ -2515,6 +2517,79 @@ class Isothermal_Monolith_Simulator(object):
             file.write('\n')
         file.write('\n')
         file.close()
+
+    # Define a function to print optimal parameter information to a file
+    def print_kinetic_parameter_info(self, file_name=""):
+        if file_name == "":
+            file_name+="parameter_info"
+            file_name+=".txt"
+
+        folder="output/"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        file = open(folder+file_name,"w")
+
+        for rxn in self.model.all_rxns:
+            line = rxn+" (moles / volume catalyst / time) = "
+            if rxn in self.model.arrhenius_rxns:
+                line+= "k_"+rxn+" * "
+                spec_i=0
+                for spec in self.model.component(rxn+"_reactants"):
+                    if spec_i == 0:
+                        line+= spec+"^("+str(self.model.rxn_orders[rxn,spec].value)+") "
+                    else:
+                        line+= "* "+spec+"^("+str(self.model.rxn_orders[rxn,spec].value)+") "
+                    spec_i+=1
+            elif rxn in self.model.equ_arrhenius_rxns:
+                line+= "kf_"+rxn+" * "
+                spec_i=0
+                for spec in self.model.component(rxn+"_reactants"):
+                    if spec_i == 0:
+                        line+= spec+"^("+str(self.model.rxn_orders[rxn,spec].value)+") "
+                    else:
+                        line+= "* "+spec+"^("+str(self.model.rxn_orders[rxn,spec].value)+") "
+                    spec_i+=1
+                line+= "- kr_"+rxn+" * "
+                spec_i=0
+                for spec in self.model.component(rxn+"_products"):
+                    if spec_i == 0:
+                        line+= spec+"^("+str(self.model.rxn_orders[rxn,spec].value)+") "
+                    else:
+                        line+= "* "+spec+"^("+str(self.model.rxn_orders[rxn,spec].value)+") "
+                    spec_i+=1
+            else:
+                print("Error! It should be impossible for you to get here... Ut oh...")
+                exit()
+            file.write(line)
+            file.write('\n')
+            if rxn in self.model.arrhenius_rxns:
+                file.write("\tk_"+rxn+" = A * T^B * exp[-E/R/T]")
+                file.write('\n')
+                file.write("\t  A (varies) =\t" + str(self.model.A[rxn].value))
+                file.write('\n')
+                file.write("\t  E (J/mol)  =\t" + str(self.model.E[rxn].value))
+                file.write('\n')
+                file.write("\t  B (None)   =\t" + str(self.model.B[rxn].value))
+            elif rxn in self.model.equ_arrhenius_rxns:
+                file.write("\tkf_"+rxn+" = Af * exp[-Ef/R/T]")
+                file.write('\n')
+                file.write("\tkr_"+rxn+" = Af * exp[-dS/R] * exp[-(Ef - dH)/R/T]")
+                file.write('\n')
+                file.write("\t  Af (varies)  =\t" + str(self.model.Af[rxn].value))
+                file.write('\n')
+                file.write("\t  Ef (J/mol)   =\t" + str(self.model.Ef[rxn].value))
+                file.write('\n')
+                file.write("\t  dH (J/mol)   =\t" + str(self.model.dH[rxn].value))
+                file.write('\n')
+                file.write("\t  dS (J/K/mol) =\t" + str(self.model.dS[rxn].value))
+            else:
+                pass
+            file.write('\n')
+            file.write('\n')
+
+        file.close()
+
 
     # Define function to unload/save a model state
     def save_model_state(self, file_name=""):

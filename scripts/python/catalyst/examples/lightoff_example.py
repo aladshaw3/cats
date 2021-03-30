@@ -169,3 +169,5 @@ test.print_results_of_breakthrough(["CO","NO","O2"], "A0", "T0", file_name="", i
 test.print_results_all_locations(["CO","NO","O2"], "A0", "T0", file_name="", include_temp=True)
 
 test.save_model_state(file_name="example2.json")
+
+test.print_kinetic_parameter_info(file_name="example_params2.txt")
