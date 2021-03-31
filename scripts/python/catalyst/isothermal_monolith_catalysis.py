@@ -3316,8 +3316,6 @@ class Isothermal_Monolith_Simulator(object):
         except:
             print(file_name+" does not contain proper data for optimization")
 
-        print("\n........... loading time-space info for all vars ..........")
-
         try:
             cp = 1
             dt = DiscretizationMethod.FiniteDifference
@@ -3335,6 +3333,8 @@ class Isothermal_Monolith_Simulator(object):
             self.discretize_model(method=dt, elems=elems, tstep=tstep, colpoints=cp)
         except:
             print(file_name+" does not contain necessary information for rebuilding and discretization")
+
+        print("\n........... loading time-space info for all vars ..........")
 
         # Set functions to perform AFTER discretization
         for key in obj['model']['T']:
