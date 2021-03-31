@@ -777,16 +777,24 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.E[rxn].setlb(info["parameters"]["E_lb"])
                 self.model.E[rxn].setub(info["parameters"]["E_ub"])
             except:
-                self.model.E[rxn].setlb(info["parameters"]["E"]*0.8)
-                self.model.E[rxn].setub(info["parameters"]["E"]*1.2)
+                if info["parameters"]["E"] >= 0.0:
+                    self.model.E[rxn].setlb(info["parameters"]["E"]*0.8)
+                    self.model.E[rxn].setub(info["parameters"]["E"]*1.2)
+                else:
+                    self.model.E[rxn].setlb(info["parameters"]["E"]*1.2)
+                    self.model.E[rxn].setub(info["parameters"]["E"]*0.8)
             try:
                 self.model.B[rxn].set_value(info["parameters"]["B"])
                 try:
                     self.model.B[rxn].setlb(info["parameters"]["B_lb"])
                     self.model.B[rxn].setub(info["parameters"]["B_ub"])
                 except:
-                    self.model.B[rxn].setlb(info["parameters"]["B"]*0.8)
-                    self.model.B[rxn].setub(info["parameters"]["B"]*1.2)
+                    if info["parameters"]["B"] >= 0.0:
+                        self.model.B[rxn].setlb(info["parameters"]["B"]*0.8)
+                        self.model.B[rxn].setub(info["parameters"]["B"]*1.2)
+                    else:
+                        self.model.B[rxn].setlb(info["parameters"]["B"]*1.2)
+                        self.model.B[rxn].setub(info["parameters"]["B"]*0.8)
             except:
                 self.model.B[rxn].set_value(0)
                 self.model.B[rxn].setlb(0)
@@ -806,8 +814,12 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.Ef[rxn].setlb(info["parameters"]["E_lb"])
                 self.model.Ef[rxn].setub(info["parameters"]["E_ub"])
             except:
-                self.model.Ef[rxn].setlb(info["parameters"]["E"]*0.8)
-                self.model.Ef[rxn].setub(info["parameters"]["E"]*1.2)
+                if info["parameters"]["E"] >= 0.0:
+                    self.model.Ef[rxn].setlb(info["parameters"]["E"]*0.8)
+                    self.model.Ef[rxn].setub(info["parameters"]["E"]*1.2)
+                else:
+                    self.model.Ef[rxn].setlb(info["parameters"]["E"]*1.2)
+                    self.model.Ef[rxn].setub(info["parameters"]["E"]*0.8)
 
             self.model.dH[rxn].set_value(info["parameters"]["dH"])
             try:
@@ -2858,7 +2870,7 @@ class Isothermal_Monolith_Simulator(object):
         file.close()
 
     # Function to load full model from json file
-    def load_model_full(self, file_name):
+    def load_model_full(self, file_name, reset_param_bounds=False):
         # Attempt to load json file
         obj = json.load(open(file_name))
 
@@ -3048,32 +3060,80 @@ class Isothermal_Monolith_Simulator(object):
         # Need special treatment for reaction values
         for key in obj['model']['A']:
             self.model.A[key].set_value(obj['model']['A'][key]['value'])
-            self.model.A[key].setlb(obj['model']['A'][key]['lower'])
-            self.model.A[key].setub(obj['model']['A'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.A[key].setlb(obj['model']['A'][key]['lower'])
+                self.model.A[key].setub(obj['model']['A'][key]['upper'])
+            else:
+                self.model.A[key].setlb(obj['model']['A'][key]['value']*0.8)
+                self.model.A[key].setub(obj['model']['A'][key]['value']*1.2)
         for key in obj['model']['B']:
             self.model.B[key].set_value(obj['model']['B'][key]['value'])
-            self.model.B[key].setlb(obj['model']['B'][key]['lower'])
-            self.model.B[key].setub(obj['model']['B'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.B[key].setlb(obj['model']['B'][key]['lower'])
+                self.model.B[key].setub(obj['model']['B'][key]['upper'])
+            else:
+                if obj['model']['B'][key]['value'] >= 0.0:
+                    self.model.B[key].setlb(obj['model']['B'][key]['value']*0.8)
+                    self.model.B[key].setub(obj['model']['B'][key]['value']*1.2)
+                else:
+                    self.model.B[key].setlb(obj['model']['B'][key]['value']*1.2)
+                    self.model.B[key].setub(obj['model']['B'][key]['value']*0.8)
         for key in obj['model']['E']:
             self.model.E[key].set_value(obj['model']['E'][key]['value'])
-            self.model.E[key].setlb(obj['model']['E'][key]['lower'])
-            self.model.E[key].setub(obj['model']['E'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.E[key].setlb(obj['model']['E'][key]['lower'])
+                self.model.E[key].setub(obj['model']['E'][key]['upper'])
+            else:
+                if obj['model']['E'][key]['value'] >= 0.0:
+                    self.model.E[key].setlb(obj['model']['E'][key]['value']*0.8)
+                    self.model.E[key].setub(obj['model']['E'][key]['value']*1.2)
+                else:
+                    self.model.E[key].setlb(obj['model']['E'][key]['value']*1.2)
+                    self.model.E[key].setub(obj['model']['E'][key]['value']*0.8)
         for key in obj['model']['Af']:
             self.model.Af[key].set_value(obj['model']['Af'][key]['value'])
-            self.model.Af[key].setlb(obj['model']['Af'][key]['lower'])
-            self.model.Af[key].setub(obj['model']['Af'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.Af[key].setlb(obj['model']['Af'][key]['lower'])
+                self.model.Af[key].setub(obj['model']['Af'][key]['upper'])
+            else:
+                self.model.Af[key].setlb(obj['model']['Af'][key]['value']*0.8)
+                self.model.Af[key].setub(obj['model']['Af'][key]['value']*1.2)
         for key in obj['model']['Ef']:
             self.model.Ef[key].set_value(obj['model']['Ef'][key]['value'])
-            self.model.Ef[key].setlb(obj['model']['Ef'][key]['lower'])
-            self.model.Ef[key].setub(obj['model']['Ef'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.Ef[key].setlb(obj['model']['Ef'][key]['lower'])
+                self.model.Ef[key].setub(obj['model']['Ef'][key]['upper'])
+            else:
+                if obj['model']['Ef'][key]['value'] >= 0.0:
+                    self.model.Ef[key].setlb(obj['model']['Ef'][key]['value']*0.8)
+                    self.model.Ef[key].setub(obj['model']['Ef'][key]['value']*1.2)
+                else:
+                    self.model.Ef[key].setlb(obj['model']['Ef'][key]['value']*1.2)
+                    self.model.Ef[key].setub(obj['model']['Ef'][key]['value']*0.8)
         for key in obj['model']['dH']:
             self.model.dH[key].set_value(obj['model']['dH'][key]['value'])
-            self.model.dH[key].setlb(obj['model']['dH'][key]['lower'])
-            self.model.dH[key].setub(obj['model']['dH'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.dH[key].setlb(obj['model']['dH'][key]['lower'])
+                self.model.dH[key].setub(obj['model']['dH'][key]['upper'])
+            else:
+                if obj['model']['dH'][key]['value'] >= 0.0:
+                    self.model.dH[key].setlb(obj['model']['dH'][key]['value']*0.8)
+                    self.model.dH[key].setub(obj['model']['dH'][key]['value']*1.2)
+                else:
+                    self.model.dH[key].setlb(obj['model']['dH'][key]['value']*1.2)
+                    self.model.dH[key].setub(obj['model']['dH'][key]['value']*0.8)
         for key in obj['model']['dS']:
             self.model.dS[key].set_value(obj['model']['dS'][key]['value'])
-            self.model.dS[key].setlb(obj['model']['dS'][key]['lower'])
-            self.model.dS[key].setub(obj['model']['dS'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.dS[key].setlb(obj['model']['dS'][key]['lower'])
+                self.model.dS[key].setub(obj['model']['dS'][key]['upper'])
+            else:
+                if obj['model']['dS'][key]['value'] >= 0.0:
+                    self.model.dS[key].setlb(obj['model']['dS'][key]['value']*0.8)
+                    self.model.dS[key].setub(obj['model']['dS'][key]['value']*1.2)
+                else:
+                    self.model.dS[key].setlb(obj['model']['dS'][key]['value']*1.2)
+                    self.model.dS[key].setub(obj['model']['dS'][key]['value']*0.8)
 
         #Fix ICs and BCs
         self.model.Cb[:,:,:, :, self.model.t.first()].fix()
@@ -3110,7 +3170,7 @@ class Isothermal_Monolith_Simulator(object):
     #   NOTE: User MUST also provide new temperature profiles and/or space-velocities
     #           (if applicable). Simulation will otherwise assume new temperatures
     #           are the prior temperatures extended from the final state.
-    def load_model_state_as_IC(self, file_name, new_time_window, tstep=None, state=None):
+    def load_model_state_as_IC(self, file_name, new_time_window, tstep=None, state=None, reset_param_bounds=False):
         ## TODO: Make sure that if state is in new_time_window, that additional
         #           information is carried over
 
@@ -3349,32 +3409,80 @@ class Isothermal_Monolith_Simulator(object):
         # Need special treatment for reaction values
         for key in obj['model']['A']:
             self.model.A[key].set_value(obj['model']['A'][key]['value'])
-            self.model.A[key].setlb(obj['model']['A'][key]['lower'])
-            self.model.A[key].setub(obj['model']['A'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.A[key].setlb(obj['model']['A'][key]['lower'])
+                self.model.A[key].setub(obj['model']['A'][key]['upper'])
+            else:
+                self.model.A[key].setlb(obj['model']['A'][key]['value']*0.8)
+                self.model.A[key].setub(obj['model']['A'][key]['value']*1.2)
         for key in obj['model']['B']:
             self.model.B[key].set_value(obj['model']['B'][key]['value'])
-            self.model.B[key].setlb(obj['model']['B'][key]['lower'])
-            self.model.B[key].setub(obj['model']['B'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.B[key].setlb(obj['model']['B'][key]['lower'])
+                self.model.B[key].setub(obj['model']['B'][key]['upper'])
+            else:
+                if obj['model']['B'][key]['value'] >= 0.0:
+                    self.model.B[key].setlb(obj['model']['B'][key]['value']*0.8)
+                    self.model.B[key].setub(obj['model']['B'][key]['value']*1.2)
+                else:
+                    self.model.B[key].setlb(obj['model']['B'][key]['value']*1.2)
+                    self.model.B[key].setub(obj['model']['B'][key]['value']*0.8)
         for key in obj['model']['E']:
             self.model.E[key].set_value(obj['model']['E'][key]['value'])
-            self.model.E[key].setlb(obj['model']['E'][key]['lower'])
-            self.model.E[key].setub(obj['model']['E'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.E[key].setlb(obj['model']['E'][key]['lower'])
+                self.model.E[key].setub(obj['model']['E'][key]['upper'])
+            else:
+                if obj['model']['E'][key]['value'] >= 0.0:
+                    self.model.E[key].setlb(obj['model']['E'][key]['value']*0.8)
+                    self.model.E[key].setub(obj['model']['E'][key]['value']*1.2)
+                else:
+                    self.model.E[key].setlb(obj['model']['E'][key]['value']*1.2)
+                    self.model.E[key].setub(obj['model']['E'][key]['value']*0.8)
         for key in obj['model']['Af']:
             self.model.Af[key].set_value(obj['model']['Af'][key]['value'])
-            self.model.Af[key].setlb(obj['model']['Af'][key]['lower'])
-            self.model.Af[key].setub(obj['model']['Af'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.Af[key].setlb(obj['model']['Af'][key]['lower'])
+                self.model.Af[key].setub(obj['model']['Af'][key]['upper'])
+            else:
+                self.model.Af[key].setlb(obj['model']['Af'][key]['value']*0.8)
+                self.model.Af[key].setub(obj['model']['Af'][key]['value']*1.2)
         for key in obj['model']['Ef']:
             self.model.Ef[key].set_value(obj['model']['Ef'][key]['value'])
-            self.model.Ef[key].setlb(obj['model']['Ef'][key]['lower'])
-            self.model.Ef[key].setub(obj['model']['Ef'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.Ef[key].setlb(obj['model']['Ef'][key]['lower'])
+                self.model.Ef[key].setub(obj['model']['Ef'][key]['upper'])
+            else:
+                if obj['model']['Ef'][key]['value'] >= 0.0:
+                    self.model.Ef[key].setlb(obj['model']['Ef'][key]['value']*0.8)
+                    self.model.Ef[key].setub(obj['model']['Ef'][key]['value']*1.2)
+                else:
+                    self.model.Ef[key].setlb(obj['model']['Ef'][key]['value']*1.2)
+                    self.model.Ef[key].setub(obj['model']['Ef'][key]['value']*0.8)
         for key in obj['model']['dH']:
             self.model.dH[key].set_value(obj['model']['dH'][key]['value'])
-            self.model.dH[key].setlb(obj['model']['dH'][key]['lower'])
-            self.model.dH[key].setub(obj['model']['dH'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.dH[key].setlb(obj['model']['dH'][key]['lower'])
+                self.model.dH[key].setub(obj['model']['dH'][key]['upper'])
+            else:
+                if obj['model']['dH'][key]['value'] >= 0.0:
+                    self.model.dH[key].setlb(obj['model']['dH'][key]['value']*0.8)
+                    self.model.dH[key].setub(obj['model']['dH'][key]['value']*1.2)
+                else:
+                    self.model.dH[key].setlb(obj['model']['dH'][key]['value']*1.2)
+                    self.model.dH[key].setub(obj['model']['dH'][key]['value']*0.8)
         for key in obj['model']['dS']:
             self.model.dS[key].set_value(obj['model']['dS'][key]['value'])
-            self.model.dS[key].setlb(obj['model']['dS'][key]['lower'])
-            self.model.dS[key].setub(obj['model']['dS'][key]['upper'])
+            if reset_param_bounds == False:
+                self.model.dS[key].setlb(obj['model']['dS'][key]['lower'])
+                self.model.dS[key].setub(obj['model']['dS'][key]['upper'])
+            else:
+                if obj['model']['dS'][key]['value'] >= 0.0:
+                    self.model.dS[key].setlb(obj['model']['dS'][key]['value']*0.8)
+                    self.model.dS[key].setub(obj['model']['dS'][key]['value']*1.2)
+                else:
+                    self.model.dS[key].setlb(obj['model']['dS'][key]['value']*1.2)
+                    self.model.dS[key].setub(obj['model']['dS'][key]['value']*0.8)
 
         #Fix ICs and BCs
         self.model.Cb[:,:,:, :, self.model.t.first()].fix()
