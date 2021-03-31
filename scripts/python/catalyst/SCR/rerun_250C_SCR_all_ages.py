@@ -13,7 +13,7 @@ writefile = "250C_model"+run+".json"
 
 #NOTE: Other output names can remain the same, most important thing is .json file
 sim = Isothermal_Monolith_Simulator()
-sim.load_model_full(readfile)
+sim.load_model_full(readfile, reset_param_bounds=True)
 
 sim.fix_reaction("r1")
 sim.fix_reaction("r2a")

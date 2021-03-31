@@ -164,6 +164,7 @@ class Isothermal_Monolith_Simulator(object):
         self.initialize_time = 0
         self.solve_time = 0
         self.isVelocityRecalculated = False
+        self.load_time = 0
 
         self.isDataBoundsSet = False
         self.isDataTimesSet = False
@@ -2871,6 +2872,8 @@ class Isothermal_Monolith_Simulator(object):
 
     # Function to load full model from json file
     def load_model_full(self, file_name, reset_param_bounds=False):
+        self.load_time = time.time()
+        print("----------- Attempting to load model from file ------------")
         # Attempt to load json file
         obj = json.load(open(file_name))
 
@@ -2992,6 +2995,8 @@ class Isothermal_Monolith_Simulator(object):
             self.discretize_model(method=dt, elems=elems, tstep=tstep, colpoints=cp)
         except:
             print(file_name+" does not contain necessary information for rebuilding and discretization")
+
+        print("........... loading time-space info for all vars ..........")
 
         # Set functions to perform AFTER discretization
         for key in obj['model']['T']:
@@ -3151,6 +3156,9 @@ class Isothermal_Monolith_Simulator(object):
                 for temp in self.model.T_set:
                     self.isBoundarySet[spec][age][temp] = True
 
+        self.load_time = (time.time() - self.load_time)
+        print("============ Loading Completed in "+str(self.load_time)+" (s) ============")
+
 
     # Function to load a model state as an initial condition to next simulation
     #   User must provide the following:
@@ -3171,8 +3179,8 @@ class Isothermal_Monolith_Simulator(object):
     #           (if applicable). Simulation will otherwise assume new temperatures
     #           are the prior temperatures extended from the final state.
     def load_model_state_as_IC(self, file_name, new_time_window, tstep=None, state=None, reset_param_bounds=False):
-        ## TODO: Make sure that if state is in new_time_window, that additional
-        #           information is carried over
+        print("----------- Attempting to load model from file ------------")
+        self.load_time = time.time()
 
         # Attempt to load json file
         obj = json.load(open(file_name))
@@ -3307,6 +3315,8 @@ class Isothermal_Monolith_Simulator(object):
                             self.set_data_values_for(spec,age,temp,loc,times,values)
         except:
             print(file_name+" does not contain proper data for optimization")
+
+        print("........... loading time-space info for all vars ..........")
 
         try:
             cp = 1
@@ -3493,6 +3503,9 @@ class Isothermal_Monolith_Simulator(object):
             for age in self.model.age_set:
                 for temp in self.model.T_set:
                     self.isInitialSet[spec][age][temp] = True
+
+        self.load_time = (time.time() - self.load_time)
+        print("============ Loading Completed in "+str(self.load_time)+" (s) ============")
 
 
     # # TODO: Add plotting functionality?
