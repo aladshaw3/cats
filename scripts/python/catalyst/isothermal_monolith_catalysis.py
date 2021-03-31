@@ -29,7 +29,7 @@ import yaml
 import os.path
 from os import path
 from enum import Enum
-import time
+import time as TIME
 import datetime
 import json
 from ast import literal_eval
@@ -160,7 +160,7 @@ class Isothermal_Monolith_Simulator(object):
         self.isBoundarySet = {}
         self.isObjectiveSet = False
         self.isInitialized = False
-        self.build_time = time.time()
+        self.build_time = TIME.time()
         self.initialize_time = 0
         self.solve_time = 0
         self.isVelocityRecalculated = False
@@ -1231,7 +1231,7 @@ class Isothermal_Monolith_Simulator(object):
             self.model.obj = Objective(rule=self.norm_objective)
             self.isObjectiveSet = True
 
-        self.build_time = (time.time() - self.build_time)
+        self.build_time = (TIME.time() - self.build_time)
         print("\tComplete! Elapsed time (s) = "+str(self.build_time))
 
     # Set constant initial conditions
@@ -1903,7 +1903,7 @@ class Isothermal_Monolith_Simulator(object):
             self.recalculate_linear_velocities(True)
 
         # Setup a dictionary to determine which reaction to unfix after solve
-        self.initialize_time = time.time()
+        self.initialize_time = TIME.time()
         fixed_dict = {}
         for rxn in self.rxn_list:
             fixed_dict[rxn]=self.rxn_list[rxn]["fixed"]
@@ -1946,7 +1946,7 @@ class Isothermal_Monolith_Simulator(object):
                 for time_solve in self.model.t:
                     # Solve 1 time at a time starting with the i=1 time step (since IC is known)
                     if i > 0:
-                        start = time.time()
+                        start = TIME.time()
                         print("\t... time_step " + str(time_solve))
                         self.model.Cb[:, age_solve, temp_solve, :, time_solve].unfix()
                         self.model.C[:, age_solve, temp_solve, :, time_solve].unfix()
@@ -2143,7 +2143,7 @@ class Isothermal_Monolith_Simulator(object):
                 self.unfix_reaction(rxn)
 
         self.isInitialized = True
-        self.initialize_time = (time.time() - self.initialize_time)
+        self.initialize_time = (TIME.time() - self.initialize_time)
         return (results.solver.status, results.solver.termination_condition)
         # End Initializer
 
@@ -2175,7 +2175,7 @@ class Isothermal_Monolith_Simulator(object):
             self.fix_all_reactions()
         if self.isVelocityRecalculated == False:
             self.recalculate_linear_velocities(True)
-        self.solve_time = time.time()
+        self.solve_time = TIME.time()
 
         solver = SolverFactory('ipopt')
 
@@ -2296,7 +2296,7 @@ class Isothermal_Monolith_Simulator(object):
             print("\tStatus: " + str(results.solver.status))
             print("\tTermination Condition: " + str(results.solver.termination_condition))
 
-        self.solve_time = (time.time() - self.solve_time)
+        self.solve_time = (TIME.time() - self.solve_time)
 
         print("\nModel Statistics")
         print("-----------------")
@@ -2872,8 +2872,8 @@ class Isothermal_Monolith_Simulator(object):
 
     # Function to load full model from json file
     def load_model_full(self, file_name, reset_param_bounds=False):
-        self.load_time = time.time()
-        print("----------- Attempting to load model from file ------------")
+        self.load_time = TIME.time()
+        print("----------- Attempting to load model from file ------------\n")
         # Attempt to load json file
         obj = json.load(open(file_name))
 
@@ -2996,7 +2996,7 @@ class Isothermal_Monolith_Simulator(object):
         except:
             print(file_name+" does not contain necessary information for rebuilding and discretization")
 
-        print("........... loading time-space info for all vars ..........")
+        print("\n........... loading time-space info for all vars ..........")
 
         # Set functions to perform AFTER discretization
         for key in obj['model']['T']:
@@ -3156,8 +3156,8 @@ class Isothermal_Monolith_Simulator(object):
                 for temp in self.model.T_set:
                     self.isBoundarySet[spec][age][temp] = True
 
-        self.load_time = (time.time() - self.load_time)
-        print("============ Loading Completed in "+str(self.load_time)+" (s) ============")
+        self.load_time = (TIME.time() - self.load_time)
+        print("============ Loading Completed in "+str(self.load_time)+" (s) ============\n")
 
 
     # Function to load a model state as an initial condition to next simulation
@@ -3179,8 +3179,8 @@ class Isothermal_Monolith_Simulator(object):
     #           (if applicable). Simulation will otherwise assume new temperatures
     #           are the prior temperatures extended from the final state.
     def load_model_state_as_IC(self, file_name, new_time_window, tstep=None, state=None, reset_param_bounds=False):
-        print("----------- Attempting to load model from file ------------")
-        self.load_time = time.time()
+        print("----------- Attempting to load model from file ------------\n")
+        self.load_time = TIME.time()
 
         # Attempt to load json file
         obj = json.load(open(file_name))
@@ -3316,7 +3316,7 @@ class Isothermal_Monolith_Simulator(object):
         except:
             print(file_name+" does not contain proper data for optimization")
 
-        print("........... loading time-space info for all vars ..........")
+        print("\n........... loading time-space info for all vars ..........")
 
         try:
             cp = 1
@@ -3504,8 +3504,8 @@ class Isothermal_Monolith_Simulator(object):
                 for temp in self.model.T_set:
                     self.isInitialSet[spec][age][temp] = True
 
-        self.load_time = (time.time() - self.load_time)
-        print("============ Loading Completed in "+str(self.load_time)+" (s) ============")
+        self.load_time = (TIME.time() - self.load_time)
+        print("============ Loading Completed in "+str(self.load_time)+" (s) ============\n")
 
 
     # # TODO: Add plotting functionality?
