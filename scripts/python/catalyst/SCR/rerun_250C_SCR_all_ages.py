@@ -7,8 +7,8 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 # Create a simulator object and Load a full model from json
-run = "02"                              #update this number to reflect changes in runs
-readfile = 'output/250C_model.json'     #update this name to reflect which model to load
+run = "06"                              #update this number to reflect changes in runs
+readfile = 'output/250C_model05.json'     #update this name to reflect which model to load
 writefile = "250C_model"+run+".json"
 
 #NOTE: Other output names can remain the same, most important thing is .json file
@@ -23,6 +23,14 @@ sim.fix_reaction("r3b")
 sim.fix_reaction("r3c")
 sim.fix_reaction("r4a")
 sim.fix_reaction("r4b")
+
+#Should fix also the reactions for ammonia oxidation (need them to keep their relevence)
+sim.fix_reaction("r5")
+sim.fix_reaction("r13a")
+sim.fix_reaction("r13b")
+sim.fix_reaction("r21")
+sim.fix_reaction("r29")
+sim.fix_reaction("r37")
 
 sim.initialize_auto_scaling()
 sim.initialize_simulator()
