@@ -2069,6 +2069,7 @@ class Isothermal_Monolith_Simulator(object):
                             print("\tResults are loaded, but need to be checked")
                             self.model.solutions.load_from(results)
                         else:
+                            self.model.solutions.load_from(results)
                             print("An Error has occurred at (" + str(age_solve) + ", " + str(temp_solve) + ", " + str(time_solve) + ")")
                             print("\tStatus: " + str(results.solver.status))
                             print("\tTermination Condition: " + str(results.solver.termination_condition))
