@@ -34,7 +34,7 @@ sim.fix_reaction("r37")
 
 #sim.initialize_auto_scaling()
 #sim.initialize_simulator(console_out=True)
-sim.isInitialized = True #manually override check in finalize_auto_scaling
+#sim.isInitialized = True #manually override check in finalize_auto_scaling
 sim.finalize_auto_scaling()
 sim.run_solver()
 

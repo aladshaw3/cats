@@ -3157,6 +3157,8 @@ class Isothermal_Monolith_Simulator(object):
                 for temp in self.model.T_set:
                     self.isBoundarySet[spec][age][temp] = True
 
+        self.isInitialized = True
+
         self.load_time = (TIME.time() - self.load_time)
         print("============ Loading Completed in "+str(self.load_time)+" (s) ============\n")
 
@@ -3510,6 +3512,9 @@ class Isothermal_Monolith_Simulator(object):
 
 
     # # TODO: Add plotting functionality?
+    # # TODO: Plot at time (all locations)
+    # # TODO: Plot at location (all times)
+    # # TODO: Plot vs Data (at given location, all times)
 
 # Function to read in data values to be used in objective functions
 #   This is the naive read function, which just reads in all information
