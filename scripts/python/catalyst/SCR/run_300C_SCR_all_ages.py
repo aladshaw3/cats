@@ -796,7 +796,7 @@ sim.set_const_BC("N2","2hr","300C",0.0184)
 # ---------------- 4hr BCs ------------------
 sim.set_time_dependent_BC("O2","4hr","300C",
                             time_value_pairs=[(2.091,4.253E-5),
-                                              (30.7583,0.002126764)],
+                                              (20.591,0.002126764)],
                             initial_value=0.002126764)
 
 sim.set_time_dependent_BC("H2O","4hr","300C",
