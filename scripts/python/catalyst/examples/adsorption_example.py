@@ -133,3 +133,6 @@ test.plot_at_locations(["q1","S1"], ["Unaged"], ["250C"], [5], display_live=Fals
 
 test.plot_at_locations(["NH3"], ["Unaged"], ["250C"], [0,1,2,3,4,5], display_live=False)
 test.plot_at_locations(["q1","S1"], ["Unaged"], ["250C"], [0,1,2,3,4,5], display_live=False)
+
+test.plot_at_times(["q1"], ["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=False)
+test.plot_at_times(["NH3"], ["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=False)

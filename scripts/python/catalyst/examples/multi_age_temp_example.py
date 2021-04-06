@@ -94,3 +94,6 @@ test.print_results_of_integral_average(["q1"], "2hr", "250C", file_name="")
 
 test.plot_at_locations(["NH3"], ["Unaged","2hr"], ["150C","250C"], [5], display_live=False)
 test.plot_at_locations(["q1","S1"], ["Unaged","2hr"], ["150C","250C"], [5], display_live=False)
+
+test.plot_at_times(["NH3"], ["Unaged","2hr"], ["150C","250C"],
+                    [0,4,8,12,16,20], display_live=True)

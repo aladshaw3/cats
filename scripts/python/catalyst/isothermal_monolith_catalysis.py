@@ -3511,9 +3511,6 @@ class Isothermal_Monolith_Simulator(object):
         print("============ Loading Completed in "+str(self.load_time)+" (s) ============\n")
 
 
-    # # TODO: Add plotting functionality?
-    # # TODO: Plot at time (all locations)
-    # # TODO: Plot at location (all times)
     # # TODO: Plot vs Data (at given location, all times)
 
     # Function to plot a species for all times at a series of locations
@@ -3625,8 +3622,110 @@ class Isothermal_Monolith_Simulator(object):
 
 
     # Function to plot a speices for all locations at a series of times
-    def plot_at_times(self):
-        pass
+    #   User must provide...
+    #       spec_list = list of names of species to plot together
+    #       age_list = list of names of ages to plot together
+    #       temp_list = list of names of isothermal temperatures to plot together
+    #       time_list = list of values of times for variables
+    #       display_live = (optional) If true, plots will be shown to user during runtime
+    #       file_name = (optional) name of file to save
+    #       file_type = (optional) type of image file to save as
+    def plot_at_times(self, spec_list, age_list, temp_list, time_list,
+                        display_live=False, file_name="", file_type=".png"):
+        if type(spec_list) is not list:
+            print("Error! Need to provide species as a list (even if it is just one species)")
+            exit()
+        if type(age_list) is not list:
+            print("Error! Need to provide ages as a list (even if it is just one species)")
+            exit()
+        if type(temp_list) is not list:
+            print("Error! Need to provide temperature sets as a list (even if it is just one species)")
+            exit()
+        if type(time_list) is not list:
+            print("Error! Need to provide times as a list (even if it is just one species)")
+            exit()
+
+        #Check lists for errors
+        for spec in spec_list:
+            if spec not in self.model.all_species_set:
+                print("Error! Invalid species in given list")
+                exit()
+        for age in age_list:
+            if age not in self.model.age_set:
+                print("Error! Invalid age in given list")
+                exit()
+        for temp in temp_list:
+            if temp not in self.model.T_set:
+                print("Error! Invalid temperature in given list")
+                exit()
+        true_time_list = []
+        for time in time_list:
+            if time not in self.model.t:
+                print("WARNING: Given time is not a point in the simulation. Updating to nearest time")
+                nearest_time_index = self.model.t.find_nearest_index(time)
+                if self.model.t[nearest_time_index] not in true_time_list:
+                    true_time_list.append(self.model.t[nearest_time_index])
+            else:
+                if time not in true_time_list:
+                    true_time_list.append(time)
+
+
+        #Check file name and type
+        if file_name == "":
+            for spec in spec_list:
+                file_name+=spec+"_"
+
+        folder="output/"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        if file_type != ".png" and file_type != ".pdf" and file_type != ".ps" and file_type != ".eps" and file_type != ".svg":
+            print("Warning! Unsupported image file type...")
+            print("\tDefaulting to .png")
+            file_type = ".png"
+
+        full_file_name = folder+file_name+"Plots"+file_type
+
+        xvals = list(self.model.z.data())
+        fig,ax = plt.subplots(figsize=(10,5))
+        leg=[]
+        # # TODO: These units may change later based on user input units
+        x_units = "(cm)"
+        y_units = "(mol/L)"
+        ylab1 = ""
+        for spec in spec_list:
+            ylab1 += spec+"\n"
+            for age in age_list:
+                for temp in temp_list:
+                    for time in true_time_list:
+                        leg_name = spec+"_"+age+"_"+temp+"_at_"+str(time)
+                        leg.append(leg_name)
+                        if spec in self.model.gas_set:
+                            yvals = list(self.model.Cb[spec,age,temp,:,time].value)
+                            ax.plot(xvals,yvals)
+                        else:
+                            if self.isSurfSpecSet == True:
+                                if spec in self.model.surf_set:
+                                    yvals = list(self.model.q[spec,age,temp,:,time].value)
+                                else:
+                                    if self.isSitesSet == True:
+                                        if spec in self.model.site_set:
+                                            yvals = list(self.model.S[spec,age,temp,:,time].value)
+                                        else:
+                                            print("Error!")
+                                            exit()
+                            ax.plot(xvals,yvals)
+
+        plt.legend(leg, loc='center left', bbox_to_anchor=(1, 0.5))
+        ax.set_xlabel("Z "+x_units)
+        ax.set_ylabel(ylab1+y_units)
+        plt.tight_layout()
+        plt.savefig(full_file_name)
+        if display_live == True:
+            fig.show()
+            print("\nDisplaying plot. Press enter to continue...(this closes the images)")
+            input()
+        plt.close()
 
 # Function to read in data values to be used in objective functions
 #   This is the naive read function, which just reads in all information
