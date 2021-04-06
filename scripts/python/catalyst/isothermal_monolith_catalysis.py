@@ -156,7 +156,7 @@ class Isothermal_Monolith_Simulator(object):
         self.rxn_list = {}
         self.isConBuilt = False
         self.isDiscrete = False
-        self.isInitialSet = {}  ## TODO: Fix these to be for species, age, and temp
+        self.isInitialSet = {}
         self.isBoundarySet = {}
         self.isObjectiveSet = False
         self.isInitialized = False
@@ -3511,8 +3511,6 @@ class Isothermal_Monolith_Simulator(object):
         print("============ Loading Completed in "+str(self.load_time)+" (s) ============\n")
 
 
-    # # TODO: Plot vs Data (at given location, all times)
-
     # Function to plot a species for all times at a series of locations
     #   User must provide...
     #       spec_list = list of names of species to plot together
@@ -3726,6 +3724,94 @@ class Isothermal_Monolith_Simulator(object):
             print("\nDisplaying plot. Press enter to continue...(this closes the images)")
             input()
         plt.close()
+
+
+    # Function to plot a species for all times at a series of locations
+    #   User must provide...
+    #       spec = nams of species to plot (must be a gas species)
+    #       age = name of ages to plot
+    #       temp = name of isothermal temperatures to plot
+    #       loc = value of location for variables and data
+    #       display_live = (optional) If true, plots will be shown to user during runtime
+    #       file_name = (optional) name of file to save
+    #       file_type = (optional) type of image file to save as
+    def plot_vs_data(self, spec, age, temp, loc,
+                    display_live=False, file_name="", file_type=".png"):
+        if spec not in self.model.gas_set:
+            print("Error! Species name not found in set of model gases")
+            exit()
+        if spec not in self.model.data_gas_set:
+            print("Error! Species name not found in set of data gases")
+            exit()
+
+        if age not in self.model.age_set:
+            print("Error! Age name not found in set of model ages")
+            exit()
+        if age not in self.model.data_age_set:
+            print("Error! Age name not found in set of data ages")
+            exit()
+
+        if temp not in self.model.T_set:
+            print("Error! Temperature name not found in set of model temperatures")
+            exit()
+        if temp not in self.model.data_T_set:
+            print("Error! Temperature name not found in set of data temperatures")
+            exit()
+
+        true_loc = loc
+        true_data_loc = loc
+        if loc not in self.model.z_data:
+            print("Error! Location value not found in set of location data")
+            exit()
+        if loc not in self.model.z:
+            print("WARNING: Given location is not a node in the mesh. Updating to nearest node")
+            nearest_loc_index = self.model.z.find_nearest_index(loc)
+            true_loc = self.model.z[nearest_loc_index]
+
+        #Check file name and type
+        if file_name == "":
+            file_name+=spec+"_"+age+"_"+temp+"_at_"+str(loc)
+
+        folder="output/"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        if file_type != ".png" and file_type != ".pdf" and file_type != ".ps" and file_type != ".eps" and file_type != ".svg":
+            print("Warning! Unsupported image file type...")
+            print("\tDefaulting to .png")
+            file_type = ".png"
+
+        full_file_name = folder+file_name+"ComparisonPlots"+file_type
+
+        xvals_model = list(self.model.t.data())
+        xvals_data = list(self.model.t_data.data())
+        fig,ax = plt.subplots(figsize=(10,5))
+        leg=[]
+        x_units = "(min)"
+        y_units = "(mol/L)"
+        ylab = spec+"\n"+y_units
+        xlab = "Time "+x_units
+
+        leg.append(spec+"_Data")
+        yvals_data = list(self.model.Cb_data[spec,age,temp,true_data_loc,:].value)
+        ax.plot(xvals_data,yvals_data,'or')
+
+        leg.append(spec+"_Model")
+        yvals_model = list(self.model.Cb[spec,age,temp,true_loc,:].value)
+        ax.plot(xvals_model,yvals_model,'-k')
+
+        plt.legend(leg, loc='best')
+        ax.set_xlabel(xlab)
+        ax.set_ylabel(ylab)
+        plt.tight_layout()
+        plt.savefig(full_file_name)
+        if display_live == True:
+            fig.show()
+            print("\nDisplaying plot. Press enter to continue...(this closes the images)")
+            input()
+        plt.close()
+
+
 
 # Function to read in data values to be used in objective functions
 #   This is the naive read function, which just reads in all information
