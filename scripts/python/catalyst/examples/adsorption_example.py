@@ -130,3 +130,6 @@ test.print_kinetic_parameter_info(file_name="example_params.txt")
 
 test.plot_at_locations(["NH3"], ["Unaged"], ["250C"], [5], display_live=False)
 test.plot_at_locations(["q1","S1"], ["Unaged"], ["250C"], [5], display_live=False)
+
+test.plot_at_locations(["NH3"], ["Unaged"], ["250C"], [0,1,2,3,4,5], display_live=False)
+test.plot_at_locations(["q1","S1"], ["Unaged"], ["250C"], [0,1,2,3,4,5], display_live=False)

@@ -91,3 +91,6 @@ test.print_results_of_integral_average(["q1"], "2hr", "150C", file_name="")
 
 test.print_results_of_breakthrough(["NH3"], "2hr", "250C", file_name="")
 test.print_results_of_integral_average(["q1"], "2hr", "250C", file_name="")
+
+test.plot_at_locations(["NH3"], ["Unaged","2hr"], ["150C","250C"], [5], display_live=False)
+test.plot_at_locations(["q1","S1"], ["Unaged","2hr"], ["150C","250C"], [5], display_live=False)

@@ -3582,21 +3582,18 @@ class Isothermal_Monolith_Simulator(object):
         full_file_name = folder+file_name+"Plots"+file_type
 
         xvals = list(self.model.t.data())
-        fig,ax = plt.subplots()
+        fig,ax = plt.subplots(figsize=(10,5))
         leg=[]
         # # TODO: These units may change later based on user input units
         x_units = "(min)"
         y_units = "(mol/L)"
         ylab1 = ""
         for spec in spec_list:
-            leg_name = spec
             ylab1 += spec+"\n"
             for age in age_list:
-                leg_name+="_"+age
                 for temp in temp_list:
-                    leg_name+="_"+temp
                     for loc in true_loc_list:
-                        leg_name+="_at_"+str(loc)
+                        leg_name = spec+"_"+age+"_"+temp+"_at_"+str(loc)
                         leg.append(leg_name)
                         if spec in self.model.gas_set:
                             yvals = list(self.model.Cb[spec,age,temp,loc,:].value)
@@ -3614,7 +3611,7 @@ class Isothermal_Monolith_Simulator(object):
                                             exit()
                             ax.plot(xvals,yvals)
 
-        plt.legend(leg)
+        plt.legend(leg, loc='center left', bbox_to_anchor=(1, 0.5))
         ax.set_xlabel("Time "+x_units)
         ax.set_ylabel(ylab1+y_units)
         plt.tight_layout()
