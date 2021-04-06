@@ -3826,6 +3826,13 @@ class Isothermal_Monolith_Simulator(object):
 #   and temperatures. Then, this function returns a dictionary of that
 #   information that the user can use to setup the data in the model.
 #
+#   By default, this method returns a dictionary of lists for time
+#   values and each concentration value. However, the user may request
+#   to return a dictionary of tuples, where time values get rolled
+#   into a tuple for each species as Data[species] = [(time, value), ...]
+#   To use this feature, the time values in the input file MUST have
+#   "time" in the header name.
+#
 #   Input file structure:
 #   ---------------------
 #   time    Spec1   Spec2
@@ -3836,11 +3843,11 @@ class Isothermal_Monolith_Simulator(object):
 #   the time. Each subsequent column must have an associated species
 #   name from the declared set of data names. Below each column header
 #   should be the time stamped data.
-#
-#   # TODO: Figure out a way to time-shift all data to a common time window
-def naively_read_data_file(data_file, factor=1):
+def naively_read_data_file(data_file, factor=1, dict_of_tuples=False):
     Data = {}
+    DataTuples = {}
     Values = {}
+    TimeValue = 0
     i = 0
     ordered_list = []
     # Read in file and save to dictionary
@@ -3848,28 +3855,49 @@ def naively_read_data_file(data_file, factor=1):
     for line in open(data_file, "r"):
         # Read in header that contains species names
         if i==0:
+            firstItem = True
             for item in line.split():
                 Data[item] = []
                 Values[item] = 0
                 reset[item] = 1
                 ordered_list.append(item)
+                if dict_of_tuples == True:
+                    if firstItem == True and "time" not in item.lower():
+                        print("Error! Time must be first column if trying to read as tuples")
+                        exit()
+                    if "time" not in item.lower():
+                        DataTuples[item] = []
+                firstItem = False
         # Read in data for each species
         else:
             j=0
             for value in line.split():
                 Values[ordered_list[j]] += float(value)
+                if dict_of_tuples == True and "time" in ordered_list[j].lower():
+                    TimeValue += float(value)
                 j+=1
             #End column loop
+            wasCalc = False
             for item in Data:
 
                 if reset[item] == factor:
                     Values[item] = Values[item]/float(factor)
+                    if wasCalc == False:
+                        temp_time = TimeValue/float(factor)
+                        wasCalc = True
                     reset[item] = 1
-                    Data[item].append(Values[item])
+                    if dict_of_tuples == False:
+                        Data[item].append(Values[item])
+                    else:
+                        if "time" not in item.lower():
+                            DataTuples[item].append( (temp_time, Values[item]) )
                     Values[item] = 0
+                    TimeValue = 0
                 else:
                     reset[item]+=1
         i+=1
     #End line loop
-
-    return Data
+    if dict_of_tuples == False:
+        return Data
+    else:
+        return DataTuples
