@@ -127,3 +127,6 @@ test.print_results_all_locations(["NH3","q1","S1"], "Unaged", "250C", file_name=
 test.save_model_state(file_name="example.json")
 
 test.print_kinetic_parameter_info(file_name="example_params.txt")
+
+test.plot_at_locations(["NH3"], ["Unaged"], ["250C"], [5], display_live=False)
+test.plot_at_locations(["q1","S1"], ["Unaged"], ["250C"], [5], display_live=False)
