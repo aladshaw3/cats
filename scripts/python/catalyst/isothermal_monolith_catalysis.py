@@ -152,7 +152,7 @@ class Isothermal_Monolith_Simulator(object):
         self.isSitesSet = False
         self.site_list = {}
         self.isRxnSet = False
-        self.isRxnBuilt = False
+        self.isRxnBuilt = {}
         self.rxn_list = {}
         self.isConBuilt = False
         self.isDiscrete = False
@@ -587,6 +587,7 @@ class Isothermal_Monolith_Simulator(object):
         full_rxn_list = []
         for r in rxns:
             full_rxn_list.append(r)
+            self.isRxnBuilt[r] = False
             # Determine what to do with different reaction types
             if rxns[r] == ReactionType.Arrhenius:
                 arr_rxn_list.append(r)
@@ -896,7 +897,136 @@ class Isothermal_Monolith_Simulator(object):
                     if spec in self.model.surf_set:
                         self.model.u_q[spec,rxn,:].set_value(info["override_molar_contribution"][spec])
 
-        self.isRxnBuilt = True
+        self.isRxnBuilt[rxn] = True
+
+    # Function to manually override parameter bounds for reactions
+    #   This is optional. Default values are setup in the 'set_reaction_info' function
+    #       User MUST provide...
+    #           rxn = name of the reaction to apply changes to
+    #           param = name of param to apply changes to
+    #                   ("A", "B", "E", "dH", or "dS")
+    #                       if param is invalid, then nothing is done
+    #
+    #       THEN, User provides either...
+    #           bounds = a tuple containing the lower and upper bounds (lower, upper)
+    #           factor = a non-negative value used as a basis for setting bounds
+    #                       (fractional percent down and up to allow adjustment)
+    #
+    #       If user provides nothing, then nothing happens.
+    #       If user provides both args, then 'bounds' will be used only
+    def set_reaction_param_bounds(self, rxn, param, bounds=None, factor=None):
+        if rxn not in self.model.all_rxns:
+            print("Error! Invalid reaction given. Continuing anyway.")
+            return
+        if self.isRxnBuilt[rxn] == False:
+            print("Error! Cannot changes bounds of reaction without first calling 'set_reaction_info'")
+            print("\tSkipping this action...")
+            return
+        if bounds != None:
+            if type(bounds) is not tuple:
+                print("Error! Bounds must be given as a tuple argument (lower, upper)")
+                return
+            if bounds[0] > bounds[1]:
+                print("Error! Bounds must be given as an ORDERED tuple argument (lower, upper)")
+                return
+        if factor != None:
+            if factor < 0:
+                factor = 0
+            factor_up = factor
+            factor_low = factor
+            if factor >= 1:
+                factor_low = 0.99
+        if rxn in self.model.arrhenius_rxns:
+            if param == "A":
+                if bounds != None:
+                    self.model.A[rxn].setlb(bounds[0])
+                    self.model.A[rxn].setub(bounds[1])
+                    return
+                if factor != None:
+                    self.model.A[rxn].setlb(self.model.A[rxn].value*(1-factor_low))
+                    self.model.A[rxn].setub(self.model.A[rxn].value*(1+factor_up))
+                    return
+            elif param == "B":
+                if bounds != None:
+                    self.model.B[rxn].setlb(bounds[0])
+                    self.model.B[rxn].setub(bounds[1])
+                    return
+                if factor != None:
+                    if self.model.B[rxn].value >=0:
+                        self.model.B[rxn].setlb(self.model.B[rxn].value*(1-factor_low))
+                        self.model.B[rxn].setub(self.model.B[rxn].value*(1+factor_up))
+                    else:
+                        self.model.B[rxn].setub(self.model.B[rxn].value*(1-factor_low))
+                        self.model.B[rxn].setlb(self.model.B[rxn].value*(1+factor_up))
+                    return
+            elif param == "E":
+                if bounds != None:
+                    self.model.E[rxn].setlb(bounds[0])
+                    self.model.E[rxn].setub(bounds[1])
+                    return
+                if factor != None:
+                    if self.model.E[rxn].value >=0:
+                        self.model.E[rxn].setlb(self.model.E[rxn].value*(1-factor_low))
+                        self.model.E[rxn].setub(self.model.E[rxn].value*(1+factor_up))
+                    else:
+                        self.model.E[rxn].setub(self.model.E[rxn].value*(1-factor_low))
+                        self.model.E[rxn].setlb(self.model.E[rxn].value*(1+factor_up))
+                    return
+            else:
+                print("Error! Invalid parameter name")
+                return
+        if rxn in self.model.equ_arrhenius_rxns:
+            if param == "A":
+                if bounds != None:
+                    self.model.Af[rxn].setlb(bounds[0])
+                    self.model.Af[rxn].setub(bounds[1])
+                    return
+                if factor != None:
+                    self.model.Af[rxn].setlb(self.model.Af[rxn].value*(1-factor_low))
+                    self.model.Af[rxn].setub(self.model.Af[rxn].value*(1+factor_up))
+                    return
+            elif param == "E":
+                if bounds != None:
+                    self.model.Ef[rxn].setlb(bounds[0])
+                    self.model.Ef[rxn].setub(bounds[1])
+                    return
+                if factor != None:
+                    if self.model.Ef[rxn].value >=0:
+                        self.model.Ef[rxn].setlb(self.model.Ef[rxn].value*(1-factor_low))
+                        self.model.Ef[rxn].setub(self.model.Ef[rxn].value*(1+factor_up))
+                    else:
+                        self.model.Ef[rxn].setub(self.model.Ef[rxn].value*(1-factor_low))
+                        self.model.Ef[rxn].setlb(self.model.Ef[rxn].value*(1+factor_up))
+                    return
+            elif param == "dH":
+                if bounds != None:
+                    self.model.dH[rxn].setlb(bounds[0])
+                    self.model.dH[rxn].setub(bounds[1])
+                    return
+                if factor != None:
+                    if self.model.dH[rxn].value >=0:
+                        self.model.dH[rxn].setlb(self.model.dH[rxn].value*(1-factor_low))
+                        self.model.dH[rxn].setub(self.model.dH[rxn].value*(1+factor_up))
+                    else:
+                        self.model.dH[rxn].setub(self.model.dH[rxn].value*(1-factor_low))
+                        self.model.dH[rxn].setlb(self.model.dH[rxn].value*(1+factor_up))
+                    return
+            elif param == "dS":
+                if bounds != None:
+                    self.model.dS[rxn].setlb(bounds[0])
+                    self.model.dS[rxn].setub(bounds[1])
+                    return
+                if factor != None:
+                    if self.model.dS[rxn].value >=0:
+                        self.model.dS[rxn].setlb(self.model.dS[rxn].value*(1-factor_low))
+                        self.model.dS[rxn].setub(self.model.dS[rxn].value*(1+factor_up))
+                    else:
+                        self.model.dS[rxn].setub(self.model.dS[rxn].value*(1-factor_low))
+                        self.model.dS[rxn].setlb(self.model.dS[rxn].value*(1+factor_up))
+                    return
+            else:
+                print("Error! Invalid parameter name")
+                return
 
     # Function to define weight factors to be used in the objective function
     def set_weight_factor(self, spec, age, temp, value):
@@ -1069,9 +1199,10 @@ class Isothermal_Monolith_Simulator(object):
 
     # Build Constraints
     def build_constraints(self):
-        if self.isRxnBuilt == False:
-            print("Error! Cannot build constraints until reaction info is set")
-            exit()
+        for rxn in self.model.all_rxns:
+            if self.isRxnBuilt[rxn] == False:
+                print("Error! Cannot build constraints until reaction info is set")
+                exit()
         self.model.bulk_cons = Constraint(self.model.gas_set, self.model.age_set,
                                 self.model.T_set, self.model.z,
                                 self.model.t, rule=self.bulk_mb_constraint)
@@ -2959,7 +3090,7 @@ class Isothermal_Monolith_Simulator(object):
             for rxn in obj['model']['all_rxns']:
                 self.model.add_component(rxn+"_reactants", Set(initialize=obj['model'][rxn+"_reactants"]))
                 self.model.add_component(rxn+"_products", Set(initialize=obj['model'][rxn+"_products"]))
-            self.isRxnBuilt = True
+                self.isRxnBuilt[rxn] = True
         except:
             print(file_name+" does not contain reaction info for reactants and products")
 
@@ -3300,7 +3431,7 @@ class Isothermal_Monolith_Simulator(object):
             for rxn in obj['model']['all_rxns']:
                 self.model.add_component(rxn+"_reactants", Set(initialize=obj['model'][rxn+"_reactants"]))
                 self.model.add_component(rxn+"_products", Set(initialize=obj['model'][rxn+"_products"]))
-            self.isRxnBuilt = True
+                self.isRxnBuilt[rxn] = True
         except:
             print(file_name+" does not contain reaction info for reactants and products")
 

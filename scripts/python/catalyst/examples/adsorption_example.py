@@ -88,13 +88,20 @@ test.set_site_balance("S1",s1_data)
 # Reaction specification information (must correspond to correct reaction type)
 
 #   EquilibriumArrhenius
-r1_equ = {"parameters": {"A": 25000, "E": 0, "A_lb": 2500, "A_ub": 2500000000,
+#       NOTE: You can provide parameter bounds here, or later
+r1_equ = {"parameters": {"A": 25000, "E": 0,
+                        #"A_lb": 2500, "A_ub": 2500000000,
                         "dH": -54000, "dS": 30},
           "mol_reactants": {"S1": 1, "NH3": 1},
           "mol_products": {"q1": 1},
           "rxn_orders": {"S1": 1, "NH3": 1, "q1": 1}
         }
 test.set_reaction_info("r1", r1_equ)
+
+#Manually change individual parameter bounds
+test.set_reaction_param_bounds("r1","A",bounds=(2500, 2500000000))
+test.set_reaction_param_bounds("r1","dH",factor=10)
+test.set_reaction_param_bounds("r1","dS",factor=0.4)
 
 test.set_site_density("S1","Unaged",0.1152619)
 test.set_isothermal_temp("Unaged","250C",250+273.15)

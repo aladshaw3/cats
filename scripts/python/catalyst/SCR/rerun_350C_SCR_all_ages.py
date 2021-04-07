@@ -44,6 +44,10 @@ sim.unfix_reaction("r30")
 sim.unfix_reaction("r37")
 sim.unfix_reaction("r38")
 
+#Manually update some parameter bounds to see if we can get better fits 
+sim.set_reaction_param_bounds("r37","A",factor=100)
+sim.set_reaction_param_bounds("r38","A",factor=100)
+
 
 sim.finalize_auto_scaling()
 sim.run_solver()
