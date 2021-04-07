@@ -4078,7 +4078,41 @@ def time_point_selector(TimeDataList, VarDataDict, initial_time=0, maxPoints=Non
     else:
         selected_times.append(TimeDataList[0])
 
-    for spec in DerivativeVarDataDict:
-        print(spec)
+    # Approximate true derivatives
+    i=0
+    for time in TimeDataList:
+        for spec in DerivativeVarDataDict:
+            if i==0:
+                DerivativeVarDataDict[spec][i] = 0
+            else:
+                DerivativeVarDataDict[spec][i] = (VarDataDict[spec][i] - VarDataDict[spec][i-1])/(TimeDataList[i]-TimeDataList[i-1])
+        i+=1
 
+    # Normalize derivatives and change all to derivative magnitudes
+    for spec in DerivativeVarDataDict:
+        maxval = max(DerivativeVarDataDict[spec])
+        minval = min(DerivativeVarDataDict[spec])
+        val = abs(maxval)
+        if abs(maxval) < abs(minval):
+            val = abs(minval)
+        DerivativeVarDataDict[spec][:] = [abs(x) / val for x in DerivativeVarDataDict[spec]]
+
+    # Now, selection points based on the derivatives
+    probable_times = []
+    i=0
+    for time in TimeDataList:
+        for spec in DerivativeVarDataDict:
+            if DerivativeVarDataDict[spec][i] > 0.005:
+                probable_times.append(time)
+                break
+        i+=1
+
+    # # TODO: If maxPoints = None, we need to choose how to down select based on
+    #       approximate memory usage (max = 212 steps * (15 species * 5 ages))
+    #       Since these are gas species, assume actual species is 3x
+    #       Artificial max = 200*10*5 ==> 15000 steps for 1 species and 1 age
+    #           maxPoints = 5000 / N^2   where N is number of species given
+    #           minPoints = 200
+    for time in probable_times:
+        print(time)
     return selected_times
