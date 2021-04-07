@@ -867,6 +867,24 @@ sim.fix_reaction("r4b")
 # Fix all reactions for simulation mode only
 sim.fix_all_reactions()
 
+sim.unfix_reaction("r5")
+sim.unfix_reaction("r6")
+
+sim.unfix_reaction("r13a")
+sim.unfix_reaction("r14a")
+
+sim.unfix_reaction("r13b")
+sim.unfix_reaction("r14b")
+
+sim.unfix_reaction("r21")
+sim.unfix_reaction("r22")
+
+sim.unfix_reaction("r29")
+sim.unfix_reaction("r30")
+
+sim.unfix_reaction("r37")
+sim.unfix_reaction("r38")
+
 
 sim.initialize_auto_scaling()
 sim.initialize_simulator()
