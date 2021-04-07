@@ -8,8 +8,8 @@ from catalyst.isothermal_monolith_catalysis import *
 
 # Create a simulator object and Load a full model from json
 run = "02"                              #update this number to reflect changes in runs
-readfile = 'output/300C_model.json'     #update this name to reflect which model to load
-writefile = "300C_model"+run+".json"
+readfile = 'output/350C_model.json'     #update this name to reflect which model to load
+writefile = "350C_model"+run+".json"
 
 #NOTE: Other output names can remain the same, most important thing is .json file
 sim = Isothermal_Monolith_Simulator()
@@ -44,7 +44,7 @@ sim.unfix_reaction("r30")
 sim.unfix_reaction("r37")
 sim.unfix_reaction("r38")
 
-#Manually update some parameter bounds to see if we can get better fits 
+#Manually update some parameter bounds to see if we can get better fits
 sim.set_reaction_param_bounds("r37","A",factor=100)
 sim.set_reaction_param_bounds("r38","A",factor=100)
 
