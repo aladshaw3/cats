@@ -1300,9 +1300,6 @@ class Isothermal_Monolith_Simulator(object):
             exit()
 
         # Set the first value as given initial_value
-        if initial_value < 0:
-            print("Error! Concentrations cannot be negative")
-            exit()
         if initial_value < 1e-20:
             initial_value = 1e-20
         i=0
@@ -1314,9 +1311,6 @@ class Isothermal_Monolith_Simulator(object):
             if time >= current_bc_time:
                 try:
                     current_bc_value = time_value_pairs[i][1]
-                    if current_bc_value < 0:
-                        print("Error! Concentrations cannot be negative")
-                        exit()
                     if current_bc_value < 1e-20:
                         current_bc_value = 1e-20
                 except:
