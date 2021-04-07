@@ -1309,6 +1309,15 @@ class Isothermal_Monolith_Simulator(object):
             if time == self.model.t.first():
                 current_bc_value = initial_value
             if time >= current_bc_time:
+                ###
+                try:
+                    j=i
+                    while time >= time_value_pairs[j][0]:
+                        j+=1
+                    i=j-1
+                except:
+                    pass
+                ###
                 try:
                     current_bc_value = time_value_pairs[i][1]
                     if current_bc_value < 1e-20:

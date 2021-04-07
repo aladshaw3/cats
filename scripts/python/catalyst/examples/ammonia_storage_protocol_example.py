@@ -147,3 +147,4 @@ test.run_solver()
 test.print_results_of_breakthrough(["NH3"], "Unaged", "150C", file_name="")
 test.print_results_of_integral_average(["q1","q2a","q2b","q3a","q3b","q3c"],
                                         "Unaged", "150C", file_name="")
+test.plot_at_locations(["NH3"], ["Unaged"], ["150C"], [5], display_live=True)

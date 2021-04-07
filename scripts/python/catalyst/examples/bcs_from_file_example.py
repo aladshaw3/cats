@@ -3,53 +3,17 @@ import sys
 sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
-# Read in the data (data is now a dictionary containing the data we want)
-data = naively_read_data_file("inputfiles/SCR_all-ages_350C.txt",factor=5)
-
 # Testing
 sim = Isothermal_Monolith_Simulator()
 sim.add_axial_dim(0,5)
-sim.add_axial_dataset(5)       # Location of observations (in cm)
 
 sim.add_temporal_dim(0,97)
-sim.add_temporal_dataset(data["time"])   #Temporal observations (in s)
 
-sim.add_age_set(["Unaged","2hr","4hr","8hr","16hr"])
-sim.add_data_age_set(["Unaged","2hr","4hr","8hr","16hr"])  # Data observations can be a sub-set
+sim.add_age_set(["Unaged"])
 
 sim.add_temperature_set(["350C"])
-sim.add_data_temperature_set(["350C"])     # Data observations can be a sub-set
 
 sim.add_gas_species(["NH3","H2O","O2","NO","NO2","N2O","N2"])
-sim.add_data_gas_species(["NH3","NO","NO2","N2O"])    # Data observations can be a sub-set
-
-sim.set_data_values_for("NH3","Unaged","350C",5,data["time"],data["NH3_Unaged"])
-sim.set_data_values_for("NO","Unaged","350C",5,data["time"],data["NO_Unaged"])
-sim.set_data_values_for("NO2","Unaged","350C",5,data["time"],data["NO2_Unaged"])
-sim.set_data_values_for("N2O","Unaged","350C",5,data["time"],data["N2O_Unaged"])
-
-sim.set_data_values_for("NH3","2hr","350C",5,data["time"],data["NH3_2hr"])
-sim.set_data_values_for("NO","2hr","350C",5,data["time"],data["NO_2hr"])
-sim.set_data_values_for("NO2","2hr","350C",5,data["time"],data["NO2_2hr"])
-sim.set_data_values_for("N2O","2hr","350C",5,data["time"],data["N2O_2hr"])
-
-sim.set_data_values_for("NH3","4hr","350C",5,data["time"],data["NH3_4hr"])
-sim.set_data_values_for("NO","4hr","350C",5,data["time"],data["NO_4hr"])
-sim.set_data_values_for("NO2","4hr","350C",5,data["time"],data["NO2_4hr"])
-sim.set_data_values_for("N2O","4hr","350C",5,data["time"],data["N2O_4hr"])
-
-sim.set_data_values_for("NH3","8hr","350C",5,data["time"],data["NH3_8hr"])
-sim.set_data_values_for("NO","8hr","350C",5,data["time"],data["NO_8hr"])
-sim.set_data_values_for("NO2","8hr","350C",5,data["time"],data["NO2_8hr"])
-sim.set_data_values_for("N2O","8hr","350C",5,data["time"],data["N2O_8hr"])
-
-sim.set_data_values_for("NH3","16hr","350C",5,data["time"],data["NH3_16hr"])
-sim.set_data_values_for("NO","16hr","350C",5,data["time"],data["NO_16hr"])
-sim.set_data_values_for("NO2","16hr","350C",5,data["time"],data["NO2_16hr"])
-sim.set_data_values_for("N2O","16hr","350C",5,data["time"],data["N2O_16hr"])
-
-#Clear up memory space after we don't need the dictionary anymore
-data.clear()
 
 sim.add_surface_species(["q1","q2a","q2b","q3a","q3b","q3c","q4a","q4b"])
 sim.add_surface_sites(["S1","S2","S3a","S3b","S3c"])
@@ -589,39 +553,7 @@ sim.set_site_density("S3a","Unaged",0.01632)
 sim.set_site_density("S3b","Unaged",0.003233)
 sim.set_site_density("S3c","Unaged",0.006699)
 
-# ----------------- 2hr Site Densities -----------
-sim.set_site_density("S1","2hr",0.051274815)
-sim.set_site_density("S2","2hr",0.025820144)
-sim.set_site_density("S3a","2hr",0.009147918)
-sim.set_site_density("S3b","2hr",0.000423397)
-sim.set_site_density("S3c","2hr",0.008572669)
-
-# ----------------- 4hr Site Densities -----------
-sim.set_site_density("S1","4hr",0.049679956)
-sim.set_site_density("S2","4hr",0.02692473)
-sim.set_site_density("S3a","4hr",0.005127864)
-sim.set_site_density("S3b","4hr",5.54458E-05)
-sim.set_site_density("S3c","4hr",0.009298203)
-
-# ----------------- 8hr Site Densities -----------
-sim.set_site_density("S1","8hr",0.04838926)
-sim.set_site_density("S2","8hr",0.026648589)
-sim.set_site_density("S3a","8hr",0.001611258)
-sim.set_site_density("S3b","8hr",9.50848E-07)
-sim.set_site_density("S3c","8hr",0.009687883)
-
-# ----------------- 16hr Site Densities -----------
-sim.set_site_density("S1","16hr",0.050359742)
-sim.set_site_density("S2","16hr",0.025179871)
-sim.set_site_density("S3a","16hr",0.000159082)
-sim.set_site_density("S3b","16hr",2.79637E-10)
-sim.set_site_density("S3c","16hr",0.009755058)
-
 sim.set_isothermal_temp("Unaged","350C",350+273.15)
-sim.set_isothermal_temp("2hr","350C",350+273.15)
-sim.set_isothermal_temp("4hr","350C",350+273.15)
-sim.set_isothermal_temp("8hr","350C",350+273.15)
-sim.set_isothermal_temp("16hr","350C",350+273.15)
 
 # Build the constraints then discretize
 sim.build_constraints()
@@ -647,79 +579,6 @@ sim.set_const_IC("q3b","Unaged","350C",0)
 sim.set_const_IC("q3c","Unaged","350C",0)
 sim.set_const_IC("q4a","Unaged","350C",0)
 sim.set_const_IC("q4b","Unaged","350C",0)
-
-# ---------------- 2hr ICs ------------------
-sim.set_const_IC("O2","2hr","350C",0.001956118)
-sim.set_const_IC("H2O","2hr","350C",0.000974953352944018)
-sim.set_const_IC("NH3","2hr","350C",0)
-sim.set_const_IC("NO","2hr","350C",0)
-sim.set_const_IC("NO2","2hr","350C",0)
-sim.set_const_IC("N2O","2hr","350C",0)
-sim.set_const_IC("N2","2hr","350C",0.0184)
-
-sim.set_const_IC("q1","2hr","350C",0)
-sim.set_const_IC("q2a","2hr","350C",0)
-sim.set_const_IC("q2b","2hr","350C",0)
-sim.set_const_IC("q3a","2hr","350C",0)
-sim.set_const_IC("q3b","2hr","350C",0)
-sim.set_const_IC("q3c","2hr","350C",0)
-sim.set_const_IC("q4a","2hr","350C",0)
-sim.set_const_IC("q4b","2hr","350C",0)
-
-# ---------------- 4hr ICs ------------------
-sim.set_const_IC("O2","4hr","350C",0.001956118)
-sim.set_const_IC("H2O","4hr","350C",0.000974953352944018)
-sim.set_const_IC("NH3","4hr","350C",0)
-sim.set_const_IC("NO","4hr","350C",0)
-sim.set_const_IC("NO2","4hr","350C",0)
-sim.set_const_IC("N2O","4hr","350C",0)
-sim.set_const_IC("N2","4hr","350C",0.0184)
-
-sim.set_const_IC("q1","4hr","350C",0)
-sim.set_const_IC("q2a","4hr","350C",0)
-sim.set_const_IC("q2b","4hr","350C",0)
-sim.set_const_IC("q3a","4hr","350C",0)
-sim.set_const_IC("q3b","4hr","350C",0)
-sim.set_const_IC("q3c","4hr","350C",0)
-sim.set_const_IC("q4a","4hr","350C",0)
-sim.set_const_IC("q4b","4hr","350C",0)
-
-# ---------------- 8hr ICs ------------------
-sim.set_const_IC("O2","8hr","350C",0.001956118)
-sim.set_const_IC("H2O","8hr","350C",0.000974953352944018)
-sim.set_const_IC("NH3","8hr","350C",0)
-sim.set_const_IC("NO","8hr","350C",0)
-sim.set_const_IC("NO2","8hr","350C",0)
-sim.set_const_IC("N2O","8hr","350C",0)
-sim.set_const_IC("N2","8hr","350C",0.0184)
-
-sim.set_const_IC("q1","8hr","350C",0)
-sim.set_const_IC("q2a","8hr","350C",0)
-sim.set_const_IC("q2b","8hr","350C",0)
-sim.set_const_IC("q3a","8hr","350C",0)
-sim.set_const_IC("q3b","8hr","350C",0)
-sim.set_const_IC("q3c","8hr","350C",0)
-sim.set_const_IC("q4a","8hr","350C",0)
-sim.set_const_IC("q4b","8hr","350C",0)
-
-# ---------------- 16hr ICs ------------------
-sim.set_const_IC("O2","16hr","350C",0.001956118)
-sim.set_const_IC("H2O","16hr","350C",0.000974953352944018)
-sim.set_const_IC("NH3","16hr","350C",0)
-sim.set_const_IC("NO","16hr","350C",0)
-sim.set_const_IC("NO2","16hr","350C",0)
-sim.set_const_IC("N2O","16hr","350C",0)
-sim.set_const_IC("N2","16hr","350C",0.0184)
-
-sim.set_const_IC("q1","16hr","350C",0)
-sim.set_const_IC("q2a","16hr","350C",0)
-sim.set_const_IC("q2b","16hr","350C",0)
-sim.set_const_IC("q3a","16hr","350C",0)
-sim.set_const_IC("q3b","16hr","350C",0)
-sim.set_const_IC("q3c","16hr","350C",0)
-sim.set_const_IC("q4a","16hr","350C",0)
-sim.set_const_IC("q4b","16hr","350C",0)
-
 
 #Read in data tuples to use as BCs
 data_tup = naively_read_data_file("inputfiles/protocol_SCR_all-ages_350C.txt",
@@ -751,109 +610,6 @@ sim.set_const_BC("N2O","Unaged","350C",0)
 sim.set_const_BC("N2","Unaged","350C",0.0184)
 
 
-# ---------------- 2hr BCs ------------------
-sim.set_time_dependent_BC("O2","2hr","350C",
-                            time_value_pairs=data_tup["O2_2hr"],
-                            initial_value=0.001956118)
-
-sim.set_time_dependent_BC("H2O","2hr","350C",
-                            time_value_pairs=data_tup["H2O_2hr"],
-                            initial_value=0.000974953352944018)
-
-sim.set_time_dependent_BC("NH3","2hr","350C",
-                            time_value_pairs=data_tup["NH3_2hr"],
-                            initial_value=0)
-
-sim.set_time_dependent_BC("NO","2hr","350C",
-                            time_value_pairs=data_tup["NO_2hr"],
-                            initial_value=0)
-
-sim.set_time_dependent_BC("NO2","2hr","350C",
-                            time_value_pairs=data_tup["NO2_2hr"],
-                            initial_value=0)
-
-sim.set_const_BC("N2O","2hr","350C",0)
-
-sim.set_const_BC("N2","2hr","350C",0.0184)
-
-
-# ---------------- 4hr BCs ------------------
-sim.set_time_dependent_BC("O2","4hr","350C",
-                            time_value_pairs=data_tup["O2_4hr"],
-                            initial_value=0.001956118)
-
-sim.set_time_dependent_BC("H2O","4hr","350C",
-                            time_value_pairs=data_tup["H2O_4hr"],
-                            initial_value=0.000974953352944018)
-
-sim.set_time_dependent_BC("NH3","4hr","350C",
-                            time_value_pairs=data_tup["NH3_4hr"],
-                            initial_value=0)
-
-sim.set_time_dependent_BC("NO","4hr","350C",
-                            time_value_pairs=data_tup["NO_4hr"],
-                            initial_value=0)
-
-sim.set_time_dependent_BC("NO2","4hr","350C",
-                            time_value_pairs=data_tup["NO2_4hr"],
-                            initial_value=0)
-
-sim.set_const_BC("N2O","4hr","350C",0)
-
-sim.set_const_BC("N2","4hr","350C",0.0184)
-
-
-# ---------------- 8hr BCs ------------------
-sim.set_time_dependent_BC("O2","8hr","350C",
-                            time_value_pairs=data_tup["O2_8hr"],
-                            initial_value=0.001956118)
-
-sim.set_time_dependent_BC("H2O","8hr","350C",
-                            time_value_pairs=data_tup["H2O_8hr"],
-                            initial_value=0.000974953352944018)
-
-sim.set_time_dependent_BC("NH3","8hr","350C",
-                            time_value_pairs=data_tup["NH3_8hr"],
-                            initial_value=0)
-
-sim.set_time_dependent_BC("NO","8hr","350C",
-                            time_value_pairs=data_tup["NO_8hr"],
-                            initial_value=0)
-
-sim.set_time_dependent_BC("NO2","8hr","350C",
-                            time_value_pairs=data_tup["NO2_8hr"],
-                            initial_value=0)
-
-sim.set_const_BC("N2O","8hr","350C",0)
-
-sim.set_const_BC("N2","8hr","350C",0.0184)
-
-
-# ---------------- 16hr BCs ------------------
-sim.set_time_dependent_BC("O2","16hr","350C",
-                            time_value_pairs=data_tup["O2_16hr"],
-                            initial_value=0.001956118)
-
-sim.set_time_dependent_BC("H2O","16hr","350C",
-                            time_value_pairs=data_tup["H2O_16hr"],
-                            initial_value=0.000974953352944018)
-
-sim.set_time_dependent_BC("NH3","16hr","350C",
-                            time_value_pairs=data_tup["NH3_16hr"],
-                            initial_value=0)
-
-sim.set_time_dependent_BC("NO","16hr","350C",
-                            time_value_pairs=data_tup["NO_16hr"],
-                            initial_value=0)
-
-sim.set_time_dependent_BC("NO2","16hr","350C",
-                            time_value_pairs=data_tup["NO2_16hr"],
-                            initial_value=0)
-
-sim.set_const_BC("N2O","16hr","350C",0)
-
-sim.set_const_BC("N2","16hr","350C",0.0184)
-
 # Fix the kinetics to only run a simulation
 sim.fix_reaction("r1")
 sim.fix_reaction("r2a")
@@ -879,34 +635,3 @@ sim.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"],
                                         "Unaged", "350C", 0, file_name="Unaged_SCR_350C_bypass.txt")
 sim.print_results_of_integral_average(["q1","q2a","q2b","q3a","q3b","q3c"],
                                         "Unaged", "350C", file_name="Unaged_SCR_350C_average_ads.txt")
-
-sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "2hr", "350C", file_name="2hr_SCR_350C_breakthrough.txt")
-sim.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "2hr", "350C", 0, file_name="2hr_SCR_350C_bypass.txt")
-sim.print_results_of_integral_average(["q1","q2a","q2b","q3a","q3b","q3c"],
-                                        "2hr", "350C", file_name="2hr_SCR_350C_average_ads.txt")
-
-sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "4hr", "350C", file_name="4hr_SCR_350C_breakthrough.txt")
-sim.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "4hr", "350C", 0, file_name="4hr_SCR_350C_bypass.txt")
-sim.print_results_of_integral_average(["q1","q2a","q2b","q3a","q3b","q3c"],
-                                        "4hr", "350C", file_name="4hr_SCR_350C_average_ads.txt")
-
-sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "8hr", "350C", file_name="8hr_SCR_350C_breakthrough.txt")
-sim.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "8hr", "350C", 0, file_name="8hr_SCR_350C_bypass.txt")
-sim.print_results_of_integral_average(["q1","q2a","q2b","q3a","q3b","q3c"],
-                                        "8hr", "350C", file_name="8hr_SCR_350C_average_ads.txt")
-
-sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "16hr", "350C", file_name="16hr_SCR_350C_breakthrough.txt")
-sim.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "16hr", "350C", 0, file_name="16hr_SCR_350C_bypass.txt")
-sim.print_results_of_integral_average(["q1","q2a","q2b","q3a","q3b","q3c"],
-                                        "16hr", "350C", file_name="16hr_SCR_350C_average_ads.txt")
-
-sim.print_kinetic_parameter_info(file_name="350C_opt_params.txt")
-sim.save_model_state(file_name="350C_model.json")
