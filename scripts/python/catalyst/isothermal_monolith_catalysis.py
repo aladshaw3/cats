@@ -1644,6 +1644,20 @@ class Isothermal_Monolith_Simulator(object):
             self.model.dS[re].fix()
             self.rxn_list[re]["fixed"]=True
 
+    # Function to unfix all kinetic vars
+    def unfix_all_reactions(self):
+        for r in self.model.arrhenius_rxns:
+            self.model.A[r].unfix()
+            self.model.B[r].unfix()
+            self.model.E[r].unfix()
+            self.rxn_list[r]["fixed"]=False
+        for re in self.model.equ_arrhenius_rxns:
+            self.model.Af[re].unfix()
+            self.model.Ef[re].unfix()
+            self.model.dH[re].unfix()
+            self.model.dS[re].unfix()
+            self.rxn_list[re]["fixed"]=False
+
     # Function to fix only a given reaction
     def fix_reaction(self, rxn):
         if rxn in self.model.arrhenius_rxns:
@@ -4037,5 +4051,34 @@ def naively_read_data_file(data_file, factor=1, dict_of_tuples=False):
         return DataTuples
 
 # Helper function to intellegently select data points to simulate
-def time_point_selector(DataTuples, maxPoints=None):
-    pass
+#       User must provide...
+#           TimeDataList = list of time values that correspond to lists in VarDataDict
+#           VarDataDict = dictionary of lists of values of variables that derivatives
+#                           will be calculated from
+#           initial_time = (optional) the first time point to return (default=0)
+#           maxPoints = (optional) maximum number of time points to return
+def time_point_selector(TimeDataList, VarDataDict, initial_time=0, maxPoints=None):
+    if type(TimeDataList) is not list:
+        print("Error! Must provide a list of time points to select from")
+        exit()
+    if type(VarDataDict) is not dict:
+        print("Error! Must provide a dictionary of lists of variable values")
+        exit()
+    DerivativeVarDataDict = {}
+    for spec in VarDataDict:
+        if len(TimeDataList) != len(VarDataDict[spec]):
+            print("Error! Dimensional mis-match in data sets. Must have same number of time points as corresponding values")
+            exit()
+        if "time" not in spec.lower():
+            DerivativeVarDataDict[spec] = [0.0] * len(TimeDataList)
+
+    selected_times = []
+    if TimeDataList[0] != initial_time:
+        selected_times.append(initial_time)
+    else:
+        selected_times.append(TimeDataList[0])
+
+    for spec in DerivativeVarDataDict:
+        print(spec)
+
+    return selected_times

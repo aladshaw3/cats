@@ -7,13 +7,15 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 # Create a simulator object and Load a full model from json
-run = "03"                              #update this number to reflect changes in runs
-readfile = 'output/350C_model02.json'     #update this name to reflect which model to load
+run = "04"                              #update this number to reflect changes in runs
+readfile = 'output/350C_model03.json'     #update this name to reflect which model to load
 writefile = "350C_model"+run+".json"
 
 #NOTE: Other output names can remain the same, most important thing is .json file
 sim = Isothermal_Monolith_Simulator()
 sim.load_model_full(readfile, reset_param_bounds=True)
+
+sim.unfix_all_reactions()
 
 sim.fix_reaction("r1")
 sim.fix_reaction("r2a")
