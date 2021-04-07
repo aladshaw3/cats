@@ -4035,3 +4035,7 @@ def naively_read_data_file(data_file, factor=1, dict_of_tuples=False):
         return Data
     else:
         return DataTuples
+
+# Helper function to intellegently select data points to simulate
+def time_point_selector(DataTuples, maxPoints=None):
+    pass
