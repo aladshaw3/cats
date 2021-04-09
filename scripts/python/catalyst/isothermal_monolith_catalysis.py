@@ -4055,9 +4055,10 @@ def naively_read_data_file(data_file, factor=1, dict_of_tuples=False):
 #           TimeDataList = list of time values that correspond to lists in VarDataDict
 #           VarDataDict = dictionary of lists of values of variables that derivatives
 #                           will be calculated from
-#           initial_time = (optional) the first time point to return (default=0)
-#           maxPoints = (optional) maximum number of time points to return
-def time_point_selector(TimeDataList, VarDataDict, initial_time=0, maxPoints=None):
+#           start_time = (optional) the first time point to return (default=0)
+#           end_time = (optional) the last time point to return
+#           maxStep = (optional) maximum allowable step size when selecting points
+def time_point_selector(TimeDataList, VarDataDict, start_time=None, end_time=None, maxStep=None):
     if type(TimeDataList) is not list:
         print("Error! Must provide a list of time points to select from")
         exit()
@@ -4071,12 +4072,15 @@ def time_point_selector(TimeDataList, VarDataDict, initial_time=0, maxPoints=Non
             exit()
         if "time" not in spec.lower():
             DerivativeVarDataDict[spec] = [0.0] * len(TimeDataList)
+    if maxStep==None:
+        maxStep = TimeDataList[-1]/100.0
+    if end_time==None:
+        end_time = TimeDataList[-1]
+    if start_time==None:
+        start_time = 0
 
     selected_times = []
-    if TimeDataList[0] != initial_time:
-        selected_times.append(initial_time)
-    else:
-        selected_times.append(TimeDataList[0])
+    selected_times.append(start_time)
 
     # Approximate true derivatives
     i=0
@@ -4099,20 +4103,39 @@ def time_point_selector(TimeDataList, VarDataDict, initial_time=0, maxPoints=Non
 
     # Now, selection points based on the derivatives
     probable_times = []
+    stepsizes = []
+    probable_times.append(selected_times[0])
     i=0
+    j=0
     for time in TimeDataList:
-        for spec in DerivativeVarDataDict:
-            if DerivativeVarDataDict[spec][i] > 0.005:
-                probable_times.append(time)
-                break
+        if time >= start_time and time <= end_time:
+            for spec in DerivativeVarDataDict:
+                if DerivativeVarDataDict[spec][i] > 0.01:
+                    probable_times.append(time)
+                    stepsizes.append(probable_times[j+1]-probable_times[j])
+                    j+=1
+                    break
+            # Force another step if needed to prevent too large a step
+            if i>0:
+                if (time-probable_times[j]) > maxStep:
+                    probable_times.append(time)
+                    stepsizes.append(probable_times[j+1]-probable_times[j])
+                    j+=1
+        i+=1
+    if probable_times[-1] <= end_time:
+        probable_times.append(end_time)
+
+    minstep = min(stepsizes)
+
+    i=0
+    j=0
+    for time in probable_times:
+        if i>0:
+            if (probable_times[i]-selected_times[j]) <= minstep*1.2:
+                pass
+            else:
+                selected_times.append(probable_times[i])
+                j+=1
         i+=1
 
-    # # TODO: If maxPoints = None, we need to choose how to down select based on
-    #       approximate memory usage (max = 212 steps * (15 species * 5 ages))
-    #       Since these are gas species, assume actual species is 3x
-    #       Artificial max = 200*10*5 ==> 15000 steps for 1 species and 1 age
-    #           maxPoints = 5000 / N^2   where N is number of species given
-    #           minPoints = 200
-    for time in probable_times:
-        print(time)
     return selected_times
