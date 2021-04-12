@@ -55,6 +55,50 @@ class LinearSolverMethod(Enum):
     MA57 = 3
     MA97 = 4
 
+# Helper function to grab reference state diffusivities in cm**2/s
+def default_ref_diffusivity(spec):
+    if "nh3" in spec.lower():
+        return 0.826
+    elif "ar" in spec.lower():
+        return 0.437
+    elif "ch4" in spec.lower():
+        return 0.485
+    elif "co2" in spec.lower():
+        return 0.390
+    elif "co" in spec.lower():
+        return 0.475
+    elif "h2o" in spec.lower():
+        return 0.638
+    elif "h2" in spec.lower():
+        return 1.747
+    elif "he" in spec.lower():
+        return 0.437
+    elif "so2" in spec.lower():
+        return 0.384
+    elif "no2" in spec.lower():
+        return 0.485
+    elif "no" in spec.lower():
+        return 0.485
+    elif "n2o" in spec.lower():
+        return 0.485
+    elif "o2" in spec.lower():
+        return 0.561
+    else:
+        return 0.638
+
+# Helper function to calculate Ergun Pressure Drop contribution
+#   mu = gas viscosity in kg/m/s
+#   rho = gas density in kg/m**3
+#   v = average linear velocity in m/s
+#   dh = hydraulic diameter in m
+#   eps = bulk porosity (unitless)
+#
+#       Returns Pressure change in kPa / cm
+def ergun_pressure_drop(mu, rho, v, dh, eps):
+    dP_m = 150.0*mu*(1-eps)**2/(eps**3*dh**2)*eps*v
+    dP_m += 1.75*(1-eps)/(eps**3*dh)*rho*eps**2*v**2
+    return dP_m/1000.0/100.0
+
 # Helper function for Arrhenius reaction rates
 #   E = activation energy in J/mol
 #   A = pre-exponential factor (units depend on reaction)
@@ -102,26 +146,6 @@ def equilibrium_arrhenius_consts(Af, Ef, dH, dS):
 #                   Smax = S + SUM(all qi, u_si*qi) = 0
 #
 
-# # TODO: (?) Develop subroutines to automatically down select data (?)
-#               Use relative rate of change between nieghbors do determine
-#               the density of points to select
-#
-# # TODO: Allow users to input boundary conditions for concentrations in ppm
-#        We would need to update to include pressure and use ideal gas law
-#        for conversions (i.e., we introduce unit conversion stuff).
-#
-#               PV = nRT  -->  P = CRT              (concentration changes)
-#               PV = nRT  -->  P*Q = n_dot*R*T      (flow rate changes)
-#                            n_dot = moles/time  <-- should be constant
-#               Q*C = n_dot = constant when temperature and/or pressure change
-#
-#       When temperature changes (if pressure doesn't change, then the inlet
-#       concentration must change OR the inlet flow rate must change)
-#               In most cases, changes in temperature change the concentrations
-#               (or flow rates) and not the pressure. DEFAULT should be to change
-#               the inlet concentration (with an option to change inlet flow rate)
-#
-# # TODO: Add in pressure drop?
 # # TODO: Units Handling: https://pyomo.readthedocs.io/en/stable/advanced_topics/units_container.html
 class Isothermal_Monolith_Simulator(object):
     #Default constructor
@@ -132,7 +156,6 @@ class Isothermal_Monolith_Simulator(object):
 
         # Add the mandatory components to the model
         #       TODO:     (?) Make all parameters into Var objects (?)
-        #       TODO:     (?) Include pressure drop calculation (?)
         self.model.eb = Param(within=NonNegativeReals, initialize=0.3309, mutable=True, units=None)
         self.model.ew = Param(within=NonNegativeReals, initialize=0.2, mutable=True, units=None)
         self.model.r = Param(within=NonNegativeReals, initialize=1, mutable=True, units=units.cm)
@@ -319,9 +342,9 @@ class Isothermal_Monolith_Simulator(object):
         self.model.Pref = Param(self.model.age_set, self.model.T_set, within=NonNegativeReals,
                                 initialize=101.35, mutable=True, units=units.kPa)
         self.model.rho = Var(self.model.age_set, self.model.T_set, self.model.t,
-                                    domain=NonNegativeReals, initialize=1200, units=units.g/units.cm**3)
+                                    domain=NonNegativeReals, initialize=0.0012, units=units.g/units.cm**3)
         self.model.mu = Var(self.model.age_set, self.model.T_set, self.model.t,
-                                    domain=NonNegativeReals, initialize=1.85, units=units.g/units.cm/units.s)
+                                    domain=NonNegativeReals, initialize=0.000185, units=units.g/units.cm/units.s)
         self.model.Re = Var(self.model.age_set, self.model.T_set, self.model.t,
                                     domain=NonNegativeReals, initialize=7500, units=None)
         self.isTempSet = True
@@ -421,6 +444,9 @@ class Isothermal_Monolith_Simulator(object):
                                     domain=NonNegativeReals, initialize=0.0065, units=None)
         self.model.Sh = Var(self.model.gas_set, self.model.age_set, self.model.T_set, self.model.t,
                                     domain=NonNegativeReals, initialize=5.75, units=None)
+
+        for spec in self.model.gas_set:
+            self.model.Dm[spec].set_value( default_ref_diffusivity(spec) )
 
     # Add gas species for data observations and a weight factor 'w' to be used for
     #   changing the behavior of the objective function
@@ -1036,6 +1062,21 @@ class Isothermal_Monolith_Simulator(object):
 
         self.model.w[spec,age,temp].set_value(value)
 
+    # Function to set a reference diffusivity for a species
+    #       spec = name of species to set gas phase diffusivity for
+    #       val = value of gas phase diffusivity in cm**2/s
+    def set_ref_diffusivity(self, spec, val):
+        if self.isGasSpecSet == False:
+            print("Error! Cannot specify diffusivity without setting up gas species first")
+            exit()
+        if spec not in self.model.gas_set:
+            print("Error! Unrecognized gas species name was given when trying to set diffusivity")
+            exit()
+
+        if val < 1e-6:
+            val = 1e-6
+        self.model.Dm[spec].set_value(val)
+
     # Helper function to calculate and store Ga and dh values
     #       This automatically gets called whenever a user updates
     #       the approximations to cell_density or bulk_porosity
@@ -1057,7 +1098,7 @@ class Isothermal_Monolith_Simulator(object):
     #       temp = name of the temperature set (required for scoping into variable)
     #       loc = float for location in spatial domain
     #       loc = float for location in temporal domain
-    #       eps = (optional) tolerance to prevent divide by zero error 
+    #       eps = (optional) tolerance to prevent divide by zero error
     #
     def interpret_var(self, var, spec, age, temp, loc, time, eps=1e-6):
         if eps > 1e-6:
@@ -1286,9 +1327,12 @@ class Isothermal_Monolith_Simulator(object):
             for temp in self.model.T_set:
                 T = self.model.T[age,temp,self.model.z.first(),self.model.t.first()].value
                 val = self.model.P[age,temp,self.model.z.first(),self.model.t.first()].value*1000/287.058/T*1000
-                self.model.rho[age,temp,:].set_value(val)
+                self.model.rho[age,temp,:].set_value(val/100**3)
                 val = 0.1458*T**1.5/(110.4+T)
-                self.model.mu[age,temp,:].set_value(val)
+                self.model.mu[age,temp,:].set_value(val/10000)
+
+        #       Initialize pressure drop across monolith
+        self.calculate_pressure_drop()
 
         #       Initialize dimensionless numbers
         #           NOTE: Assume time is always in minutes (for any user inputs,
@@ -1305,15 +1349,16 @@ class Isothermal_Monolith_Simulator(object):
                     self.model.v[age,temp, self.model.t.first()].value/60* \
                         self.model.dh.value/self.model.mu[age,temp,self.model.t.first()].value
                 self.model.Re[age,temp,:].set_value(Re)
+                T = self.model.T[age,temp,self.model.z.first(),self.model.t.first()].value
 
                 for spec in self.model.gas_set:
                     Sc = self.model.mu[age,temp,self.model.t.first()].value/ \
                     self.model.rho[age,temp,self.model.t.first()].value/ \
-                    self.model.Dm[spec].value
+                    (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))
 
                     self.model.Sc[spec,age,temp,:].set_value(Sc)
 
-                    Sh = (0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5))/2
+                    Sh = (0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5))
                     self.model.Sh[spec,age,temp,:].set_value(Sh)
 
         #       Initialize mass transfer rates
@@ -1321,8 +1366,9 @@ class Isothermal_Monolith_Simulator(object):
         for spec in self.model.gas_set:
             for age in self.model.age_set:
                 for temp in self.model.T_set:
+                    T = self.model.T[age,temp,self.model.z.first(),self.model.t.first()].value
                     val = self.model.Sh[spec,age,temp,self.model.t.first()].value*self.model.ew.value* \
-                            self.model.Dm[spec].value*60 / self.model.dh.value
+                            (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))*60 / self.model.dh.value
                     self.model.km[spec,age,temp,:,:].set_value(val)
 
         #       Initialize Smax
@@ -1597,9 +1643,9 @@ class Isothermal_Monolith_Simulator(object):
                 for time in self.model.t:
                     T = self.model.T[age,temp,self.model.z.first(),time].value
                     val = self.model.P[age,temp,self.model.z.first(),time].value*1000/287.058/T*1000
-                    self.model.rho[age,temp,time].set_value(val)
+                    self.model.rho[age,temp,time].set_value(val/100**3)
                     val = 0.1458*T**1.5/(110.4+T)
-                    self.model.mu[age,temp,time].set_value(val)
+                    self.model.mu[age,temp,time].set_value(val/10000)
 
         for age in self.model.age_set:
             for temp in self.model.T_set:
@@ -1608,32 +1654,55 @@ class Isothermal_Monolith_Simulator(object):
                         self.model.v[age,temp,time].value/60* \
                             self.model.dh.value/self.model.mu[age,temp,time].value
                     self.model.Re[age,temp,time].set_value(Re)
+                    T = self.model.T[age,temp,self.model.z.first(),time].value
 
                     for spec in self.model.gas_set:
                         Sc = self.model.mu[age,temp,time].value/ \
                         self.model.rho[age,temp,time].value/ \
-                        self.model.Dm[spec].value
+                        (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))
 
                         self.model.Sc[spec,age,temp,time].set_value(Sc)
                         if isMonolith == True:
-                            Sh = (0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5))/2
+                            Sh = (0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5))
                         else:
-                            Sh = (2+(0.4*Re**0.5+0.06*Re**0.67)*Sc**0.4)/2
+                            Sh = (2+(0.4*Re**0.5+0.06*Re**0.67)*Sc**0.4)
                         self.model.Sh[spec,age,temp,time].set_value(Sh)
 
         for spec in self.model.gas_set:
             for age in self.model.age_set:
                 for temp in self.model.T_set:
                     for time in self.model.t:
+                        T = self.model.T[age,temp,self.model.z.first(),time].value
                         val = self.model.Sh[spec,age,temp,time].value*self.model.ew.value* \
-                            self.model.Dm[spec].value*60 / self.model.dh.value
+                            (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))*60 / self.model.dh.value
                         ## TODO: Add unit conversions for time
                         ## TODO: Add unit conversions for space
                         #   val = cm/min
                         self.model.km[spec,age,temp,:,time].set_value(val)
 
+        self.calculate_pressure_drop()
         if interally_called == True:
             self.isVelocityRecalculated = True
+
+    # Function to calculate pressure drop across monolith
+    def calculate_pressure_drop(self):
+        for age in self.model.age_set:
+            for temp in self.model.T_set:
+                for time in self.model.t:
+                    # # TODO: Check units for conversions
+                    mu = self.model.mu[age,temp,time].value * 100.0 / 1000.0
+                    rho = self.model.rho[age,temp,time].value * 100.0**3 / 1000.0
+                    v = self.model.v[age,temp,time].value / 60.0 / 100.0
+                    dh = self.model.dh.value / 100.0
+                    eps = self.model.eb.value
+                    dP_dz = ergun_pressure_drop(mu, rho, v, dh, eps)
+                    z_old = self.model.z.last()
+                    for z in reversed(self.model.z):
+                        if z == self.model.z.last():
+                            z_old = z
+                        else:
+                            self.model.P[age,temp,z,time].set_value(self.model.P[age,temp,z_old,time].value + dP_dz*(z_old-z))
+
 
     # Function to fix all kinetic vars
     def fix_all_reactions(self):
