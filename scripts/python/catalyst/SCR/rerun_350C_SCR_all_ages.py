@@ -1,6 +1,6 @@
 #This file is used to rerun a simulation using newly found parameters.
 #The purpose is for additional refinement of kinetics. We will reuse this
-#script for additional optimization passes.
+#script for additional optimization passes
 
 import sys
 sys.path.append('../..')
