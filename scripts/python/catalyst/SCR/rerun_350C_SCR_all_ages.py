@@ -50,7 +50,6 @@ sim.unfix_reaction("r38")
 #sim.set_reaction_param_bounds("r37","A",factor=100)
 #sim.set_reaction_param_bounds("r38","A",factor=100)
 
-
 sim.finalize_auto_scaling()
 sim.run_solver()
 
