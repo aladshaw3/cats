@@ -1057,8 +1057,13 @@ class Isothermal_Monolith_Simulator(object):
     #       temp = name of the temperature set (required for scoping into variable)
     #       loc = float for location in spatial domain
     #       loc = float for location in temporal domain
+    #       eps = (optional) tolerance to prevent divide by zero error 
     #
-    def interpret_var(self, var, spec, age, temp, loc, time):
+    def interpret_var(self, var, spec, age, temp, loc, time, eps=1e-6):
+        if eps > 1e-6:
+            eps = 1e-6
+        if eps < 1e-16:
+            eps = 1e-16
         nearest_loc_index = self.model.z.find_nearest_index(loc)
         nearest_time_index = self.model.t.find_nearest_index(time)
 
@@ -1084,8 +1089,8 @@ class Isothermal_Monolith_Simulator(object):
 
         z_dist = (self.model.z[nearest_loc_index] - loc)
         t_dist = (self.model.t[nearest_time_index] - time)
-        z_slope = -(var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[nearest_time_index]] - var[spec,age,temp,self.model.z[next_nearest_loc_index],self.model.t[nearest_time_index]])/(self.model.z[nearest_loc_index] - self.model.z[next_nearest_loc_index])
-        t_slope = -(var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[nearest_time_index]] - var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[next_nearest_time_index]])/(self.model.t[nearest_time_index] - self.model.t[next_nearest_time_index])
+        z_slope = -(var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[nearest_time_index]] - var[spec,age,temp,self.model.z[next_nearest_loc_index],self.model.t[nearest_time_index]])/(self.model.z[nearest_loc_index] - (self.model.z[next_nearest_loc_index] + eps) )
+        t_slope = -(var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[nearest_time_index]] - var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[next_nearest_time_index]])/(self.model.t[nearest_time_index] - (self.model.t[next_nearest_time_index] + eps) )
 
         loc_val = self.model.z[nearest_loc_index]
         time_val = self.model.t[nearest_time_index]

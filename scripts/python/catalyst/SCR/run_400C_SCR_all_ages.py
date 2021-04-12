@@ -4,7 +4,7 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 # Read in the data (data is now a dictionary containing the data we want)
-data = naively_read_data_file("inputfiles/SCR_all-ages_400C.txt",factor=3)
+data = naively_read_data_file("inputfiles/SCR_all-ages_400C.txt",factor=1)
 
 time_list = time_point_selector(data["time"], data)
 
@@ -13,8 +13,8 @@ sim = Isothermal_Monolith_Simulator()
 sim.add_axial_dim(0,5)
 sim.add_axial_dataset(5)       # Location of observations (in cm)
 
-#sim.add_temporal_dim(point_list=time_list)
-sim.add_temporal_dim(0,90)
+sim.add_temporal_dim(point_list=time_list)
+#sim.add_temporal_dim(0,90)
 sim.add_temporal_dataset(data["time"])   #Temporal observations (in s)
 
 sim.add_age_set(["Unaged","2hr","4hr","8hr","16hr"])
@@ -242,13 +242,13 @@ r12 = {"parameters": {"A": 0, "E": 0},
 
 
 #  ---------- q2a reactions ------------
-r13a = {"parameters": {"A": 246.3111159, "E": 0},
+r13a = {"parameters": {"A": 123.3111159, "E": 0},
           "mol_reactants": {"q2a": 1, "O2": 0.75},
           "mol_products": {"S2": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"q2a": 1, "O2": 1}
         }
 
-r14a = {"parameters": {"A": 119.1763218, "E": 0},
+r14a = {"parameters": {"A": 60.1763218, "E": 0},
           "mol_reactants": {"q2a": 1, "O2": 1.25},
           "mol_products": {"S2": 1, "NO": 1, "H2O": 1.5},
           "rxn_orders": {"q2a": 1, "O2": 1}
@@ -407,13 +407,13 @@ r28 = {"parameters": {"A": 0, "E": 0},
         }
 
 #  ---------- q3b reactions ------------
-r29 = {"parameters": {"A": 1492.051399, "E": 0},
+r29 = {"parameters": {"A": 800.051399, "E": 0},
           "mol_reactants": {"q3b": 1, "O2": 0.75},
           "mol_products": {"S3b": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"q3b": 1, "O2": 1}
         }
 
-r30 = {"parameters": {"A": 281.5571709, "E": 0},
+r30 = {"parameters": {"A": 140.5571709, "E": 0},
           "mol_reactants": {"q3b": 1, "O2": 1.25},
           "mol_products": {"S3b": 1, "NO": 1, "H2O": 1.5},
           "rxn_orders": {"q3b": 1, "O2": 1}
@@ -462,13 +462,13 @@ r36 = {"parameters": {"A": 0, "E": 0},
         }
 
 #  ---------- q3c reactions ------------
-r37 = {"parameters": {"A": 98.46516491, "E": 0},
+r37 = {"parameters": {"A": 50.46516491, "E": 0},
           "mol_reactants": {"q3c": 1, "O2": 0.75},
           "mol_products": {"S3c": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"q3c": 1, "O2": 1}
         }
 
-r38 = {"parameters": {"A": 5919.056417, "E": 0},
+r38 = {"parameters": {"A": 300.056417, "E": 0},
           "mol_reactants": {"q3c": 1, "O2": 1.25},
           "mol_products": {"S3c": 1, "NO": 1, "H2O": 1.5},
           "rxn_orders": {"q3c": 1, "O2": 1}
@@ -726,7 +726,7 @@ sim.set_const_IC("q4b","16hr","400C",0)
 
 #Read in data tuples to use as BCs
 data_tup = naively_read_data_file("inputfiles/protocol_SCR_all-ages_400C.txt",
-                                    factor=3,dict_of_tuples=True)
+                                    factor=1,dict_of_tuples=True)
 
 # ---------------- Unaged BCs ------------------
 sim.set_time_dependent_BC("O2","Unaged","400C",
