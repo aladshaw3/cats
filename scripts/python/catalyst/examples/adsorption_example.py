@@ -126,7 +126,18 @@ test.initialize_simulator()
 
 test.finalize_auto_scaling()
 test.run_solver()
-
+'''
+test.model.Re.pprint()
+test.model.Sc.pprint()
+test.model.Sh.pprint()
+test.model.km.pprint()
+test.model.rho.pprint()
+test.model.mu.pprint()
+test.model.dh.pprint()
+test.model.Ga.pprint()
+test.model.v.pprint()
+exit()
+'''
 test.print_results_of_breakthrough(["NH3"], "Unaged", "250C", file_name="")
 test.print_results_of_integral_average(["q1","S1"], "Unaged", "250C", file_name="")
 test.print_results_all_locations(["NH3","q1","S1"], "Unaged", "250C", file_name="")

@@ -131,11 +131,11 @@ def equilibrium_arrhenius_consts(Af, Ef, dH, dS):
 #
 #           Mass balance in channel space (Mandatory)
 #
-#                   eb*dCb/dt + eb*v*dCb/dz = -Ga*km*(Cb - C)
+#                   eb*dCb/dt + eb*v*dCb/dz = -(1-eb)*Ga*km*(Cb - C)
 #
 #           Mass balance in the washcoat (Mandatory)
 #
-#                   ew*(1-eb)*dC/dt = Ga*km*(Cb - C) + (1-eb)*SUM(all i, u_ci * ri)
+#                   ew*(1-eb)*dC/dt = (1-eb)*Ga*km*(Cb - C) + (1-eb)*SUM(all i, u_ci * ri)
 #
 #           Surface species reaction terms (Optional, if surface species not needed)
 #
@@ -1085,7 +1085,7 @@ class Isothermal_Monolith_Simulator(object):
         dc = 2*(Ac/3.14159)**0.5
         ds = Ac**0.5
         self.model.dh.set_value(0.5*(dc+ds))
-        self.model.Ga.set_value(4*self.model.cell_density.value*self.model.dh.value/self.model.eb.value)
+        self.model.Ga.set_value(4*self.model.cell_density.value*self.model.dh.value/(1-self.model.eb.value))
         if isMonolith == False:
             self.model.dh.set_value(dh_true)
             self.model.Ga.set_value(6/self.model.dh.value)
@@ -1212,14 +1212,14 @@ class Isothermal_Monolith_Simulator(object):
 
     # Bulk mass balance constraint
     def bulk_mb_constraint(self, m, gas, age, temp, z, t):
-        return m.eb*m.dCb_dt[gas, age, temp, z, t] + m.eb*m.v[age,temp,t]*m.dCb_dz[gas, age, temp, z, t] == -m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t])
+        return m.eb*m.dCb_dt[gas, age, temp, z, t] + m.eb*m.v[age,temp,t]*m.dCb_dz[gas, age, temp, z, t] == -(1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t])
 
     # Washcoat mass balance constraint
     # # TODO: Update rxn_sum_gas to automatically update u values
     #           based on whether the reaction is surface or not
     def pore_mb_constraint(self, m, gas, age, temp, z, t):
         rxn_sum=self.reaction_sum_gas(gas, m, age, temp, z, t)
-        return m.ew*(1-m.eb)*m.dC_dt[gas, age, temp, z, t] == m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t]) + (1-m.eb)*rxn_sum
+        return m.ew*(1-m.eb)*m.dC_dt[gas, age, temp, z, t] == (1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t]) + (1-m.eb)*rxn_sum
 
     # Adsorption/surface mass balance constraint
     def surf_mb_constraint(self, m, surf, age, temp, z, t):

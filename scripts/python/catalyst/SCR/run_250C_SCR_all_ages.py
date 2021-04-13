@@ -918,7 +918,6 @@ sim.fix_reaction("r4b")
 # Fix all reactions for simulation mode only
 #sim.fix_all_reactions()
 
-
 sim.initialize_auto_scaling()
 sim.initialize_simulator()
 sim.finalize_auto_scaling()
