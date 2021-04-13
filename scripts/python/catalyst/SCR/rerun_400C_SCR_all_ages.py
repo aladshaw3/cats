@@ -7,8 +7,8 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 # Create a simulator object and Load a full model from json
-run = "05"                              #update this number to reflect changes in runs
-readfile = 'output/400C_model04.json'     #update this name to reflect which model to load
+run = "02"                              #update this number to reflect changes in runs
+readfile = 'output/400C_model.json'     #update this name to reflect which model to load
 writefile = "400C_model"+run+".json"
 
 #NOTE: Other output names can remain the same, most important thing is .json file
