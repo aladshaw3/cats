@@ -195,19 +195,19 @@ r6 = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q1": 1, "O2": 1}
         }
 
-r7f = {"parameters": {"A": 19001.33914, "E": 0},
+r7f = {"parameters": {"A": 31483.22265, "E": 0},
           "mol_reactants": {"S1": 1, "NO": 1, "O2": 0.5},
           "mol_products": {"S1": 1, "NO2": 1},
           "rxn_orders": {"S1": 1, "NO": 1, "O2": 1}
         }
 
-r7r = {"parameters": {"A": 10.83303226, "E": 0},
+r7r = {"parameters": {"A": 10.90187269, "E": 0},
           "mol_reactants": {"S1": 1, "NO2": 1},
           "mol_products": {"S1": 1, "NO": 1, "O2": 0.5},
           "rxn_orders": {"S1": 1, "NO2": 1}
         }
 
-r8 = {"parameters": {"A": 61587568.29, "E": 0},
+r8 = {"parameters": {"A": 48726663.2, "E": 0},
           "mol_reactants": {"q1": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"S1": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"q1": 1, "NO": 1, "O2": 1}
@@ -239,13 +239,13 @@ r12 = {"parameters": {"A": 0, "E": 0},
 
 
 #  ---------- q2a reactions ------------
-r13a = {"parameters": {"A": 40.3504371, "E": 0},
+r13a = {"parameters": {"A": 21.13361159, "E": 0},
           "mol_reactants": {"q2a": 1, "O2": 0.75},
           "mol_products": {"S2": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"q2a": 1, "O2": 1}
         }
 
-r14a = {"parameters": {"A": 30.10654008, "E": 0},
+r14a = {"parameters": {"A": 22.54828523, "E": 0},
           "mol_reactants": {"q2a": 1, "O2": 1.25},
           "mol_products": {"S2": 1, "NO": 1, "H2O": 1.5},
           "rxn_orders": {"q2a": 1, "O2": 1}
@@ -263,19 +263,19 @@ r15ar = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"S2": 1, "NO2": 1}
         }
 
-r16a = {"parameters": {"A": 725033937.4, "E": 0},
+r16a = {"parameters": {"A": 461854242.4, "E": 0},
           "mol_reactants": {"q2a": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"S2": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"q2a": 1, "NO": 1, "O2": 1}
         }
 
-r17a = {"parameters": {"A": 11744199.69, "E": 0},
+r17a = {"parameters": {"A": 19456053.27, "E": 0},
           "mol_reactants": {"q2a": 1, "NO2": 1},
           "mol_products": {"S2": 1, "N2": 1, "H2O": 1.5, "O2": 0.25},
           "rxn_orders": {"q2a": 1, "NO2": 1}
         }
 
-r18a = {"parameters": {"A": 1834428475, "E": 0},
+r18a = {"parameters": {"A": 1836760736, "E": 0},
           "mol_reactants": {"q2a": 1, "NO2": 1, "O2": 0.25},
           "mol_products": {"S2": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"q2a": 1, "NO2": 1, "O2": 1}
@@ -318,7 +318,7 @@ r15br = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q2b": 1, "NO2": 1}
         }
 
-r16b = {"parameters": {"A": 2651365104, "E": 0},
+r16b = {"parameters": {"A": 1436298806, "E": 0},
           "mol_reactants": {"q2b": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"q2a": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"q2b": 1, "NO": 1, "O2": 1}
@@ -330,13 +330,13 @@ r17b = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q2b": 1, "NO2": 1}
         }
 
-r18b = {"parameters": {"A": 42680922653, "E": 0},
+r18b = {"parameters": {"A": 36419091568, "E": 0},
           "mol_reactants": {"q2b": 1, "NO2": 1, "O2": 0.25},
           "mol_products": {"q2a": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"q2b": 1, "NO2": 1, "O2": 1}
         }
 
-r19b = {"parameters": {"A": 13698310.96, "E": 0},
+r19b = {"parameters": {"A": 10141775.92, "E": 0},
           "mol_reactants": {"q2b": 1, "NO": 1, "O2": 0.75},
           "mol_products": {"q2a": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"q2b": 1, "NO": 1, "O2": 1}
@@ -373,13 +373,13 @@ r23r = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"S3a": 1, "NO2": 1}
         }
 
-r24 = {"parameters": {"A": 1075286546, "E": 0},
+r24 = {"parameters": {"A": 914079793.8, "E": 0},
           "mol_reactants": {"q3a": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"S3a": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"q3a": 1, "NO": 1, "O2": 1}
         }
 
-r25 = {"parameters": {"A": 13343026.11, "E": 0},
+r25 = {"parameters": {"A": 11321564.2, "E": 0},
           "mol_reactants": {"q3a": 1, "NO2": 1},
           "mol_products": {"S3a": 1, "N2": 1, "H2O": 1.5, "O2": 0.25},
           "rxn_orders": {"q3a": 1, "NO2": 1}
@@ -391,7 +391,7 @@ r26 = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q3a": 1, "NO2": 1, "O2": 1}
         }
 
-r27 = {"parameters": {"A": 10555293.46, "E": 0},
+r27 = {"parameters": {"A": 11566451.95, "E": 0},
           "mol_reactants": {"q3a": 1, "NO": 1, "O2": 0.75},
           "mol_products": {"S3a": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"q3a": 1, "NO": 1, "O2": 1}
@@ -404,31 +404,31 @@ r28 = {"parameters": {"A": 0, "E": 0},
         }
 
 #  ---------- q3b reactions ------------
-r29 = {"parameters": {"A": 600.655317, "E": 0},
+r29 = {"parameters": {"A": 132.2224512, "E": 0},
           "mol_reactants": {"q3b": 1, "O2": 0.75},
           "mol_products": {"S3b": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"q3b": 1, "O2": 1}
         }
 
-r30 = {"parameters": {"A": 250.7064246, "E": 0},
+r30 = {"parameters": {"A": 380.2268442, "E": 0},
           "mol_reactants": {"q3b": 1, "O2": 1.25},
           "mol_products": {"S3b": 1, "NO": 1, "H2O": 1.5},
           "rxn_orders": {"q3b": 1, "O2": 1}
         }
 
-r31f = {"parameters": {"A": 3853880.333, "E": 0},
+r31f = {"parameters": {"A": 6387595.258, "E": 0},
           "mol_reactants": {"S3b": 1, "NO": 1, "O2": 0.5},
           "mol_products": {"S3b": 1, "NO2": 1},
           "rxn_orders": {"S3b": 1, "NO": 1, "O2": 1}
         }
 
-r31r = {"parameters": {"A": 13158.28223, "E": 0},
+r31r = {"parameters": {"A": 8650.774758, "E": 0},
           "mol_reactants": {"S3b": 1, "NO2": 1},
           "mol_products": {"S3b": 1, "NO": 1, "O2": 0.5},
           "rxn_orders": {"S3b": 1, "NO2": 1}
         }
 
-r32 = {"parameters": {"A": 69432334963, "E": 0},
+r32 = {"parameters": {"A": 1.01317E+11, "E": 0},
           "mol_reactants": {"q3b": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"S3b": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"q3b": 1, "NO": 1, "O2": 1}
@@ -440,7 +440,7 @@ r33 = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q3b": 1, "NO2": 1}
         }
 
-r34 = {"parameters": {"A": 17942050935, "E": 0},
+r34 = {"parameters": {"A": 20507764414, "E": 0},
           "mol_reactants": {"q3b": 1, "NO2": 1, "O2": 0.25},
           "mol_products": {"S3b": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"q3b": 1, "NO2": 1, "O2": 1}
@@ -459,37 +459,37 @@ r36 = {"parameters": {"A": 0, "E": 0},
         }
 
 #  ---------- q3c reactions ------------
-r37 = {"parameters": {"A": 0.202098868, "E": 0},
+r37 = {"parameters": {"A": 4.122251624, "E": 0},
           "mol_reactants": {"q3c": 1, "O2": 0.75},
           "mol_products": {"S3c": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"q3c": 1, "O2": 1}
         }
 
-r38 = {"parameters": {"A": 0.360135396, "E": 0},
+r38 = {"parameters": {"A": 17.21538922, "E": 0},
           "mol_reactants": {"q3c": 1, "O2": 1.25},
           "mol_products": {"S3c": 1, "NO": 1, "H2O": 1.5},
           "rxn_orders": {"q3c": 1, "O2": 1}
         }
 
-r39f = {"parameters": {"A": 7959106.85, "E": 0},
+r39f = {"parameters": {"A": 8603408.1, "E": 0},
           "mol_reactants": {"S3c": 1, "NO": 1, "O2": 0.5},
           "mol_products": {"S3c": 1, "NO2": 1},
           "rxn_orders": {"S3c": 1, "NO": 1, "O2": 1}
         }
 
-r39r = {"parameters": {"A": 5878.269305, "E": 0},
+r39r = {"parameters": {"A": 8505.892474, "E": 0},
           "mol_reactants": {"S3c": 1, "NO2": 1},
           "mol_products": {"S3c": 1, "NO": 1, "O2": 0.5},
           "rxn_orders": {"S3c": 1, "NO2": 1}
         }
 
-r40 = {"parameters": {"A": 3064529385, "E": 0},
+r40 = {"parameters": {"A": 2440491626, "E": 0},
           "mol_reactants": {"q3c": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"S3c": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"q3c": 1, "NO": 1, "O2": 1}
         }
 
-r41 = {"parameters": {"A": 8027877.24, "E": 0},
+r41 = {"parameters": {"A": 10507237.03, "E": 0},
           "mol_reactants": {"q3c": 1, "NO2": 1},
           "mol_products": {"S3c": 1, "N2": 1, "H2O": 1.5, "O2": 0.25},
           "rxn_orders": {"q3c": 1, "NO2": 1}
@@ -501,7 +501,7 @@ r42 = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"q3c": 1, "NO2": 1, "O2": 1}
         }
 
-r43 = {"parameters": {"A": 76337360.84, "E": 0},
+r43 = {"parameters": {"A": 42709560.26, "E": 0},
           "mol_reactants": {"q3c": 1, "NO": 1, "O2": 0.75},
           "mol_products": {"S3c": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"q3c": 1, "NO": 1, "O2": 1}
