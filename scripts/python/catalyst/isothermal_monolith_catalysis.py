@@ -188,6 +188,7 @@ class Isothermal_Monolith_Simulator(object):
         self.solve_time = 0
         self.isVelocityRecalculated = False
         self.load_time = 0
+        self.rescaleConstraint = False
 
         self.isDataBoundsSet = False
         self.isDataTimesSet = False
@@ -1933,12 +1934,12 @@ class Isothermal_Monolith_Simulator(object):
             print("Error! Cannot automate final variable scaling if variables not initialized")
             exit()
 
-        rescaleConstraint = False
+        self.rescaleConstraint = False
         # add the scaling_factor if it doesn't already exist
         if self.model.find_component('scaling_factor'):
-            rescaleConstraint = False
+            self.rescaleConstraint = False
         else:
-            rescaleConstraint = True
+            self.rescaleConstraint = True
             self.model.scaling_factor = Suffix(direction=Suffix.EXPORT)
 
         # set scaling for objective function
@@ -2052,7 +2053,7 @@ class Isothermal_Monolith_Simulator(object):
 
 
         # Only rescale constraints if they were not scaled before
-        if rescaleConstraint == True:
+        if self.rescaleConstraint == True:
             # set scaling for bulk constraints
             maxval = 0
             for key in self.model.bulk_cons:
@@ -2122,7 +2123,7 @@ class Isothermal_Monolith_Simulator(object):
                             exit()
 
         if self.isVelocityRecalculated == False:
-            self.recalculate_linear_velocities(True)
+            self.recalculate_linear_velocities(interally_called=True,isMonolith=True)
 
         # Setup a dictionary to determine which reaction to unfix after solve
         self.initialize_time = TIME.time()
@@ -2397,7 +2398,7 @@ class Isothermal_Monolith_Simulator(object):
             print("Warning! No objective function set. Forcing all kinetics to be fixed.")
             self.fix_all_reactions()
         if self.isVelocityRecalculated == False:
-            self.recalculate_linear_velocities(True)
+            self.recalculate_linear_velocities(interally_called=True,isMonolith=True)
         self.solve_time = TIME.time()
 
         solver = SolverFactory('ipopt')

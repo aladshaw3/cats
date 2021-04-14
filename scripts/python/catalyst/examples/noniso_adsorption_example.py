@@ -110,7 +110,6 @@ test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.FiniteDifference,
                     tstep=20,elems=5,colpoints=1)
 
-test.set_isothermal_temp("Unaged","250C",250+273.15)
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 test.set_const_IC("NH3","Unaged","250C",0)
 test.set_const_IC("q1","Unaged","250C",0)
@@ -118,17 +117,34 @@ test.set_time_dependent_BC("NH3","Unaged","250C",
                             time_value_pairs=[(5,6.94E-6), (30,0)],
                             initial_value=0)
 
-# Fix the kinetics to only run a simulation
+# Set temperature info
+#test.set_isothermal_temp("Unaged","250C",250+273.15)
+test.set_const_temperature_IC("Unaged","250C",250+273.15)
+test.set_const_temperature_BC("Unaged","250C",250+273.15)
+test.set_const_wall_temperature("Unaged","250C",250+273.15)
+
+# Fix the kinetics and/or heats of reaction to only run a simulation
 #test.fix_all_reactions()
+test.model.dHrxn["r1"].set_value(-540000)
+#test.model.dHrxn["r1"].set_value(0)
+test.fix_all_heats()
 
+#test.model.pprint()
+#exit()
 test.initialize_auto_scaling()
-test.initialize_simulator()
-
+test.initialize_simulator(console_out=False)
+#test.model.cpg.pprint()
 test.finalize_auto_scaling()
 test.run_solver()
-test.model.cpg.pprint()
-test.model.Tc.pprint()
-test.model.T.pprint()
+#test.model.scaling_factor.pprint()
+#test.model.gas_energy.pprint()
+#test.model.solid_energy.pprint()
+#exit()
+#test.model.cpg.pprint()
+#test.model.Tc.pprint()
+#test.model.T.pprint()
+#test.model.surf_cons.pprint()
+#exit()
 #exit()
 '''
 test.model.Re.pprint()
@@ -142,7 +158,7 @@ test.model.Ga.pprint()
 test.model.v.pprint()
 exit()
 '''
-test.print_results_of_breakthrough(["NH3"], "Unaged", "250C", file_name="noniso_ads.txt")
+test.print_results_of_breakthrough(["NH3"], "Unaged", "250C", file_name="noniso_ads.txt", include_temp=True)
 
 test.save_model_state(file_name="noniso_example.json")
 
