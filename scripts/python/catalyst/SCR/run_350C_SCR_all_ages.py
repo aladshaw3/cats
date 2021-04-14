@@ -4,7 +4,7 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 # Read in the data (data is now a dictionary containing the data we want)
-data = naively_read_data_file("inputfiles/SCR_all-ages_350C.txt",factor=5)
+data = naively_read_data_file("inputfiles/SCR_all-ages_350C.txt",factor=2)
 
 # Testing
 sim = Isothermal_Monolith_Simulator()
@@ -865,7 +865,7 @@ sim.fix_reaction("r4a")
 sim.fix_reaction("r4b")
 
 # Fix all reactions for simulation mode only
-sim.fix_all_reactions()
+'''sim.fix_all_reactions()
 
 sim.unfix_reaction("r5")
 sim.unfix_reaction("r6")
@@ -883,7 +883,7 @@ sim.unfix_reaction("r29")
 sim.unfix_reaction("r30")
 
 sim.unfix_reaction("r37")
-sim.unfix_reaction("r38")
+sim.unfix_reaction("r38")'''
 
 
 sim.initialize_auto_scaling()

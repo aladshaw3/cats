@@ -7,8 +7,8 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 # Create a simulator object and Load a full model from json
-run = "02"                              #update this number to reflect changes in runs
-readfile = 'output/300C_model.json'     #update this name to reflect which model to load
+run = "03"                              #update this number to reflect changes in runs
+readfile = 'output/300C_model02.json'     #update this name to reflect which model to load
 writefile = "300C_model"+run+".json"
 
 #NOTE: Other output names can remain the same, most important thing is .json file
@@ -24,33 +24,33 @@ sim.fix_reaction("r3c")
 sim.fix_reaction("r4a")
 sim.fix_reaction("r4b")
 
-'''
+
 sim.fix_all_reactions()
 
+sim.unfix_reaction("r5")
 sim.unfix_reaction("r6")
 sim.unfix_reaction("r10")
-sim.unfix_reaction("r11")
 
+sim.unfix_reaction("r13a")
 sim.unfix_reaction("r14a")
 sim.unfix_reaction("r18a")
-sim.unfix_reaction("r19a")
 
+sim.unfix_reaction("r13b")
 sim.unfix_reaction("r14b")
 sim.unfix_reaction("r18b")
-sim.unfix_reaction("r19b")
 
+sim.unfix_reaction("r21")
 sim.unfix_reaction("r22")
 sim.unfix_reaction("r26")
-sim.unfix_reaction("r27")
 
+sim.unfix_reaction("r29")
 sim.unfix_reaction("r30")
 sim.unfix_reaction("r34")
-sim.unfix_reaction("r35")
 
+sim.unfix_reaction("r37")
 sim.unfix_reaction("r38")
 sim.unfix_reaction("r42")
-sim.unfix_reaction("r43")
-'''
+
 
 sim.finalize_auto_scaling()
 sim.run_solver()
