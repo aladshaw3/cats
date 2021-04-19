@@ -31,6 +31,7 @@ sim.fix_reaction("r4b")
 #sim.fix_reaction("r21")
 #sim.fix_reaction("r29")
 #sim.fix_reaction("r37")
+sim.fix_all_reactions()
 
 sim.finalize_auto_scaling()
 sim.run_solver()
@@ -72,3 +73,5 @@ sim.print_results_of_integral_average(["q1","q2a","q2b","q3a","q3b","q3c"],
 
 sim.print_kinetic_parameter_info(file_name="250C_opt_params.txt")
 sim.save_model_state(file_name=writefile)
+
+sim.print_results_all_locations(["NH3","q3a","S3a"], "Unaged", "250C", file_name="check_res.txt")

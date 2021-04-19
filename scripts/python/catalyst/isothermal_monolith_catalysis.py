@@ -1313,7 +1313,7 @@ class Isothermal_Monolith_Simulator(object):
         for age in self.model.age_set:
             for temp in self.model.T_set:
                 flow_rate_ref = volume*value(self.model.space_velocity[age,temp,self.model.t.first()])
-                press = value(self.model.P[age,temp,self.model.z.first(),self.model.t.first()])
+                press = value(self.model.P[age,temp,self.model.z.last(),self.model.t.first()])
                 temperature = value(self.model.T[age,temp,self.model.z.first(),self.model.t.first()])
                 self.model.P[age,temp,:,:].set_value(press)
                 val = value(self.model.space_velocity[age,temp,self.model.t.first()])
@@ -1634,7 +1634,7 @@ class Isothermal_Monolith_Simulator(object):
             for temp in self.model.T_set:
                 for time in self.model.t:
                     Q_ref = volume*value(self.model.space_velocity[age,temp,time])
-                    P = value(self.model.P[age,temp,self.model.z.first(),time])
+                    P = value(self.model.P[age,temp,self.model.z.last(),time])
                     T = value(self.model.T[age,temp,self.model.z.first(),time])
                     Q_real = Q_ref*(value(self.model.Pref[age,temp])/P)*(T/value(self.model.Tref[age,temp]))
                     self.model.v[age,temp,time].set_value(Q_real/open_area)
