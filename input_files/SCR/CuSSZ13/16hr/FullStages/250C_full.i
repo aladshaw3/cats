@@ -1,16 +1,12 @@
-# ---------------------------------------------------------------------
-# NOTE 1: May need to include O2 adsorption to account for NH3 'spike' when
-# O2 level is increased.
-# ---------------------------------------------------------------------
 
 [GlobalParams]
   # 'dg_scheme' and 'sigma' are parameters for the DG kernels
   dg_scheme = nipg
   sigma = 10
-  # 'transfer_rate' is a lumped parameter for film mass transfer and pore diffusion
-  #   The value here is indicative of mass transfer into a washcoat in a monolith
-  #   where the monolith channels are squares with rounded corners
-  transfer_rate = 5757.541  #min^-1
+  # 'transfer_rate' is a lumped parameter for mass-trasfer coefficient (km)
+  #     and the ratio of exposed area to catalyst volume (Ga).
+  #       transfer_rate = km*Ga*(1-eb)
+  transfer_rate = 9539  #min^-1
 [] #END GlobalParams
 
 [Problem]
@@ -22,7 +18,7 @@
     type = GeneratedMesh
     dim = 2
     nx = 1
-    ny = 20
+    ny = 10
     xmin = 0.0
     xmax = 1.0    #2cm diameter
     ymin = 0.0
@@ -33,435 +29,435 @@
 
 ## Gas phase variable lists
     [./O2]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0.002330029
     [../]
 
     [./O2w]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0.002330029
     [../]
 
     [./H2O]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0.001154771
     [../]
 
     [./H2Ow]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0.001154771
     [../]
 
     [./NH3]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 1E-9
     [../]
 
     [./NH3w]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 1E-9
     [../]
 
     [./NOx]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 1E-9
     [../]
 
     [./NOxw]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 1E-9
     [../]
 
     [./NO2]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 1E-9
     [../]
 
     [./NO2w]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 1E-9
     [../]
 
     [./N2O]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 1E-9
     [../]
 
     [./N2Ow]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 1E-9
     [../]
 
 ## Reaction variable list
     [./r1]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r2a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r2b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r3a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r3b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r3c]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r4a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r4b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r5]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r6]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r7]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r8]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r9]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r10]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r11]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r12]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r13a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r14a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r15a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r16a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r17a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r18a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r19a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r20a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r13b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r14b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r15b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r16b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r17b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r18b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r19b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r20b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r21]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r22]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r23]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r24]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r25]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r26]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r27]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r28]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r29]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r30]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r31]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r32]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r33]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r34]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r35]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r36]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r37]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r38]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r39]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r40]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r41]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r42]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r43]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./r44]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
 ## Surface Variable List
     [./q1]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./q2a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./q2b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./q3a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./q3b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./q3c]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./q4a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./q4b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./qT]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0
     [../]
 
     [./S1]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./S2]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./S3a]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./S3b]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
     [./S3c]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
     [../]
 
@@ -513,7 +509,7 @@
   [./D]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 0.0
+    initial_condition = 2400.0  #Approximate dispersion
   [../]
 
   # e_b
@@ -606,6 +602,19 @@
         variable = O2w
         coupled = O2
     [../]
+    [./O2w_rxns]
+        type = ScaledWeightedCoupledSumFunction
+        variable = O2w
+        coupled_list = 'r10 r11 r13a r13b r14a r14b r15a r15b r16a r16b
+                        r17a r17b r18a r18b r19a r19b r21 r22 r23 r24
+                        r25 r26 r27 r29 r30 r31 r32 r33 r34 r35
+                        r37 r38 r39 r40 r41 r42 r43 r5 r6 r7 r8 r9'
+        weights = '-0.25 -0.75 -0.75 -0.75 -1.25 -1.25 -0.5 -0.5 -0.25 -0.25
+                        0.25 0.25 -0.25 -0.25 -0.75 -0.75 -0.75 -1.25 -0.5 -0.25
+                        0.25 -0.25 -0.75 -0.75 -1.25 -0.5 -0.25 0.25 -0.25 -0.75
+                        -0.75 -1.25 -0.5 -0.25 0.25 -0.25 -0.75 -0.75 -1.25 -0.5 -0.25 0.25'
+        scale = non_pore
+    [../]
 
     # =============== Bulk phase H2O ===============
     [./H2O_dot]
@@ -649,8 +658,14 @@
     [./H2Ow_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = H2Ow
-        coupled_list = 'r4a r4b'
-        weights = '-1 -1'
+        coupled_list = 'r4a r4b r10 r11 r12 r13a r13b r14a r14b r16a r16b
+                        r17a r17b r18a r18b r19a r19b r20a r20b r21 r22
+                        r24 r25 r26 r27 r28 r29 r30 r32 r33 r34 r35 r36
+                        r37 r38 r40 r41 r42 r43 r44 r5 r6 r8 r9'
+        weights = '-1 -1 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5
+                        1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5
+                        1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5
+                        1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5'
         scale = non_pore
     [../]
 
@@ -1234,11 +1249,11 @@
       variable = r7
       this_variable = r7
 
-      forward_activation_energy = 124748.7
-      forward_pre_exponential = 2.725E14
+      forward_activation_energy = 0
+      forward_pre_exponential = 147.537
 
-      reverse_activation_energy = 190460.7
-      reverse_pre_exponential = 3.1729E16
+      reverse_activation_energy = 0
+      reverse_pre_exponential = 0.003524
 
       temperature = temp
       scale = 1.0
@@ -1257,8 +1272,8 @@
       variable = r8
       this_variable = r8
 
-      forward_activation_energy = 90106.9
-      forward_pre_exponential = 2.89635E16
+      forward_activation_energy = 0
+      forward_pre_exponential = 4426514
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1373,8 +1388,8 @@
       variable = r13a
       this_variable = r13a
 
-      forward_activation_energy = 77096.2
-      forward_pre_exponential = 542098776
+      forward_activation_energy = 0
+      forward_pre_exponential = 2.36378
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1397,7 +1412,7 @@
       this_variable = r14a
 
       forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_pre_exponential = 1.371876
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1442,8 +1457,8 @@
       variable = r16a
       this_variable = r16a
 
-      forward_activation_energy = 84067.1
-      forward_pre_exponential = 9.38616E15
+      forward_activation_energy = 0
+      forward_pre_exponential = 26428686
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1465,8 +1480,8 @@
       variable = r17a
       this_variable = r17a
 
-      forward_activation_energy = 54359.2
-      forward_pre_exponential = 1.54734E12
+      forward_activation_energy = 0
+      forward_pre_exponential = 1021349
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1488,8 +1503,8 @@
       variable = r18a
       this_variable = r18a
 
-      forward_activation_energy = 89832.6
-      forward_pre_exponential = 2.6758E15
+      forward_activation_energy = 0
+      forward_pre_exponential = 7243320
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1628,8 +1643,8 @@
       variable = r16b
       this_variable = r16b
 
-      forward_activation_energy = 74106.9
-      forward_pre_exponential = 2.89635E15
+      forward_activation_energy = 0
+      forward_pre_exponential = 73882124
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1674,8 +1689,8 @@
       variable = r18b
       this_variable = r18b
 
-      forward_activation_energy = 153031.1
-      forward_pre_exponential = 1.27128E23
+      forward_activation_energy = 0
+      forward_pre_exponential = 1.58E8
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1697,8 +1712,8 @@
       variable = r19b
       this_variable = r19b
 
-      forward_activation_energy = 103400.9
-      forward_pre_exponential = 3.233598E17
+      forward_activation_energy = 0
+      forward_pre_exponential = 2254938
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1813,8 +1828,8 @@
       variable = r24
       this_variable = r24
 
-      forward_activation_energy = 105579.3
-      forward_pre_exponential = 1.61724E18
+      forward_activation_energy = 0
+      forward_pre_exponential = 1.26E8
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1836,8 +1851,8 @@
       variable = r25
       this_variable = r25
 
-      forward_activation_energy = 112935.4
-      forward_pre_exponential = 8.55678E16
+      forward_activation_energy = 0
+      forward_pre_exponential = 762415
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1859,8 +1874,8 @@
       variable = r26
       this_variable = r26
 
-      forward_activation_energy = 238744.1
-      forward_pre_exponential = 9.92376E16
+      forward_activation_energy = 0
+      forward_pre_exponential = 0
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1882,8 +1897,8 @@
       variable = r27
       this_variable = r27
 
-      forward_activation_energy = 97070.4
-      forward_pre_exponential = 8.61972E15
+      forward_activation_energy = 0
+      forward_pre_exponential = 4051904
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1929,8 +1944,8 @@
       variable = r29
       this_variable = r29
 
-      forward_activation_energy = 58674.5
-      forward_pre_exponential = 33445842
+      forward_activation_energy = 0
+      forward_pre_exponential = 12.804
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1953,7 +1968,7 @@
       this_variable = r30
 
       forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_pre_exponential = 12.6955
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1975,11 +1990,11 @@
       variable = r31
       this_variable = r31
 
-      forward_activation_energy = 43962
-      forward_pre_exponential = 5.01205E10
+      forward_activation_energy = 0
+      forward_pre_exponential = 2236985
 
-      reverse_activation_energy = 93653.9
-      reverse_pre_exponential = 6.1464E11
+      reverse_activation_energy = 0
+      reverse_pre_exponential = 1164.919
 
       temperature = temp
       scale = 1.0
@@ -1998,8 +2013,8 @@
       variable = r32
       this_variable = r32
 
-      forward_activation_energy = 141272.5
-      forward_pre_exponential = 6.2142E22
+      forward_activation_energy = 0
+      forward_pre_exponential = 2.97E8
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2044,8 +2059,8 @@
       variable = r34
       this_variable = r34
 
-      forward_activation_energy = 141411
-      forward_pre_exponential = 6.32648E22
+      forward_activation_energy = 0
+      forward_pre_exponential = 1.3E8
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2114,8 +2129,8 @@
       variable = r37
       this_variable = r37
 
-      forward_activation_energy = 120116.6
-      forward_pre_exponential = 1.55166E11
+      forward_activation_energy = 0
+      forward_pre_exponential = 0.01831449
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2138,7 +2153,7 @@
       this_variable = r38
 
       forward_activation_energy = 0
-      forward_pre_exponential = 0
+      forward_pre_exponential = 0.020512
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2160,11 +2175,11 @@
       variable = r39
       this_variable = r39
 
-      forward_activation_energy = 44670.9
-      forward_pre_exponential = 3.22636E10
+      forward_activation_energy = 0
+      forward_pre_exponential = 1584808
 
-      reverse_activation_energy = 95712
-      reverse_pre_exponential = 4.0929E11
+      reverse_activation_energy = 0
+      reverse_pre_exponential = 369.3771
 
       temperature = temp
       scale = 1.0
@@ -2183,8 +2198,8 @@
       variable = r40
       this_variable = r40
 
-      forward_activation_energy = 102597.4
-      forward_pre_exponential = 1.651554E19
+      forward_activation_energy = 0
+      forward_pre_exponential = 3.46E8
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2206,8 +2221,8 @@
       variable = r41
       this_variable = r41
 
-      forward_activation_energy = 119148
-      forward_pre_exponential = 3.11187E18
+      forward_activation_energy = 0
+      forward_pre_exponential = 781484.9
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2252,8 +2267,8 @@
       variable = r43
       this_variable = r43
 
-      forward_activation_energy = 134489.7
-      forward_pre_exponential = 3.700764E20
+      forward_activation_energy = 0
+      forward_pre_exponential = 7114766
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
