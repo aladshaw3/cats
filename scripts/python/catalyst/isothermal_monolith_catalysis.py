@@ -196,6 +196,7 @@ class Isothermal_Monolith_Simulator(object):
         self.isDataTempSet = False
         self.isDataGasSpecSet = False
         self.isDataValuesSet = {}
+
         self.DiscType = "DiscretizationMethod.FiniteDifference"
         self.colpoints = 1
 
@@ -1232,6 +1233,10 @@ class Isothermal_Monolith_Simulator(object):
         sum=self.site_sum(site, m, age, temp, z, t)
         return m.Smax[site,age,z,t] - m.S[site, age, temp, z, t] - sum == 0
 
+    # Edge constraint for central differencing
+    def bulk_edge_constraint(self, m, gas, age, temp, t):
+        return m.dCb_dz[gas, age, temp, m.z[-1], t] == (m.Cb[gas, age, temp, m.z[-1], t] - m.Cb[gas, age, temp, m.z[-2], t])/(m.z[-1]-m.z[-2])
+
     # Objective function
     def norm_objective(self, m):
         sum = 0
@@ -1285,8 +1290,9 @@ class Isothermal_Monolith_Simulator(object):
         fd_discretizer.apply_to(self.model,nfe=tstep,wrt=self.model.t,scheme='BACKWARD')
 
         if method == DiscretizationMethod.FiniteDifference:
-            fd_discretizer.apply_to(self.model,nfe=elems,wrt=self.model.z,scheme='BACKWARD')
+            fd_discretizer.apply_to(self.model,nfe=elems,wrt=self.model.z,scheme='CENTRAL')
             self.DiscType = "DiscretizationMethod.FiniteDifference"
+            self.model.dCbdz_edge = Constraint(self.model.gas_set, self.model.age_set, self.model.T_set, self.model.t, rule=self.bulk_edge_constraint)
         elif method == DiscretizationMethod.OrthogonalCollocation:
             oc_discretizer.apply_to(self.model,nfe=elems,wrt=self.model.z,ncp=colpoints,scheme='LAGRANGE-RADAU')
             self.DiscType = "DiscretizationMethod.OrthogonalCollocation"
@@ -1902,6 +1908,8 @@ class Isothermal_Monolith_Simulator(object):
             maxval = 1e-5
         self.model.scaling_factor.set_value(self.model.dCb_dz_disc_eq, 1/maxval)
         self.model.scaling_factor.set_value(self.model.dCb_dz, 1/maxval)
+        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+            self.model.scaling_factor.set_value(self.model.dCbdz_edge, 1/maxval)
 
         maxval = 0
         for key in self.model.dCb_dt_disc_eq:
@@ -1980,6 +1988,8 @@ class Isothermal_Monolith_Simulator(object):
             maxval = abs(self.model.dCb_dz[minkey].value)
         self.model.scaling_factor.set_value(self.model.dCb_dz, 1/maxval)
         self.model.scaling_factor.set_value(self.model.dCb_dz_disc_eq, 1/maxval)
+        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+            self.model.scaling_factor.set_value(self.model.dCbdz_edge, 1/maxval)
 
         maxkey = max(self.model.dCb_dt.get_values(), key=self.model.dCb_dt.get_values().get)
         minkey = min(self.model.dCb_dt.get_values(), key=self.model.dCb_dt.get_values().get)
@@ -2147,6 +2157,8 @@ class Isothermal_Monolith_Simulator(object):
         self.model.dCb_dz_disc_eq[:, :, :, :, :].deactivate()
         self.model.dCb_dt_disc_eq[:, :, :, :, :].deactivate()
         self.model.dC_dt_disc_eq[:, :, :, :, :].deactivate()
+        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+            self.model.dCbdz_edge[:, :, :, :].deactivate()
 
         if self.isSurfSpecSet == True:
             self.model.q[:, :, :, :, :].fix()
@@ -2181,6 +2193,8 @@ class Isothermal_Monolith_Simulator(object):
                         self.model.dCb_dz_disc_eq[:, age_solve, temp_solve, :, time_solve].activate()
                         self.model.dCb_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].activate()
                         self.model.dC_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].activate()
+                        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+                            self.model.dCbdz_edge[:, age_solve, temp_solve, time_solve].activate()
 
                         if self.isSurfSpecSet == True:
                             self.model.q[:, age_solve, temp_solve, :, time_solve].unfix()
@@ -2273,10 +2287,10 @@ class Isothermal_Monolith_Simulator(object):
                             solver.options['warm_start_init_point'] = options['warm_start_init_point']
 
                         # Run solver (tighten the bounds to force good solutions)
-                        solver.options['bound_push'] = 1e-2
-                        solver.options['bound_frac'] = 1e-2
-                        solver.options['slack_bound_push'] = 1e-2
-                        solver.options['slack_bound_frac'] = 1e-2
+                        solver.options['bound_push'] = 1e-4
+                        solver.options['bound_frac'] = 1e-4
+                        solver.options['slack_bound_push'] = 1e-4
+                        solver.options['slack_bound_frac'] = 1e-4
                         solver.options['warm_start_init_point'] = 'yes'
 
                         if self.model.find_component('scaling_factor'):
@@ -2308,6 +2322,8 @@ class Isothermal_Monolith_Simulator(object):
                         self.model.dCb_dz_disc_eq[:, age_solve, temp_solve, :, time_solve].deactivate()
                         self.model.dCb_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].deactivate()
                         self.model.dC_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].deactivate()
+                        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+                            self.model.dCbdz_edge[:, age_solve, temp_solve, time_solve].deactivate()
 
                         if self.isSurfSpecSet == True:
                             self.model.q[:, age_solve, temp_solve, :, time_solve].fix()
@@ -2338,6 +2354,8 @@ class Isothermal_Monolith_Simulator(object):
         self.model.dCb_dz_disc_eq[:, :, :, :, :].activate()
         self.model.dCb_dt_disc_eq[:, :, :, :, :].activate()
         self.model.dC_dt_disc_eq[:, :, :, :, :].activate()
+        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+            self.model.dCbdz_edge[:, :, :, :].activate()
 
         if self.isSurfSpecSet == True:
             self.model.q[:, :, :, :, :].unfix()

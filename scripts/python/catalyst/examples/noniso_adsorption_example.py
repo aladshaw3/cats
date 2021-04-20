@@ -108,7 +108,7 @@ test.set_site_density("S1","Unaged",0.1152619)
 # Build the constraints then discretize
 test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=20,elems=5,colpoints=1)
+                    tstep=20,elems=5,colpoints=2)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 test.set_const_IC("NH3","Unaged","250C",0)

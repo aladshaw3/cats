@@ -264,6 +264,10 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         return (1-m.eb)*m.rhoc*m.cpc*m.dTc_dt[age,temp,z,t] == (1-m.eb)*m.Ga*m.hc*(m.T[age,temp,z,t]-m.Tc[age,temp,z,t]) \
                 -(1-m.eb)*m.a*m.hwc*(m.Tc[age,temp,z,t]-m.Tw[age,temp,z,t]) + ((1-m.eb)/1000)*rxn_sum
 
+    # Edge constraint for central differencing
+    def temp_edge_constraint(self, m, age, temp, t):
+        return m.dT_dz[age, temp, m.z[-1], t] == (m.T[age, temp, m.z[-1], t] - m.T[age, temp, m.z[-2], t])/(m.z[-1]-m.z[-2])
+
     # Build Constraints
     def build_constraints(self):
         for rxn in self.model.all_rxns:
@@ -301,6 +305,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                         elems=20, tstep=100, colpoints=1):
         Isothermal_Monolith_Simulator.discretize_model(self, method=method,
                         elems=elems, tstep=tstep, colpoints=colpoints)
+
+        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+            self.model.dTdz_edge = Constraint(self.model.age_set, self.model.T_set, self.model.t, rule=self.temp_edge_constraint)
         # Unfix temperatures by default
         self.model.T[:,:,:,:].unfix()
         self.model.Tc[:,:,:,:].unfix()
@@ -735,6 +742,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             self.model.dCb_dz_disc_eq[:, :, :, :, :].deactivate()
             self.model.dCb_dt_disc_eq[:, :, :, :, :].deactivate()
             self.model.dC_dt_disc_eq[:, :, :, :, :].deactivate()
+            if self.DiscType == "DiscretizationMethod.FiniteDifference":
+                self.model.dCbdz_edge[:, :, :, :].deactivate()
+                self.model.dTdz_edge[:, :, :].deactivate()
 
             self.model.Tc[:,:,:,:].fix()
             self.model.T[:,:,:,:].fix()
@@ -780,6 +790,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                             self.model.dCb_dz_disc_eq[:, age_solve, temp_solve, :, time_solve].activate()
                             self.model.dCb_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].activate()
                             self.model.dC_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].activate()
+                            if self.DiscType == "DiscretizationMethod.FiniteDifference":
+                                self.model.dCbdz_edge[:, age_solve, temp_solve, time_solve].activate()
+                                self.model.dTdz_edge[age_solve, temp_solve, time_solve].activate()
 
                             if self.isIsothermal[age_solve][temp_solve] == False:
                                 self.model.T[age_solve, temp_solve, :, time_solve].unfix()
@@ -925,6 +938,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                             self.model.dCb_dz_disc_eq[:, age_solve, temp_solve, :, time_solve].deactivate()
                             self.model.dCb_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].deactivate()
                             self.model.dC_dt_disc_eq[:, age_solve, temp_solve, :, time_solve].deactivate()
+                            if self.DiscType == "DiscretizationMethod.FiniteDifference":
+                                self.model.dCbdz_edge[:, age_solve, temp_solve, time_solve].deactivate()
+                                self.model.dTdz_edge[age_solve, temp_solve, time_solve].deactivate()
 
                             if self.isIsothermal[age_solve][temp_solve] == False:
                                 self.model.T[age_solve, temp_solve, :, time_solve].fix()
@@ -967,6 +983,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             self.model.dCb_dz_disc_eq[:, :, :, :, :].activate()
             self.model.dCb_dt_disc_eq[:, :, :, :, :].activate()
             self.model.dC_dt_disc_eq[:, :, :, :, :].activate()
+            if self.DiscType == "DiscretizationMethod.FiniteDifference":
+                self.model.dCbdz_edge[:, :, :, :].activate()
+                self.model.dTdz_edge[:, :, :].activate()
 
             for age in self.model.age_set:
                 for temp in self.model.T_set:
