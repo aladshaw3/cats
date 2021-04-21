@@ -302,7 +302,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
     # Override 'discretize_model'
     def discretize_model(self, method=DiscretizationMethod.FiniteDifference,
-                        elems=20, tstep=100, colpoints=1):
+                        elems=20, tstep=100, colpoints=2):
         Isothermal_Monolith_Simulator.discretize_model(self, method=method,
                         elems=elems, tstep=tstep, colpoints=colpoints)
 

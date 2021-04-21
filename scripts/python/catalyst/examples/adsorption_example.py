@@ -76,7 +76,7 @@ test.add_surface_sites("S1")
 test.add_reactions({"r1": ReactionType.EquilibriumArrhenius})
 
 test.set_bulk_porosity(0.3309)
-test.set_washcoat_porosity(0.2)
+test.set_washcoat_porosity(0.4)
 test.set_reactor_radius(1)                      #cm
 test.set_space_velocity_all_runs(1000)          #volumes per min
 test.set_cell_density(62)                       # 62 cells per cm^2 (~400 cpsi)
@@ -108,8 +108,8 @@ test.set_isothermal_temp("Unaged","250C",250+273.15)
 
 # Build the constraints then discretize
 test.build_constraints()
-test.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=20,elems=5,colpoints=1)
+test.discretize_model(method=DiscretizationMethod.OrthogonalCollocation,
+                    tstep=20,elems=5,colpoints=2)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 test.set_const_IC("NH3","Unaged","250C",0)

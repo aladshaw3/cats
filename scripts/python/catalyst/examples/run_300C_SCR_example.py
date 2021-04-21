@@ -98,7 +98,7 @@ sim.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
                     })
 
 sim.set_bulk_porosity(0.3309)
-sim.set_washcoat_porosity(0.2)
+sim.set_washcoat_porosity(0.4)
 sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(1000)      #volumes/min
 sim.set_cell_density(62)                   # 62 cells per cm^2 (~400 cpsi)
@@ -645,6 +645,52 @@ sim.fix_reaction("r4b")
 
 # Fix all reactions for simulation mode only
 sim.fix_all_reactions()
+sim.unfix_reaction("r13a")
+sim.unfix_reaction("r14a")
+sim.unfix_reaction("r29")
+sim.unfix_reaction("r30")
+sim.unfix_reaction("r37")
+sim.unfix_reaction("r38")
+
+sim.unfix_reaction("r1")
+sim.unfix_reaction("r2a")
+sim.unfix_reaction("r2b")
+sim.unfix_reaction("r3a")
+sim.unfix_reaction("r3b")
+sim.unfix_reaction("r3c")
+sim.unfix_reaction("r4a")
+sim.unfix_reaction("r4b")
+'''
+sim.set_reaction_param_bounds("r1","dH",factor=0)
+sim.set_reaction_param_bounds("r1","dS",factor=0)
+
+sim.set_reaction_param_bounds("r2a","dH",factor=0)
+sim.set_reaction_param_bounds("r2a","dS",factor=0)
+
+sim.set_reaction_param_bounds("r2b","dH",factor=0)
+sim.set_reaction_param_bounds("r2b","dS",factor=0)
+
+sim.set_reaction_param_bounds("r3a","dH",factor=0)
+sim.set_reaction_param_bounds("r3a","dS",factor=0)
+
+sim.set_reaction_param_bounds("r3b","dH",factor=0)
+sim.set_reaction_param_bounds("r3b","dS",factor=0)
+
+sim.set_reaction_param_bounds("r3c","dH",factor=0)
+sim.set_reaction_param_bounds("r3c","dS",factor=0)
+
+sim.set_reaction_param_bounds("r4a","dH",factor=0)
+sim.set_reaction_param_bounds("r4a","dS",factor=0)
+
+sim.set_reaction_param_bounds("r4b","dH",factor=0)
+sim.set_reaction_param_bounds("r4b","dS",factor=0)
+'''
+#sim.set_reaction_param_bounds("r13a","A",factor=5)
+#sim.set_reaction_param_bounds("r14a","A",factor=5)
+#sim.set_reaction_param_bounds("r29","A",factor=5)
+#sim.set_reaction_param_bounds("r30","A",factor=5)
+#sim.set_reaction_param_bounds("r37","A",factor=5)
+#sim.set_reaction_param_bounds("r38","A",factor=5)
 
 
 sim.initialize_auto_scaling()

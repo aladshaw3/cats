@@ -118,7 +118,7 @@ sim.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
                     })
 
 sim.set_bulk_porosity(0.3309)
-sim.set_washcoat_porosity(0.2)
+sim.set_washcoat_porosity(0.4)
 sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(1000)      #volumes/min
 sim.set_cell_density(62)                   # 62 cells per cm^2 (~400 cpsi)
@@ -626,7 +626,7 @@ sim.set_isothermal_temp("16hr","350C",350+273.15)
 # Build the constraints then discretize
 sim.build_constraints()
 sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=97,elems=5,colpoints=1)
+                    tstep=97,elems=5,colpoints=2)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 

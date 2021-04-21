@@ -198,7 +198,7 @@ class Isothermal_Monolith_Simulator(object):
         self.isDataValuesSet = {}
 
         self.DiscType = "DiscretizationMethod.FiniteDifference"
-        self.colpoints = 1
+        self.colpoints = 2
 
 
     # Add a continuous set for spatial dimension (current expected units = cm)
@@ -1274,12 +1274,15 @@ class Isothermal_Monolith_Simulator(object):
         self.isConBuilt = True
 
     # Apply a discretizer
-    def discretize_model(self, method=DiscretizationMethod.FiniteDifference, elems=20, tstep=100, colpoints=1):
+    def discretize_model(self, method=DiscretizationMethod.FiniteDifference, elems=20, tstep=100, colpoints=2):
         if self.isConBuilt == False:
             print("Error! Must build the constraints before calling a discretizer")
             exit()
 
         print("Starting discretizer. Please wait...")
+
+        if colpoints < 2:
+            colpoints = 2
 
         # Apply the discretizer method
         fd_discretizer = TransformationFactory('dae.finite_difference')
