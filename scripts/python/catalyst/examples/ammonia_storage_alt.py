@@ -46,32 +46,32 @@ test.set_site_balance("S3c",s3c_data)
 # Reaction specification information (must correspond to correct reaction type)
 
 #   EquilibriumArrhenius
-r1_equ = {"parameters": {"A": 250000, "E": 0, "dH": -54547.9, "dS": -29.9943},
+r1_equ = {"parameters": {"A": 250000, "E": 0, "dH": -56879.78665, "dS": -1.21784066},
           "mol_reactants": {"S1": 1, "NH3": 1},
           "mol_products": {"q1": 1},
           "rxn_orders": {"S1": 1, "NH3": 1, "q1": 1}
         }
-r2a_equ = {"parameters": {"A": 300000, "E": 0, "dH": -78073.843, "dS": -35.311574},
+r2a_equ = {"parameters": {"A": 300000, "E": 0, "dH": -92113.70654, "dS": -66.84540187},
           "mol_reactants": {"S2": 1, "NH3": 1},
           "mol_products": {"q2a": 1},
           "rxn_orders": {"S2": 1, "NH3": 1, "q2a": 1}
         }
-r2b_equ = {"parameters": {"A": 150000, "E": 0, "dH": -78064.167, "dS": -46.821878},
+r2b_equ = {"parameters": {"A": 150000, "E": 0, "dH": -56612.25601, "dS": -29.90818603},
           "mol_reactants": {"q2a": 1, "NH3": 1},
           "mol_products": {"q2b": 1},
           "rxn_orders": {"q2a": 1, "NH3": 1, "q2b": 1}
         }
-r3a_equ = {"parameters": {"A": 2500000, "E": 0, "dH": -91860.8, "dS": -28.9292},
+r3a_equ = {"parameters": {"A": 2500000, "E": 0, "dH": -69751.04598, "dS": -1.149111704},
           "mol_reactants": {"S3a": 1, "NH3": 1},
           "mol_products": {"q3a": 1},
           "rxn_orders": {"S3a": 1, "NH3": 1, "q3a": 1}
         }
-r3b_equ = {"parameters": {"A": 2500000, "E": 0, "dH": -91860.8, "dS": -28.9292},
+r3b_equ = {"parameters": {"A": 2500000, "E": 0, "dH": -69751.04598, "dS": -1.149111704},
           "mol_reactants": {"S3b": 1, "NH3": 1},
           "mol_products": {"q3b": 1},
           "rxn_orders": {"S3b": 1, "NH3": 1, "q3b": 1}
         }
-r3c_equ = {"parameters": {"A": 2500000, "E": 0, "dH": -91860.8, "dS": -28.9292},
+r3c_equ = {"parameters": {"A": 2500000, "E": 0, "dH": -69751.04598, "dS": -1.149111704},
           "mol_reactants": {"S3c": 1, "NH3": 1},
           "mol_products": {"q3c": 1},
           "rxn_orders": {"S3c": 1, "NH3": 1, "q3c": 1}
@@ -96,18 +96,18 @@ test.set_reaction_info("r3c", r3c_equ)
 test.set_reaction_info("r4a", r4a_equ)
 test.set_reaction_info("r4b", r4b_equ)
 
-test.set_site_density("S1","Unaged",0.052619016)
-test.set_site_density("S2","Unaged",0.023125746)
-test.set_site_density("S3a","Unaged",0.01632)
-test.set_site_density("S3b","Unaged",0.003233)
-test.set_site_density("S3c","Unaged",0.006699)
+test.set_site_density("S1","Unaged",0.026083096)
+test.set_site_density("S2","Unaged",0.028798843)
+test.set_site_density("S3a","Unaged",0.022324538)
+test.set_site_density("S3b","Unaged",0.011213914)
+test.set_site_density("S3c","Unaged",0.005411324)
 
 test.set_isothermal_temp("Unaged","150C",150+273.15)
 
 # Build the constraints then discretize
 test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=100,elems=5,colpoints=1)
+                    tstep=100,elems=5,colpoints=2)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 test.set_const_IC("NH3","Unaged","150C",0)
@@ -141,7 +141,11 @@ test.set_temperature_ramp("Unaged", "150C", 225.425, 305.3, 809.5651714)
 
 # Fix the kinetics to only run a simulation
 test.fix_all_reactions()
+
+test.initialize_auto_scaling()
 test.initialize_simulator(console_out=False)
+
+test.finalize_auto_scaling()
 test.run_solver()
 
 test.print_results_of_breakthrough(["NH3"], "Unaged", "150C", file_name="")
