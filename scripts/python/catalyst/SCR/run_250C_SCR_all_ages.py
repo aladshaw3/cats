@@ -404,7 +404,7 @@ r28 = {"parameters": {"A": 0, "E": 0},
         }
 
 #  ---------- q3b reactions ------------
-r29 = {"parameters": {"A": 38.63, "E": 0},
+r29 = {"parameters": {"A": 30.9040956, "E": 0},
           "mol_reactants": {"q3b": 1, "O2": 0.75},
           "mol_products": {"S3b": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"q3b": 1, "O2": 1}
@@ -459,7 +459,7 @@ r36 = {"parameters": {"A": 0, "E": 0},
         }
 
 #  ---------- q3c reactions ------------
-r37 = {"parameters": {"A": 9.399, "E": 0},
+r37 = {"parameters": {"A": 7.519214279, "E": 0},
           "mol_reactants": {"q3c": 1, "O2": 0.75},
           "mol_products": {"S3c": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"q3c": 1, "O2": 1}
@@ -919,7 +919,10 @@ sim.fix_reaction("r4b")
 #sim.fix_all_reactions()
 # Force a smaller upper bound than lower bound for reactions of interest
 for rxn in sim.model.arrhenius_rxns:
-    sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8,sim.model.A[rxn].value*1.05))
+    sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8,sim.model.A[rxn].value*1.01))
+
+sim.set_reaction_param_bounds("r29", "A", bounds=(sim.model.A["r29"].value*0.99,sim.model.A["r29"].value*1.40))
+sim.set_reaction_param_bounds("r37", "A", bounds=(sim.model.A["r37"].value*0.99,sim.model.A["r37"].value*1.40))
 
 sim.initialize_auto_scaling()
 sim.initialize_simulator()
