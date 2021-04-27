@@ -1067,3 +1067,174 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     # # TODO: Override 'run_solver' (?)
 
     # # TODO: Override saving and loading of models
+
+    # # TODO: Create a plotting function to compare temperatures
+
+    # Function to plot temperatures for all times at a series of locations
+    #   User must provide...
+    #       age_list = list of names of ages to plot together
+    #       temp_list = list of names of isothermal temperatures to plot together
+    #       loc_list = list of values of locations for variables
+    #       display_live = (optional) If true, plots will be shown to user during runtime
+    #       file_name = (optional) name of file to save
+    #       file_type = (optional) type of image file to save as
+    def plot_temperature_at_locations(self, age_list, temp_list, loc_list,
+                        display_live=False, file_name="", file_type=".png"):
+        if type(age_list) is not list:
+            raise Exception("Error! Need to provide ages as a list (even if it is just one species)")
+        if type(temp_list) is not list:
+            raise Exception("Error! Need to provide temperature sets as a list (even if it is just one species)")
+        if type(loc_list) is not list:
+            raise Exception("Error! Need to provide locations as a list (even if it is just one species)")
+
+        #Check lists for errors
+        for age in age_list:
+            if age not in self.model.age_set:
+                raise Exception("Error! Invalid age in given list")
+        for temp in temp_list:
+            if temp not in self.model.T_set:
+                raise Exception("Error! Invalid temperature in given list")
+        true_loc_list = []
+        for loc in loc_list:
+            if loc not in self.model.z:
+                print("WARNING: Given location is not a node in the mesh. Updating to nearest node")
+                nearest_loc_index = self.model.z.find_nearest_index(loc)
+                if self.model.z[nearest_loc_index] not in true_loc_list:
+                    true_loc_list.append(self.model.z[nearest_loc_index])
+            else:
+                if loc not in true_loc_list:
+                    true_loc_list.append(loc)
+
+
+        #Check file name and type
+        if file_name == "":
+            file_name+="Temperatures_"
+
+        folder="output/"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        if file_type != ".png" and file_type != ".pdf" and file_type != ".ps" and file_type != ".eps" and file_type != ".svg":
+            print("Warning! Unsupported image file type...")
+            print("\tDefaulting to .png")
+            file_type = ".png"
+
+        full_file_name = folder+file_name+"Plots"+file_type
+
+        xvals = list(self.model.t.data())
+        fig,ax = plt.subplots(figsize=(10,5))
+        leg=[]
+        # # TODO: These units may change later based on user input units
+        x_units = "(min)"
+        y_units = "(K)"
+        ylab1 = ""
+        var_list = ["T","Tc"]
+        for var in var_list:
+            ylab1 += var+"\n"
+            for age in age_list:
+                for temp in temp_list:
+                    for loc in true_loc_list:
+                        leg_name = var+"_"+age+"_"+temp+"_at_"+str(loc)
+                        leg.append(leg_name)
+                        if var == "T":
+                            yvals = list(self.model.T[age,temp,loc,:].value)
+                            ax.plot(xvals,yvals)
+                        else:
+                            yvals = list(self.model.Tc[age,temp,loc,:].value)
+                            ax.plot(xvals,yvals)
+
+        plt.legend(leg, loc='center left', bbox_to_anchor=(1, 0.5))
+        ax.set_xlabel("Time "+x_units)
+        ax.set_ylabel(ylab1+y_units)
+        plt.tight_layout()
+        plt.savefig(full_file_name)
+        if display_live == True:
+            fig.show()
+            print("\nDisplaying plot. Press enter to continue...(this closes the images)")
+            input()
+        plt.close()
+
+
+    # Function to plot temperatures for all locations at a series of times
+    #   User must provide...
+    #       age_list = list of names of ages to plot together
+    #       temp_list = list of names of isothermal temperatures to plot together
+    #       time_list = list of values of times for variables
+    #       display_live = (optional) If true, plots will be shown to user during runtime
+    #       file_name = (optional) name of file to save
+    #       file_type = (optional) type of image file to save as
+    def plot_temperature_at_times(self, age_list, temp_list, time_list,
+                        display_live=False, file_name="", file_type=".png"):
+        if type(age_list) is not list:
+            raise Exception("Error! Need to provide ages as a list (even if it is just one species)")
+        if type(temp_list) is not list:
+            raise Exception("Error! Need to provide temperature sets as a list (even if it is just one species)")
+        if type(time_list) is not list:
+            raise Exception("Error! Need to provide times as a list (even if it is just one species)")
+
+        #Check lists for errors
+        for age in age_list:
+            if age not in self.model.age_set:
+                raise Exception("Error! Invalid age in given list")
+        for temp in temp_list:
+            if temp not in self.model.T_set:
+                raise Exception("Error! Invalid temperature in given list")
+        true_time_list = []
+        for time in time_list:
+            if time not in self.model.t:
+                print("WARNING: Given time is not a point in the simulation. Updating to nearest time")
+                nearest_time_index = self.model.t.find_nearest_index(time)
+                if self.model.t[nearest_time_index] not in true_time_list:
+                    true_time_list.append(self.model.t[nearest_time_index])
+            else:
+                if time not in true_time_list:
+                    true_time_list.append(time)
+
+
+        #Check file name and type
+        if file_name == "":
+            file_name+="Temperatures_"
+
+        folder="output/"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        if file_type != ".png" and file_type != ".pdf" and file_type != ".ps" and file_type != ".eps" and file_type != ".svg":
+            print("Warning! Unsupported image file type...")
+            print("\tDefaulting to .png")
+            file_type = ".png"
+
+        full_file_name = folder+file_name+"Plots"+file_type
+
+        xvals = list(self.model.z.data())
+        fig,ax = plt.subplots(figsize=(10,5))
+        leg=[]
+        # # TODO: These units may change later based on user input units
+        x_units = "(cm)"
+        y_units = "(K)"
+        ylab1 = ""
+        var_list = ["T","Tc"]
+        for var in var_list:
+            ylab1 += var+"\n"
+            for age in age_list:
+                for temp in temp_list:
+                    for time in true_time_list:
+                        leg_name = var+"_"+age+"_"+temp+"_at_"+str(time)
+                        leg.append(leg_name)
+                        if var == "T":
+                            yvals = list(self.model.T[age,temp,:,time].value)
+                            ax.plot(xvals,yvals)
+                        else:
+                            yvals = list(self.model.Tc[age,temp,:,time].value)
+                            ax.plot(xvals,yvals)
+
+        plt.legend(leg, loc='center left', bbox_to_anchor=(1, 0.5))
+        ax.set_xlabel("Z "+x_units)
+        ax.set_ylabel(ylab1+y_units)
+        plt.tight_layout()
+        plt.savefig(full_file_name)
+        if display_live == True:
+            fig.show()
+            print("\nDisplaying plot. Press enter to continue...(this closes the images)")
+            input()
+        plt.close()

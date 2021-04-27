@@ -107,7 +107,7 @@ test.set_site_density("S1","Unaged",0.1152619)
 
 # Build the constraints then discretize
 test.build_constraints()
-test.discretize_model(method=DiscretizationMethod.FiniteDifference,
+test.discretize_model(method=DiscretizationMethod.OrthogonalCollocation,
                     tstep=20,elems=5,colpoints=2)
 
 # Set temperature info after discretizer
@@ -149,4 +149,8 @@ test.plot_at_locations(["q1","S1"], ["Unaged"], ["250C"], [0,1,2,3,4,5], display
 test.plot_at_times(["q1"], ["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=False)
 test.plot_at_times(["NH3"], ["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=False)
 
-test.plot_vs_data("NH3", "Unaged", "250C", 5, display_live=True)
+test.plot_vs_data("NH3", "Unaged", "250C", 5, display_live=False)
+
+test.plot_temperature_at_locations(["Unaged"], ["250C"], [5], display_live=False)
+
+test.plot_temperature_at_times(["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=True)
