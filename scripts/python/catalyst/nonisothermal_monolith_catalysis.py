@@ -428,6 +428,27 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
     # # TODO: Create a 'set_temperature_ramp_BC' function
 
+    # Set initial condition when given ppm as units
+    def set_const_IC_in_ppm(self, spec, age, temp, ppm_val):
+        if self.isInitialTempSet[age][temp] == False:
+            raise Exception("Error! Cannot use 'set_const_IC_in_ppm' without setting IC for temperature first")
+        self.isIsothermalTempSet = True
+        Isothermal_Monolith_Simulator.set_const_IC_in_ppm(self, spec, age, temp, ppm_val)
+
+    # Set boundary condition when given ppm as units
+    def set_const_BC_in_ppm(self, spec, age, temp, ppm_val):
+        if self.isBoundaryTempSet[age][temp] == False:
+            raise Exception("Error! Cannot use 'set_const_BC_in_ppm' without setting BC for temperature first")
+        self.isIsothermalTempSet = True
+        Isothermal_Monolith_Simulator.set_const_BC_in_ppm(self, spec, age, temp, ppm_val)
+
+    # Set time dependent boundary condition when given ppm as units
+    def set_time_dependent_BC_in_ppm(self, spec, age, temp, time_value_pairs, initial_value=0):
+        if self.isBoundaryTempSet[age][temp] == False:
+            raise Exception("Error! Cannot use 'set_time_dependent_BC_in_ppm' without setting BC for temperature first")
+        self.isIsothermalTempSet = True
+        Isothermal_Monolith_Simulator.set_time_dependent_BC_in_ppm(self, spec, age, temp, time_value_pairs, initial_value)
+
     # Override 'recalculate_linear_velocities'
     def recalculate_linear_velocities(self, interally_called=False, isMonolith=True):
         Isothermal_Monolith_Simulator.recalculate_linear_velocities(self, interally_called=interally_called, isMonolith=isMonolith)
