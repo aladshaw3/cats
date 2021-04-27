@@ -110,6 +110,7 @@ test.discretize_model(method=DiscretizationMethod.FiniteDifference,
                     tstep=100,elems=5,colpoints=2)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
+# 5% = 50,000 ppm --> 1% = 10,000 ppm
 test.set_const_IC("NH3","Unaged","150C",0)
 test.set_const_IC("H2O","Unaged","150C",0.001337966847917)
 

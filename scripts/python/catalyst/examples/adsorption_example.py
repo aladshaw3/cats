@@ -112,10 +112,13 @@ test.discretize_model(method=DiscretizationMethod.OrthogonalCollocation,
                     tstep=20,elems=5,colpoints=2)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
-test.set_const_IC("NH3","Unaged","250C",0)
+test.set_const_IC_in_ppm("NH3","Unaged","250C",0)
+
 test.set_const_IC("q1","Unaged","250C",0)
-test.set_time_dependent_BC("NH3","Unaged","250C",
-                            time_value_pairs=[(5,6.94E-6), (30,0)],
+#test.set_const_BC_in_ppm("NH3","Unaged","250C",300)
+
+test.set_time_dependent_BC_in_ppm("NH3","Unaged","250C",
+                            time_value_pairs=[(5,300), (30,0)],
                             initial_value=0)
 
 # Fix the kinetics to only run a simulation
@@ -126,18 +129,7 @@ test.initialize_simulator()
 
 test.finalize_auto_scaling()
 test.run_solver()
-'''
-test.model.Re.pprint()
-test.model.Sc.pprint()
-test.model.Sh.pprint()
-test.model.km.pprint()
-test.model.rho.pprint()
-test.model.mu.pprint()
-test.model.dh.pprint()
-test.model.Ga.pprint()
-test.model.v.pprint()
-exit()
-'''
+
 test.print_results_of_breakthrough(["NH3"], "Unaged", "250C", file_name="")
 test.print_results_of_integral_average(["q1","S1"], "Unaged", "250C", file_name="")
 test.print_results_all_locations(["NH3","q1","S1"], "Unaged", "250C", file_name="")

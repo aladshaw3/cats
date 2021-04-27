@@ -155,7 +155,6 @@ class Isothermal_Monolith_Simulator(object):
         self.model = ConcreteModel()
 
         # Add the mandatory components to the model
-        #       TODO:     (?) Make all parameters into Var objects (?)
         self.model.eb = Param(within=NonNegativeReals, initialize=0.3309, mutable=True, units=None)
         self.model.ew = Param(within=NonNegativeReals, initialize=0.2, mutable=True, units=None)
         self.model.r = Param(within=NonNegativeReals, initialize=1, mutable=True, units=units.cm)
@@ -196,6 +195,7 @@ class Isothermal_Monolith_Simulator(object):
         self.isDataTempSet = False
         self.isDataGasSpecSet = False
         self.isDataValuesSet = {}
+        self.isIsothermalTempSet = False
 
         self.DiscType = "DiscretizationMethod.FiniteDifference"
         self.colpoints = 2
@@ -688,6 +688,7 @@ class Isothermal_Monolith_Simulator(object):
     def set_isothermal_temp(self,age,temp,value):
         self.model.T[age,temp,:,:].set_value(value)
         self.isVelocityRecalculated = False
+        self.isIsothermalTempSet = True
 
     # Set the space velocity for a simulation to a given value
     #   Assumes same value for all times (can be reset later)
@@ -1398,6 +1399,27 @@ class Isothermal_Monolith_Simulator(object):
                     # Do not set this initial value (not a time dependent variable)
                     self.isInitialSet[spec][age][temp] = True
 
+    # Set initial condition when given ppm as units
+    def set_const_IC_in_ppm(self, spec, age, temp, ppm_val):
+        if self.isDiscrete == False:
+            raise Exception("Error! User should call the discretizer before setting initial conditions")
+        if ppm_val < 0:
+            raise Exception("Error! Concentrations cannot be negative")
+        if self.isIsothermalTempSet == False:
+            raise Exception("Error! Cannot use 'set_const_IC_in_ppm' if temperatures are not set first")
+        if spec not in self.model.gas_set:
+            raise Exception("Error! Given species name is not a valid gas species name")
+
+        value = ppm_val/10**6*self.model.Pref[age,temp].value/8.3145/self.model.T[age,temp,self.model.z.first(),self.model.t.first()].value
+        if value < 1e-20:
+            value = 1e-20
+        self.model.Cb[spec,age,temp, :, self.model.t.first()].set_value(value)
+        self.model.Cb[spec,age,temp, :, self.model.t.first()].fix()
+        self.model.C[spec,age,temp, :, self.model.t.first()].set_value(value)
+        self.model.C[spec,age,temp, :, self.model.t.first()].fix()
+        self.isInitialSet[spec][age][temp] = True
+
+
     # Set constant boundary conditions
     def set_const_BC(self,spec,age,temp,value):
         if spec not in self.model.gas_set:
@@ -1413,6 +1435,28 @@ class Isothermal_Monolith_Simulator(object):
 
         self.model.Cb[spec,age,temp,self.model.z.first(), :].set_value(value)
         self.model.Cb[spec,age,temp,self.model.z.first(), :].fix()
+        self.isBoundarySet[spec][age][temp] = True
+
+    # Set boundary condition when given ppm as units
+    def set_const_BC_in_ppm(self, spec, age, temp, ppm_val):
+        if spec not in self.model.gas_set:
+            raise Exception("Error! Cannot specify boundary value for non-gas species")
+
+        if self.isInitialSet[spec][age][temp] == False:
+            raise Exception("Error! User must specify initial conditions before boundary conditions")
+
+        if ppm_val < 0:
+            raise Exception("Error! Concentrations cannot be negative")
+
+        if self.isIsothermalTempSet == False:
+            raise Exception("Error! Cannot use 'set_const_IC_in_ppm' if temperatures are not set first")
+
+        for time in self.model.t:
+            value = ppm_val/10**6*self.model.Pref[age,temp].value/8.3145/self.model.T[age,temp,self.model.z.first(),time].value
+            if value < 1e-20:
+                value = 1e-20
+            self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(value)
+            self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
         self.isBoundarySet[spec][age][temp] = True
 
     # Set time dependent BCs using a 'time_value_pairs' list of tuples
@@ -1468,6 +1512,73 @@ class Isothermal_Monolith_Simulator(object):
 
         self.isBoundarySet[spec][age][temp] = True
 
+
+    # Set time dependent boundary condition when given ppm as units
+    def set_time_dependent_BC_in_ppm(self, spec, age, temp, time_value_pairs, initial_value=0):
+        if spec not in self.model.gas_set:
+            raise Exception("Error! Cannot specify boundary value for non-gas species")
+
+        if self.isInitialSet[spec][age][temp] == False:
+            raise Exception("Error! User must specify initial conditions before boundary conditions")
+
+        if type(time_value_pairs) is not list:
+            raise Exception("Error! Must specify time dependent BCs using a list of tuples: [(t0,value), (t1,value) ...]")
+
+        if type(time_value_pairs[0]) is not tuple:
+            raise Exception("Error! Must specify time dependent BCs using a list of tuples: [(t0,value), (t1,value) ...]")
+
+        if self.isIsothermalTempSet == False:
+            raise Exception("Error! Cannot use 'set_const_IC_in_ppm' if temperatures are not set first")
+
+
+        # Set the first value as given initial_value
+        initial_value = initial_value/10**6*self.model.Pref[age,temp].value/8.3145/self.model.T[age,temp,self.model.z.first(),self.model.t.first()].value
+        if initial_value < 1e-20:
+            initial_value = 1e-20
+        i=0
+        current_bc_time = time_value_pairs[i][0]
+        current_bc_value = time_value_pairs[i][1]
+        for time in self.model.t:
+            if time == self.model.t.first():
+                current_bc_value = initial_value
+            if time >= current_bc_time:
+                ###
+                try:
+                    j=i
+                    while time >= time_value_pairs[j][0]:
+                        j+=1
+                    i=j-1
+                except:
+                    pass
+                ###
+                try:
+                    current_bc_value = time_value_pairs[i][1]
+                    current_bc_value = current_bc_value/10**6*self.model.Pref[age,temp].value/8.3145/self.model.T[age,temp,self.model.z.first(),time].value
+                    if current_bc_value < 1e-20:
+                        current_bc_value = 1e-20
+                except:
+                    pass
+                self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(current_bc_value)
+                self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
+                i+=1
+                try:
+                    current_bc_time = time_value_pairs[i][0]
+                except:
+                    pass
+            else:
+                self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(current_bc_value)
+                self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
+
+        self.isBoundarySet[spec][age][temp] = True
+
+        '''for time in self.model.t:
+            value = ppm_val/10**6*self.model.Pref[age,temp].value/8.3145/self.model.T[age,temp,self.model.z.first(),time].value
+            if value < 1e-20:
+                value = 1e-20
+            self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(value)
+            self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
+        self.isBoundarySet[spec][age][temp] = True'''
+
     # Function to add linear temperature ramp section
     #       Starting temperature will be whatever the temperature is
     #       at the start time. End temperature will be carried over to
@@ -1488,6 +1599,7 @@ class Isothermal_Monolith_Simulator(object):
                     self.model.T[age,temp,:,time].set_value(start_temp+slope*(time-start_time))
             previous_time = time
         self.isVelocityRecalculated = False
+        self.isIsothermalTempSet = True
 
     # Function to define reaction 'zones'
     #       By default, all reactions occur in all zones. Users can
