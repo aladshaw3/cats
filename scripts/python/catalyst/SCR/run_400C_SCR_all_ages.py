@@ -628,7 +628,7 @@ sim.set_isothermal_temp("16hr","400C",400+273.15)
 
 # Build the constraints then discretize
 sim.build_constraints()
-sim.discretize_model(method=DiscretizationMethod.OrthogonalCollocation,
+sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
                     tstep=90,elems=5,colpoints=2)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
@@ -874,6 +874,8 @@ for rxn in sim.model.arrhenius_rxns:
 
 sim.set_reaction_param_bounds("r29", "A", bounds=(sim.model.A["r29"].value*0.99,sim.model.A["r29"].value*1.40))
 sim.set_reaction_param_bounds("r37", "A", bounds=(sim.model.A["r37"].value*0.99,sim.model.A["r37"].value*1.40))
+
+sim.fix_all_reactions()
 
 sim.initialize_auto_scaling()
 sim.initialize_simulator()

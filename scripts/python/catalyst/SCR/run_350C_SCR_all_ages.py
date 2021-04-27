@@ -869,8 +869,10 @@ sim.fix_reaction("r4b")
 for rxn in sim.model.arrhenius_rxns:
     sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8,sim.model.A[rxn].value*1.01))
 
-sim.set_reaction_param_bounds("r29", "A", bounds=(sim.model.A["r29"].value*0.99,sim.model.A["r29"].value*1.40))
-sim.set_reaction_param_bounds("r37", "A", bounds=(sim.model.A["r37"].value*0.99,sim.model.A["r37"].value*1.40))
+sim.set_reaction_param_bounds("r29", "A", bounds=(sim.model.A["r29"].value*0.90,sim.model.A["r29"].value*1.20))
+sim.set_reaction_param_bounds("r37", "A", bounds=(sim.model.A["r37"].value*0.90,sim.model.A["r37"].value*1.20))
+
+sim.fix_all_reactions()
 
 sim.initialize_auto_scaling()
 sim.initialize_simulator()

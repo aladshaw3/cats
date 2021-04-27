@@ -76,6 +76,7 @@ def spec_heat_of_air(T):
 #
 #               NOTE: d_rxnj = Kronecker Delta based on reaction/catalyst zoning
 #
+# # TODO: Add energy balance for wall temperature as function of Tc, T, and ambient temp
 class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     # Override of base class initialization to add new params and tracking info
     def __init__(self):
@@ -272,8 +273,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     def build_constraints(self):
         for rxn in self.model.all_rxns:
             if self.isRxnBuilt[rxn] == False:
-                print("Error! Cannot build constraints until reaction info is set")
-                exit()
+                raise Exception("Error! Cannot build constraints until reaction info is set")
         self.model.bulk_cons = Constraint(self.model.gas_set, self.model.age_set,
                                 self.model.T_set, self.model.z,
                                 self.model.t, rule=self.bulk_mb_constraint)
@@ -350,8 +350,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     #  Override 'set_temperature_ramp' (Fix Tc to T via a ramp function)
     def set_temperature_ramp(self, age, temp, start_time, end_time, end_temp):
         if self.isDiscrete == False:
-            print("Error! User should call the discretizer before setting isothermal temperatures")
-            exit()
+            raise Exception("Error! User should call the discretizer before setting isothermal temperatures")
         Isothermal_Monolith_Simulator.set_temperature_ramp(self, age, temp, start_time, end_time, end_temp)
         self.model.Tc[age,temp,:,:].fix()
         self.model.T[age,temp,:,:].fix()
@@ -377,8 +376,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     # Override 'set_isothermal_temp' (Fix Tc to T)
     def set_isothermal_temp(self,age,temp,value):
         if self.isDiscrete == False:
-            print("Error! User should call the discretizer before setting isothermal temperatures")
-            exit()
+            raise Exception("Error! User should call the discretizer before setting isothermal temperatures")
         Isothermal_Monolith_Simulator.set_isothermal_temp(self,age,temp,value)
         self.model.Tc[age,temp,:,:].fix()
         self.model.T[age,temp,:,:].fix()
@@ -408,8 +406,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     # Create a 'set_const_temperature_IC' function
     def set_const_temperature_IC(self,age,temp,value):
         if self.isDiscrete == False:
-            print("Error! User should call the discretizer before setting initial conditions")
-            exit()
+            raise Exception("Error! User should call the discretizer before setting initial conditions")
         self.model.T[age,temp, :, self.model.t.first()].set_value(value)
         self.model.T[age,temp, :, self.model.t.first()].fix()
         self.model.Tc[age,temp, :, self.model.t.first()].set_value(value)
@@ -420,8 +417,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     # Create a 'set_const_temperature_BC' function
     def set_const_temperature_BC(self,age,temp,value):
         if self.isInitialTempSet[age][temp] == False:
-            print("Error! User must specify initial conditions before boundary conditions")
-            exit()
+            raise Exception("Error! User must specify initial conditions before boundary conditions")
 
         self.model.T[age,temp,self.model.z.first(), :].set_value(value)
         self.model.T[age,temp,self.model.z.first(), :].fix()
@@ -516,8 +512,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     def initialize_auto_scaling(self):
         Isothermal_Monolith_Simulator.initialize_auto_scaling(self)
         if self.isBoundaryTempSet == False:
-            print("Error! Must specify boundary conditions for temperature before attempting scaling")
-            exit()
+            raise Exception("Error! Must specify boundary conditions for temperature before attempting scaling")
 
         # set initial scaling factor to inverse of max values
         maxkey = max(self.model.T.get_values(), key=self.model.T.get_values().get)
@@ -686,23 +681,19 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                 for age in self.model.age_set:
                     for temp in self.model.T_set:
                         if self.isBoundarySet[spec][age][temp] == False:
-                            print("Error! Must specify boundaries before attempting to solve")
-                            exit()
+                            raise Exception("Error! Must specify boundaries before attempting to solve")
             if self.isSurfSpecSet == True:
                 for spec in self.model.surf_set:
                     for age in self.model.age_set:
                         for temp in self.model.T_set:
                             if self.isInitialSet[spec][age][temp] == False:
-                                print("Error! Must specify initial conditions before attempting to solve")
-                                exit()
+                                raise Exception("Error! Must specify initial conditions before attempting to solve")
             for age in self.model.age_set:
                 for temp in self.model.T_set:
                     if self.isBoundaryTempSet[age][temp] == False:
-                        print("Error! Must specify boundaries before attempting to solve")
-                        exit()
+                        raise Exception("Error! Must specify boundaries before attempting to solve")
                     if self.isWallTempSet[age][temp] == False:
-                        print("Error! Must specify wall temperatures before attempting to solve")
-                        exit()
+                        raise Exception("Error! Must specify wall temperatures before attempting to solve")
 
             if self.isVelocityRecalculated == False:
                 self.recalculate_linear_velocities(interally_called=True,isMonolith=True)
@@ -883,8 +874,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                                     print("\t               'LinearSolverMethod.MA27'")
                                     print("\t               'LinearSolverMethod.MA57'")
                                     print("\t               'LinearSolverMethod.MA97'")
-                                    print("\nNOTE: 'MA' solvers only available if 'idaes' environment is used...")
-                                    exit()
+                                    raise Exception("\nNOTE: 'MA' solvers only available if 'idaes' environment is used...")
                             if 'tol' in options:
                                 solver.options['tol'] = options['tol']
                             if 'acceptable_tol' in options:

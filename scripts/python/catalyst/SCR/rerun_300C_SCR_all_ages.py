@@ -27,12 +27,12 @@ sim.fix_reaction("r4b")
 
 sim.fix_all_reactions()
 
-sim.unfix_reaction("r29")
+#sim.unfix_reaction("r29")
 
 sim.unfix_reaction("r37")
 
-sim.set_reaction_param_bounds("r29", "A", bounds=(sim.model.A["r29"].value*0.99,sim.model.A["r29"].value*1.20))
-sim.set_reaction_param_bounds("r37", "A", bounds=(sim.model.A["r37"].value*0.99,sim.model.A["r37"].value*1.20))
+#sim.set_reaction_param_bounds("r29", "A", bounds=(sim.model.A["r29"].value*0.99,sim.model.A["r29"].value*1.20))
+sim.set_reaction_param_bounds("r37", "A", bounds=(sim.model.A["r37"].value*0.99,sim.model.A["r37"].value*1.40))
 
 
 sim.finalize_auto_scaling()
