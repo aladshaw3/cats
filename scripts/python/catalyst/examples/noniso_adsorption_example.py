@@ -151,6 +151,6 @@ test.plot_at_times(["NH3"], ["Unaged"], ["250C"], [0,10,20,30,40,50,60], display
 
 test.plot_vs_data("NH3", "Unaged", "250C", 5, display_live=False)
 
-test.plot_temperature_at_locations(["Unaged"], ["250C"], [5], display_live=False)
+test.plot_temperature_at_locations(["Unaged"], ["250C"], [5], display_live=True)
 
-test.plot_temperature_at_times(["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=True)
+test.plot_temperature_at_times(["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=False)

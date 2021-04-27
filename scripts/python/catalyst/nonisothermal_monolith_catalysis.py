@@ -341,7 +341,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         # # TODO: Deactivate any objective function (if any), then activate a new
         #           objective function for inclusion of temperature data
 
-    # # TODO: Override 'set_reaction_zone'
+    # # TODO: Override 'set_reaction_zone' (call and apply to model.d_rxn)
 
     # # TODO: Override 'set_reaction_info' (and add bounds on parameters)
 
