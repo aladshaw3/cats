@@ -1201,1117 +1201,1116 @@
       product_stoich = '1'
     [../]
 
-## ======= Start Reaction Set for q1 ======
-    [./r5_val]
-        type = Reaction
-        variable = r5
-    [../]
-    [./r5_rx]
-      type = ArrheniusReaction
-      variable = r5
-      this_variable = r5
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q1 O2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r6_val]
-        type = Reaction
-        variable = r6
-    [../]
-    [./r6_rx]
-      type = ArrheniusReaction
-      variable = r6
-      this_variable = r6
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q1 O2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r7_val]
-        type = Reaction
-        variable = r7
-    [../]
-    [./r7_rx]
-      type = ArrheniusReaction
-      variable = r7
-      this_variable = r7
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 309820.7
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 199.1037
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'S1 NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = 'S1 NO2w'
-      product_stoich = '1 1'
-    [../]
-
-    [./r8_val]
-        type = Reaction
-        variable = r8
-    [../]
-    [./r8_rx]
-      type = ArrheniusReaction
-      variable = r8
-      this_variable = r8
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 77334215
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q1 NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r9_val]
-        type = Reaction
-        variable = r9
-    [../]
-    [./r9_rx]
-      type = ArrheniusReaction
-      variable = r9
-      this_variable = r9
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q1 NO2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r10_val]
-        type = Reaction
-        variable = r10
-    [../]
-    [./r10_rx]
-      type = ArrheniusReaction
-      variable = r10
-      this_variable = r10
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q1 NO2w O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r11_val]
-        type = Reaction
-        variable = r11
-    [../]
-    [./r11_rx]
-      type = ArrheniusReaction
-      variable = r11
-      this_variable = r11
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q1 NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r12_val]
-        type = Reaction
-        variable = r12
-    [../]
-    [./r12_rx]
-      type = ArrheniusReaction
-      variable = r12
-      this_variable = r12
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q1 NOxw NO2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    ## ======= Start Reaction Set for q2a ======
-    [./r13a_val]
-        type = Reaction
-        variable = r13a
-    [../]
-    [./r13a_rx]
-      type = ArrheniusReaction
-      variable = r13a
-      this_variable = r13a
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 30.89809
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2a O2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r14a_val]
-        type = Reaction
-        variable = r14a
-    [../]
-    [./r14a_rx]
-      type = ArrheniusReaction
-      variable = r14a
-      this_variable = r14a
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 41.77008
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2a O2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r15a_val]
-        type = Reaction
-        variable = r15a
-    [../]
-    [./r15a_rx]
-      type = ArrheniusReaction
-      variable = r15a
-      this_variable = r15a
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'S2 NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = 'S2 NO2w'
-      product_stoich = '1 1'
-    [../]
-
-    [./r16a_val]
-        type = Reaction
-        variable = r16a
-    [../]
-    [./r16a_rx]
-      type = ArrheniusReaction
-      variable = r16a
-      this_variable = r16a
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 8.67E8
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2a NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r17a_val]
-        type = Reaction
-        variable = r17a
-    [../]
-    [./r17a_rx]
-      type = ArrheniusReaction
-      variable = r17a
-      this_variable = r17a
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 44230687
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2a NO2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r18a_val]
-        type = Reaction
-        variable = r18a
-    [../]
-    [./r18a_rx]
-      type = ArrheniusReaction
-      variable = r18a
-      this_variable = r18a
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 9.34E9
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2a NO2w O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r19a_val]
-        type = Reaction
-        variable = r19a
-    [../]
-    [./r19a_rx]
-      type = ArrheniusReaction
-      variable = r19a
-      this_variable = r19a
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2a NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r20a_val]
-        type = Reaction
-        variable = r20a
-    [../]
-    [./r20a_rx]
-      type = ArrheniusReaction
-      variable = r20a
-      this_variable = r20a
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2a NOxw NO2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-
-    ## ======= Start Reaction Set for q2b ======
-    [./r13b_val]
-        type = Reaction
-        variable = r13b
-    [../]
-    [./r13b_rx]
-      type = ArrheniusReaction
-      variable = r13b
-      this_variable = r13b
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2b O2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r14b_val]
-        type = Reaction
-        variable = r14b
-    [../]
-    [./r14b_rx]
-      type = ArrheniusReaction
-      variable = r14b
-      this_variable = r14b
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2b O2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r15b_val]
-        type = Reaction
-        variable = r15b
-    [../]
-    [./r15b_rx]
-      type = ArrheniusReaction
-      variable = r15b
-      this_variable = r15b
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2a NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = 'q2a NO2w'
-      product_stoich = '1 1'
-    [../]
-
-    [./r16b_val]
-        type = Reaction
-        variable = r16b
-    [../]
-    [./r16b_rx]
-      type = ArrheniusReaction
-      variable = r16b
-      this_variable = r16b
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 2.2E9
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2b NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r17b_val]
-        type = Reaction
-        variable = r17b
-    [../]
-    [./r17b_rx]
-      type = ArrheniusReaction
-      variable = r17b
-      this_variable = r17b
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2b NO2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r18b_val]
-        type = Reaction
-        variable = r18b
-    [../]
-    [./r18b_rx]
-      type = ArrheniusReaction
-      variable = r18b
-      this_variable = r18b
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 1.38E11
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2b NO2w O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r19b_val]
-        type = Reaction
-        variable = r19b
-    [../]
-    [./r19b_rx]
-      type = ArrheniusReaction
-      variable = r19b
-      this_variable = r19b
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 9187359
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2b NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r20b_val]
-        type = Reaction
-        variable = r20b
-    [../]
-    [./r20b_rx]
-      type = ArrheniusReaction
-      variable = r20b
-      this_variable = r20b
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2b NOxw NO2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    ## ======= Start Reaction Set for q3a ======
-    [./r21_val]
-        type = Reaction
-        variable = r21
-    [../]
-    [./r21_rx]
-      type = ArrheniusReaction
-      variable = r21
-      this_variable = r21
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3a O2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r22_val]
-        type = Reaction
-        variable = r22
-    [../]
-    [./r22_rx]
-      type = ArrheniusReaction
-      variable = r22
-      this_variable = r22
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3a O2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r23_val]
-        type = Reaction
-        variable = r23
-    [../]
-    [./r23_rx]
-      type = ArrheniusReaction
-      variable = r23
-      this_variable = r23
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'S3a NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = 'S3a NO2w'
-      product_stoich = '1 1'
-    [../]
-
-    [./r24_val]
-        type = Reaction
-        variable = r24
-    [../]
-    [./r24_rx]
-      type = ArrheniusReaction
-      variable = r24
-      this_variable = r24
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 1.43E9
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3a NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r25_val]
-        type = Reaction
-        variable = r25
-    [../]
-    [./r25_rx]
-      type = ArrheniusReaction
-      variable = r25
-      this_variable = r25
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 21033791
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3a NO2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r26_val]
-        type = Reaction
-        variable = r26
-    [../]
-    [./r26_rx]
-      type = ArrheniusReaction
-      variable = r26
-      this_variable = r26
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3a NO2w O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r27_val]
-        type = Reaction
-        variable = r27
-    [../]
-    [./r27_rx]
-      type = ArrheniusReaction
-      variable = r27
-      this_variable = r27
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 12571016
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3a NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r28_val]
-        type = Reaction
-        variable = r28
-    [../]
-    [./r28_rx]
-      type = ArrheniusReaction
-      variable = r28
-      this_variable = r28
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3a NOxw NO2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    ## ======= Start Reaction Set for q3b ======
-    [./r29_val]
-        type = Reaction
-        variable = r29
-    [../]
-    [./r29_rx]
-      type = ArrheniusReaction
-      variable = r29
-      this_variable = r29
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 204.4686
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3b O2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r30_val]
-        type = Reaction
-        variable = r30
-    [../]
-    [./r30_rx]
-      type = ArrheniusReaction
-      variable = r30
-      this_variable = r30
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 889.3132
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3b O2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r31_val]
-        type = Reaction
-        variable = r31
-    [../]
-    [./r31_rx]
-      type = ArrheniusReaction
-      variable = r31
-      this_variable = r31
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 11885157
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 16190.59
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'S3b NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = 'S3b NO2w'
-      product_stoich = '1 1'
-    [../]
-
-    [./r32_val]
-        type = Reaction
-        variable = r32
-    [../]
-    [./r32_rx]
-      type = ArrheniusReaction
-      variable = r32
-      this_variable = r32
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 7.06E11
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3b NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r33_val]
-        type = Reaction
-        variable = r33
-    [../]
-    [./r33_rx]
-      type = ArrheniusReaction
-      variable = r33
-      this_variable = r33
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3b NO2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r34_val]
-        type = Reaction
-        variable = r34
-    [../]
-    [./r34_rx]
-      type = ArrheniusReaction
-      variable = r34
-      this_variable = r34
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 8.56E10
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3b NO2w O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r35_val]
-        type = Reaction
-        variable = r35
-    [../]
-    [./r35_rx]
-      type = ArrheniusReaction
-      variable = r35
-      this_variable = r35
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3b NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r36_val]
-        type = Reaction
-        variable = r36
-    [../]
-    [./r36_rx]
-      type = ArrheniusReaction
-      variable = r36
-      this_variable = r36
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3b NOxw NO2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    ## ======= Start Reaction Set for q3c ======
-    [./r37_val]
-        type = Reaction
-        variable = r37
-    [../]
-    [./r37_rx]
-      type = ArrheniusReaction
-      variable = r37
-      this_variable = r37
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 21.11735618
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3c O2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r38_val]
-        type = Reaction
-        variable = r38
-    [../]
-    [./r38_rx]
-      type = ArrheniusReaction
-      variable = r38
-      this_variable = r38
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 147.0473
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3c O2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r39_val]
-        type = Reaction
-        variable = r39
-    [../]
-    [./r39_rx]
-      type = ArrheniusReaction
-      variable = r39
-      this_variable = r39
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 16022172
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 31002.73
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'S3c NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = 'S3c NO2w'
-      product_stoich = '1 1'
-    [../]
-
-    [./r40_val]
-        type = Reaction
-        variable = r40
-    [../]
-    [./r40_rx]
-      type = ArrheniusReaction
-      variable = r40
-      this_variable = r40
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 3.07E9
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3c NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r41_val]
-        type = Reaction
-        variable = r41
-    [../]
-    [./r41_rx]
-      type = ArrheniusReaction
-      variable = r41
-      this_variable = r41
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 20863340
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3c NO2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r42_val]
-        type = Reaction
-        variable = r42
-    [../]
-    [./r42_rx]
-      type = ArrheniusReaction
-      variable = r42
-      this_variable = r42
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3c NO2w O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r43_val]
-        type = Reaction
-        variable = r43
-    [../]
-    [./r43_rx]
-      type = ArrheniusReaction
-      variable = r43
-      this_variable = r43
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 51884499
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3c NOxw O2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r44_val]
-        type = Reaction
-        variable = r44
-    [../]
-    [./r44_rx]
-      type = ArrheniusReaction
-      variable = r44
-      this_variable = r44
-
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3c NOxw NO2w'
-      reactant_stoich = '1 1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
+    ## ======= Start Reaction Set for q1 ======
+        [./r5_val]
+            type = Reaction
+            variable = r5
+        [../]
+        [./r5_rx]
+          type = ArrheniusReaction
+          variable = r5
+          this_variable = r5
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q1 O2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r6_val]
+            type = Reaction
+            variable = r6
+        [../]
+        [./r6_rx]
+          type = ArrheniusReaction
+          variable = r6
+          this_variable = r6
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q1 O2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r7_val]
+            type = Reaction
+            variable = r7
+        [../]
+        [./r7_rx]
+          type = ArrheniusReaction
+          variable = r7
+          this_variable = r7
+
+          forward_activation_energy = 149923.2
+          forward_pre_exponential = 1.3849E17
+
+          reverse_activation_energy = 212856.1
+          reverse_pre_exponential = 6.8879E18
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'S1 NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = 'S1 NO2w'
+          product_stoich = '1 1'
+        [../]
+
+        [./r8_val]
+            type = Reaction
+            variable = r8
+        [../]
+        [./r8_rx]
+          type = ArrheniusReaction
+          variable = r8
+          this_variable = r8
+
+          forward_activation_energy = 55862.8
+          forward_pre_exponential = 1.464E12
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q1 NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r9_val]
+            type = Reaction
+            variable = r9
+        [../]
+        [./r9_rx]
+          type = ArrheniusReaction
+          variable = r9
+          this_variable = r9
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q1 NO2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r10_val]
+            type = Reaction
+            variable = r10
+        [../]
+        [./r10_rx]
+          type = ArrheniusReaction
+          variable = r10
+          this_variable = r10
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q1 NO2w O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r11_val]
+            type = Reaction
+            variable = r11
+        [../]
+        [./r11_rx]
+          type = ArrheniusReaction
+          variable = r11
+          this_variable = r11
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q1 NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r12_val]
+            type = Reaction
+            variable = r12
+        [../]
+        [./r12_rx]
+          type = ArrheniusReaction
+          variable = r12
+          this_variable = r12
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q1 NOxw NO2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        ## ======= Start Reaction Set for q2a ======
+        [./r13a_val]
+            type = Reaction
+            variable = r13a
+        [../]
+        [./r13a_rx]
+          type = ArrheniusReaction
+          variable = r13a
+          this_variable = r13a
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2a O2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r14a_val]
+            type = Reaction
+            variable = r14a
+        [../]
+        [./r14a_rx]
+          type = ArrheniusReaction
+          variable = r14a
+          this_variable = r14a
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2a O2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r15a_val]
+            type = Reaction
+            variable = r15a
+        [../]
+        [./r15a_rx]
+          type = ArrheniusReaction
+          variable = r15a
+          this_variable = r15a
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'S2 NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = 'S2 NO2w'
+          product_stoich = '1 1'
+        [../]
+
+        [./r16a_val]
+            type = Reaction
+            variable = r16a
+        [../]
+        [./r16a_rx]
+          type = ArrheniusReaction
+          variable = r16a
+          this_variable = r16a
+
+          forward_activation_energy = 59578.8
+          forward_pre_exponential = 2.63E13
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2a NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r17a_val]
+            type = Reaction
+            variable = r17a
+        [../]
+        [./r17a_rx]
+          type = ArrheniusReaction
+          variable = r17a
+          this_variable = r17a
+
+          forward_activation_energy = 75704.76
+          forward_pre_exponential = 3.278E13
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2a NO2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r18a_val]
+            type = Reaction
+            variable = r18a
+        [../]
+        [./r18a_rx]
+          type = ArrheniusReaction
+          variable = r18a
+          this_variable = r18a
+
+          forward_activation_energy = 141564.56
+          forward_pre_exponential = 9.6437E20
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2a NO2w O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r19a_val]
+            type = Reaction
+            variable = r19a
+        [../]
+        [./r19a_rx]
+          type = ArrheniusReaction
+          variable = r19a
+          this_variable = r19a
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2a NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r20a_val]
+            type = Reaction
+            variable = r20a
+        [../]
+        [./r20a_rx]
+          type = ArrheniusReaction
+          variable = r20a
+          this_variable = r20a
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2a NOxw NO2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+
+        ## ======= Start Reaction Set for q2b ======
+        [./r13b_val]
+            type = Reaction
+            variable = r13b
+        [../]
+        [./r13b_rx]
+          type = ArrheniusReaction
+          variable = r13b
+          this_variable = r13b
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2b O2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r14b_val]
+            type = Reaction
+            variable = r14b
+        [../]
+        [./r14b_rx]
+          type = ArrheniusReaction
+          variable = r14b
+          this_variable = r14b
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2b O2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r15b_val]
+            type = Reaction
+            variable = r15b
+        [../]
+        [./r15b_rx]
+          type = ArrheniusReaction
+          variable = r15b
+          this_variable = r15b
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2a NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = 'q2a NO2w'
+          product_stoich = '1 1'
+        [../]
+
+        [./r16b_val]
+            type = Reaction
+            variable = r16b
+        [../]
+        [./r16b_rx]
+          type = ArrheniusReaction
+          variable = r16b
+          this_variable = r16b
+
+          forward_activation_energy = 63652.4
+          forward_pre_exponential = 1.915E14
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2b NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r17b_val]
+            type = Reaction
+            variable = r17b
+        [../]
+        [./r17b_rx]
+          type = ArrheniusReaction
+          variable = r17b
+          this_variable = r17b
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2b NO2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r18b_val]
+            type = Reaction
+            variable = r18b
+        [../]
+        [./r18b_rx]
+          type = ArrheniusReaction
+          variable = r18b
+          this_variable = r18b
+
+          forward_activation_energy = 134395.98
+          forward_pre_exponential = 4.3929E21
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2b NO2w O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r19b_val]
+            type = Reaction
+            variable = r19b
+        [../]
+        [./r19b_rx]
+          type = ArrheniusReaction
+          variable = r19b
+          this_variable = r19b
+
+          forward_activation_energy = 26921.24
+          forward_pre_exponential = 1.061E9
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2b NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r20b_val]
+            type = Reaction
+            variable = r20b
+        [../]
+        [./r20b_rx]
+          type = ArrheniusReaction
+          variable = r20b
+          this_variable = r20b
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2b NOxw NO2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        ## ======= Start Reaction Set for q3a ======
+        [./r21_val]
+            type = Reaction
+            variable = r21
+        [../]
+        [./r21_rx]
+          type = ArrheniusReaction
+          variable = r21
+          this_variable = r21
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3a O2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r22_val]
+            type = Reaction
+            variable = r22
+        [../]
+        [./r22_rx]
+          type = ArrheniusReaction
+          variable = r22
+          this_variable = r22
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3a O2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r23_val]
+            type = Reaction
+            variable = r23
+        [../]
+        [./r23_rx]
+          type = ArrheniusReaction
+          variable = r23
+          this_variable = r23
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'S3a NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = 'S3a NO2w'
+          product_stoich = '1 1'
+        [../]
+
+        [./r24_val]
+            type = Reaction
+            variable = r24
+        [../]
+        [./r24_rx]
+          type = ArrheniusReaction
+          variable = r24
+          this_variable = r24
+
+          forward_activation_energy = 44949.9
+          forward_pre_exponential = 3.871E12
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3a NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r25_val]
+            type = Reaction
+            variable = r25
+        [../]
+        [./r25_rx]
+          type = ArrheniusReaction
+          variable = r25
+          this_variable = r25
+
+          forward_activation_energy = 66241.88
+          forward_pre_exponential = 2.684E12
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3a NO2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r26_val]
+            type = Reaction
+            variable = r26
+        [../]
+        [./r26_rx]
+          type = ArrheniusReaction
+          variable = r26
+          this_variable = r26
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3a NO2w O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r27_val]
+            type = Reaction
+            variable = r27
+        [../]
+        [./r27_rx]
+          type = ArrheniusReaction
+          variable = r27
+          this_variable = r27
+
+          forward_activation_energy = 26401.1
+          forward_pre_exponential = 1.485E9
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3a NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r28_val]
+            type = Reaction
+            variable = r28
+        [../]
+        [./r28_rx]
+          type = ArrheniusReaction
+          variable = r28
+          this_variable = r28
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3a NOxw NO2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        ## ======= Start Reaction Set for q3b ======
+        [./r29_val]
+            type = Reaction
+            variable = r29
+        [../]
+        [./r29_rx]
+          type = ArrheniusReaction
+          variable = r29
+          this_variable = r29
+
+          forward_activation_energy = 52789.8
+          forward_pre_exponential = 14963533
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3b O2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r30_val]
+            type = Reaction
+            variable = r30
+        [../]
+        [./r30_rx]
+          type = ArrheniusReaction
+          variable = r30
+          this_variable = r30
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3b O2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r31_val]
+            type = Reaction
+            variable = r31
+        [../]
+        [./r31_rx]
+          type = ArrheniusReaction
+          variable = r31
+          this_variable = r31
+
+          forward_activation_energy = 34437.3
+          forward_pre_exponential = 5.453E9
+
+          reverse_activation_energy = 46012.8
+          reverse_pre_exponential = 50991329
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'S3b NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = 'S3b NO2w'
+          product_stoich = '1 1'
+        [../]
+
+        [./r32_val]
+            type = Reaction
+            variable = r32
+        [../]
+        [./r32_rx]
+          type = ArrheniusReaction
+          variable = r32
+          this_variable = r32
+
+          forward_activation_energy = 149450.1
+          forward_pre_exponential = 2.1456E23
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3b NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r33_val]
+            type = Reaction
+            variable = r33
+        [../]
+        [./r33_rx]
+          type = ArrheniusReaction
+          variable = r33
+          this_variable = r33
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3b NO2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r34_val]
+            type = Reaction
+            variable = r34
+        [../]
+        [./r34_rx]
+          type = ArrheniusReaction
+          variable = r34
+          this_variable = r34
+
+          forward_activation_energy = 124978.8
+          forward_pre_exponential = 2.7045E20
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3b NO2w O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r35_val]
+            type = Reaction
+            variable = r35
+        [../]
+        [./r35_rx]
+          type = ArrheniusReaction
+          variable = r35
+          this_variable = r35
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3b NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r36_val]
+            type = Reaction
+            variable = r36
+        [../]
+        [./r36_rx]
+          type = ArrheniusReaction
+          variable = r36
+          this_variable = r36
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3b NOxw NO2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        ## ======= Start Reaction Set for q3c ======
+        [./r37_val]
+            type = Reaction
+            variable = r37
+        [../]
+        [./r37_rx]
+          type = ArrheniusReaction
+          variable = r37
+          this_variable = r37
+
+          forward_activation_energy = 56800.3
+          forward_pre_exponential = 9671366
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3c O2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r38_val]
+            type = Reaction
+            variable = r38
+        [../]
+        [./r38_rx]
+          type = ArrheniusReaction
+          variable = r38
+          this_variable = r38
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3c O2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r39_val]
+            type = Reaction
+            variable = r39
+        [../]
+        [./r39_rx]
+          type = ArrheniusReaction
+          variable = r39
+          this_variable = r39
+
+          forward_activation_energy = 44773.69
+          forward_pre_exponential = 4.579E10
+
+          reverse_activation_energy = 86844.84
+          reverse_pre_exponential = 1.815E11
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'S3c NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = 'S3c NO2w'
+          product_stoich = '1 1'
+        [../]
+
+        [./r40_val]
+            type = Reaction
+            variable = r40
+        [../]
+        [./r40_rx]
+          type = ArrheniusReaction
+          variable = r40
+          this_variable = r40
+
+          forward_activation_energy = 44510.6
+          forward_pre_exponential = 8.228E12
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3c NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r41_val]
+            type = Reaction
+            variable = r41
+        [../]
+        [./r41_rx]
+          type = ArrheniusReaction
+          variable = r41
+          this_variable = r41
+
+          forward_activation_energy = 66196.22
+          forward_pre_exponential = 2.483E12
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3c NO2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r42_val]
+            type = Reaction
+            variable = r42
+        [../]
+        [./r42_rx]
+          type = ArrheniusReaction
+          variable = r42
+          this_variable = r42
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3c NO2w O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r43_val]
+            type = Reaction
+            variable = r43
+        [../]
+        [./r43_rx]
+          type = ArrheniusReaction
+          variable = r43
+          this_variable = r43
+
+          forward_activation_energy = 39176.7
+          forward_pre_exponential = 4.863E10
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3c NOxw O2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r44_val]
+            type = Reaction
+            variable = r44
+        [../]
+        [./r44_rx]
+          type = ArrheniusReaction
+          variable = r44
+          this_variable = r44
+
+          forward_activation_energy = 0
+          forward_pre_exponential = 0
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3c NOxw NO2w'
+          reactant_stoich = '1 1 1'
+          products = ''
+          product_stoich = ''
+        [../]
 
 [] #END Kernels
 
@@ -2459,7 +2458,7 @@
         uz = vel_z
         input_vals = '3.62E-5 0.001810822'
         input_times = '2.091 16.92'
-        time_spans = '1 1'
+        time_spans = '0.5 0.5'
     [../]
     [./O2_FluxOut]
         type = DGPoreConcFluxBC
@@ -2507,7 +2506,7 @@
         uz = vel_z
         input_vals = '5.39E-6   1E-15   5.39E-6  1E-15    5.39E-6   1E-15'
         input_times = '2.091   29.92    41.25    49.59   66.42   73.92'
-        time_spans = '1      1    1    1    1    1'
+        time_spans = '0.5      0.5    0.5    0.5    0.5    0.5'
     [../]
     [./NH3_FluxOut]
         type = DGPoreConcFluxBC
@@ -2531,7 +2530,7 @@
         uz = vel_z
         input_vals = '5.39E-6  2.70E-6   5.39E-6'
         input_times = '29.92   59.42   80.75'
-        time_spans = '1      1    1'
+        time_spans = '0.5      0.5    0.5'
     [../]
     [./NOx_FluxOut]
         type = DGPoreConcFluxBC
@@ -2555,7 +2554,7 @@
         uz = vel_z
         input_vals = '2.70E-6   1E-15'
         input_times = '59.42   80.75'
-        time_spans = '1      1    1'
+        time_spans = '0.5      0.5    0.5'
     [../]
     [./NO2_FluxOut]
         type = DGPoreConcFluxBC

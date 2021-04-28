@@ -1257,11 +1257,11 @@
       variable = r7
       this_variable = r7
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 147.537
+      forward_activation_energy = 149923.2
+      forward_pre_exponential = 1.3849E17
 
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0.003524
+      reverse_activation_energy = 212856.1
+      reverse_pre_exponential = 6.8879E18
 
       temperature = temp
       scale = 1.0
@@ -1280,8 +1280,8 @@
       variable = r8
       this_variable = r8
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 4426514
+      forward_activation_energy = 55862.8
+      forward_pre_exponential = 1.464E12
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1397,7 +1397,7 @@
       this_variable = r13a
 
       forward_activation_energy = 0
-      forward_pre_exponential = 2.36378
+      forward_pre_exponential = 0
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1420,7 +1420,7 @@
       this_variable = r14a
 
       forward_activation_energy = 0
-      forward_pre_exponential = 1.371876
+      forward_pre_exponential = 0
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1465,8 +1465,8 @@
       variable = r16a
       this_variable = r16a
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 26428686
+      forward_activation_energy = 59578.8
+      forward_pre_exponential = 2.63E13
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1488,8 +1488,8 @@
       variable = r17a
       this_variable = r17a
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 1021349
+      forward_activation_energy = 75704.76
+      forward_pre_exponential = 3.278E13
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1511,8 +1511,8 @@
       variable = r18a
       this_variable = r18a
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 7243320
+      forward_activation_energy = 141564.56
+      forward_pre_exponential = 9.6437E20
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1651,8 +1651,8 @@
       variable = r16b
       this_variable = r16b
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 73882124
+      forward_activation_energy = 63652.4
+      forward_pre_exponential = 1.915E14
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1697,8 +1697,8 @@
       variable = r18b
       this_variable = r18b
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 1.58E8
+      forward_activation_energy = 134395.98
+      forward_pre_exponential = 4.3929E21
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1720,8 +1720,8 @@
       variable = r19b
       this_variable = r19b
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 2254938
+      forward_activation_energy = 26921.24
+      forward_pre_exponential = 1.061E9
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1836,8 +1836,8 @@
       variable = r24
       this_variable = r24
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 1.26E8
+      forward_activation_energy = 44949.9
+      forward_pre_exponential = 3.871E12
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1859,8 +1859,8 @@
       variable = r25
       this_variable = r25
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 762415
+      forward_activation_energy = 66241.88
+      forward_pre_exponential = 2.684E12
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1905,8 +1905,8 @@
       variable = r27
       this_variable = r27
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 4051904
+      forward_activation_energy = 26401.1
+      forward_pre_exponential = 1.485E9
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1952,8 +1952,8 @@
       variable = r29
       this_variable = r29
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 12.804
+      forward_activation_energy = 52789.8
+      forward_pre_exponential = 14963533
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1976,7 +1976,7 @@
       this_variable = r30
 
       forward_activation_energy = 0
-      forward_pre_exponential = 12.6955
+      forward_pre_exponential = 0
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1998,11 +1998,11 @@
       variable = r31
       this_variable = r31
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 2236985
+      forward_activation_energy = 34437.3
+      forward_pre_exponential = 5.453E9
 
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 1164.919
+      reverse_activation_energy = 46012.8
+      reverse_pre_exponential = 50991329
 
       temperature = temp
       scale = 1.0
@@ -2021,8 +2021,8 @@
       variable = r32
       this_variable = r32
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 2.97E8
+      forward_activation_energy = 149450.1
+      forward_pre_exponential = 2.1456E23
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2067,8 +2067,8 @@
       variable = r34
       this_variable = r34
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 1.3E8
+      forward_activation_energy = 124978.8
+      forward_pre_exponential = 2.7045E20
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2137,8 +2137,8 @@
       variable = r37
       this_variable = r37
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0.01831449
+      forward_activation_energy = 56800.3
+      forward_pre_exponential = 9671366
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2161,7 +2161,7 @@
       this_variable = r38
 
       forward_activation_energy = 0
-      forward_pre_exponential = 0.020512
+      forward_pre_exponential = 0
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2183,11 +2183,11 @@
       variable = r39
       this_variable = r39
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 1584808
+      forward_activation_energy = 44773.69
+      forward_pre_exponential = 4.579E10
 
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 369.3771
+      reverse_activation_energy = 86844.84
+      reverse_pre_exponential = 1.815E11
 
       temperature = temp
       scale = 1.0
@@ -2206,8 +2206,8 @@
       variable = r40
       this_variable = r40
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 3.46E8
+      forward_activation_energy = 44510.6
+      forward_pre_exponential = 8.228E12
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2229,8 +2229,8 @@
       variable = r41
       this_variable = r41
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 781484.9
+      forward_activation_energy = 66196.22
+      forward_pre_exponential = 2.483E12
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2275,8 +2275,8 @@
       variable = r43
       this_variable = r43
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 7114766
+      forward_activation_energy = 39176.7
+      forward_pre_exponential = 4.863E10
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2459,7 +2459,7 @@
         uz = vel_z
         input_vals = '4.66006E-5 0.002330029'
         input_times = '2.0917 29.758'
-        time_spans = '1 1'
+        time_spans = '0.5 0.5'
     [../]
     [./O2_FluxOut]
         type = DGPoreConcFluxBC
@@ -2483,7 +2483,7 @@
         uz = vel_z
         input_vals = '0.00115689 0.001144255    0.00113886'
         input_times = '3.5917   31.5    203.5'
-        time_spans = '1  1  1'
+        time_spans = '0.5  0.5  0.5'
     [../]
     [./H2O_FluxOut]
         type = DGPoreConcFluxBC
@@ -2507,7 +2507,7 @@
         uz = vel_z
         input_vals = '6.9499E-6   1E-15   6.9499E-6  1E-15    6.9499E-6   1E-15'
         input_times = '2.0917   40.75    56.2583    101.425    130.425    190.7583'
-        time_spans = '1      1    1    1    1    1'
+        time_spans = '0.5      0.5    0.5    0.5    0.5    0.5'
     [../]
     [./NH3_FluxOut]
         type = DGPoreConcFluxBC
@@ -2531,7 +2531,7 @@
         uz = vel_z
         input_vals = '6.9239E-6   3.44803E-6   6.9239E-6'
         input_times = '40.75    116.925    203.7583'
-        time_spans = '1      1    1'
+        time_spans = '0.5      0.5   0.5'
     [../]
     [./NOx_FluxOut]
         type = DGPoreConcFluxBC
@@ -2555,7 +2555,7 @@
         uz = vel_z
         input_vals = '3.37554E-6   1E-15'
         input_times = '116.925    203.7583'
-        time_spans = '1      1    1'
+        time_spans = '0.5      0.5    0.5'
     [../]
     [./NO2_FluxOut]
         type = DGPoreConcFluxBC
