@@ -1,4 +1,8 @@
 # This file is a demo for the 'Isothermal_Monolith_Simulator' object
+
+# This is a file for updated storage models.
+#       This updated model is clearly wrong. Too few Cu sites
+
 import sys
 sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
@@ -46,42 +50,42 @@ test.set_site_balance("S3c",s3c_data)
 # Reaction specification information (must correspond to correct reaction type)
 
 #   EquilibriumArrhenius
-r1_equ = {"parameters": {"A": 250000, "E": 0, "dH": -56879.78665, "dS": -1.21784066},
+r1_equ = {"parameters": {"A": 250000, "E": 0, "dH": -55373.27775, "dS": -9.890904876},
           "mol_reactants": {"S1": 1, "NH3": 1},
           "mol_products": {"q1": 1},
           "rxn_orders": {"S1": 1, "NH3": 1, "q1": 1}
         }
-r2a_equ = {"parameters": {"A": 300000, "E": 0, "dH": -92113.70654, "dS": -66.84540187},
+r2a_equ = {"parameters": {"A": 300000, "E": 0, "dH": -96730.75013, "dS": -75.82167773},
           "mol_reactants": {"S2": 1, "NH3": 1},
           "mol_products": {"q2a": 1},
           "rxn_orders": {"S2": 1, "NH3": 1, "q2a": 1}
         }
-r2b_equ = {"parameters": {"A": 150000, "E": 0, "dH": -56612.25601, "dS": -29.90818603},
+r2b_equ = {"parameters": {"A": 150000, "E": 0, "dH": -61052.33873, "dS": -51.45393416},
           "mol_reactants": {"q2a": 1, "NH3": 1},
           "mol_products": {"q2b": 1},
           "rxn_orders": {"q2a": 1, "NH3": 1, "q2b": 1}
         }
-r3a_equ = {"parameters": {"A": 2500000, "E": 0, "dH": -69751.04598, "dS": -1.149111704},
+r3a_equ = {"parameters": {"A": 2500000, "E": 0, "dH": -77456.55236, "dS": -12.2450631},
           "mol_reactants": {"S3a": 1, "NH3": 1},
           "mol_products": {"q3a": 1},
           "rxn_orders": {"S3a": 1, "NH3": 1, "q3a": 1}
         }
-r3b_equ = {"parameters": {"A": 2500000, "E": 0, "dH": -69751.04598, "dS": -1.149111704},
+r3b_equ = {"parameters": {"A": 2500000, "E": 0, "dH": -77456.55236, "dS": -12.2450631},
           "mol_reactants": {"S3b": 1, "NH3": 1},
           "mol_products": {"q3b": 1},
           "rxn_orders": {"S3b": 1, "NH3": 1, "q3b": 1}
         }
-r3c_equ = {"parameters": {"A": 2500000, "E": 0, "dH": -69751.04598, "dS": -1.149111704},
+r3c_equ = {"parameters": {"A": 2500000, "E": 0, "dH": -77456.55236, "dS": -12.2450631},
           "mol_reactants": {"S3c": 1, "NH3": 1},
           "mol_products": {"q3c": 1},
           "rxn_orders": {"S3c": 1, "NH3": 1, "q3c": 1}
         }
-r4a_equ = {"parameters": {"A": 44000, "E": 0, "dH": -32099.1, "dS": -24.2494},
+r4a_equ = {"parameters": {"A": 44000, "E": 0, "dH": -25484.91068, "dS": -2.2},
           "mol_reactants": {"S1": 1, "H2O": 1},
           "mol_products": {"q4a": 1},
           "rxn_orders": {"S1": 1, "H2O": 1, "q4a": 1}
         }
-r4b_equ = {"parameters": {"A": 70000, "E": 0, "dH": -28889.23, "dS": -26.674},
+r4b_equ = {"parameters": {"A": 70000, "E": 0, "dH": -25484.91068, "dS": -101.6400684},
           "mol_reactants": {"S2": 1, "H2O": 1},
           "mol_products": {"q4b": 1},
           "rxn_orders": {"S2": 1, "H2O": 1, "q4b": 1}
@@ -96,11 +100,11 @@ test.set_reaction_info("r3c", r3c_equ)
 test.set_reaction_info("r4a", r4a_equ)
 test.set_reaction_info("r4b", r4b_equ)
 
-test.set_site_density("S1","Unaged",0.026083096)
-test.set_site_density("S2","Unaged",0.028798843)
-test.set_site_density("S3a","Unaged",0.022324538)
-test.set_site_density("S3b","Unaged",0.011213914)
-test.set_site_density("S3c","Unaged",0.005411324)
+test.set_site_density("S1","Unaged",0.040791315)
+test.set_site_density("S2","Unaged",0.013597105)
+test.set_site_density("S3a","Unaged",0.020844122)
+test.set_site_density("S3b","Unaged",0.019947193)
+test.set_site_density("S3c","Unaged",1e-6)
 
 test.set_isothermal_temp("Unaged","150C",150+273.15)
 

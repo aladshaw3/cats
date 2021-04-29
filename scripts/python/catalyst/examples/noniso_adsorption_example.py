@@ -89,7 +89,7 @@ test.set_site_balance("S1",s1_data)
 
 #   EquilibriumArrhenius
 #       NOTE: You can provide parameter bounds here, or later
-r1_equ = {"parameters": {"A": 25000, "E": 0,
+r1_equ = {"parameters": {"A": 250000, "E": 0,
                         #"A_lb": 2500, "A_ub": 2500000000,
                         "dH": -54000, "dS": 30},
           "mol_reactants": {"S1": 1, "NH3": 1},
@@ -124,7 +124,7 @@ test.set_time_dependent_BC_in_ppm("NH3","Unaged","250C",
 
 # Fix the kinetics and/or heats of reaction to only run a simulation
 #test.fix_all_reactions()
-test.model.dHrxn["r1"].set_value(-540000)
+test.model.dHrxn["r1"].set_value(-54000)
 #test.model.dHrxn["r1"].set_value(0)
 test.fix_all_heats()
 

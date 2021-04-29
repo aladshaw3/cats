@@ -71,7 +71,7 @@ def spec_heat_of_air(T):
 #
 #           Energy balance in the washcoat
 #
-#                   (1-eb)*rhoc*cpc*dTc/dt = (1-eb)*Ga*hc*(T - Tc)
+#                   (1-eb)*rhoc*cpc*dTc/dt = (1-eb)*Kc*d^2T/dz^2 + (1-eb)*Ga*hc*(T - Tc)
 #                           - (1-eb)*a*hwc*(Tc - Tw) + (1-eb)/1000*SUM(all rj, (-dHrxnj)*d_rxnj**rj)
 #
 #               NOTE: d_rxnj = Kronecker Delta based on reaction/catalyst zoning
@@ -91,6 +91,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                             units=units.J/units.K/units.min/units.cm**2)
         self.model.hwc = Var(domain=NonNegativeReals, initialize=0.15,
                             units=units.J/units.K/units.min/units.cm**2)
+        self.model.Kc = Var(domain=NonNegativeReals, initialize=1,
+                            units=units.J/units.K/units.min/units.cm)
 
         self.model.rhoc = Param(within=NonNegativeReals, initialize=0.9,
                             mutable=True, units=units.g/units.cm**3)
@@ -98,6 +100,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                             mutable=True, units=units.J/units.g/units.K)
 
         self.heats_list = {}
+        self.heats_list["Kc"] = False
         self.heats_list["hc"] = False
         self.heats_list["hwg"] = False
         self.heats_list["hwc"] = False
@@ -118,6 +121,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         self.model.dT_dz = DerivativeVar(self.model.T, wrt=self.model.z, initialize=0, units=units.K/units.cm)
         self.model.dT_dt = DerivativeVar(self.model.T, wrt=self.model.t, initialize=0, units=units.K/units.min)
         self.model.dTc_dt = DerivativeVar(self.model.Tc, wrt=self.model.t, initialize=0, units=units.K/units.min)
+        self.model.d2Tc_dz2 = DerivativeVar(self.model.T, wrt=(self.model.z, self.model.z),
+                                            initialize=0, units=units.K/units.cm/units.cm)
         self.model.cpg = Var(self.model.age_set, self.model.T_set, self.model.t,
                                     domain=NonNegativeReals, initialize=1.005, units=units.J/units.g/units.K)
 
@@ -258,16 +263,24 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                 == -(1-m.eb)*m.Ga*m.hc*(m.T[age,temp,z,t]-m.Tc[age,temp,z,t]) - m.eb*m.a*m.hwg*(m.T[age,temp,z,t]-m.Tw[age,temp,z,t])
 
     # Energy balance in solid phase
-    #                   (1-eb)*rhoc*cpc*dTc/dt = (1-eb)*Ga*hc*(T - Tc)
+    #                   (1-eb)*rhoc*cpc*dTc/dt = (1-eb)*Kc*d^2T/dz^2 + (1-eb)*Ga*hc*(T - Tc)
     #                           - (1-eb)*a*hwc*(Tc - Tw) + (1-eb)/1000*SUM(all rj, (-dHrxnj)*d_rxnj**rj)
     def solid_eb_constraint(self, m, age, temp, z, t):
         rxn_sum=self.reaction_sum_heats(m, age, temp, z, t)
-        return (1-m.eb)*m.rhoc*m.cpc*m.dTc_dt[age,temp,z,t] == (1-m.eb)*m.Ga*m.hc*(m.T[age,temp,z,t]-m.Tc[age,temp,z,t]) \
+        return (1-m.eb)*m.rhoc*m.cpc*m.dTc_dt[age,temp,z,t] == (1-m.eb)*m.Kc*m.d2Tc_dz2[age,temp,z,t] (1-m.eb)*m.Ga*m.hc*(m.T[age,temp,z,t]-m.Tc[age,temp,z,t]) \
                 -(1-m.eb)*m.a*m.hwc*(m.Tc[age,temp,z,t]-m.Tw[age,temp,z,t]) + ((1-m.eb)/1000)*rxn_sum
 
     # Edge constraint for central differencing
     def temp_edge_constraint(self, m, age, temp, t):
         return m.dT_dz[age, temp, m.z[-1], t] == (m.T[age, temp, m.z[-1], t] - m.T[age, temp, m.z[-2], t])/(m.z[-1]-m.z[-2])
+
+    # Edge constraint for catalyst temperature at boundaries
+    def temp_cat_edge_back(self, m, age, temp, t):
+        return m.d2Tc_dz2[age, temp, m.z.last(), t] == 0
+
+    # Edge constraint for catalyst temperature at boundaries
+    def temp_cat_edge_front(self, m, age, temp, t):
+        return m.d2Tc_dz2[age, temp, m.z.first(), t] == 0
 
     # Build Constraints
     def build_constraints(self):
@@ -308,6 +321,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
         if self.DiscType == "DiscretizationMethod.FiniteDifference":
             self.model.dTdz_edge = Constraint(self.model.age_set, self.model.T_set, self.model.t, rule=self.temp_edge_constraint)
+
         # Unfix temperatures by default
         self.model.T[:,:,:,:].unfix()
         self.model.Tc[:,:,:,:].unfix()
@@ -336,7 +350,6 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
         #       Fix BCs for temperatures
         self.model.T[:,:,self.model.z.first(), :].fix()
-        self.model.Tc[:,:,self.model.z.first(), :].fix()
 
         # # TODO: Deactivate any objective function (if any), then activate a new
         #           objective function for inclusion of temperature data
@@ -471,6 +484,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         elif name == "hwc":
             self.model.hwc.fix()
             self.heats_list["hwc"] = True
+        elif name == "Kc":
+            self.model.Kc.fix()
+            self.heats_list["Kc"] = True
         else:
             if name in self.model.all_rxns:
                 self.model.dHrxn[name].fix()
@@ -478,9 +494,11 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
     # Function to fix all heat terms
     def fix_all_heats(self):
+        self.model.Kc.fix()
         self.model.hc.fix()
         self.model.hwg.fix()
         self.model.hwc.fix()
+        self.heats_list["Kc"] = True
         self.heats_list["hc"] = True
         self.heats_list["hwg"] = True
         self.heats_list["hwc"] = True
@@ -506,6 +524,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         elif name == "hwc":
             self.model.hwc.unfix()
             self.heats_list["hwc"] = False
+        elif name == "Kc":
+            self.model.Kc.unfix()
+            self.heats_list["Kc"] = False
         else:
             if name in self.model.all_rxns:
                 self.model.dHrxn[name].unfix()
@@ -513,9 +534,11 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
     # Function to unfix all heat terms
     def unfix_all_heats(self):
+        self.model.Kc.unfix()
         self.model.hc.unfix()
         self.model.hwg.unfix()
         self.model.hwc.unfix()
+        self.heats_list["Kc"] = False
         self.heats_list["hc"] = False
         self.heats_list["hwg"] = False
         self.heats_list["hwc"] = False
@@ -543,6 +566,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
         # set initial scaling factors for heats
         self.model.scaling_factor.set_value(self.model.hc, 1/self.model.hc.value)
+        self.model.scaling_factor.set_value(self.model.Kc, 1/self.model.Kc.value)
         self.model.scaling_factor.set_value(self.model.hwc, 1/self.model.hwc.value)
         self.model.scaling_factor.set_value(self.model.hwg, 1/self.model.hwg.value)
         for rxn in self.model.all_rxns:
@@ -583,6 +607,16 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         self.model.scaling_factor.set_value(self.model.dT_dz, 1/maxval)
 
         maxval = 0
+        for key in self.model.d2Tc_dz2_disc_eq:
+            newval = abs(value(self.model.d2Tc_dz2_disc_eq[key]))
+            if newval > maxval:
+                maxval = newval
+        if maxval < 1e-1:
+            maxval = 1e-1
+        self.model.scaling_factor.set_value(self.model.d2Tc_dz2_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tc_dz2, 1/maxval)
+
+        maxval = 0
         for key in self.model.dT_dt_disc_eq:
             newval = abs(value(self.model.dT_dt_disc_eq[key]))
             if newval > maxval:
@@ -618,6 +652,18 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         self.model.scaling_factor.set_value(self.model.dT_dz, 1/maxval)
         self.model.scaling_factor.set_value(self.model.dT_dz_disc_eq, 1/maxval)
 
+        maxkey = max(self.model.d2Tc_dz2.get_values(), key=self.model.d2Tc_dz2.get_values().get)
+        minkey = min(self.model.d2Tc_dz2.get_values(), key=self.model.d2Tc_dz2.get_values().get)
+
+        if abs(self.model.d2Tc_dz2[maxkey].value) >= abs(self.model.d2Tc_dz2[minkey].value):
+            maxval = abs(self.model.d2Tc_dz2[maxkey].value)
+        else:
+            maxval = abs(self.model.d2Tc_dz2[minkey].value)
+        if maxval < 1e-1:
+            maxval = 1e-1
+        self.model.scaling_factor.set_value(self.model.d2Tc_dz2, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tc_dz2_disc_eq, 1/maxval)
+
         maxkey = max(self.model.dT_dt.get_values(), key=self.model.dT_dt.get_values().get)
         minkey = min(self.model.dT_dt.get_values(), key=self.model.dT_dt.get_values().get)
 
@@ -643,6 +689,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         self.model.scaling_factor.set_value(self.model.dTc_dt_disc_eq, 1/maxval)
 
         # reset scaling factors for heats
+        self.model.scaling_factor.set_value(self.model.Kc, 1/self.model.Kc.value)
         self.model.scaling_factor.set_value(self.model.hc, 1/self.model.hc.value)
         self.model.scaling_factor.set_value(self.model.hwc, 1/self.model.hwc.value)
         self.model.scaling_factor.set_value(self.model.hwg, 1/self.model.hwg.value)
@@ -731,6 +778,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                 elif item == "hwc":
                     fixed_heat_dict[item] = self.heats_list[item]
                 elif item == "hwg":
+                    fixed_heat_dict[item] = self.heats_list[item]
+                elif item == "Kc":
                     fixed_heat_dict[item] = self.heats_list[item]
                 else:
                     fixed_heat_dict[item] = {}
@@ -1051,6 +1100,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                     if fixed_heat_dict[item] == False:
                         self.unfix_heat(item)
                 elif item == "hwg":
+                    if fixed_heat_dict[item] == False:
+                        self.unfix_heat(item)
+                elif item == "Kc":
                     if fixed_heat_dict[item] == False:
                         self.unfix_heat(item)
                 else:
