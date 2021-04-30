@@ -110,9 +110,6 @@ test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.FiniteDifference,
                     tstep=20,elems=5,colpoints=2)
 
-test.model.pprint()
-exit()
-
 # Set temperature info after discretizer
 test.set_const_temperature_IC("Unaged","250C",250+273.15)
 test.set_const_temperature_BC("Unaged","250C",250+273.15)
@@ -132,11 +129,10 @@ test.model.dHrxn["r1"].set_value(-54000)
 test.fix_all_heats()
 
 test.initialize_auto_scaling()
-test.initialize_simulator(console_out=True)
+test.initialize_simulator(console_out=False)
 #test.model.cpg.pprint()
 test.finalize_auto_scaling()
 test.run_solver()
-
 
 test.print_results_of_breakthrough(["NH3"], "Unaged", "250C", file_name="noniso_ads.txt", include_temp=True)
 
@@ -157,4 +153,4 @@ test.plot_vs_data("NH3", "Unaged", "250C", 5, display_live=False)
 
 test.plot_temperature_at_locations(["Unaged"], ["250C"], [5], display_live=True)
 
-test.plot_temperature_at_times(["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=False)
+test.plot_temperature_at_times(["Unaged"], ["250C"], [5,10,15], display_live=False)

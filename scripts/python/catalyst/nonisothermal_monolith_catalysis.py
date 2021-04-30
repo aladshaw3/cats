@@ -121,9 +121,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         self.heats_list["hwg"] = False
         self.heats_list["hwc"] = False
         self.heats_list["dHrxn"] = {}
-        self.isInitialTempSet = {}
-        # # TODO: Add check for Initial wall temp
-        self.isAmbTempSet = {}         # # TODO: Change this to Ambient
+        self.isInitialTempSet = {}      # # TODO: Add check for Initial temps individually
+        self.isAmbTempSet = {}
         self.isBoundaryTempSet = {}
         self.isIsothermal = {}
         self.isAllIsothermal = True
@@ -143,7 +142,6 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         self.model.dTc_dt = DerivativeVar(self.model.Tc, wrt=self.model.t, initialize=0, units=units.K/units.min)
         self.model.dTw_dt = DerivativeVar(self.model.Tw, wrt=self.model.t, initialize=0, units=units.K/units.min)
 
-        # # TODO: ADD DerivativeVar for Tw
         self.model.d2Tc_dz2 = DerivativeVar(self.model.Tc, wrt=(self.model.z, self.model.z),
                                             initialize=0, units=units.K/units.cm/units.cm)
         self.model.d2Tw_dz2 = DerivativeVar(self.model.Tw, wrt=(self.model.z, self.model.z),
@@ -859,7 +857,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             self.model.scaling_factor.set_value(self.model.wall_energy, 1/maxval)
 
 
-    # # TODO: Override 'initialize_simulator'
+    # Override 'initialize_simulator'
     def initialize_simulator(self, console_out=False, options={'print_user_options': 'yes',
                                                     'linear_solver': LinearSolverMethod.MA97,
                                                     'tol': 1e-8,
@@ -1313,6 +1311,10 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
     # # TODO: Override saving and loading of models
 
+    # # TODO: Override 'print_kinetic_parameter_info' and add in heat of reaction parameters
+
+    # # TODO: Create a print function for thermal parameters (h values and K values)
+
     # # TODO: Create a plotting function to compare temperatures
 
     # Function to plot temperatures for all times at a series of locations
@@ -1373,7 +1375,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         x_units = "(min)"
         y_units = "(K)"
         ylab1 = ""
-        var_list = ["T","Tc"]
+        var_list = ["T","Tc", "Tw"]
         for var in var_list:
             ylab1 += var+"\n"
             for age in age_list:
@@ -1384,8 +1386,11 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                         if var == "T":
                             yvals = list(self.model.T[age,temp,loc,:].value)
                             ax.plot(xvals,yvals)
-                        else:
+                        elif var == "Tc":
                             yvals = list(self.model.Tc[age,temp,loc,:].value)
+                            ax.plot(xvals,yvals)
+                        else:
+                            yvals = list(self.model.Tw[age,temp,loc,:].value)
                             ax.plot(xvals,yvals)
 
         plt.legend(leg, loc='center left', bbox_to_anchor=(1, 0.5))
@@ -1458,7 +1463,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         x_units = "(cm)"
         y_units = "(K)"
         ylab1 = ""
-        var_list = ["T","Tc"]
+        var_list = ["T","Tc", "Tw"]
         for var in var_list:
             ylab1 += var+"\n"
             for age in age_list:
@@ -1469,8 +1474,11 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                         if var == "T":
                             yvals = list(self.model.T[age,temp,:,time].value)
                             ax.plot(xvals,yvals)
-                        else:
+                        elif var == "Tc":
                             yvals = list(self.model.Tc[age,temp,:,time].value)
+                            ax.plot(xvals,yvals)
+                        else:
+                            yvals = list(self.model.Tw[age,temp,:,time].value)
                             ax.plot(xvals,yvals)
 
         plt.legend(leg, loc='center left', bbox_to_anchor=(1, 0.5))
