@@ -76,9 +76,9 @@ test.add_surface_sites("S1")
 test.add_reactions({"r1": ReactionType.EquilibriumArrhenius})
 
 test.set_bulk_porosity(0.3309)
-test.set_washcoat_porosity(0.2)
-test.set_reactor_radius(1)                      #cm
-test.set_space_velocity_all_runs(1000)          #volumes per min
+test.set_washcoat_porosity(0.4)
+test.set_reactor_radius(1)                      # cm
+test.set_space_velocity_all_runs(1000)          # volumes per min
 test.set_cell_density(62)                       # 62 cells per cm^2 (~400 cpsi)
 
 # Setting up site balances using dicts
