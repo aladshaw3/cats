@@ -21,10 +21,13 @@ test.add_gas_species("N2")
 #       Just pass a blank dictionary to it.
 test.add_reactions({})
 
-test.set_bulk_porosity(0.3309)
+# # TODO: Add a boundary for porosity of 1
+test.set_bulk_porosity(0.9999)
 test.set_washcoat_porosity(0.4)
 test.set_reactor_radius(1)                      # cm
-test.set_space_velocity_all_runs(1000)          # volumes per min
+# # TODO: Add the ability to change space velocity as a function of time
+# # TODO: Add a boundary for velocity of zero
+test.set_space_velocity_all_runs(1e-6)          # volumes per min
 test.set_cell_density(62)                       # 62 cells per cm^2 (~400 cpsi)
 
 # Build the constraints then discretize
