@@ -76,13 +76,21 @@ def spec_heat_of_air(T):
 #
 #               NOTE: d_rxnj = Kronecker Delta based on reaction/catalyst zoning
 #
-# # TODO: Add energy balance for wall temperature as function of Tc, T, and ambient temp
+#           Energy balance in the wall
+#
+#                   rhow*cpw*dTw/dt = Kw*d^2Tw/dz^2 - eb*a*hwg*(Tw - T) - (1-eb)*a*hwc*(Tw - Tc)
+#                                   - aw*hwg*(Tw - Ta)
+#
 class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     # Override of base class initialization to add new params and tracking info
     def __init__(self):
         Isothermal_Monolith_Simulator.__init__(self)
         self.model.a = Param(within=NonNegativeReals, initialize=2,
                             mutable=True, units=units.cm**-1)
+        self.model.aw = Param(within=NonNegativeReals, initialize=26,
+                            mutable=True, units=units.cm**-1)
+        self.model.delr = Param(within=NonNegativeReals, initialize=0.3175,
+                            mutable=True, units=units.cm)
 
         # # TODO: May be able to calculate these from thermal conductivity and thickness
         self.model.hc = Var(domain=NonNegativeReals, initialize=0.15,
@@ -93,20 +101,29 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                             units=units.J/units.K/units.min/units.cm**2)
         self.model.Kc = Var(domain=NonNegativeReals, initialize=1,
                             units=units.J/units.K/units.min/units.cm)
+        self.model.Kw = Var(domain=NonNegativeReals, initialize=1,
+                            units=units.J/units.K/units.min/units.cm)
 
         self.model.rhoc = Param(within=NonNegativeReals, initialize=0.9,
                             mutable=True, units=units.g/units.cm**3)
         self.model.cpc = Param(within=NonNegativeReals, initialize=0.935,
                             mutable=True, units=units.J/units.g/units.K)
 
+        self.model.rhow = Param(within=NonNegativeReals, initialize=0.9,
+                            mutable=True, units=units.g/units.cm**3)
+        self.model.cpw = Param(within=NonNegativeReals, initialize=0.935,
+                            mutable=True, units=units.J/units.g/units.K)
+
         self.heats_list = {}
         self.heats_list["Kc"] = False
+        self.heats_list["Kw"] = False
         self.heats_list["hc"] = False
         self.heats_list["hwg"] = False
         self.heats_list["hwc"] = False
         self.heats_list["dHrxn"] = {}
         self.isInitialTempSet = {}
-        self.isWallTempSet = {}
+        # # TODO: Add check for Initial wall temp
+        self.isAmbTempSet = {}         # # TODO: Change this to Ambient
         self.isBoundaryTempSet = {}
         self.isIsothermal = {}
         self.isAllIsothermal = True
@@ -118,11 +135,20 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                             domain=NonNegativeReals, initialize=298, units=units.K)
         self.model.Tw = Var(self.model.age_set, self.model.T_set, self.model.z, self.model.t,
                             domain=NonNegativeReals, initialize=298, units=units.K)
+        self.model.Ta = Var(self.model.age_set, self.model.T_set, self.model.z, self.model.t,
+                            domain=NonNegativeReals, initialize=298, units=units.K)
         self.model.dT_dz = DerivativeVar(self.model.T, wrt=self.model.z, initialize=0, units=units.K/units.cm)
+
         self.model.dT_dt = DerivativeVar(self.model.T, wrt=self.model.t, initialize=0, units=units.K/units.min)
         self.model.dTc_dt = DerivativeVar(self.model.Tc, wrt=self.model.t, initialize=0, units=units.K/units.min)
-        self.model.d2Tc_dz2 = DerivativeVar(self.model.T, wrt=(self.model.z, self.model.z),
+        self.model.dTw_dt = DerivativeVar(self.model.Tw, wrt=self.model.t, initialize=0, units=units.K/units.min)
+
+        # # TODO: ADD DerivativeVar for Tw
+        self.model.d2Tc_dz2 = DerivativeVar(self.model.Tc, wrt=(self.model.z, self.model.z),
                                             initialize=0, units=units.K/units.cm/units.cm)
+        self.model.d2Tw_dz2 = DerivativeVar(self.model.Tw, wrt=(self.model.z, self.model.z),
+                                            initialize=0, units=units.K/units.cm/units.cm)
+
         self.model.cpg = Var(self.model.age_set, self.model.T_set, self.model.t,
                                     domain=NonNegativeReals, initialize=1.005, units=units.J/units.g/units.K)
 
@@ -130,12 +156,12 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             self.isInitialTempSet[age] = {}
             self.isBoundaryTempSet[age] = {}
             self.isIsothermal[age] = {}
-            self.isWallTempSet[age] = {}
+            self.isAmbTempSet[age] = {}
             for temp in self.model.T_set:
                 self.isInitialTempSet[age][temp] = False
                 self.isBoundaryTempSet[age][temp] = False
                 self.isIsothermal[age][temp] = False
-                self.isWallTempSet[age][temp] = False
+                self.isAmbTempSet[age][temp] = False
 
     # Override for adding reactions which adds in new var/params for heat of reactions
     def add_reactions(self, rxns):
@@ -152,6 +178,12 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     def set_reactor_radius(self,rad):
         Isothermal_Monolith_Simulator.set_reactor_radius(self,rad)
         self.model.a.set_value(2.0/self.model.r.value)
+        self.model.aw.set_value(2*(self.model.r.value + self.model.delr.value)/self.model.delr.value**2)
+
+    # Function to establish the thichness of the wall
+    def set_wall_thickness(self,delrad):
+        self.model.delr.set_value(delrad)
+        self.model.aw.set_value(2*(self.model.r.value + self.model.delr.value)/self.model.delr.value**2)
 
     # # TODO: Add a norm form that includes the temperature data
     # # TODO: Customize the weight factors in the norm such that temperature
@@ -267,8 +299,15 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     #                           - (1-eb)*a*hwc*(Tc - Tw) + (1-eb)/1000*SUM(all rj, (-dHrxnj)*d_rxnj**rj)
     def solid_eb_constraint(self, m, age, temp, z, t):
         rxn_sum=self.reaction_sum_heats(m, age, temp, z, t)
-        return (1-m.eb)*m.rhoc*m.cpc*m.dTc_dt[age,temp,z,t] == (1-m.eb)*m.Kc*m.d2Tc_dz2[age,temp,z,t] (1-m.eb)*m.Ga*m.hc*(m.T[age,temp,z,t]-m.Tc[age,temp,z,t]) \
+        return (1-m.eb)*m.rhoc*m.cpc*m.dTc_dt[age,temp,z,t] == (1-m.eb)*m.Kc*m.d2Tc_dz2[age,temp,z,t] + (1-m.eb)*m.Ga*m.hc*(m.T[age,temp,z,t]-m.Tc[age,temp,z,t]) \
                 -(1-m.eb)*m.a*m.hwc*(m.Tc[age,temp,z,t]-m.Tw[age,temp,z,t]) + ((1-m.eb)/1000)*rxn_sum
+
+    # Energy balance in wall phase
+    #                   rhow*cpw*dTw/dt = Kw*d^2Tw/dz^2 - eb*a*hwg*(Tw - T) - (1-eb)*a*hwc*(Tw - Tc)
+    #                                   - aw*hwg*(Tw - Ta)
+    def wall_eb_constraint(self, m, age, temp, z, t):
+        return m.rhow*m.cpw*m.dTw_dt[age,temp,z,t] == m.Kw*m.d2Tw_dz2[age,temp,z,t] + m.eb*m.a*m.hwg*(m.T[age,temp,z,t]-m.Tw[age,temp,z,t]) \
+                -(1-m.eb)*m.a*m.hwc*(m.Tw[age,temp,z,t]-m.Tc[age,temp,z,t]) - m.aw*m.hwg*(m.Tw[age,temp,z,t]-m.Ta[age,temp,z,t])
 
     # Edge constraint for central differencing
     def temp_edge_constraint(self, m, age, temp, t):
@@ -281,6 +320,14 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     # Edge constraint for catalyst temperature at boundaries
     def temp_cat_edge_front(self, m, age, temp, t):
         return m.d2Tc_dz2[age, temp, m.z.first(), t] == 0
+
+    # Edge constraint for wall temperature at boundaries
+    def temp_wall_edge_back(self, m, age, temp, t):
+        return m.d2Tw_dz2[age, temp, m.z.last(), t] == 0
+
+    # Edge constraint for wall temperature at boundaries
+    def temp_wall_edge_front(self, m, age, temp, t):
+        return m.d2Tw_dz2[age, temp, m.z.first(), t] == 0
 
     # Build Constraints
     def build_constraints(self):
@@ -311,6 +358,10 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                                 self.model.T_set, self.model.z,
                                 self.model.t, rule=self.solid_eb_constraint)
 
+        self.model.wall_energy = Constraint(self.model.age_set,
+                                self.model.T_set, self.model.z,
+                                self.model.t, rule=self.wall_eb_constraint)
+
         self.isConBuilt = True
 
     # Override 'discretize_model'
@@ -321,12 +372,19 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
         if self.DiscType == "DiscretizationMethod.FiniteDifference":
             self.model.dTdz_edge = Constraint(self.model.age_set, self.model.T_set, self.model.t, rule=self.temp_edge_constraint)
+            self.model.d2Tcdz2_back = Constraint(self.model.age_set, self.model.T_set, self.model.t, rule=self.temp_cat_edge_back)
+            self.model.d2Twdz2_back = Constraint(self.model.age_set, self.model.T_set, self.model.t, rule=self.temp_wall_edge_back)
+
+        self.model.d2Tcdz2_front = Constraint(self.model.age_set, self.model.T_set, self.model.t, rule=self.temp_cat_edge_front)
+        self.model.d2Twdz2_front = Constraint(self.model.age_set, self.model.T_set, self.model.t, rule=self.temp_wall_edge_front)
 
         # Unfix temperatures by default
         self.model.T[:,:,:,:].unfix()
         self.model.Tc[:,:,:,:].unfix()
+        self.model.Tw[:,:,:,:].unfix()
 
-        self.model.Tw[:,:,:,:].fix()
+        #self.model.Tw[:,:,:,:].fix()
+        self.model.Ta[:,:,:,:].fix()
         self.model.cpg[:,:,:].fix()
         #       Initialize Tc and cpg
         for age in self.model.age_set:
@@ -345,6 +403,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         #       Fix ICs for temperatures
         self.model.T[:,:, :, self.model.t.first()].fix()
         self.model.Tc[:,:, :, self.model.t.first()].fix()
+        self.model.Tw[:,:, :, self.model.t.first()].fix()
         self.model.dT_dt[:,:,self.model.z.first(),self.model.t.first()].set_value(0)
         self.model.dT_dt[:,:,self.model.z.first(),self.model.t.first()].fix()
 
@@ -367,19 +426,22 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         Isothermal_Monolith_Simulator.set_temperature_ramp(self, age, temp, start_time, end_time, end_temp)
         self.model.Tc[age,temp,:,:].fix()
         self.model.T[age,temp,:,:].fix()
+        self.model.Tw[age,temp,:,:].fix()
 
         # Fix the derivative vars
         self.model.dTc_dt[age,temp,:,:].fix()
+        self.model.dTw_dt[age,temp,:,:].fix()
         self.model.dT_dt[age,temp,:,:].fix()
         self.model.dT_dz[age,temp,:,:].fix()
         self.model.dTc_dt_disc_eq[age,temp,:,:].deactivate()
+        self.model.dTw_dt_disc_eq[age,temp,:,:].deactivate()
         self.model.dT_dt_disc_eq[age,temp,:,:].deactivate()
         self.model.dT_dz_disc_eq[age,temp,:,:].deactivate()
         self.model.gas_energy[age,temp,:,:].deactivate()
         self.model.solid_energy[age,temp,:,:].deactivate()
         self.isInitialTempSet[age][temp] = True
         self.isBoundaryTempSet[age][temp] = True
-        self.isWallTempSet[age][temp] = True
+        self.isAmbTempSet[age][temp] = True
         self.isIsothermal[age][temp] = True
         for time in self.model.t:
             T = value(self.model.T[age,temp,self.model.z.first(),time])
@@ -393,14 +455,17 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         Isothermal_Monolith_Simulator.set_isothermal_temp(self,age,temp,value)
         self.model.Tc[age,temp,:,:].fix()
         self.model.T[age,temp,:,:].fix()
+        self.model.Tw[age,temp,:,:].fix()
         self.model.Tc[age,temp,:,:].set_value(value)
         self.model.Tw[age,temp,:,:].set_value(value)
 
         # Fix the derivative vars
         self.model.dTc_dt[age,temp,:,:].fix()
+        self.model.dTw_dt[age,temp,:,:].fix()
         self.model.dT_dt[age,temp,:,:].fix()
         self.model.dT_dz[age,temp,:,:].fix()
         self.model.dTc_dt_disc_eq[age,temp,:,:].deactivate()
+        self.model.dTw_dt_disc_eq[age,temp,:,:].deactivate()
         self.model.dT_dt_disc_eq[age,temp,:,:].deactivate()
         self.model.dT_dz_disc_eq[age,temp,:,:].deactivate()
         self.model.gas_energy[age,temp,:,:].deactivate()
@@ -409,12 +474,12 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         self.isInitialTempSet[age][temp] = True
         self.isBoundaryTempSet[age][temp] = True
         self.isIsothermal[age][temp] = True
-        self.isWallTempSet[age][temp] = True
+        self.isAmbTempSet[age][temp] = True
 
     # Create a 'set_const_wall_temperature' function
-    def set_const_wall_temperature(self,age,temp,value):
-        self.model.Tw[age,temp,:,:].set_value(value)
-        self.isWallTempSet[age][temp] = True
+    def set_const_ambient_temperature(self,age,temp,value):
+        self.model.Ta[age,temp,:,:].set_value(value)
+        self.isAmbTempSet[age][temp] = True
 
     # Create a 'set_const_temperature_IC' function
     def set_const_temperature_IC(self,age,temp,value):
@@ -424,6 +489,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         self.model.T[age,temp, :, self.model.t.first()].fix()
         self.model.Tc[age,temp, :, self.model.t.first()].set_value(value)
         self.model.Tc[age,temp, :, self.model.t.first()].fix()
+        self.model.Tw[age,temp, :, self.model.t.first()].set_value(value)
+        self.model.Tw[age,temp, :, self.model.t.first()].fix()
         self.isInitialTempSet[age][temp] = True
         self.isVelocityRecalculated = False
 
@@ -487,6 +554,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         elif name == "Kc":
             self.model.Kc.fix()
             self.heats_list["Kc"] = True
+        elif name == "Kw":
+            self.model.Kw.fix()
+            self.heats_list["Kw"] = True
         else:
             if name in self.model.all_rxns:
                 self.model.dHrxn[name].fix()
@@ -494,10 +564,12 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
     # Function to fix all heat terms
     def fix_all_heats(self):
+        self.model.Kw.fix()
         self.model.Kc.fix()
         self.model.hc.fix()
         self.model.hwg.fix()
         self.model.hwc.fix()
+        self.heats_list["Kw"] = True
         self.heats_list["Kc"] = True
         self.heats_list["hc"] = True
         self.heats_list["hwg"] = True
@@ -527,6 +599,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         elif name == "Kc":
             self.model.Kc.unfix()
             self.heats_list["Kc"] = False
+        elif name == "Kw":
+            self.model.Kw.unfix()
+            self.heats_list["Kw"] = False
         else:
             if name in self.model.all_rxns:
                 self.model.dHrxn[name].unfix()
@@ -534,10 +609,12 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
     # Function to unfix all heat terms
     def unfix_all_heats(self):
+        self.model.Kw.unfix()
         self.model.Kc.unfix()
         self.model.hc.unfix()
         self.model.hwg.unfix()
         self.model.hwc.unfix()
+        self.heats_list["Kw"] = False
         self.heats_list["Kc"] = False
         self.heats_list["hc"] = False
         self.heats_list["hwg"] = False
@@ -563,10 +640,12 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         maxval = self.model.T[maxkey].value
         self.model.scaling_factor.set_value(self.model.T, 1/maxval)
         self.model.scaling_factor.set_value(self.model.Tc, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.Tw, 1/maxval)
 
         # set initial scaling factors for heats
         self.model.scaling_factor.set_value(self.model.hc, 1/self.model.hc.value)
         self.model.scaling_factor.set_value(self.model.Kc, 1/self.model.Kc.value)
+        self.model.scaling_factor.set_value(self.model.Kw, 1/self.model.Kw.value)
         self.model.scaling_factor.set_value(self.model.hwc, 1/self.model.hwc.value)
         self.model.scaling_factor.set_value(self.model.hwg, 1/self.model.hwg.value)
         for rxn in self.model.all_rxns:
@@ -595,6 +674,16 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             maxval = 1e-1
         self.model.scaling_factor.set_value(self.model.solid_energy, 1/maxval)
 
+        # set scaling for wall energy constraints
+        maxval = 0
+        for key in self.model.wall_energy:
+            newval = abs(value(self.model.wall_energy[key]))
+            if newval > maxval:
+                maxval = newval
+        if maxval < 1e-1:
+            maxval = 1e-1
+        self.model.scaling_factor.set_value(self.model.wall_energy, 1/maxval)
+
         # set scaling for derivative variables and constraints
         maxval = 0
         for key in self.model.dT_dz_disc_eq:
@@ -617,6 +706,16 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         self.model.scaling_factor.set_value(self.model.d2Tc_dz2, 1/maxval)
 
         maxval = 0
+        for key in self.model.d2Tw_dz2_disc_eq:
+            newval = abs(value(self.model.d2Tw_dz2_disc_eq[key]))
+            if newval > maxval:
+                maxval = newval
+        if maxval < 1e-1:
+            maxval = 1e-1
+        self.model.scaling_factor.set_value(self.model.d2Tw_dz2_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tw_dz2, 1/maxval)
+
+        maxval = 0
         for key in self.model.dT_dt_disc_eq:
             newval = abs(value(self.model.dT_dt_disc_eq[key]))
             if newval > maxval:
@@ -627,6 +726,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         self.model.scaling_factor.set_value(self.model.dT_dt, 1/maxval)
         self.model.scaling_factor.set_value(self.model.dTc_dt_disc_eq, 1/maxval)
         self.model.scaling_factor.set_value(self.model.dTc_dt, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dTw_dt_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dTw_dt, 1/maxval)
 
     # Override 'finalize_auto_scaling'
     def finalize_auto_scaling(self):
@@ -638,6 +739,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         maxval = self.model.T[maxkey].value
         self.model.scaling_factor.set_value(self.model.T, 1/maxval)
         self.model.scaling_factor.set_value(self.model.Tc, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.Tw, 1/maxval)
 
         # set scaling for derivative vars
         maxkey = max(self.model.dT_dz.get_values(), key=self.model.dT_dz.get_values().get)
@@ -664,6 +766,18 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         self.model.scaling_factor.set_value(self.model.d2Tc_dz2, 1/maxval)
         self.model.scaling_factor.set_value(self.model.d2Tc_dz2_disc_eq, 1/maxval)
 
+        maxkey = max(self.model.d2Tw_dz2.get_values(), key=self.model.d2Tw_dz2.get_values().get)
+        minkey = min(self.model.d2Tw_dz2.get_values(), key=self.model.d2Tw_dz2.get_values().get)
+
+        if abs(self.model.d2Tw_dz2[maxkey].value) >= abs(self.model.d2Tw_dz2[minkey].value):
+            maxval = abs(self.model.d2Tw_dz2[maxkey].value)
+        else:
+            maxval = abs(self.model.d2Tw_dz2[minkey].value)
+        if maxval < 1e-1:
+            maxval = 1e-1
+        self.model.scaling_factor.set_value(self.model.d2Tw_dz2, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tw_dz2_disc_eq, 1/maxval)
+
         maxkey = max(self.model.dT_dt.get_values(), key=self.model.dT_dt.get_values().get)
         minkey = min(self.model.dT_dt.get_values(), key=self.model.dT_dt.get_values().get)
 
@@ -688,8 +802,21 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         self.model.scaling_factor.set_value(self.model.dTc_dt, 1/maxval)
         self.model.scaling_factor.set_value(self.model.dTc_dt_disc_eq, 1/maxval)
 
+        maxkey = max(self.model.dTw_dt.get_values(), key=self.model.dTw_dt.get_values().get)
+        minkey = min(self.model.dTw_dt.get_values(), key=self.model.dTw_dt.get_values().get)
+
+        if abs(self.model.dTw_dt[maxkey].value) >= abs(self.model.dTw_dt[minkey].value):
+            maxval = abs(self.model.dTw_dt[maxkey].value)
+        else:
+            maxval = abs(self.model.dTw_dt[minkey].value)
+        if maxval < 1e-1:
+            maxval = 1e-1
+        self.model.scaling_factor.set_value(self.model.dTw_dt, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dTw_dt_disc_eq, 1/maxval)
+
         # reset scaling factors for heats
         self.model.scaling_factor.set_value(self.model.Kc, 1/self.model.Kc.value)
+        self.model.scaling_factor.set_value(self.model.Kw, 1/self.model.Kw.value)
         self.model.scaling_factor.set_value(self.model.hc, 1/self.model.hc.value)
         self.model.scaling_factor.set_value(self.model.hwc, 1/self.model.hwc.value)
         self.model.scaling_factor.set_value(self.model.hwg, 1/self.model.hwg.value)
@@ -720,6 +847,16 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             if maxval < 1e-1:
                 maxval = 1e-1
             self.model.scaling_factor.set_value(self.model.solid_energy, 1/maxval)
+
+            # set scaling for wall energy constraints
+            maxval = 0
+            for key in self.model.wall_energy:
+                newval = abs(value(self.model.wall_energy[key]))
+                if newval > maxval:
+                    maxval = newval
+            if maxval < 1e-1:
+                maxval = 1e-1
+            self.model.scaling_factor.set_value(self.model.wall_energy, 1/maxval)
 
 
     # # TODO: Override 'initialize_simulator'
@@ -760,7 +897,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                 for temp in self.model.T_set:
                     if self.isBoundaryTempSet[age][temp] == False:
                         raise Exception("Error! Must specify boundaries before attempting to solve")
-                    if self.isWallTempSet[age][temp] == False:
+                    if self.isAmbTempSet[age][temp] == False:
                         raise Exception("Error! Must specify wall temperatures before attempting to solve")
 
             if self.isVelocityRecalculated == False:
@@ -780,6 +917,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                 elif item == "hwg":
                     fixed_heat_dict[item] = self.heats_list[item]
                 elif item == "Kc":
+                    fixed_heat_dict[item] = self.heats_list[item]
+                elif item == "Kw":
                     fixed_heat_dict[item] = self.heats_list[item]
                 else:
                     fixed_heat_dict[item] = {}
@@ -806,17 +945,29 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             if self.DiscType == "DiscretizationMethod.FiniteDifference":
                 self.model.dCbdz_edge[:, :, :, :].deactivate()
                 self.model.dTdz_edge[:, :, :].deactivate()
+                self.model.d2Tcdz2_back[:,:,:].deactivate()
+                self.model.d2Twdz2_back[:,:,:].deactivate()
 
             self.model.Tc[:,:,:,:].fix()
+            self.model.Tw[:,:,:,:].fix()
             self.model.T[:,:,:,:].fix()
             self.model.dTc_dt[:,:,:,:].fix()
+            self.model.dTw_dt[:,:,:,:].fix()
             self.model.dT_dt[:,:,:,:].fix()
             self.model.dT_dz[:,:,:,:].fix()
+            self.model.d2Tc_dz2[:,:,:,:].fix()
+            self.model.d2Tw_dz2[:,:,:,:].fix()
             self.model.gas_energy[:,:,:,:].deactivate()
             self.model.solid_energy[:,:,:,:].deactivate()
+            self.model.wall_energy[:,:,:,:].deactivate()
             self.model.dTc_dt_disc_eq[:,:,:,:].deactivate()
+            self.model.dTw_dt_disc_eq[:,:,:,:].deactivate()
             self.model.dT_dt_disc_eq[:,:,:,:].deactivate()
             self.model.dT_dz_disc_eq[:,:,:,:].deactivate()
+            self.model.d2Tc_dz2_disc_eq[:,:,:,:].deactivate()
+            self.model.d2Tw_dz2_disc_eq[:,:,:,:].deactivate()
+            self.model.d2Tcdz2_front[:,:,:].deactivate()
+            self.model.d2Twdz2_front[:,:,:].deactivate()
 
             if self.isSurfSpecSet == True:
                 self.model.q[:, :, :, :, :].fix()
@@ -854,18 +1005,30 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                             if self.DiscType == "DiscretizationMethod.FiniteDifference":
                                 self.model.dCbdz_edge[:, age_solve, temp_solve, time_solve].activate()
                                 self.model.dTdz_edge[age_solve, temp_solve, time_solve].activate()
+                                self.model.d2Tcdz2_back[age_solve, temp_solve, time_solve].activate()
+                                self.model.d2Twdz2_back[age_solve, temp_solve, time_solve].activate()
 
                             if self.isIsothermal[age_solve][temp_solve] == False:
                                 self.model.T[age_solve, temp_solve, :, time_solve].unfix()
                                 self.model.Tc[age_solve, temp_solve, :, time_solve].unfix()
+                                self.model.Tw[age_solve, temp_solve, :, time_solve].unfix()
                                 self.model.dT_dt[age_solve, temp_solve, :, time_solve].unfix()
                                 self.model.dTc_dt[age_solve, temp_solve, :, time_solve].unfix()
+                                self.model.dTw_dt[age_solve, temp_solve, :, time_solve].unfix()
                                 self.model.dT_dz[age_solve, temp_solve, :, time_solve].unfix()
+                                self.model.d2Tc_dz2[age_solve, temp_solve, :, time_solve].unfix()
+                                self.model.d2Tw_dz2[age_solve, temp_solve, :, time_solve].unfix()
                                 self.model.gas_energy[age_solve, temp_solve, :, time_solve].activate()
                                 self.model.solid_energy[age_solve, temp_solve, :, time_solve].activate()
+                                self.model.wall_energy[age_solve, temp_solve, :, time_solve].activate()
                                 self.model.dT_dz_disc_eq[age_solve, temp_solve, :, time_solve].activate()
                                 self.model.dT_dt_disc_eq[age_solve, temp_solve, :, time_solve].activate()
                                 self.model.dTc_dt_disc_eq[age_solve, temp_solve, :, time_solve].activate()
+                                self.model.dTw_dt_disc_eq[age_solve, temp_solve, :, time_solve].activate()
+                                self.model.d2Tc_dz2_disc_eq[age_solve, temp_solve, :, time_solve].activate()
+                                self.model.d2Tw_dz2_disc_eq[age_solve, temp_solve, :, time_solve].activate()
+                                self.model.d2Tcdz2_front[age_solve, temp_solve, time_solve].activate()
+                                self.model.d2Twdz2_front[age_solve, temp_solve, time_solve].activate()
 
 
                             if self.isSurfSpecSet == True:
@@ -890,6 +1053,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                             self.model.dT_dt[age_solve, temp_solve,self.model.z.first(),self.model.t.first()].fix()
                             self.model.T[age_solve, temp_solve, :, self.model.t.first()].fix()
                             self.model.Tc[age_solve, temp_solve, :, self.model.t.first()].fix()
+                            self.model.Tw[age_solve, temp_solve, :, self.model.t.first()].fix()
                             self.model.T[age_solve, temp_solve,self.model.z.first(), :].fix()
 
                             #Inside age_solve, temp_solve, and time_solve
@@ -1001,18 +1165,30 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                             if self.DiscType == "DiscretizationMethod.FiniteDifference":
                                 self.model.dCbdz_edge[:, age_solve, temp_solve, time_solve].deactivate()
                                 self.model.dTdz_edge[age_solve, temp_solve, time_solve].deactivate()
+                                self.model.d2Tcdz2_back[age_solve, temp_solve, time_solve].deactivate()
+                                self.model.d2Twdz2_back[age_solve, temp_solve, time_solve].deactivate()
 
                             if self.isIsothermal[age_solve][temp_solve] == False:
                                 self.model.T[age_solve, temp_solve, :, time_solve].fix()
                                 self.model.Tc[age_solve, temp_solve, :, time_solve].fix()
+                                self.model.Tw[age_solve, temp_solve, :, time_solve].fix()
                                 self.model.dT_dt[age_solve, temp_solve, :, time_solve].fix()
                                 self.model.dTc_dt[age_solve, temp_solve, :, time_solve].fix()
+                                self.model.dTw_dt[age_solve, temp_solve, :, time_solve].fix()
                                 self.model.dT_dz[age_solve, temp_solve, :, time_solve].fix()
+                                self.model.d2Tc_dz2[age_solve, temp_solve, :, time_solve].fix()
+                                self.model.d2Tw_dz2[age_solve, temp_solve, :, time_solve].fix()
                                 self.model.gas_energy[age_solve, temp_solve, :, time_solve].deactivate()
                                 self.model.solid_energy[age_solve, temp_solve, :, time_solve].deactivate()
+                                self.model.wall_energy[age_solve, temp_solve, :, time_solve].deactivate()
                                 self.model.dT_dz_disc_eq[age_solve, temp_solve, :, time_solve].deactivate()
                                 self.model.dT_dt_disc_eq[age_solve, temp_solve, :, time_solve].deactivate()
                                 self.model.dTc_dt_disc_eq[age_solve, temp_solve, :, time_solve].deactivate()
+                                self.model.dTw_dt_disc_eq[age_solve, temp_solve, :, time_solve].deactivate()
+                                self.model.d2Tc_dz2_disc_eq[age_solve, temp_solve, :, time_solve].deactivate()
+                                self.model.d2Tw_dz2_disc_eq[age_solve, temp_solve, :, time_solve].deactivate()
+                                self.model.d2Tcdz2_front[age_solve, temp_solve, time_solve].deactivate()
+                                self.model.d2Twdz2_front[age_solve, temp_solve, time_solve].deactivate()
 
                             if self.isSurfSpecSet == True:
                                 self.model.q[:, age_solve, temp_solve, :, time_solve].fix()
@@ -1052,14 +1228,27 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                     if self.isIsothermal[age][temp] == False:
                         self.model.T[age, temp, :, :].unfix()
                         self.model.Tc[age, temp, :, :].unfix()
+                        self.model.Tw[age, temp, :, :].unfix()
                         self.model.dT_dt[age, temp, :, :].unfix()
                         self.model.dTc_dt[age, temp, :, :].unfix()
+                        self.model.dTw_dt[age, temp, :, :].unfix()
                         self.model.dT_dz[age, temp, :, :].unfix()
+                        self.model.d2Tc_dz2[age, temp, :, :].unfix()
+                        self.model.d2Tw_dz2[age, temp, :, :].unfix()
                         self.model.gas_energy[age, temp, :, :].activate()
                         self.model.solid_energy[age, temp, :, :].activate()
+                        self.model.wall_energy[age, temp, :, :].activate()
                         self.model.dT_dz_disc_eq[age, temp, :, :].activate()
                         self.model.dT_dt_disc_eq[age, temp, :, :].activate()
                         self.model.dTc_dt_disc_eq[age, temp, :, :].activate()
+                        self.model.dTw_dt_disc_eq[age, temp, :, :].activate()
+                        self.model.d2Tc_dz2_disc_eq[age, temp, :, :].activate()
+                        self.model.d2Tw_dz2_disc_eq[age, temp, :, :].activate()
+                        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+                            self.model.d2Tcdz2_back[age, temp, :].activate()
+                            self.model.d2Twdz2_back[age, temp, :].activate()
+                        self.model.d2Tcdz2_front[age, temp, :].activate()
+                        self.model.d2Twdz2_front[age, temp, :].activate()
 
             if self.isSurfSpecSet == True:
                 self.model.q[:, :, :, :, :].unfix()
@@ -1082,6 +1271,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             self.model.dT_dt[:,:,self.model.z.first(),self.model.t.first()].fix()
             self.model.T[:,:, :, self.model.t.first()].fix()
             self.model.Tc[:,:, :, self.model.t.first()].fix()
+            self.model.Tw[:, :, :, self.model.t.first()].fix()
             self.model.T[:,:,self.model.z.first(), :].fix()
 
             # Add objective function back
@@ -1103,6 +1293,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                     if fixed_heat_dict[item] == False:
                         self.unfix_heat(item)
                 elif item == "Kc":
+                    if fixed_heat_dict[item] == False:
+                        self.unfix_heat(item)
+                elif item == "Kw":
                     if fixed_heat_dict[item] == False:
                         self.unfix_heat(item)
                 else:
