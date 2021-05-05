@@ -289,7 +289,8 @@ class Isothermal_Monolith_Simulator(object):
         # Check to see if each age in the data set has a cooresponding simulation set
         for age in self.model.data_age_set:
             if age not in self.model.age_set:
-                raise Exception("Error! Data ages must be a sub-set of simulation ages")
+                raise Exception("Error! Data ages must be a sub-set of simulation ages. "
+                                +str(age)+ " given is not in model.age_set")
         self.isDataAgeSet = True
 
     # Add a variable set for isothermal temperatures [Must be reals]
@@ -358,7 +359,8 @@ class Isothermal_Monolith_Simulator(object):
         # Check to see if each temp in the data set has a cooresponding simulation set
         for temp in self.model.data_T_set:
             if temp not in self.model.T_set:
-                raise Exception("Error! Data temps must be a sub-set of simulation temps")
+                raise Exception("Error! Data temps must be a sub-set of simulation temps. "
+                                +str(temp)+ " given is not in model.T_set")
         self.isDataTempSet = True
 
     # Add gas species (both bulk and washcoat) [Must be strings]
@@ -383,7 +385,8 @@ class Isothermal_Monolith_Simulator(object):
                                             "washcoat": item+"_w",
                                             "inlet": item+"_in"}
                 else:
-                    raise Exception("Error! Gas species must be a string")
+                    raise Exception("Error! Gas species must be a string. "
+                                    +str(item)+ " given is not a string object")
             self.model.gas_set = Set(initialize=gas_species)
             self.model.Cb = Var(self.model.gas_set, self.model.age_set, self.model.T_set,
                             self.model.z, self.model.t,
@@ -408,7 +411,8 @@ class Isothermal_Monolith_Simulator(object):
                                 domain=NonNegativeReals, bounds=(1e-20,1e5),
                                 initialize=1e-20, units=units.mol/units.L)
             else:
-                raise Exception("Error! Gas species must be a string")
+                raise Exception("Error! Gas species must be a string. "
+                                +str(gas_species)+ " given is not a string object")
         self.isGasSpecSet = True
         for spec in self.model.gas_set:
             self.isBoundarySet[spec] = {}
@@ -469,12 +473,14 @@ class Isothermal_Monolith_Simulator(object):
                                 within=NonNegativeReals, mutable=True,
                                 initialize=1, units=None)
             else:
-                raise Exception("Error! Gas species must be a string")
+                raise Exception("Error! Gas species must be a string. "
+                                +str(gas_species)+" given is not a string object")
         # Check to see if each temp in the data set has a cooresponding simulation set
         for spec in self.model.data_gas_set:
             self.isDataValuesSet[spec] = False
             if spec not in self.model.gas_set:
-                raise Exception("Error! Data gas species must be a sub-set of simulation species")
+                raise Exception("Error! Data gas species must be a sub-set of simulation species. "
+                                +str(spec)+ " given is not in model.gas_set")
 
         self.isDataGasSpecSet = True
 
@@ -504,7 +510,8 @@ class Isothermal_Monolith_Simulator(object):
                                 domain=NonNegativeReals, bounds=(1e-20,1e5),
                                 initialize=1e-20, units=units.mol/units.L)
             else:
-                raise Exception("Error! Surface species must be a string")
+                raise Exception("Error! Surface species must be a string. "
+                                +str(surf_species)+" given is not a string object")
         self.isSurfSpecSet = True
         self.model.dq_dt = DerivativeVar(self.model.q, wrt=self.model.t, initialize=0, units=units.mol/units.L/units.min)
 
@@ -532,7 +539,8 @@ class Isothermal_Monolith_Simulator(object):
                 if isinstance(item, str):
                     self.site_list[item] = item
                 else:
-                    raise Exception("Error! Surface site must be a string")
+                    raise Exception("Error! Surface site must be a string. "
+                                    +str(item)+" given is not a string object")
             self.model.site_set = Set(initialize=sites)
             self.model.S = Var(self.model.site_set, self.model.age_set, self.model.T_set,
                             self.model.z, self.model.t,
@@ -555,7 +563,8 @@ class Isothermal_Monolith_Simulator(object):
                                 within=NonNegativeReals, initialize=1e-20,
                                 mutable=True, units=units.mol/units.L)
             else:
-                raise Exception("Error! Surface sites must be a string")
+                raise Exception("Error! Surface sites must be a string. "
+                                +str(sites)+" given is not a string object")
 
         self.model.u_S = Param(self.model.site_set, self.model.surf_set, domain=Reals,
                                         initialize=0, mutable=True)
@@ -577,7 +586,8 @@ class Isothermal_Monolith_Simulator(object):
             raise Exception("Error! Cannot specify reactions before defining species")
 
         if type(rxns) is not dict:
-            raise Exception("Error! Must specify reactions using a formatted dictionary")
+            raise Exception("Error! Must specify reactions using a formatted dictionary. "
+                            +str(rxns)+" given in not a dict object")
 
         # Iterate through the reaction list
         arr_rxn_list = []
@@ -592,7 +602,8 @@ class Isothermal_Monolith_Simulator(object):
             elif rxns[r] == ReactionType.EquilibriumArrhenius:
                 arr_equ_rxn_list.append(r)
             else:
-                raise Exception("Error! Unsupported 'ReactionType' object")
+                raise Exception("Error! Unsupported 'ReactionType' object. "
+                                +str(rxns[r])+" given is not recognized")
 
         # Setup model with all reactions (store sets for each type)
         self.model.all_rxns = Set(initialize=full_rxn_list)
@@ -723,7 +734,8 @@ class Isothermal_Monolith_Simulator(object):
         if self.isSitesSet == False:
             raise Exception("Error! Cannot set site balance info before specifying that there are sites")
         if type(info) is not dict:
-            raise Exception("Error! Must specify site balances using a formatted dictionary")
+            raise Exception("Error! Must specify site balances using a formatted dictionary. "
+                            +str(info)+ " given is not a dict object")
         if "mol_occupancy" not in info:
             raise Exception("Error! Must specify reaction 'mol_occupancy' in dictionary")
         for spec in self.model.surf_set:
@@ -741,7 +753,8 @@ class Isothermal_Monolith_Simulator(object):
         if self.isRxnSet == False:
             raise Exception("Error! Cannot set reaction parameters before declaring reaction types")
         if type(info) is not dict:
-            raise Exception("Error! Must specify reactions using a formatted dictionary")
+            raise Exception("Error! Must specify reactions using a formatted dictionary. "
+                            +str(info)+ " given is not a dict object")
         if "parameters" not in info:
             raise Exception("Error! Must specify reaction 'parameters' in dictionary")
         if "mol_reactants" not in info:
@@ -832,7 +845,8 @@ class Isothermal_Monolith_Simulator(object):
                     self.model.dS[rxn].setlb(info["parameters"]["dS"]*1.2)
                     self.model.dS[rxn].setub(info["parameters"]["dS"]*0.8)
         else:
-            raise Exception("Error! Given reaction name does not exist in model")
+            raise Exception("Error! Given reaction name does not exist in model. "
+                            +str(rxn)+ " given does not exist")
 
         #Create a model set for reactants and products
         react_list = []
@@ -1026,7 +1040,8 @@ class Isothermal_Monolith_Simulator(object):
         if self.isGasSpecSet == False:
             raise Exception("Error! Cannot specify diffusivity without setting up gas species first")
         if spec not in self.model.gas_set:
-            raise Exception("Error! Unrecognized gas species name was given when trying to set diffusivity")
+            raise Exception("Error! Unrecognized gas species name was given when trying to set diffusivity. "
+                            +str(spec)+ " given is not a valid name in model.gas_set")
 
         if val < 1e-6:
             val = 1e-6
@@ -1206,7 +1221,8 @@ class Isothermal_Monolith_Simulator(object):
     def build_constraints(self):
         for rxn in self.model.all_rxns:
             if self.isRxnBuilt[rxn] == False:
-                raise Exception("Error! Cannot build constraints until reaction info is set")
+                raise Exception("Error! Cannot build constraints until reaction info is set. "
+                                +str(rxn)+ " reaction is not yet constructed")
         self.model.bulk_cons = Constraint(self.model.gas_set, self.model.age_set,
                                 self.model.T_set, self.model.z,
                                 self.model.t, rule=self.bulk_mb_constraint)
@@ -1252,7 +1268,8 @@ class Isothermal_Monolith_Simulator(object):
             self.DiscType = "DiscretizationMethod.OrthogonalCollocation"
             self.colpoints = colpoints
         else:
-            raise Exception("Error! Unrecognized discretization method")
+            raise Exception("Error! Unrecognized discretization method. "
+                            +str(method)+ " given is not recognized")
 
         # Before exiting, we should initialize some additional parameters that
         #   the discretizer doesn't already handle
@@ -1368,7 +1385,8 @@ class Isothermal_Monolith_Simulator(object):
                     anyFalse = True
                     break
             if anyFalse == True:
-                raise Exception("Error! Some data for gases not set. Cannot create objective function")
+                raise Exception("Error! Some data for gases not set. Cannot create objective function. "
+                                +str(self.isDataValuesSet)+ " check dict for missing pieces")
             self.model.obj = Objective(rule=self.norm_objective)
             self.isObjectiveSet = True
 
@@ -1408,7 +1426,8 @@ class Isothermal_Monolith_Simulator(object):
         if self.isIsothermalTempSet == False:
             raise Exception("Error! Cannot use 'set_const_IC_in_ppm' if temperatures are not set first")
         if spec not in self.model.gas_set:
-            raise Exception("Error! Given species name is not a valid gas species name")
+            raise Exception("Error! Given species name is not a valid gas species name. "
+                            +str(spec)+ " given is not in model.gas_set")
 
         value = ppm_val/10**6*self.model.Pref[age,temp].value/8.3145/self.model.T[age,temp,self.model.z.first(),self.model.t.first()].value
         if value < 1e-20:
@@ -1423,10 +1442,12 @@ class Isothermal_Monolith_Simulator(object):
     # Set constant boundary conditions
     def set_const_BC(self,spec,age,temp,value):
         if spec not in self.model.gas_set:
-            raise Exception("Error! Cannot specify boundary value for non-gas species")
+            raise Exception("Error! Cannot specify boundary value for non-gas species. "
+                            +str(spec)+" given is not in model.gas_set")
 
         if self.isInitialSet[spec][age][temp] == False:
-            raise Exception("Error! User must specify initial conditions before boundary conditions")
+            raise Exception("Error! User must specify initial conditions before boundary conditions. "
+                            +str(spec)+","+str(age)+","+str(temp)+ " given does not have IC")
 
         if value < 0:
             raise Exception("Error! Concentrations cannot be negative")
@@ -1440,10 +1461,12 @@ class Isothermal_Monolith_Simulator(object):
     # Set boundary condition when given ppm as units
     def set_const_BC_in_ppm(self, spec, age, temp, ppm_val):
         if spec not in self.model.gas_set:
-            raise Exception("Error! Cannot specify boundary value for non-gas species")
+            raise Exception("Error! Cannot specify boundary value for non-gas species. "
+                            +str(spec)+" given is not in model.gas_set")
 
         if self.isInitialSet[spec][age][temp] == False:
-            raise Exception("Error! User must specify initial conditions before boundary conditions")
+            raise Exception("Error! User must specify initial conditions before boundary conditions. "
+                            +str(spec)+","+str(age)+","+str(temp)+ " given does not have IC")
 
         if ppm_val < 0:
             raise Exception("Error! Concentrations cannot be negative")
@@ -1463,16 +1486,20 @@ class Isothermal_Monolith_Simulator(object):
     #       If user does not provide an initial value, it will be assumed 1e-20
     def set_time_dependent_BC(self,spec,age,temp,time_value_pairs,initial_value=1e-20):
         if spec not in self.model.gas_set:
-            raise Exception("Error! Cannot specify boundary value for non-gas species")
+            raise Exception("Error! Cannot specify boundary value for non-gas species. "
+                            +str(spec)+" given is not in model.gas_set")
 
         if self.isInitialSet[spec][age][temp] == False:
-            raise Exception("Error! User must specify initial conditions before boundary conditions")
+            raise Exception("Error! User must specify initial conditions before boundary conditions. "
+                            +str(spec)+","+str(age)+","+str(temp)+ " given does not have IC")
 
         if type(time_value_pairs) is not list:
-            raise Exception("Error! Must specify time dependent BCs using a list of tuples: [(t0,value), (t1,value) ...]")
+            raise Exception("Error! Must specify time dependent BCs using a list of tuples: [(t0,value), (t1,value) ...]. "
+                            +str(spec)+","+str(age)+","+str(temp)+ " given does not have correct args")
 
         if type(time_value_pairs[0]) is not tuple:
-            raise Exception("Error! Must specify time dependent BCs using a list of tuples: [(t0,value), (t1,value) ...]")
+            raise Exception("Error! Must specify time dependent BCs using a list of tuples: [(t0,value), (t1,value) ...]. "
+                            +str(spec)+","+str(age)+","+str(temp)+ " given does not have correct args")
 
         # Set the first value as given initial_value
         if initial_value < 1e-20:
@@ -1516,16 +1543,20 @@ class Isothermal_Monolith_Simulator(object):
     # Set time dependent boundary condition when given ppm as units
     def set_time_dependent_BC_in_ppm(self, spec, age, temp, time_value_pairs, initial_value=0):
         if spec not in self.model.gas_set:
-            raise Exception("Error! Cannot specify boundary value for non-gas species")
+            raise Exception("Error! Cannot specify boundary value for non-gas species. "
+                            +str(spec)+" given is not in model.gas_set")
 
         if self.isInitialSet[spec][age][temp] == False:
-            raise Exception("Error! User must specify initial conditions before boundary conditions")
+            raise Exception("Error! User must specify initial conditions before boundary conditions. "
+                            +str(spec)+","+str(age)+","+str(temp)+ " given does not have IC")
 
         if type(time_value_pairs) is not list:
-            raise Exception("Error! Must specify time dependent BCs using a list of tuples: [(t0,value), (t1,value) ...]")
+            raise Exception("Error! Must specify time dependent BCs using a list of tuples: [(t0,value), (t1,value) ...]. "
+                            +str(spec)+","+str(age)+","+str(temp)+ " given does not have correct args")
 
         if type(time_value_pairs[0]) is not tuple:
-            raise Exception("Error! Must specify time dependent BCs using a list of tuples: [(t0,value), (t1,value) ...]")
+            raise Exception("Error! Must specify time dependent BCs using a list of tuples: [(t0,value), (t1,value) ...]. "
+                            +str(spec)+","+str(age)+","+str(temp)+ " given does not have correct args")
 
         if self.isIsothermalTempSet == False:
             raise Exception("Error! Cannot use 'set_const_IC_in_ppm' if temperatures are not set first")
@@ -1613,7 +1644,8 @@ class Isothermal_Monolith_Simulator(object):
         if self.isDiscrete == False:
             raise Exception("Error! User should call the discretizer before setting a reaction zone")
         if rxn not in self.model.all_rxns:
-            raise Exception("Error! Invalid reaction ID given")
+            raise Exception("Error! Invalid reaction ID given. "
+                            +str(rxn)+" given is not a valid name in model.all_rxns")
         if type(zone) is not tuple:
             raise Exception("Error! Zone must be given as tuple: zone=(start_loc, end_loc)")
         start_loc = zone[0]
@@ -1695,7 +1727,8 @@ class Isothermal_Monolith_Simulator(object):
             raise Exception("Error! Values for setting data must be given as a list")
 
         if loc not in self.model.z_data:
-            raise Exception("Error! Location given was not specified during the creation of the spatial data set")
+            raise Exception("Error! Location given was not specified during the creation of the spatial data set. "
+                            +str(loc)+ " given is not a valid location in model.z_data")
 
         if len(times) != len(values):
             raise Exception("Error! The 'times' list and 'values' list must be of same size")
@@ -1881,7 +1914,8 @@ class Isothermal_Monolith_Simulator(object):
             for age in self.model.age_set:
                 for temp in self.model.T_set:
                     if self.isBoundarySet[spec][age][temp] == False:
-                        raise Exception("Error! Must specify boundaries before attempting to initialize scaling")
+                        raise Exception("Error! Must specify boundaries before attempting to initialize scaling. "
+                                        +str(spec)+","+str(age)+","+str(temp)+ " given does not have BCs set")
 
         self.model.scaling_factor = Suffix(direction=Suffix.EXPORT)
 
@@ -2207,13 +2241,15 @@ class Isothermal_Monolith_Simulator(object):
             for age in self.model.age_set:
                 for temp in self.model.T_set:
                     if self.isBoundarySet[spec][age][temp] == False:
-                        raise Exception("Error! Must specify boundaries before attempting to solve")
+                        raise Exception("Error! Must specify boundaries before attempting to solve. "
+                                        +str(spec)+","+str(age)+","+str(temp)+" given does not have BCs set")
         if self.isSurfSpecSet == True:
             for spec in self.model.surf_set:
                 for age in self.model.age_set:
                     for temp in self.model.T_set:
                         if self.isInitialSet[spec][age][temp] == False:
-                            raise Exception("Error! Must specify initial conditions before attempting to solve")
+                            raise Exception("Error! Must specify initial conditions before attempting to solve. "
+                                            +str(spec)+","+str(age)+","+str(temp)+" given does not have ICs set")
 
         if self.isVelocityRecalculated == False:
             self.recalculate_linear_velocities(interally_called=True,isMonolith=True)
@@ -2485,13 +2521,15 @@ class Isothermal_Monolith_Simulator(object):
             for age in self.model.age_set:
                 for temp in self.model.T_set:
                     if self.isBoundarySet[spec][age][temp] == False:
-                        raise Exception("Error! Must specify boundaries before attempting to solve")
+                        raise Exception("Error! Must specify boundaries before attempting to solve. "
+                                        +str(spec)+","+str(age)+","+str(temp)+" given does not have BCs set")
         if self.isSurfSpecSet == True:
             for spec in self.model.surf_set:
                 for age in self.model.age_set:
                     for temp in self.model.T_set:
                         if self.isInitialSet[spec][age][temp] == False:
-                            raise Exception("Error! Must specify initial conditions before attempting to solve")
+                            raise Exception("Error! Must specify initial conditions before attempting to solve. "
+                                            +str(spec)+","+str(age)+","+str(temp)+" given does not have ICs set")
         if self.isObjectiveSet == False:
             print("Warning! No objective function set. Forcing all kinetics to be fixed.")
             self.fix_all_reactions()
@@ -3839,13 +3877,16 @@ class Isothermal_Monolith_Simulator(object):
         #Check lists for errors
         for spec in spec_list:
             if spec not in self.model.all_species_set:
-                raise Exception("Error! Invalid species in given list")
+                raise Exception("Error! Invalid species in given list. "
+                                +str(spec)+" given is not in model.all_species_set")
         for age in age_list:
             if age not in self.model.age_set:
-                raise Exception("Error! Invalid age in given list")
+                raise Exception("Error! Invalid age in given list. "
+                                +str(age)+" given is not in model.age_set")
         for temp in temp_list:
             if temp not in self.model.T_set:
-                raise Exception("Error! Invalid temperature in given list")
+                raise Exception("Error! Invalid temperature in given list. "
+                                +str(temp)+" given is not in model.T_set")
         true_loc_list = []
         for loc in loc_list:
             if loc not in self.model.z:
@@ -3900,7 +3941,8 @@ class Isothermal_Monolith_Simulator(object):
                                         if spec in self.model.site_set:
                                             yvals = list(self.model.S[spec,age,temp,loc,:].value)
                                         else:
-                                            raise Exception("Error! Invalid species name given")
+                                            raise Exception("Error! Invalid species name given. "
+                                                            +str(spec)+" given does not exist in model")
                             ax.plot(xvals,yvals)
 
         plt.legend(leg, loc='center left', bbox_to_anchor=(1, 0.5))
@@ -3939,13 +3981,16 @@ class Isothermal_Monolith_Simulator(object):
         #Check lists for errors
         for spec in spec_list:
             if spec not in self.model.all_species_set:
-                raise Exception("Error! Invalid species in given list")
+                raise Exception("Error! Invalid species in given list. "
+                                +str(spec)+" given is not in model.all_species_set")
         for age in age_list:
             if age not in self.model.age_set:
-                raise Exception("Error! Invalid age in given list")
+                raise Exception("Error! Invalid age in given list. "
+                                +str(age)+" given is not in model.age_set")
         for temp in temp_list:
             if temp not in self.model.T_set:
-                raise Exception("Error! Invalid temperature in given list")
+                raise Exception("Error! Invalid temperature in given list. "
+                                +str(temp)+" given is not in model.T_set")
         true_time_list = []
         for time in time_list:
             if time not in self.model.t:
@@ -4000,7 +4045,8 @@ class Isothermal_Monolith_Simulator(object):
                                         if spec in self.model.site_set:
                                             yvals = list(self.model.S[spec,age,temp,:,time].value)
                                         else:
-                                            raise Exception("Error! Invalide species name given")
+                                            raise Exception("Error! Invalide species name given. "
+                                                            +str(spec)+" given does not exist in model")
                             ax.plot(xvals,yvals)
 
         plt.legend(leg, loc='center left', bbox_to_anchor=(1, 0.5))
@@ -4027,24 +4073,31 @@ class Isothermal_Monolith_Simulator(object):
     def plot_vs_data(self, spec, age, temp, loc,
                     display_live=False, file_name="", file_type=".png"):
         if spec not in self.model.gas_set:
-            raise Exception("Error! Species name not found in set of model gases")
+            raise Exception("Error! Species name not found in set of model gases. "
+                            +str(spec)+" given is not in model.gas_set")
         if spec not in self.model.data_gas_set:
-            raise Exception("Error! Species name not found in set of data gases")
+            raise Exception("Error! Species name not found in set of data gases. "
+                            +str(spec)+" given is not in model.data_gas_set")
 
         if age not in self.model.age_set:
-            raise Exception("Error! Age name not found in set of model ages")
+            raise Exception("Error! Age name not found in set of model ages. "
+                            +str(age)+" given is not in model.age_set")
         if age not in self.model.data_age_set:
-            raise Exception("Error! Age name not found in set of data ages")
+            raise Exception("Error! Age name not found in set of data ages. "
+                            +str(age)+" given is not in model.data_age_set")
 
         if temp not in self.model.T_set:
-            raise Exception("Error! Temperature name not found in set of model temperatures")
+            raise Exception("Error! Temperature name not found in set of model temperatures. "
+                            +str(temp)+" given is not in model.T_set")
         if temp not in self.model.data_T_set:
-            raise Exception("Error! Temperature name not found in set of data temperatures")
+            raise Exception("Error! Temperature name not found in set of data temperatures. "
+                            +str(temp)+" given is not in model.data_T_set")
 
         true_loc = loc
         true_data_loc = loc
         if loc not in self.model.z_data:
-            raise Exception("Error! Location value not found in set of location data")
+            raise Exception("Error! Location value not found in set of location data. "
+                            +str(loc)+" given is not in model.z_data")
         if loc not in self.model.z:
             print("WARNING: Given location is not a node in the mesh. Updating to nearest node")
             nearest_loc_index = self.model.z.find_nearest_index(loc)

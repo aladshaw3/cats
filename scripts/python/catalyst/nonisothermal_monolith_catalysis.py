@@ -331,7 +331,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     def build_constraints(self):
         for rxn in self.model.all_rxns:
             if self.isRxnBuilt[rxn] == False:
-                raise Exception("Error! Cannot build constraints until reaction info is set")
+                raise Exception("Error! Cannot build constraints until reaction info is set. "
+                                +str(rxn)+ " given has not yet been constructed")
         self.model.bulk_cons = Constraint(self.model.gas_set, self.model.age_set,
                                 self.model.T_set, self.model.z,
                                 self.model.t, rule=self.bulk_mb_constraint)
@@ -495,7 +496,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     # Create a 'set_const_temperature_BC' function
     def set_const_temperature_BC(self,age,temp,value):
         if self.isInitialTempSet[age][temp] == False:
-            raise Exception("Error! User must specify initial conditions before boundary conditions")
+            raise Exception("Error! User must specify initial conditions before boundary conditions. "
+                            +str(age)+","+str(temp)+" given does not have IC for temperature")
 
         self.model.T[age,temp,self.model.z.first(), :].set_value(value)
         self.model.T[age,temp,self.model.z.first(), :].fix()
@@ -509,21 +511,24 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     # Set initial condition when given ppm as units
     def set_const_IC_in_ppm(self, spec, age, temp, ppm_val):
         if self.isInitialTempSet[age][temp] == False:
-            raise Exception("Error! Cannot use 'set_const_IC_in_ppm' without setting IC for temperature first")
+            raise Exception("Error! Cannot use 'set_const_IC_in_ppm' without setting IC for temperature first. "
+                            +str(age)+","+str(temp)+" given does not have IC for temperature")
         self.isIsothermalTempSet = True
         Isothermal_Monolith_Simulator.set_const_IC_in_ppm(self, spec, age, temp, ppm_val)
 
     # Set boundary condition when given ppm as units
     def set_const_BC_in_ppm(self, spec, age, temp, ppm_val):
         if self.isBoundaryTempSet[age][temp] == False:
-            raise Exception("Error! Cannot use 'set_const_BC_in_ppm' without setting BC for temperature first")
+            raise Exception("Error! Cannot use 'set_const_BC_in_ppm' without setting BC for temperature first. "
+                            +str(age)+","+str(temp)+" given does not have BC for temperature")
         self.isIsothermalTempSet = True
         Isothermal_Monolith_Simulator.set_const_BC_in_ppm(self, spec, age, temp, ppm_val)
 
     # Set time dependent boundary condition when given ppm as units
     def set_time_dependent_BC_in_ppm(self, spec, age, temp, time_value_pairs, initial_value=0):
         if self.isBoundaryTempSet[age][temp] == False:
-            raise Exception("Error! Cannot use 'set_time_dependent_BC_in_ppm' without setting BC for temperature first")
+            raise Exception("Error! Cannot use 'set_time_dependent_BC_in_ppm' without setting BC for temperature first. "
+                            +str(age)+","+str(temp)+" given does not have BC for temperature")
         self.isIsothermalTempSet = True
         Isothermal_Monolith_Simulator.set_time_dependent_BC_in_ppm(self, spec, age, temp, time_value_pairs, initial_value)
 
@@ -884,19 +889,23 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                 for age in self.model.age_set:
                     for temp in self.model.T_set:
                         if self.isBoundarySet[spec][age][temp] == False:
-                            raise Exception("Error! Must specify boundaries before attempting to solve")
+                            raise Exception("Error! Must specify boundaries before attempting to solve. "
+                                            +str(spec)+","+str(age)+","+str(temp)+" given does not have BCs set")
             if self.isSurfSpecSet == True:
                 for spec in self.model.surf_set:
                     for age in self.model.age_set:
                         for temp in self.model.T_set:
                             if self.isInitialSet[spec][age][temp] == False:
-                                raise Exception("Error! Must specify initial conditions before attempting to solve")
+                                raise Exception("Error! Must specify initial conditions before attempting to solve. "
+                                                +str(spec)+","+str(age)+","+str(temp)+" given does not have ICs set")
             for age in self.model.age_set:
                 for temp in self.model.T_set:
                     if self.isBoundaryTempSet[age][temp] == False:
-                        raise Exception("Error! Must specify boundaries before attempting to solve")
+                        raise Exception("Error! Must specify boundaries before attempting to solve. "
+                                        +str(age)+","+str(temp)+" given does not have BCs set for temperature")
                     if self.isAmbTempSet[age][temp] == False:
-                        raise Exception("Error! Must specify wall temperatures before attempting to solve")
+                        raise Exception("Error! Must specify wall/ambient temperatures before attempting to solve. "
+                                        +str(age)+","+str(temp)+" given does not have wall/ambient temperatures set")
 
             if self.isVelocityRecalculated == False:
                 self.recalculate_linear_velocities(interally_called=True,isMonolith=True)
@@ -1337,10 +1346,12 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         #Check lists for errors
         for age in age_list:
             if age not in self.model.age_set:
-                raise Exception("Error! Invalid age in given list")
+                raise Exception("Error! Invalid age in given list. "
+                                +str(age)+" given is not in model.age_set")
         for temp in temp_list:
             if temp not in self.model.T_set:
-                raise Exception("Error! Invalid temperature in given list")
+                raise Exception("Error! Invalid temperature in given list. "
+                                +str(temp)+" given is not in model.T_set")
         true_loc_list = []
         for loc in loc_list:
             if loc not in self.model.z:
@@ -1425,10 +1436,12 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         #Check lists for errors
         for age in age_list:
             if age not in self.model.age_set:
-                raise Exception("Error! Invalid age in given list")
+                raise Exception("Error! Invalid age in given list. "
+                                +str(age)+" given is not in model.age_set")
         for temp in temp_list:
             if temp not in self.model.T_set:
-                raise Exception("Error! Invalid temperature in given list")
+                raise Exception("Error! Invalid temperature in given list. "
+                                +str(temp)+" given is not in model.T_set")
         true_time_list = []
         for time in time_list:
             if time not in self.model.t:
