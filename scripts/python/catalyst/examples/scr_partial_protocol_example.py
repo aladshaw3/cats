@@ -640,7 +640,7 @@ test.fix_reaction("r4a")
 test.fix_reaction("r4b")
 
 # Fix all kinetics, then only unfix some reactions
-test.fix_all_reactions()
+#test.fix_all_reactions()
 
 '''test.unfix_reaction("r8")
 test.unfix_reaction("r16a")

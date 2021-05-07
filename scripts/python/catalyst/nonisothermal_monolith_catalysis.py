@@ -697,6 +697,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             maxval = 1e-1
         self.model.scaling_factor.set_value(self.model.dT_dz_disc_eq, 1/maxval)
         self.model.scaling_factor.set_value(self.model.dT_dz, 1/maxval)
+        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+            self.model.scaling_factor.set_value(self.model.dTdz_edge, 1/maxval)
 
         maxval = 0
         for key in self.model.d2Tc_dz2_disc_eq:
@@ -707,6 +709,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             maxval = 1e-1
         self.model.scaling_factor.set_value(self.model.d2Tc_dz2_disc_eq, 1/maxval)
         self.model.scaling_factor.set_value(self.model.d2Tc_dz2, 1/maxval)
+        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+            self.model.scaling_factor.set_value(self.model.d2Tcdz2_back, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tcdz2_front, 1/maxval)
 
         maxval = 0
         for key in self.model.d2Tw_dz2_disc_eq:
@@ -717,6 +722,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             maxval = 1e-1
         self.model.scaling_factor.set_value(self.model.d2Tw_dz2_disc_eq, 1/maxval)
         self.model.scaling_factor.set_value(self.model.d2Tw_dz2, 1/maxval)
+        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+            self.model.scaling_factor.set_value(self.model.d2Twdz2_back, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Twdz2_front, 1/maxval)
 
         maxval = 0
         for key in self.model.dT_dt_disc_eq:
@@ -735,6 +743,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     # Override 'finalize_auto_scaling'
     def finalize_auto_scaling(self):
         Isothermal_Monolith_Simulator.finalize_auto_scaling(self)
+
+        if self.model.find_component('obj') == False and self.rescaleConstraint == False:
+            return
 
         # Reset constraints for variables and derivative variables
         #       NOT for the constraints though (these should not be rescaled)
@@ -756,6 +767,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             maxval = 1e-1
         self.model.scaling_factor.set_value(self.model.dT_dz, 1/maxval)
         self.model.scaling_factor.set_value(self.model.dT_dz_disc_eq, 1/maxval)
+        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+            self.model.scaling_factor.set_value(self.model.dTdz_edge, 1/maxval)
 
         maxkey = max(self.model.d2Tc_dz2.get_values(), key=self.model.d2Tc_dz2.get_values().get)
         minkey = min(self.model.d2Tc_dz2.get_values(), key=self.model.d2Tc_dz2.get_values().get)
@@ -768,6 +781,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             maxval = 1e-1
         self.model.scaling_factor.set_value(self.model.d2Tc_dz2, 1/maxval)
         self.model.scaling_factor.set_value(self.model.d2Tc_dz2_disc_eq, 1/maxval)
+        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+            self.model.scaling_factor.set_value(self.model.d2Tcdz2_back, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tcdz2_front, 1/maxval)
 
         maxkey = max(self.model.d2Tw_dz2.get_values(), key=self.model.d2Tw_dz2.get_values().get)
         minkey = min(self.model.d2Tw_dz2.get_values(), key=self.model.d2Tw_dz2.get_values().get)
@@ -780,6 +796,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             maxval = 1e-1
         self.model.scaling_factor.set_value(self.model.d2Tw_dz2, 1/maxval)
         self.model.scaling_factor.set_value(self.model.d2Tw_dz2_disc_eq, 1/maxval)
+        if self.DiscType == "DiscretizationMethod.FiniteDifference":
+            self.model.scaling_factor.set_value(self.model.d2Twdz2_back, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Twdz2_front, 1/maxval)
 
         maxkey = max(self.model.dT_dt.get_values(), key=self.model.dT_dt.get_values().get)
         minkey = min(self.model.dT_dt.get_values(), key=self.model.dT_dt.get_values().get)
@@ -1067,9 +1086,13 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                             solver = SolverFactory('ipopt')
 
                             # Check user options
+                            for item in options:
+                                solver.options[item] = options[item]
                             if 'print_user_options' in options:
                                 if options['print_user_options'] == "yes":
                                     solver.options['print_user_options'] = options['print_user_options']
+                            else:
+                                solver.options['print_user_options'] = 'yes'
                             #   linear_solver -> valid options:
                             #   -------------------------------
                             #       Depends on installed libraries
@@ -1116,22 +1139,43 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                                     print("\t               'LinearSolverMethod.MA57'")
                                     print("\t               'LinearSolverMethod.MA97'")
                                     raise Exception("\nNOTE: 'MA' solvers only available if 'idaes' environment is used...")
+                            else:
+                                if "idaes" not in os.environ['CONDA_DEFAULT_ENV']:
+                                    solver.options['linear_solver'] = 'mumps'
+                                else:
+                                    solver.options['linear_solver'] = 'ma97'
                             if 'tol' in options:
                                 solver.options['tol'] = options['tol']
+                            else:
+                                solver.options['tol'] = 1e-8
                             if 'acceptable_tol' in options:
                                 solver.options['acceptable_tol'] = options['acceptable_tol']
+                            else:
+                                solver.options['acceptable_tol'] = 1e-8
                             if 'compl_inf_tol' in options:
                                 solver.options['compl_inf_tol'] = options['compl_inf_tol']
+                            else:
+                                solver.options['compl_inf_tol'] = 1e-8
                             if 'constr_viol_tol' in options:
                                 solver.options['constr_viol_tol'] = options['constr_viol_tol']
+                            else:
+                                solver.options['constr_viol_tol'] = 1e-8
                             if 'max_iter' in options:
                                 solver.options['max_iter'] = options['max_iter']
+                            else:
+                                solver.options['max_iter'] = 3000
                             if 'obj_scaling_factor' in options:
                                 solver.options['obj_scaling_factor'] = options['obj_scaling_factor']
+                            else:
+                                solver.options['obj_scaling_factor'] = 1
                             if 'diverging_iterates_tol' in options:
                                 solver.options['diverging_iterates_tol'] = options['diverging_iterates_tol']
+                            else:
+                                solver.options['diverging_iterates_tol'] = 1e50
                             if 'warm_start_init_point' in options:
                                 solver.options['warm_start_init_point'] = options['warm_start_init_point']
+                            else:
+                                solver.options['warm_start_init_point'] = 'yes'
 
                             # Run solver (tighten the bounds to force good solutions)
                             solver.options['bound_push'] = 1e-2

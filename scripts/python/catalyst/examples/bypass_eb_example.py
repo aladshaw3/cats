@@ -22,12 +22,14 @@ test.add_gas_species("N2")
 test.add_reactions({})
 
 # # TODO: Add a boundary for porosity of 1
-test.set_bulk_porosity(0.9999)
+#test.set_bulk_porosity(0.9999)
+test.set_bulk_porosity(0.3309)
 test.set_washcoat_porosity(0.4)
 test.set_reactor_radius(1)                      # cm
 # # TODO: Add the ability to change space velocity as a function of time
 # # TODO: Add a boundary for velocity of zero
-test.set_space_velocity_all_runs(1e-6)          # volumes per min
+#test.set_space_velocity_all_runs(1e-6)          # volumes per min
+test.set_space_velocity_all_runs(1000)   
 test.set_cell_density(62)                       # 62 cells per cm^2 (~400 cpsi)
 
 # Build the constraints then discretize
@@ -53,24 +55,8 @@ test.fix_all_heats()
 test.initialize_auto_scaling()
 test.initialize_simulator(console_out=False)
 
-# # TODO: NOTE: This model's initial residual after the initializer is 1e-13
-#               and won't converge any further. Causes a false failure
-#
-#   # TODO: FIX bug associated with setting options in intializer and solver
-#           Implementation will ignore default values if user provides a dictionary
-#           (even an incomplete dictionary)
-#
-#       Issue with bound push when passing options???
 test.finalize_auto_scaling()
-options={'print_user_options': 'yes',
-        'linear_solver': LinearSolverMethod.MA97,
-        'tol': 1e-6,
-        'acceptable_tol': 1e-6,
-        'compl_inf_tol': 1e-6,
-        'constr_viol_tol': 1e-6,
-        'max_iter': 1,
-        'obj_scaling_factor': 1,
-        'diverging_iterates_tol': 1e50}
+options={'max_iter': 100}
 test.run_solver(options=options)
 
 test.plot_temperature_at_locations(["Unaged"], ["250C"], [5], display_live=True)

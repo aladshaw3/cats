@@ -89,7 +89,7 @@ test.set_site_balance("S1",s1_data)
 
 #   EquilibriumArrhenius
 #       NOTE: You can provide parameter bounds here, or later
-r1_equ = {"parameters": {"A": 250000, "E": 0,
+r1_equ = {"parameters": {"A": 25000, "E": 0,
                         #"A_lb": 2500, "A_ub": 2500000000,
                         "dH": -54000, "dS": 30},
           "mol_reactants": {"S1": 1, "NH3": 1},
@@ -149,7 +149,7 @@ test.plot_at_locations(["q1","S1"], ["Unaged"], ["250C"], [0,1,2,3,4,5], display
 test.plot_at_times(["q1"], ["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=False)
 test.plot_at_times(["NH3"], ["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=False)
 
-test.plot_vs_data("NH3", "Unaged", "250C", 5, display_live=False)
+test.plot_vs_data("NH3", "Unaged", "250C", 5, display_live=True)
 
 test.plot_temperature_at_locations(["Unaged"], ["250C"], [5], display_live=True)
 

@@ -2076,6 +2076,9 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.scaling_factor.set_value(self.model.obj, 0.1 )
             else:
                 self.model.scaling_factor.set_value(self.model.obj, 1/(maxobj) )
+        else:
+            if self.rescaleConstraint == False:
+                return
 
         # Reset constraints for variables and derivative variables
         #       NOT for the constraints though (these should not be rescaled)
@@ -2338,9 +2341,13 @@ class Isothermal_Monolith_Simulator(object):
                         solver = SolverFactory('ipopt')
 
                         # Check user options
+                        for item in options:
+                            solver.options[item] = options[item]
                         if 'print_user_options' in options:
                             if options['print_user_options'] == "yes":
                                 solver.options['print_user_options'] = options['print_user_options']
+                        else:
+                            solver.options['print_user_options'] = 'yes'
                         #   linear_solver -> valid options:
                         #   -------------------------------
                         #       Depends on installed libraries
@@ -2387,22 +2394,43 @@ class Isothermal_Monolith_Simulator(object):
                                 print("\t               'LinearSolverMethod.MA57'")
                                 print("\t               'LinearSolverMethod.MA97'")
                                 raise Exception("\nNOTE: 'MA' solvers only available if 'idaes' environment is used...")
+                        else:
+                            if "idaes" not in os.environ['CONDA_DEFAULT_ENV']:
+                                solver.options['linear_solver'] = 'mumps'
+                            else:
+                                solver.options['linear_solver'] = 'ma97'
                         if 'tol' in options:
                             solver.options['tol'] = options['tol']
+                        else:
+                            solver.options['tol'] = 1e-8
                         if 'acceptable_tol' in options:
                             solver.options['acceptable_tol'] = options['acceptable_tol']
+                        else:
+                            solver.options['acceptable_tol'] = 1e-8
                         if 'compl_inf_tol' in options:
                             solver.options['compl_inf_tol'] = options['compl_inf_tol']
+                        else:
+                            solver.options['compl_inf_tol'] = 1e-8
                         if 'constr_viol_tol' in options:
                             solver.options['constr_viol_tol'] = options['constr_viol_tol']
+                        else:
+                            solver.options['constr_viol_tol'] = 1e-8
                         if 'max_iter' in options:
                             solver.options['max_iter'] = options['max_iter']
+                        else:
+                            solver.options['max_iter'] = 3000
                         if 'obj_scaling_factor' in options:
                             solver.options['obj_scaling_factor'] = options['obj_scaling_factor']
+                        else:
+                            solver.options['obj_scaling_factor'] = 1
                         if 'diverging_iterates_tol' in options:
                             solver.options['diverging_iterates_tol'] = options['diverging_iterates_tol']
+                        else:
+                            solver.options['diverging_iterates_tol'] = 1e50
                         if 'warm_start_init_point' in options:
                             solver.options['warm_start_init_point'] = options['warm_start_init_point']
+                        else:
+                            solver.options['warm_start_init_point'] = 'yes'
 
                         # Run solver (tighten the bounds to force good solutions)
                         solver.options['bound_push'] = 1e-4
@@ -2540,9 +2568,13 @@ class Isothermal_Monolith_Simulator(object):
         solver = SolverFactory('ipopt')
 
         # Check user options
+        for item in options:
+            solver.options[item] = options[item]
         if 'print_user_options' in options:
             if options['print_user_options'] == "yes":
                 solver.options['print_user_options'] = options['print_user_options']
+        else:
+            solver.options['print_user_options'] = 'yes'
         #   linear_solver -> valid options:
         #   -------------------------------
         #       Depends on installed libraries
@@ -2589,22 +2621,43 @@ class Isothermal_Monolith_Simulator(object):
                 print("\t               'LinearSolverMethod.MA57'")
                 print("\t               'LinearSolverMethod.MA97'")
                 raise Exception("\nNOTE: 'MA' solvers only available if 'idaes' environment is used...")
+        else:
+            if "idaes" not in os.environ['CONDA_DEFAULT_ENV']:
+                solver.options['linear_solver'] = 'mumps'
+            else:
+                solver.options['linear_solver'] = 'ma97'
         if 'tol' in options:
             solver.options['tol'] = options['tol']
+        else:
+            solver.options['tol'] = 1e-6
         if 'acceptable_tol' in options:
             solver.options['acceptable_tol'] = options['acceptable_tol']
+        else:
+            solver.options['acceptable_tol'] = 1e-6
         if 'compl_inf_tol' in options:
             solver.options['compl_inf_tol'] = options['compl_inf_tol']
+        else:
+            solver.options['compl_inf_tol'] = 1e-6
         if 'constr_viol_tol' in options:
             solver.options['constr_viol_tol'] = options['constr_viol_tol']
+        else:
+            solver.options['constr_viol_tol'] = 1e-6
         if 'max_iter' in options:
             solver.options['max_iter'] = options['max_iter']
+        else:
+            solver.options['max_iter'] = 3000
         if 'obj_scaling_factor' in options:
             solver.options['obj_scaling_factor'] = options['obj_scaling_factor']
+        else:
+            solver.options['obj_scaling_factor'] = 1
         if 'diverging_iterates_tol' in options:
             solver.options['diverging_iterates_tol'] = options['diverging_iterates_tol']
+        else:
+            solver.options['diverging_iterates_tol'] = 1e50
         if 'warm_start_init_point' in options:
             solver.options['warm_start_init_point'] = options['warm_start_init_point']
+        else:
+            solver.options['warm_start_init_point'] = 'yes'
 
         # Call the solver
         if self.isInitialized == True:
@@ -2621,6 +2674,7 @@ class Isothermal_Monolith_Simulator(object):
             #   the hard work that our custom initializer does.
             solver.options['bound_push'] = 1e-6
             solver.options['bound_frac'] = 1e-6
+            solver.options['mu_init'] = 1e-4
             solver.options['slack_bound_push'] = 1e-6
             solver.options['slack_bound_frac'] = 1e-6
             solver.options['warm_start_init_point'] = 'yes'
@@ -2632,6 +2686,7 @@ class Isothermal_Monolith_Simulator(object):
             if self.isObjectiveSet == True:
                 solver.options['bound_push'] = 1e-16
                 solver.options['bound_frac'] = 1e-16
+                solver.options['mu_init'] = 1e-4
                 solver.options['slack_bound_push'] = 1e-16
                 solver.options['slack_bound_frac'] = 1e-16
                 solver.options['warm_start_init_point'] = 'yes'
