@@ -208,10 +208,10 @@ r8 = {"parameters": {"A": 34, "E": 0},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "O2": 1}
         }
 
-r9 = {"parameters": {"A": 34, "E": 0},
-          "mol_reactants": {"ZNH4": 1, "O2": 0.75},
-          "mol_products": {"ZH": 1, "N2": 0.5, "H2O": 1.5},
-          "rxn_orders": {"ZNH4": 1, "O2": 1}
+r9 = {"parameters": {"A": 3150, "E": 0},
+          "mol_reactants": {"ZNH4": 1, "O2": 0.75, "Z2Cu": 1},
+          "mol_products": {"ZH": 1, "N2": 0.5, "H2O": 1.5, "Z2Cu": 1},
+          "rxn_orders": {"ZNH4": 1, "O2": 1, "Z2Cu": 1}
         }
 
 #  ---------- NH3 Oxidation to NO Reactions ------------
@@ -228,9 +228,9 @@ r11 = {"parameters": {"A": 0, "E": 0},
         }
 
 r12 = {"parameters": {"A": 0, "E": 0},
-          "mol_reactants": {"ZNH4": 1, "O2": 1.25},
-          "mol_products": {"ZH": 1, "NO": 1, "H2O": 1.5},
-          "rxn_orders": {"ZNH4": 1, "O2": 1}
+          "mol_reactants": {"ZNH4": 1, "O2": 1.25, "Z2Cu": 1},
+          "mol_products": {"ZH": 1, "NO": 1, "H2O": 1.5, "Z2Cu": 1},
+          "rxn_orders": {"ZNH4": 1, "O2": 1, "Z2Cu": 1}
         }
 
 #  ---------- NO-SCR Reactions ------------
@@ -280,10 +280,10 @@ r19 = {"parameters": {"A": 7400000, "E": 0},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "NO": 1, "O2": 1}
         }
 
-r20 = {"parameters": {"A": 7400000, "E": 0},
-          "mol_reactants": {"ZNH4": 1, "NO": 1, "O2": 0.75},
-          "mol_products": {"ZH": 1, "N2O": 1, "H2O": 1.5},
-          "rxn_orders": {"ZNH4": 1, "NO": 1, "O2": 1}
+r20 = {"parameters": {"A": 3.20E8, "E": 0},
+          "mol_reactants": {"ZNH4": 1, "NO": 1, "O2": 0.75, "Z2Cu": 1},
+          "mol_products": {"ZH": 1, "N2O": 1, "H2O": 1.5, "Z2Cu": 1},
+          "rxn_orders": {"ZNH4": 1, "NO": 1, "O2": 1, "Z2Cu": 1}
         }
 
 #  ---------- NH4NO3 Formation Reactions ------------
