@@ -24,10 +24,24 @@ sim.fix_reaction("r4a")
 sim.fix_reaction("r4b")
 
 #Should fix also the reactions for ammonia oxidation (need them to keep their relevence)
-upper = 1+0.1
-lower = 1-0.2
+
+# NOTE: This downward bias helps tremendously with the fits (try at higher temps as well)
+upper = 1+0.05
+lower = 1-0.4
 for rxn in sim.model.arrhenius_rxns:
     sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
+
+rxn="r7"
+sim.fix_reaction(rxn)
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8,sim.model.A[rxn].value*1.2))
+
+rxn="r8"
+sim.fix_reaction(rxn)
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8,sim.model.A[rxn].value*1.2))
+
+rxn="r9"
+sim.fix_reaction(rxn)
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8,sim.model.A[rxn].value*1.2))
 
 sim.finalize_auto_scaling()
 sim.run_solver()
