@@ -199,6 +199,7 @@ class Isothermal_Monolith_Simulator(object):
 
         self.DiscType = "DiscretizationMethod.FiniteDifference"
         self.colpoints = 2
+        self.isMonolith = True
 
 
     # Add a continuous set for spatial dimension (current expected units = cm)
@@ -666,7 +667,7 @@ class Isothermal_Monolith_Simulator(object):
         if eb > 1 or eb < 0:
             raise Exception("Error! Porosity must be a value between 0 and 1")
         self.model.eb.set_value(eb)
-        self.calculate_form_factors()
+        self.calculate_form_factors(self.isMonolith, self.model.dh.value)
 
     def set_washcoat_porosity(self, ew):
         if ew > 1 or ew < 0:
@@ -724,7 +725,7 @@ class Isothermal_Monolith_Simulator(object):
     #       be provided as (# cells per cm^2)
     def set_cell_density(self,value):
         self.model.cell_density.set_value(value)
-        self.calculate_form_factors()
+        self.calculate_form_factors(self.isMonolith, self.model.dh.value)
 
     # Setup site balance information (in needed)
     #       To setup the information for a site balance, pass the name of the
@@ -2255,7 +2256,7 @@ class Isothermal_Monolith_Simulator(object):
                                             +str(spec)+","+str(age)+","+str(temp)+" given does not have ICs set")
 
         if self.isVelocityRecalculated == False:
-            self.recalculate_linear_velocities(interally_called=True,isMonolith=True)
+            self.recalculate_linear_velocities(interally_called=True,isMonolith=self.isMonolith)
 
         # Setup a dictionary to determine which reaction to unfix after solve
         self.initialize_time = TIME.time()
@@ -2452,10 +2453,11 @@ class Isothermal_Monolith_Simulator(object):
                             print("\tResults are loaded, but need to be checked")
                             self.model.solutions.load_from(results)
                         else:
-                            self.model.solutions.load_from(results)
+                            #self.model.solutions.load_from(results)
                             print("An Error has occurred at (" + str(age_solve) + ", " + str(temp_solve) + ", " + str(time_solve) + ")")
                             print("\tStatus: " + str(results.solver.status))
                             print("\tTermination Condition: " + str(results.solver.termination_condition))
+                            return (results.solver.status, results.solver.termination_condition)
 
                         # Fix the steps that were just solved
                         self.model.Cb[:, age_solve, temp_solve, :, time_solve].fix()
@@ -2562,7 +2564,7 @@ class Isothermal_Monolith_Simulator(object):
             print("Warning! No objective function set. Forcing all kinetics to be fixed.")
             self.fix_all_reactions()
         if self.isVelocityRecalculated == False:
-            self.recalculate_linear_velocities(interally_called=True,isMonolith=True)
+            self.recalculate_linear_velocities(interally_called=True,isMonolith=self.isMonolith)
         self.solve_time = TIME.time()
 
         solver = SolverFactory('ipopt')
