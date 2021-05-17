@@ -927,7 +927,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                                         +str(age)+","+str(temp)+" given does not have wall/ambient temperatures set")
 
             if self.isVelocityRecalculated == False:
-                self.recalculate_linear_velocities(interally_called=True,isMonolith=True)
+                self.recalculate_linear_velocities(interally_called=True,isMonolith=self.isMonolith)
 
             # Setup a dictionary to determine which reaction to unfix after solve
             self.initialize_time = TIME.time()
@@ -1360,7 +1360,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             # End Initializer
 
 
-    # # TODO: Override 'run_solver' (?)
+    # # TODO: Override 'run_solver' (YES, If no obj function set, then must fix all heats!!!)
 
     # # TODO: Override saving and loading of models
 
