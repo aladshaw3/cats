@@ -2294,6 +2294,9 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.site_cons[:, :, :, :, :].deactivate()
 
         # Loops over specific sub-problems to solve
+        age_solve_old = self.model.age_set.first()
+        temp_solve_old = self.model.T_set.first()
+        time_solve_old = self.model.t.first()
         for age_solve in self.model.age_set:
             for temp_solve in self.model.T_set:
 
@@ -2433,11 +2436,12 @@ class Isothermal_Monolith_Simulator(object):
                         else:
                             solver.options['warm_start_init_point'] = 'yes'
 
-                        # Run solver (tighten the bounds to force good solutions)
-                        solver.options['bound_push'] = 1e-4
-                        solver.options['bound_frac'] = 1e-4
-                        solver.options['slack_bound_push'] = 1e-4
-                        solver.options['slack_bound_frac'] = 1e-4
+                        # Run solver (tighten the bounds to force good solutions) (1e-4 was old)
+                        solver.options['bound_push'] = 1e-6
+                        solver.options['bound_frac'] = 1e-6
+                        solver.options['mu_init'] = 1e-2
+                        solver.options['slack_bound_push'] = 1e-6
+                        solver.options['slack_bound_frac'] = 1e-6
                         solver.options['warm_start_init_point'] = 'yes'
 
                         if self.model.find_component('scaling_factor'):
@@ -2487,8 +2491,11 @@ class Isothermal_Monolith_Simulator(object):
                         # i = 0, don't do anything
                         pass
                     i+=1
+                    time_solve_old = time_solve
                 # End time_solve loop
+                temp_solve_old = temp_solve
             # End temp_solve loop
+            age_solve_old = age_solve
         # End age_solve loop
 
         # Unfix all variables
@@ -2673,12 +2680,12 @@ class Isothermal_Monolith_Simulator(object):
             #   change the initial values (at least not by much). To do that,
             #   we are forced to specify very small numbers for 'bound_frac' and
             #   'bound_push'. Otherwise, ipopt will essentially through out all
-            #   the hard work that our custom initializer does.
-            solver.options['bound_push'] = 1e-6
-            solver.options['bound_frac'] = 1e-6
+            #   the hard work that our custom initializer does. (1e-6 or 1e-8 was old)
+            solver.options['bound_push'] = 1e-10
+            solver.options['bound_frac'] = 1e-10
             solver.options['mu_init'] = 1e-4
-            solver.options['slack_bound_push'] = 1e-6
-            solver.options['slack_bound_frac'] = 1e-6
+            solver.options['slack_bound_push'] = 1e-10
+            solver.options['slack_bound_frac'] = 1e-10
             solver.options['warm_start_init_point'] = 'yes'
 
             # Strictly enfore to ipopt that the variables are not to move

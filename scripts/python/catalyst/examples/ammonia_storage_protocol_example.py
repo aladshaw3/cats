@@ -141,7 +141,9 @@ test.set_temperature_ramp("Unaged", "150C", 225.425, 305.3, 809.5651714)
 
 # Fix the kinetics to only run a simulation
 test.fix_all_reactions()
-test.initialize_simulator(console_out=False)
+#test.initialize_auto_scaling()  #Sometimes, it works best to NOT initialize scaling
+test.initialize_simulator(console_out=True)
+test.finalize_auto_scaling()
 test.run_solver()
 
 test.print_results_of_breakthrough(["NH3"], "Unaged", "150C", file_name="")
