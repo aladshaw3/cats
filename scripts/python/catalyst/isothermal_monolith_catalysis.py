@@ -478,10 +478,12 @@ class Isothermal_Monolith_Simulator(object):
                                 +str(gas_species)+" given is not a string object")
         # Check to see if each temp in the data set has a cooresponding simulation set
         for spec in self.model.data_gas_set:
-            self.isDataValuesSet[spec] = False
+            self.isDataValuesSet[spec] = {}
             if spec not in self.model.gas_set:
                 raise Exception("Error! Data gas species must be a sub-set of simulation species. "
                                 +str(spec)+ " given is not in model.gas_set")
+            for loc in self.model.z_data:
+                self.isDataValuesSet[spec][loc] = False
 
         self.isDataGasSpecSet = True
 
@@ -1401,9 +1403,10 @@ class Isothermal_Monolith_Simulator(object):
         anyFalse = False
         if self.isDataGasSpecSet == True:
             for spec in self.model.data_gas_set:
-                if self.isDataValuesSet[spec] == False:
-                    anyFalse = True
-                    break
+                for loc_dat in self.model.z_data:
+                    if self.isDataValuesSet[spec][loc_dat] == False:
+                        anyFalse = True
+                        break
             if anyFalse == True:
                 raise Exception("Error! Some data for gases not set. Cannot create objective function. "
                                 +str(self.isDataValuesSet)+ " check dict for missing pieces")
@@ -1763,7 +1766,7 @@ class Isothermal_Monolith_Simulator(object):
                 self.model.Cb_data[spec, age, temp, loc, t].set_value(values[i])
             i+=1
 
-        self.isDataValuesSet[spec] = True
+        self.isDataValuesSet[spec][loc] = True
 
 
     # This function will recalculate all linear velocities
