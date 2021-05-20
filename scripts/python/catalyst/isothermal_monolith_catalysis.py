@@ -683,6 +683,22 @@ class Isothermal_Monolith_Simulator(object):
     def set_surface_to_volume_ratio(self, Ga):
         self.model.Ga.set_value(Ga)
 
+    # NOTE: Be default, the reactor is assumed a Monolith
+    #       Changing to 'packed bed' will update how mass transfer
+    #       coefficients are calculated.
+    def set_reactor_to_packed_bed(self):
+        self.isMonolith = False
+        self.calculate_form_factors(self.isMonolith, self.model.dh.value)
+
+    # NOTE: If using 'packed bed', then user MUST supply particle diameter as dh
+    def set_packed_bed_particle_diameter(self, dia):
+        self.model.dh.set_value(dia)
+        self.set_reactor_to_packed_bed()
+
+    def set_reactor_to_monolith(self):
+        self.isMonolith = True
+        self.calculate_form_factors(self.isMonolith, self.model.dh.value)
+
     # Site density is a function of aging, thus you provide the
     #       name of the site you want to set and the age that the
     #       given value would correspond to
@@ -1336,7 +1352,10 @@ class Isothermal_Monolith_Simulator(object):
 
                     self.model.Sc[spec,age,temp,:].set_value(Sc)
 
-                    Sh = (0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5))
+                    if self.isMonolith == True:
+                        Sh = (0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5))
+                    else:
+                        Sh = (2+(0.4*Re**0.5+0.06*Re**0.67)*Sc**0.4)
                     self.model.Sh[spec,age,temp,:].set_value(Sh)
 
         #       Initialize mass transfer rates

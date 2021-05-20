@@ -34,13 +34,11 @@ class TestIsothermalCatalystBuildOptions():
         obj = Isothermal_Monolith_Simulator()
         return obj
 
-    # # TODO: Add tests for catalyst zoning
     @pytest.fixture(scope="class")
     def catalyst_zoning(self):
         obj = Isothermal_Monolith_Simulator()
         return obj
 
-    # # TODO: Add tests for non-monolith configurations
     @pytest.fixture(scope="class")
     def packed_bed(self):
         obj = Isothermal_Monolith_Simulator()
@@ -65,6 +63,7 @@ class TestIsothermalCatalystBuildOptions():
         test.add_reactions({})
 
         # NOTE: Still need to establish baseline temperature
+        #           Can be done AFTER calling discretizer
         test.set_isothermal_temp("Unaged","150C",150+273.15)
 
         test.build_constraints()
@@ -368,3 +367,213 @@ class TestIsothermalCatalystBuildOptions():
             value(test.model.Cb["CO","A0","T0", test.model.z.first(), test.model.t.first()]), rel=1e-3) == \
             value(test.model.v["A0","T0", test.model.t.last()]) * \
             value(test.model.Cb["CO","A0","T0", test.model.z.first(), test.model.t.last()])
+
+    @pytest.mark.build
+    def test_catalyst_zones(self, catalyst_zoning):
+        test = catalyst_zoning
+        test.add_axial_dim(0,5)
+        test.add_temporal_dim(0,82)
+
+        test.add_age_set("A0")
+        test.add_temperature_set("T0")
+        test.add_gas_species(["CO","O2","NO","CO2","N2"])
+
+        test.add_reactions({"r1": ReactionType.Arrhenius,
+                            "r4": ReactionType.Arrhenius})
+
+        test.set_bulk_porosity(0.3309)
+        test.set_washcoat_porosity(0.4)
+        test.set_reactor_radius(1)
+        test.set_space_velocity_all_runs(500)
+        test.set_cell_density(62)
+
+        r1 = {"parameters": {"A": 3.002796E19, "E": 205901.5765},
+                  "mol_reactants": {"CO": 1, "O2": 0.5},
+                  "mol_products": {"CO2": 1},
+                  "rxn_orders": {"CO": 1, "O2": 1},
+                }
+
+        r4 = {"parameters": {"A": 108.975, "E": 28675.21769},
+                  "mol_reactants": {"CO": 1, "NO": 1},
+                  "mol_products": {"CO2": 1, "N2": 0.5},
+                  "rxn_orders": {"CO": 1, "NO": 1}
+                }
+
+        test.set_reaction_info("r1", r1)
+        test.set_reaction_info("r4", r4)
+
+        test.build_constraints()
+        test.discretize_model(method=DiscretizationMethod.FiniteDifference,
+                            tstep=10,elems=10,colpoints=2)
+
+        test.set_isothermal_temp("A0","T0",393.15)
+        test.set_temperature_ramp("A0", "T0", 2, 86, 813.15)
+
+        test.set_const_IC_in_ppm("CO","A0","T0",5084)
+        test.set_const_IC_in_ppm("O2","A0","T0",7080)
+        test.set_const_IC_in_ppm("NO","A0","T0",1055)
+        test.set_const_IC_in_ppm("N2","A0","T0",0)
+        test.set_const_IC_in_ppm("CO2","A0","T0",0)
+
+        test.set_const_BC_in_ppm("CO","A0","T0",5084)
+        test.set_const_BC_in_ppm("O2","A0","T0",7080)
+        test.set_const_BC_in_ppm("NO","A0","T0",1055)
+        test.set_const_BC_in_ppm("N2","A0","T0",0)
+        test.set_const_BC_in_ppm("CO2","A0","T0",0)
+
+        # Specify a reaction zone
+        #   Zone is specified as a tuple: (start_zone, end_zone)
+        test.set_reaction_zone("r4", (2.5, 5))
+        #   NOTE: If you have multiple zones where a reaction may be active, then
+        #           you should use the function below to specify sets of zones where
+        #           the reaction is NOT active. This is because only the 'NOT' version
+        #           of this function is additive (whereas the standard function would
+        #           override susequent zoning information)
+        test.set_reaction_zone("r1", (0, 1.5), isNotActive=True)
+        test.set_reaction_zone("r1", (3, 4), isNotActive=True)
+
+        # Result: r4 will occur in 1 zone (2.5, 5)
+        #         r1 will occur in 2 zones (1.5, 3) & (4, 5)
+        #
+        #         NOTE: Zones listed are "inclusive" for each bound
+        #
+        #               Full length (0, 5)
+        #
+        # model.z = Set ( [0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5] )
+        assert value(test.model.u_C["CO","r1",0]) == 0
+        assert value(test.model.u_C["O2","r1",0]) == 0
+        assert value(test.model.u_C["CO2","r1",0]) == 0
+
+        assert value(test.model.u_C["CO","r1",0.5]) == 0
+        assert value(test.model.u_C["O2","r1",0.5]) == 0
+        assert value(test.model.u_C["CO2","r1",0.5]) == 0
+
+        assert value(test.model.u_C["CO","r1",1.0]) == 0
+        assert value(test.model.u_C["O2","r1",1.0]) == 0
+        assert value(test.model.u_C["CO2","r1",1.0]) == 0
+
+        assert value(test.model.u_C["CO","r1",1.5]) == 0
+        assert value(test.model.u_C["O2","r1",1.5]) == 0
+        assert value(test.model.u_C["CO2","r1",1.5]) == 0
+
+        assert value(test.model.u_C["CO","r1",2.0]) == -1
+        assert value(test.model.u_C["O2","r1",2.0]) == -0.5
+        assert value(test.model.u_C["CO2","r1",2.0]) == 1
+
+        assert value(test.model.u_C["CO","r1",2.5]) == -1
+        assert value(test.model.u_C["O2","r1",2.5]) == -0.5
+        assert value(test.model.u_C["CO2","r1",2.5]) == 1
+
+        assert value(test.model.u_C["CO","r1",3.0]) == 0
+        assert value(test.model.u_C["O2","r1",3.0]) == 0
+        assert value(test.model.u_C["CO2","r1",3.0]) == 0
+
+        assert value(test.model.u_C["CO","r1",3.5]) == 0
+        assert value(test.model.u_C["O2","r1",3.5]) == 0
+        assert value(test.model.u_C["CO2","r1",3.5]) == 0
+
+        assert value(test.model.u_C["CO","r1",4.0]) == 0
+        assert value(test.model.u_C["O2","r1",4.0]) == 0
+        assert value(test.model.u_C["CO2","r1",4.0]) == 0
+
+        assert value(test.model.u_C["CO","r1",4.5]) == -1
+        assert value(test.model.u_C["O2","r1",4.5]) == -0.5
+        assert value(test.model.u_C["CO2","r1",4.5]) == 1
+
+        assert value(test.model.u_C["CO","r1",5.0]) == -1
+        assert value(test.model.u_C["O2","r1",5.0]) == -0.5
+        assert value(test.model.u_C["CO2","r1",5.0]) == 1
+
+
+        assert value(test.model.u_C["CO","r4",0]) == 0
+        assert value(test.model.u_C["NO","r4",0]) == 0
+        assert value(test.model.u_C["CO2","r4",0]) == 0
+        assert value(test.model.u_C["N2","r4",0]) == 0
+
+        assert value(test.model.u_C["CO","r4",0.5]) == 0
+        assert value(test.model.u_C["NO","r4",0.5]) == 0
+        assert value(test.model.u_C["CO2","r4",0.5]) == 0
+        assert value(test.model.u_C["N2","r4",0.5]) == 0
+
+        assert value(test.model.u_C["CO","r4",1.0]) == 0
+        assert value(test.model.u_C["NO","r4",1.0]) == 0
+        assert value(test.model.u_C["CO2","r4",1.0]) == 0
+        assert value(test.model.u_C["N2","r4",1.0]) == 0
+
+        assert value(test.model.u_C["CO","r4",1.5]) == 0
+        assert value(test.model.u_C["NO","r4",1.5]) == 0
+        assert value(test.model.u_C["CO2","r4",1.5]) == 0
+        assert value(test.model.u_C["N2","r4",1.5]) == 0
+
+        assert value(test.model.u_C["CO","r4",2.0]) == 0
+        assert value(test.model.u_C["NO","r4",2.0]) == 0
+        assert value(test.model.u_C["CO2","r4",2.0]) == 0
+        assert value(test.model.u_C["N2","r4",2.0]) == 0
+
+        assert value(test.model.u_C["CO","r4",2.5]) == -1
+        assert value(test.model.u_C["NO","r4",2.5]) == -1
+        assert value(test.model.u_C["CO2","r4",2.5]) == 1
+        assert value(test.model.u_C["N2","r4",2.5]) == 0.5
+
+        assert value(test.model.u_C["CO","r4",3.0]) == -1
+        assert value(test.model.u_C["NO","r4",3.0]) == -1
+        assert value(test.model.u_C["CO2","r4",3.0]) == 1
+        assert value(test.model.u_C["N2","r4",3.0]) == 0.5
+
+        assert value(test.model.u_C["CO","r4",3.5]) == -1
+        assert value(test.model.u_C["NO","r4",3.5]) == -1
+        assert value(test.model.u_C["CO2","r4",3.5]) == 1
+        assert value(test.model.u_C["N2","r4",3.5]) == 0.5
+
+        assert value(test.model.u_C["CO","r4",4.0]) == -1
+        assert value(test.model.u_C["NO","r4",4.0]) == -1
+        assert value(test.model.u_C["CO2","r4",4.0]) == 1
+        assert value(test.model.u_C["N2","r4",4.0]) == 0.5
+
+        assert value(test.model.u_C["CO","r4",4.5]) == -1
+        assert value(test.model.u_C["NO","r4",4.5]) == -1
+        assert value(test.model.u_C["CO2","r4",4.5]) == 1
+        assert value(test.model.u_C["N2","r4",4.5]) == 0.5
+
+        assert value(test.model.u_C["CO","r4",5.0]) == -1
+        assert value(test.model.u_C["NO","r4",5.0]) == -1
+        assert value(test.model.u_C["CO2","r4",5.0]) == 1
+        assert value(test.model.u_C["N2","r4",5.0]) == 0.5
+
+
+    @pytest.mark.build
+    def test_packed_bed(self, packed_bed):
+        test = packed_bed
+        test.add_axial_dim(0,5)
+        test.add_temporal_dim(0,10)
+
+        test.add_age_set("Unaged")
+        test.add_temperature_set("150C")
+        test.add_gas_species(["NH3"])
+
+        test.set_bulk_porosity(0.3309)
+        test.set_washcoat_porosity(0.4)
+        test.set_reactor_radius(1)
+        test.set_space_velocity_all_runs(500)
+
+        # Intead of calling 'set_cell_density()',
+        #   you call 'set_packed_bed_particle_diameter()'
+        test.set_packed_bed_particle_diameter(0.07)
+
+        assert test.isMonolith == False
+        assert value(test.model.dh) == 0.07
+        assert value(test.model.Ga) == 6/0.07
+
+        test.add_reactions({})
+
+        test.set_isothermal_temp("Unaged","150C",298.15)
+
+        test.build_constraints()
+        test.discretize_model(method=DiscretizationMethod.OrthogonalCollocation,
+                            tstep=10,elems=5,colpoints=2)
+
+        assert pytest.approx(4.577827237450853, rel=1e-3) == \
+            value(test.model.Sh["NH3","Unaged","150C",test.model.t.first()])
+
+        assert pytest.approx(431.02267281890863, rel=1e-3) == \
+            value(test.model.km["NH3","Unaged","150C",test.model.z.first(),test.model.t.first()])
