@@ -67,31 +67,6 @@
  */
 registerMooseObject("catsApp", DGFluxLimitedBC);
 
-/*
-template<>
-InputParameters validParams<DGFluxLimitedBC>()
-{
-	InputParameters params = validParams<IntegratedBC>();
-	params.addParam<Real>("sigma", 10.0, "sigma");
-	MooseEnum dgscheme("sipg iipg nipg", "nipg");
-    params.addParam<MooseEnum>("dg_scheme", dgscheme, "DG scheme options: nipg, iipg, sipg");
-	params.addParam<Real>("vx",0, "x-component of velocity vector");
-	params.addParam<Real>("vy",0,"y-component of velocity vector");
-	params.addParam<Real>("vz",0,"z-component of velocity vector");
-	params.addParam<Real>("Dxx",0,"xx-component of diffusion tensor");
-	params.addParam<Real>("Dxy",0,"xy-component of diffusion tensor");
-	params.addParam<Real>("Dxz",0,"xz-component of diffusion tensor");
-	params.addParam<Real>("Dyx",0,"yx-component of diffusion tensor");
-	params.addParam<Real>("Dyy",0,"yy-component of diffusion tensor");
-	params.addParam<Real>("Dyz",0,"yz-component of diffusion tensor");
-	params.addParam<Real>("Dzx",0,"zx-component of diffusion tensor");
-	params.addParam<Real>("Dzy",0,"zy-component of diffusion tensor");
-	params.addParam<Real>("Dzz",0,"zz-component of diffusion tensor");
-	params.addParam<Real>("u_input", 1.0, "input value of u");
-	return params;
-}
- */
-
 InputParameters DGFluxLimitedBC::validParams()
 {
     InputParameters params = IntegratedBC::validParams();

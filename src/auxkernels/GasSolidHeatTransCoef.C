@@ -37,17 +37,6 @@
 
 registerMooseObject("catsApp", GasSolidHeatTransCoef);
 
-/*
-template<>
-InputParameters validParams<GasSolidHeatTransCoef>()
-{
-    InputParameters params = validParams<GasPropertiesBase>();
-    params.addParam< Real >("heat_cap_ratio",1.4,"Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
-    
-    return params;
-}
- */
-
 InputParameters GasSolidHeatTransCoef::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
@@ -84,11 +73,10 @@ Real GasSolidHeatTransCoef::computeValue()
     Real mu = _egret_dat.total_dyn_vis/1000.0*100.0;
     Real f = 0.25*(9.0*_Cp_Cv_ratio - 5.0);
     Real Kg = f*mu*Cv;
-    
+
     Real Pr = (_egret_dat.total_dyn_vis/1000.0*100.0)*(_egret_dat.total_specific_heat*1000.0)/Kg;
     Real Re = ReNum(_egret_dat.velocity*_porosity[_qp],_char_len[_qp]*100.0,_egret_dat.kinematic_viscosity);
-    
+
     return FilmMTCoeff(_solid_cond[_qp],_char_len[_qp],Re,Pr)/500.0;
     //Note: FilmMTCoeff is same function for heat transfer with a correction factor
 }
-

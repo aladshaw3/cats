@@ -37,12 +37,6 @@
 
 #include "GasPropertiesBase.h"
 
-/// GasSpeciesKnudsenDiffusionCorrection class object forward declarations
-//class GasSpeciesKnudsenDiffusionCorrection;
-
-//template<>
-//InputParameters validParams<GasSpeciesKnudsenDiffusionCorrection>();
-
 /// GasSpeciesKnudsenDiffusionCorrection class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -52,7 +46,7 @@ class GasSpeciesKnudsenDiffusionCorrection : public GasPropertiesBase
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     GasSpeciesKnudsenDiffusionCorrection(const InputParameters & parameters);
 
@@ -62,19 +56,13 @@ protected:
         system pressure is needed. You are required to override this function for any inherited
         AuxKernel. */
     virtual Real computeValue() override;
-    
+
     unsigned int _index;            ///< Index of the gas species to which the diffusion belongs
     const VariableValue & _porosity;                ///< Variable for the particle/washcoat porosity
     const unsigned int _porosity_var;               ///< Variable identification for the particle/washcoat porosity
     const VariableValue & _pore_rad;                ///< Variable for the micro-pore radius (m)
     const unsigned int _pore_rad_var;               ///< Variable identification for the micro-pore radius
-    
+
 private:
 
 };
-
-
-
-
-
-

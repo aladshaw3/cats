@@ -41,16 +41,6 @@
 
 registerMooseObject("catsApp", CoupledPorePhaseTransfer);
 
-/*
-template<>
-InputParameters validParams<CoupledPorePhaseTransfer>()
-{
-	InputParameters params = validParams<CoupledCoeffTimeDerivative>();
-	params.addRequiredCoupledVar("porosity","Variable for the porosity of the domain/subdomain");
-	return params;
-}
- */
-
 InputParameters CoupledPorePhaseTransfer::validParams()
 {
     InputParameters params = CoupledCoeffTimeDerivative::validParams();

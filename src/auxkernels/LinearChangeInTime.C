@@ -40,18 +40,6 @@
 
 registerMooseObject("catsApp", LinearChangeInTime);
 
-/*
-template<>
-InputParameters validParams<LinearChangeInTime>()
-{
-    InputParameters params = validParams<AuxKernel>();
-    params.addParam<Real>("start_time",0,"Point in time to start the linear change");
-    params.addParam<Real>("end_time",1,"Point in time to end the linear change");
-    params.addParam<Real>("end_value",0,"Value of the variable to end at");
-    return params;
-}
- */
-
 InputParameters LinearChangeInTime::validParams()
 {
     InputParameters params = AuxKernel::validParams();
@@ -88,6 +76,6 @@ Real LinearChangeInTime::computeValue()
     }
     if (_t >= _end_time)
         value = _end_value;
-    
+
     return value;
 }

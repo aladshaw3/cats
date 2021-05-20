@@ -41,16 +41,6 @@
 
 registerMooseObject("catsApp", InterfaceMassTransfer);
 
-/*
-template<>
-InputParameters validParams<InterfaceMassTransfer>()
-{
-    InputParameters params = validParams<InterfaceKernel>();
-    params.addParam< Real >("transfer_rate",1.0,"Mass/energy transfer coefficient");
-    return params;
-}
- */
-
 InputParameters InterfaceMassTransfer::validParams()
 {
     InputParameters params = InterfaceKernel::validParams();
@@ -105,4 +95,3 @@ Real InterfaceMassTransfer::computeQpJacobian(Moose::DGJacobianType type)
   }
   return jac;
 }
-

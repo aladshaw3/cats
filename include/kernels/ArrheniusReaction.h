@@ -46,12 +46,6 @@
 #define Rstd 8.3144621                        ///< Gas Constant in J/K/mol (or) L*kPa/K/mol (Standard Units)
 #endif
 
-/// ArrheniusReaction class object forward declarationss
-//class ArrheniusReaction;
-
-//template<>
-//InputParameters validParams<ArrheniusReaction>();
-
 /// ArrheniusReaction class object inherits from ConstReaction object
 /** This class object inherits from the Kernel object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -62,14 +56,14 @@ class ArrheniusReaction : public ConstReaction
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     ArrheniusReaction(const InputParameters & parameters);
 
 protected:
     ///  Function to compute the rate constants
     void calculateRateConstants();
-    
+
     /// Required residual function for standard kernels in MOOSE
     /** This function returns a residual contribution for this object.*/
     virtual Real computeQpResidual();
@@ -94,11 +88,7 @@ protected:
     Real _beta_rev;                                 ///< Temperature exponential reverse (-)
     const VariableValue & _temp;                    ///< Coupled temperature variable (K)
     const unsigned int _temp_var;                   ///< Variable identification for temperature
-   
+
 private:
 
 };
-
-
-
-

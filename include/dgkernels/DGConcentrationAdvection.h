@@ -43,12 +43,6 @@
 
 #include "DGAdvection.h"
 
-/// DGConcentrationAdvection class object forward declarations
-//class DGConcentrationAdvection;
-
-//template<>
-//InputParameters validParams<DGConcentrationAdvection>();
-
 /// DGConcentrationAdvection class object inherits from DGKernel object
 /** This class object inherits from the DGKernel object in the MOOSE framework.
 All public and protected members of this class are required function overrides. The object
@@ -64,7 +58,7 @@ class DGConcentrationAdvection : public DGAdvection
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     DGConcentrationAdvection(const InputParameters & parameters);
 

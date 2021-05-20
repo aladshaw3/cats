@@ -41,12 +41,6 @@
 
 #include "ConstMassTransfer.h"
 
-/// FilmMassTransfer class object forward declarationss
-//class FilmMassTransfer;
-
-//template<>
-//InputParameters validParams<FilmMassTransfer>();
-
 /// FilmMassTransfer class object inherits from ConstMassTransfer object
 /** This class object inherits from the ConstMassTransfer object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -57,7 +51,7 @@ class FilmMassTransfer : public ConstMassTransfer
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     FilmMassTransfer(const InputParameters & parameters);
 
@@ -81,8 +75,7 @@ protected:
     Real _area_to_volume;                            ///< Area to volume ratio (L^-1)
     const VariableValue & _coupled_rate;             ///< Coupled rate variable (L/T)
     const unsigned int _coupled_rate_var;            ///< Variable identification for the coupled rate variable
-    
+
 private:
 
 };
-

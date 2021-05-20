@@ -47,24 +47,6 @@
  */
 registerMooseObject("catsApp", GAnisotropicDiffusion);
 
-/*
-template<>
-InputParameters validParams<GAnisotropicDiffusion>()
-{
-	InputParameters params = validParams<Kernel>();
-	params.addParam<Real>("Dxx",0,"xx-component of diffusion tensor");
-	params.addParam<Real>("Dxy",0,"xy-component of diffusion tensor");
-	params.addParam<Real>("Dxz",0,"xz-component of diffusion tensor");
-	params.addParam<Real>("Dyx",0,"yx-component of diffusion tensor");
-	params.addParam<Real>("Dyy",0,"yy-component of diffusion tensor");
-	params.addParam<Real>("Dyz",0,"yz-component of diffusion tensor");
-	params.addParam<Real>("Dzx",0,"zx-component of diffusion tensor");
-	params.addParam<Real>("Dzy",0,"zy-component of diffusion tensor");
-	params.addParam<Real>("Dzz",0,"zz-component of diffusion tensor");
-	return params;
-}
- */
-
 InputParameters GAnisotropicDiffusion::validParams()
 {
     InputParameters params = Kernel::validParams();

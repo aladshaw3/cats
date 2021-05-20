@@ -71,12 +71,6 @@
 
 #include "DGPoreDiffFluxLimitedBC.h"
 
-/// DGPoreDiffFluxLimitedStepwiseBC class object forward declaration
-//class DGPoreDiffFluxLimitedStepwiseBC;
-
-//template<>
-//InputParameters validParams<DGPoreDiffFluxLimitedStepwiseBC>();
-
 /// DGPoreDiffFluxLimitedStepwiseBC class object inherits from DGPoreDiffFluxLimitedBC object
 /** This class object inherits from the DGPoreDiffFluxLimitedBC object.
     All public and protected members of this class are required function overrides.  */
@@ -85,14 +79,14 @@ class DGPoreDiffFluxLimitedStepwiseBC : public DGPoreDiffFluxLimitedBC
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for BC objects in MOOSE
     DGPoreDiffFluxLimitedStepwiseBC(const InputParameters & parameters);
 
 protected:
     /// Function  to update the _u_input value based on given time
     Real newInputValue(Real time);
-    
+
     /// Required function override for BC objects in MOOSE
     /** This function returns a residual contribution for this object.*/
     virtual Real computeQpResidual() override;

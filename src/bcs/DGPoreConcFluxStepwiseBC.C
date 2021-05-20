@@ -51,18 +51,6 @@
  */
 registerMooseObject("catsApp", DGPoreConcFluxStepwiseBC);
 
-/*
-template<>
-InputParameters validParams<DGPoreConcFluxStepwiseBC>()
-{
-    InputParameters params = validParams<DGPoreConcFluxBC>();
-    params.addParam< std::vector<Real> >("input_vals","Values for u_input at corresponding times");
-    params.addParam< std::vector<Real> >("input_times","Time values at which to update u_input");
-    params.addParam< std::vector<Real> >("time_spans","Amount of time it takes to go from one input to the next");
-    return params;
-}
- */
-
 InputParameters DGPoreConcFluxStepwiseBC::validParams()
 {
     InputParameters params = DGPoreConcFluxBC::validParams();
@@ -128,7 +116,7 @@ Real DGPoreConcFluxStepwiseBC::newInputValue(Real time)
             }
         }
     }
-    
+
     return val;
 }
 
@@ -149,4 +137,3 @@ Real DGPoreConcFluxStepwiseBC::computeQpOffDiagJacobian(unsigned int jvar)
     _u_input = newInputValue(_t);
     return DGPoreConcFluxBC::computeQpOffDiagJacobian(jvar);
 }
-

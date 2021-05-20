@@ -37,22 +37,11 @@
 
 registerMooseObject("catsApp", GasThermalConductivity);
 
-/*
-template<>
-InputParameters validParams<GasThermalConductivity>()
-{
-    InputParameters params = validParams<GasPropertiesBase>();
-    params.addParam< Real >("heat_cap_ratio",1.4,"Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
-    
-    return params;
-}
- */
-
 InputParameters GasThermalConductivity::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
     params.addParam< Real >("heat_cap_ratio",1.4,"Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
-    
+
     return params;
 }
 
@@ -78,7 +67,6 @@ Real GasThermalConductivity::computeValue()
     Real Cv = _egret_dat.total_specific_heat*1000.0/_Cp_Cv_ratio;
     Real mu = _egret_dat.total_dyn_vis/1000.0*100.0;
     Real f = 0.25*(9.0*_Cp_Cv_ratio - 5.0);
-    
+
     return f*mu*Cv;
 }
-

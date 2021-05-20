@@ -71,12 +71,6 @@
 
 #include "DGVarVelDiffFluxLimitedBC.h"
 
-/// DGVarVelDiffFluxLimitedStepwiseBC class object forward declaration
-//class DGVarVelDiffFluxLimitedStepwiseBC;
-
-//template<>
-//InputParameters validParams<DGVarVelDiffFluxLimitedStepwiseBC>();
-
 /// DGVarVelDiffFluxLimitedStepwiseBC class object inherits from DGVarVelDiffFluxLimitedBC object
 /** This class object inherits from the DGVarVelDiffFluxLimitedBC object.
     All public and protected members of this class are required function overrides.  */
@@ -85,7 +79,7 @@ class DGVarVelDiffFluxLimitedStepwiseBC : public DGVarVelDiffFluxLimitedBC
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for BC objects in MOOSE
     DGVarVelDiffFluxLimitedStepwiseBC(const InputParameters & parameters);
 
@@ -108,7 +102,7 @@ protected:
   being computed will be associated with the variables coupled to this object and not the
   main coupled variable itself. */
   virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
-  
+
   std::vector<Real> _input_vals;         ///< Values for _u_input that update at corresponding times
   std::vector<Real> _input_times;        ///< Values for determining when to change _u_input
   std::vector<Real> _time_spans;         ///< Amount of time it take to change to new input value

@@ -39,12 +39,6 @@
 
 #include "GVariableDiffusion.h"
 
-/// GVarPoreDiffusion class object forward declarations
-//class GVarPoreDiffusion;
-
-//template<>
-//InputParameters validParams<GVarPoreDiffusion>();
-
 /// GVarPoreDiffusion class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
 	All public and protected members of this class are required function overrides.
@@ -59,7 +53,7 @@ class GVarPoreDiffusion : public GVariableDiffusion
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
 	/// Required constructor for objects in MOOSE
 	GVarPoreDiffusion(const InputParameters & parameters);
 

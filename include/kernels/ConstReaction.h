@@ -42,12 +42,6 @@
 
 #include "Kernel.h"
 
-/// ConstReaction class object forward declarationss
-//class ConstReaction;
-
-//template<>
-//InputParameters validParams<ConstReaction>();
-
 /// ConstReaction class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -58,7 +52,7 @@ class ConstReaction : public Kernel
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     ConstReaction(const InputParameters & parameters);
 
@@ -94,9 +88,7 @@ protected:
     bool inProdList;                                    ///< Value is true if the main variable is the the product list
     int indexReact;                                     ///< Local index for the main variable in the reactant list
     int indexProd;                                      ///< Local index for the main variable in the reactant list
-    
+
 private:
 
 };
-
-

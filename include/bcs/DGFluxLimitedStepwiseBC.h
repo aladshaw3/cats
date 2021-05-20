@@ -66,12 +66,6 @@
 
 #include "DGFluxLimitedBC.h"
 
-/// DGFluxLimitedStepwiseBC class object forward declaration
-//class DGFluxLimitedStepwiseBC;
-
-//template<>
-//InputParameters validParams<DGFluxLimitedStepwiseBC>();
-
 /// DGFluxLimitedStepwiseBC class object inherits from DGFluxLimitedBC object
 /** This class object inherits from the DGFluxLimitedBC object.
     All public and protected members of this class are required function overrides.  */
@@ -80,7 +74,7 @@ class DGFluxLimitedStepwiseBC : public DGFluxLimitedBC
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for BC objects in MOOSE
     DGFluxLimitedStepwiseBC(const InputParameters & parameters);
 
@@ -95,7 +89,7 @@ protected:
         computed is the associated diagonal element in the overall Jacobian matrix for the
         system and is used in preconditioning of the linear sub-problem. */
     virtual Real computeQpJacobian() override;
-    
+
     std::vector<Real> _input_vals;         ///< Values for _u_input that update at corresponding times
     std::vector<Real> _input_times;        ///< Values for determining when to change _u_input
     std::vector<Real> _time_spans;         ///< Amount of time it take to change to new input value

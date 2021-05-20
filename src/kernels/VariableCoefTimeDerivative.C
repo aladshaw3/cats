@@ -41,16 +41,6 @@
  */
 registerMooseObject("catsApp", VariableCoefTimeDerivative);
 
-/*
-template<>
-InputParameters validParams<VariableCoefTimeDerivative>()
-{
-	InputParameters params = validParams<CoefTimeDerivative>();
-	params.addRequiredCoupledVar("coupled_coef","Variable coefficient for the time derivative");
-	return params;
-}
- */
-
 InputParameters VariableCoefTimeDerivative::validParams()
 {
     InputParameters params = CoefTimeDerivative::validParams();

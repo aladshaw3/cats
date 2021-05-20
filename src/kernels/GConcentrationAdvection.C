@@ -44,18 +44,6 @@
  */
 registerMooseObject("catsApp", GConcentrationAdvection);
 
-/*
-template<>
-InputParameters validParams<GConcentrationAdvection>()
-{
-	InputParameters params = validParams<GAdvection>();
-	params.addRequiredCoupledVar("ux","Variable for velocity in x-direction");
-	params.addRequiredCoupledVar("uy","Variable for velocity in y-direction");
-	params.addRequiredCoupledVar("uz","Variable for velocity in z-direction");
-	return params;
-}
- */
-
 InputParameters GConcentrationAdvection::validParams()
 {
     InputParameters params = GAdvection::validParams();

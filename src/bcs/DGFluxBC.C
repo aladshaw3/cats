@@ -54,19 +54,6 @@
  */
 registerMooseObject("catsApp", DGFluxBC);
 
-/*
-template<>
-InputParameters validParams<DGFluxBC>()
-{
-	InputParameters params = validParams<IntegratedBC>();
-	params.addParam<Real>("vx",0, "x-component of velocity vector");
-	params.addParam<Real>("vy",0,"y-component of velocity vector");
-	params.addParam<Real>("vz",0,"z-component of velocity vector");
-	params.addParam<Real>("u_input", 1.0, "input value of u");
-	return params;
-}
- */
-
 InputParameters DGFluxBC::validParams()
 {
     InputParameters params = IntegratedBC::validParams();

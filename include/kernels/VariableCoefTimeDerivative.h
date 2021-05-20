@@ -36,11 +36,6 @@
 
 #include "CoefTimeDerivative.h"
 
-//class VariableCoefTimeDerivative;
-
-//template <>
-//InputParameters validParams<VariableCoefTimeDerivative>();
-
 /// VariableCoefTimeDerivative class object inherits from CoefTimeDerivative object
 /**
  * Time derivative term multiplied by another variable as the coefficient.
@@ -52,7 +47,7 @@ class VariableCoefTimeDerivative : public CoefTimeDerivative
 public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
-    
+
   /// Required constructor for objects in MOOSE
   VariableCoefTimeDerivative(const InputParameters & parameters);
 

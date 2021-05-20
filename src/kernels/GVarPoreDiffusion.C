@@ -44,16 +44,6 @@
  */
 registerMooseObject("catsApp", GVarPoreDiffusion);
 
-/*
-template<>
-InputParameters validParams<GVarPoreDiffusion>()
-{
-	InputParameters params = validParams<GVariableDiffusion>();
-    params.addRequiredCoupledVar("porosity","Variable for the porosity of the domain/subdomain");
-	return params;
-}
- */
-
 InputParameters GVarPoreDiffusion::validParams()
 {
     InputParameters params = GVariableDiffusion::validParams();

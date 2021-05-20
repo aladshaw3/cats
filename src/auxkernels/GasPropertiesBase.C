@@ -38,28 +38,6 @@
 
 registerMooseObject("catsApp", GasPropertiesBase);
 
-/*
-template<>
-InputParameters validParams<GasPropertiesBase>()
-{
-    InputParameters params = validParams<AuxKernel>();
-    params.addRequiredCoupledVar("gases","List of names of the gas species variables (mol/L)");
-    params.addRequiredCoupledVar("pressure","Pressure variable for the domain (Pa)");
-    params.addRequiredCoupledVar("temperature","Temperature variable for the domain (K)");
-    params.addRequiredCoupledVar("ux","Variable for velocity in x-direction (m/s)");
-    params.addRequiredCoupledVar("uy","Variable for velocity in y-direction (m/s)");
-    params.addRequiredCoupledVar("uz","Variable for velocity in z-direction (m/s)");
-    params.addRequiredCoupledVar("hydraulic_diameter","Name of the hydraulic diameter variable (m)");
-    
-    params.addParam< std::vector<Real> >("molar_weights","List of molecular weights (g/mol)");
-    params.addParam< std::vector<Real> >("sutherland_temp","List of Sutherland's reference temperatures (K)");
-    params.addParam< std::vector<Real> >("sutherland_const","List of Sutherland's constants (K)");
-    params.addParam< std::vector<Real> >("sutherland_vis","List of Sutherland's reference viscosities (g/cm/s)");
-    params.addParam< std::vector<Real> >("spec_heat","List of specific heats (J/g/K)");
-    return params;
-}
- */
-
 InputParameters GasPropertiesBase::validParams()
 {
     InputParameters params = AuxKernel::validParams();
@@ -70,13 +48,13 @@ InputParameters GasPropertiesBase::validParams()
     params.addRequiredCoupledVar("uy","Variable for velocity in y-direction (m/s)");
     params.addRequiredCoupledVar("uz","Variable for velocity in z-direction (m/s)");
     params.addRequiredCoupledVar("hydraulic_diameter","Name of the hydraulic diameter variable (m)");
-    
+
     params.addParam< std::vector<Real> >("molar_weights","List of molecular weights (g/mol)");
     params.addParam< std::vector<Real> >("sutherland_temp","List of Sutherland's reference temperatures (K)");
     params.addParam< std::vector<Real> >("sutherland_const","List of Sutherland's constants (K)");
     params.addParam< std::vector<Real> >("sutherland_vis","List of Sutherland's reference viscosities (g/cm/s)");
     params.addParam< std::vector<Real> >("spec_heat","List of specific heats (J/g/K)");
-    
+
     params.addCoupledVar("carrier_gas",0,"Concentration for the carrier gas (mol/m^3)");
     params.addParam< Real >("carrier_gas_mw",0,"Molecular weight for the carrier gas (g/mol)");
     params.addParam< bool >("is_ideal_gas",true,"If true, then densities used for kinetic theory and pressure drop are calculated from given pressure assuming ideal gas law. If false, densities are calculated solely from the given gas concentrations.");
@@ -118,7 +96,7 @@ _is_ideal_gas(getParam< bool >("is_ideal_gas"))
         _gases_vars[i] = coupled("gases",i);
         _gases[i] = &coupledValue("gases",i);
     }
-    
+
     if (_MW.size() != _gases.size())
     {
         moose::internal::mooseErrorRaw("Must have same number of gas species and molecular weights!");
@@ -166,7 +144,7 @@ void GasPropertiesBase::prepareEgret()
         }
         if (_carrier_gas[_qp] > 0)
             total += Pstd(_carrier_gas[_qp],_temp[_qp]);
-        
+
         // Do not add "carrier" gas
         if (total >= _press[_qp])
         {
@@ -176,7 +154,7 @@ void GasPropertiesBase::prepareEgret()
             {
                 moose::internal::mooseErrorRaw("Egret has encountered an error!");
             }
-            
+
             Real total_moles = 0.0;
             for (unsigned int i = 0; i<_gases.size(); ++i)
             {
@@ -185,14 +163,14 @@ void GasPropertiesBase::prepareEgret()
                     total_moles += (*_gases[i])[_qp];
                 }
             }
-            
+
             for (unsigned int i = 0; i<_gases.size(); ++i)
             {
                 if ((*_gases[i])[_qp] > 0.0)
                 {
                     _mole_frac[i] = (*_gases[i])[_qp]/total_moles;
                 }
-                
+
                 _egret_dat.species_dat[i].molecular_weight = _MW[i];
                 _egret_dat.species_dat[i].Sutherland_Viscosity = _SuthVis[i];
                 _egret_dat.species_dat[i].Sutherland_Temp = _SuthTemp[i];
@@ -210,7 +188,7 @@ void GasPropertiesBase::prepareEgret()
                 moose::internal::mooseErrorRaw("Egret has encountered an error!");
             }
             Real carrier_press = _press[_qp] - total;
-            
+
             for (unsigned int i = 0; i<_gases.size(); ++i)
             {
                 if ((*_gases[i])[_qp] > 0.0)
@@ -250,9 +228,9 @@ void GasPropertiesBase::prepareEgret()
         }
         if (_carrier_gas[_qp] > 0)
             total+=_carrier_gas[_qp];
-        
+
         _total_conc = total;
-        
+
         for (unsigned int i = 0; i<_gases.size(); ++i)
         {
             if ((*_gases[i])[_qp] > 0.0)
@@ -272,13 +250,13 @@ void GasPropertiesBase::prepareEgret()
         {
             _mole_frac[_gases.size()] = 1e-6;
         }
-        
+
         success = initialize_data(_gases.size()+1, &_egret_dat);
         if (success != 0)
         {
             moose::internal::mooseErrorRaw("Egret has encountered an error!");
         }
-        
+
         for (unsigned int i = 0; i<_gases.size(); ++i)
         {
             _egret_dat.species_dat[i].molecular_weight = _MW[i];
@@ -306,7 +284,7 @@ void GasPropertiesBase::calculateAllProperties()
     Real vel_mag = sqrt(_velx[_qp]*_velx[_qp] + _vely[_qp]*_vely[_qp] + _velz[_qp]*_velz[_qp]);
     if (vel_mag <= 1.0E-8)
         vel_mag = 1.0E-8;
-    
+
     int success = set_variables(_press[_qp]/1000.0, _temp[_qp], vel_mag*100.0, _char_len[_qp]*100.0, _mole_frac, &_egret_dat);
     if (success != 0)
     {
@@ -323,8 +301,7 @@ Real GasPropertiesBase::computeValue()
 {
     prepareEgret();
     calculateAllProperties();
-    
+
     //return _egret_dat.species_dat[0].molecular_diffusion;
     return _egret_dat.total_dyn_vis/1000.0*100.0;
 }
-

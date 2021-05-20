@@ -43,12 +43,6 @@
 
 #include "Kernel.h"
 
-/// CoupledSumFunction class object forward declarationss
-//class CoupledSumFunction;
-
-//template<>
-//InputParameters validParams<CoupledSumFunction>();
-
 /// CoupledSumFunction class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
 	All public and protected members of this class are required function overrides.
@@ -59,7 +53,7 @@ class CoupledSumFunction : public Kernel
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
 	/// Required constructor for objects in MOOSE
 	CoupledSumFunction(const InputParameters & parameters);
 

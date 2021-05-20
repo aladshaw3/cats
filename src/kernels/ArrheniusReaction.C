@@ -42,22 +42,6 @@
 
 registerMooseObject("catsApp", ArrheniusReaction);
 
-/*
-template<>
-InputParameters validParams<ArrheniusReaction>()
-{
-    InputParameters params = validParams<ConstReaction>();
-    params.addParam< Real >("forward_activation_energy",0.0,"Activation energy forward (J/mol)");
-    params.addParam< Real >("forward_pre_exponential",1.0,"Pre-exponential factor forward (same units as kf)");
-    params.addParam< Real >("forward_beta",0.0,"Temperature exponential forward (-)");
-    params.addParam< Real >("reverse_activation_energy",0.0,"Activation energy reverse (J/mol)");
-    params.addParam< Real >("reverse_pre_exponential",1.0,"Pre-exponential factor reverse (same units as kr)");
-    params.addParam< Real >("reverse_beta",0.0,"Temperature exponential reverse (-)");
-    params.addRequiredCoupledVar("temperature","Name of the coupled temperature variable (K)");
-    return params;
-}
- */
-
 InputParameters ArrheniusReaction::validParams()
 {
     InputParameters params = ConstReaction::validParams();

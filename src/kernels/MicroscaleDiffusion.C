@@ -35,23 +35,6 @@
 
 registerMooseObject("catsApp", MicroscaleDiffusion);
 
-/*
-template<>
-InputParameters validParams<MicroscaleDiffusion>()
-{
-    InputParameters params = validParams<Kernel>();
-    params.addParam<Real>("diffusion_const",1.0,"[Global] Diffusion constant in the microscale");
-    params.addRequiredParam<Real>("micro_length","[Global] Total length of the microscale");
-    params.addRequiredParam<unsigned int>("node_id","This variable's node id in the microscale");
-    params.addRequiredParam<unsigned int>("num_nodes","[Global] Total number of nodes in microscale");
-    params.addRequiredParam<unsigned int>("coord_id","[Global] Enum: 0 = cartesian, 1 = r-cylindrical, 2 = r-spherical");
-    
-    params.addRequiredCoupledVar("upper_neighbor","Variable for upper neigbor");
-    params.addRequiredCoupledVar("lower_neighbor","Variable for lower neighbor");
-    return params;
-}
- */
-
 InputParameters MicroscaleDiffusion::validParams()
 {
     InputParameters params = Kernel::validParams();
@@ -60,7 +43,7 @@ InputParameters MicroscaleDiffusion::validParams()
     params.addRequiredParam<unsigned int>("node_id","This variable's node id in the microscale");
     params.addRequiredParam<unsigned int>("num_nodes","[Global] Total number of nodes in microscale");
     params.addRequiredParam<unsigned int>("coord_id","[Global] Enum: 0 = cartesian, 1 = r-cylindrical, 2 = r-spherical");
-    
+
     params.addRequiredCoupledVar("upper_neighbor","Variable for upper neigbor");
     params.addRequiredCoupledVar("lower_neighbor","Variable for lower neighbor");
     return params;
@@ -106,21 +89,21 @@ _lower_var(coupled("lower_neighbor"))
     {
         moose::internal::mooseErrorRaw("These microscale kernels require at least 2 nodes!");
     }
-    
+
     _dr = _total_length / ((double)_total_nodes - 1.0);
     _rl = (double)_this_node * _dr;
     _rd_l = std::pow(_rl, (double)_coord_id);
-    
+
     _rlp1 = (double)_upper_node * _dr;
     _rd_lp1 = 0.5*(pow(_rlp1,(double)_coord_id)+_rd_l);
-    
+
     _rlm1 = (double)_lower_node * _dr;
     _rd_lm1 = 0.5*(pow(_rlm1,(double)_coord_id)+_rd_l);
-    
+
     _current_diff = _diff_const;
     _upper_diff = _diff_const;
     _lower_diff = _diff_const;
-    
+
 }
 
 void MicroscaleDiffusion::calculateFluxes()
@@ -156,4 +139,3 @@ Real MicroscaleDiffusion::computeQpOffDiagJacobian(unsigned int jvar)
     }
     return 0.0;
 }
-

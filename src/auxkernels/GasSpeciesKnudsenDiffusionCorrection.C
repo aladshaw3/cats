@@ -37,18 +37,6 @@
 
 registerMooseObject("catsApp", GasSpeciesKnudsenDiffusionCorrection);
 
-/*
-template<>
-InputParameters validParams<GasSpeciesKnudsenDiffusionCorrection>()
-{
-    InputParameters params = validParams<GasPropertiesBase>();
-    params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
-    params.addRequiredCoupledVar("micro_porosity","Name of the micro-porosity variable");
-    params.addRequiredCoupledVar("micro_pore_radius","Name of the micro-pore radius variable (m)");
-    return params;
-}
- */
-
 InputParameters GasSpeciesKnudsenDiffusionCorrection::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
@@ -79,6 +67,6 @@ Real GasSpeciesKnudsenDiffusionCorrection::computeValue()
     Real Dp = _egret_dat.species_dat[_index].molecular_diffusion*_porosity[_qp]*_porosity[_qp];
     Real Dk = 9700.0*(_pore_rad[_qp]*100.0)*sqrt(_temp[_qp]/_egret_dat.species_dat[_index].molecular_weight);
     Real Deff = 1.0/((1.0/Dp)+(1.0/Dk));
-    
+
     return Deff/100.0/100.0;
 }

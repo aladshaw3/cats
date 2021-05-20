@@ -12,7 +12,7 @@
  *                      kr = kf/K       where K = exp(-dH/R/T + dS/R)
  *
  *  \note   This kernel requires both a forward and reverse reaction set of variables and the beta parameters from the
- *           typical Arrhenius expression are assumed 0. 
+ *           typical Arrhenius expression are assumed 0.
  *
  *
  *  \author Austin Ladshaw
@@ -45,12 +45,6 @@
 
 #include "ArrheniusReaction.h"
 
-/// ArrheniusEquilibriumReaction class object forward declarationss
-//class ArrheniusEquilibriumReaction;
-
-//template<>
-//InputParameters validParams<ArrheniusEquilibriumReaction>();
-
 /// ArrheniusEquilibriumReaction class object inherits from ArrheniusReaction object
 /** This class object inherits from the Kernel object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -61,7 +55,7 @@ class ArrheniusEquilibriumReaction : public ArrheniusReaction
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     ArrheniusEquilibriumReaction(const InputParameters & parameters);
 
@@ -84,12 +78,7 @@ protected:
 
     Real _enthalpy;                                ///< Reaction enthalpy (J/mol)
     Real _entropy;                                 ///< Reaction entropy (J/K/mol)
-   
+
 private:
 
 };
-
-
-
-
-

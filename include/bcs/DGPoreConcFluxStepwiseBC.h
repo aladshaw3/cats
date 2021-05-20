@@ -7,7 +7,7 @@
  *            conditions are essitially the same for input and ouput boundaries, this kernel will check
  *            the sign of the flux normal to the boundary and determine automattically whether it is
  *            an output or input boundary, then apply the appropriate conditions.
- *            
+ *
  *           Stepwise inputs are determined from a list of input values and times at which those input
  *            values are to occur. Optionally, users can also provide a list of "ramp up" times that are
  *            used to create a smoother transition instead of abrupt change in inputs.
@@ -46,12 +46,6 @@
 
 #include "DGPoreConcFluxBC.h"
 
-/// DGPoreConcFluxStepwiseBC class object forward declaration
-//class DGPoreConcFluxStepwiseBC;
-
-//template<>
-//InputParameters validParams<DGPoreConcFluxStepwiseBC>();
-
 /// DGPoreConcFluxStepwiseBC class object inherits from DGPoreConcFluxBC object
 /** This class object inherits from the DGPoreConcFluxBC object.
     All public and protected members of this class are required function overrides.
@@ -62,14 +56,14 @@ class DGPoreConcFluxStepwiseBC : public DGPoreConcFluxBC
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for BC objects in MOOSE
     DGPoreConcFluxStepwiseBC(const InputParameters & parameters);
 
 protected:
     /// Function  to update the _u_input value based on given time
     Real newInputValue(Real time);
-    
+
     /// Required function override for BC objects in MOOSE
     /** This function returns a residual contribution for this object.*/
     virtual Real computeQpResidual() override;
@@ -95,4 +89,3 @@ protected:
 private:
 
 };
-

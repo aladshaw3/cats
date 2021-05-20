@@ -37,20 +37,10 @@
 
 registerMooseObject("catsApp", GasViscosity);
 
-/*
-template<>
-InputParameters validParams<GasViscosity>()
-{
-    InputParameters params = validParams<GasPropertiesBase>();
-    
-    return params;
-}
- */
-
 InputParameters GasViscosity::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
-    
+
     return params;
 }
 
@@ -64,7 +54,6 @@ Real GasViscosity::computeValue()
 {
     prepareEgret();
     calculateAllProperties();
-    
+
     return _egret_dat.total_dyn_vis/1000.0*100.0;
 }
-

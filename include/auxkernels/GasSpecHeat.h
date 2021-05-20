@@ -37,12 +37,6 @@
 
 #include "GasPropertiesBase.h"
 
-/// GasSpecHeat class object forward declarations
-//class GasSpecHeat;
-
-//template<>
-//InputParameters validParams<GasSpecHeat>();
-
 /// GasSpecHeat class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -52,7 +46,7 @@ class GasSpecHeat : public GasPropertiesBase
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     GasSpecHeat(const InputParameters & parameters);
 
@@ -62,8 +56,7 @@ protected:
         system pressure is needed. You are required to override this function for any inherited
         AuxKernel. */
     virtual Real computeValue() override;
-    
+
 private:
 
 };
-

@@ -53,12 +53,6 @@
 
 #include "DGFluxBC.h"
 
-/// DGFluxStepwiseBC class object forward declaration
-//class DGFluxStepwiseBC;
-
-//template<>
-//InputParameters validParams<DGFluxStepwiseBC>();
-
 /// DGFluxStepwiseBC class object inherits from DGFluxBC object
 /** This class object inherits from the DGFluxBC object.
     All public and protected members of this class are required function overrides.
@@ -70,7 +64,7 @@ class DGFluxStepwiseBC : public DGFluxBC
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for BC objects in MOOSE
     DGFluxStepwiseBC(const InputParameters & parameters);
 

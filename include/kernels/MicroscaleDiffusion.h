@@ -35,12 +35,6 @@
 
 #include "Kernel.h"
 
-/// MicroscaleDiffusion class object forward declarationss
-//class MicroscaleDiffusion;
-
-//template<>
-//InputParameters validParams<MicroscaleDiffusion>();
-
 /// MicroscaleDiffusion class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -52,65 +46,63 @@ class MicroscaleDiffusion : public Kernel
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     MicroscaleDiffusion(const InputParameters & parameters);
-    
+
 protected:
     /// Calculation of the upper and lower fluxes
     void calculateFluxes();
-    
+
     /// Required residual function for standard kernels in MOOSE
     /** This function returns a residual contribution for this object.*/
     virtual Real computeQpResidual();
-    
+
     /// Required Jacobian function for standard kernels in MOOSE
     /** This function returns a Jacobian contribution for this object. The Jacobian being
         computed is the associated diagonal element in the overall Jacobian matrix for the
         system and is used in preconditioning of the linear sub-problem. */
     virtual Real computeQpJacobian();
-    
+
     /// Not Required, but aids in the preconditioning step
     /** This function returns the off diagonal Jacobian contribution for this object. By
         returning a non-zero value we will hopefully improve the convergence rate for the
         cross coupling of the variables. */
     virtual Real computeQpOffDiagJacobian(unsigned int jvar);
-    
+
     Real _diff_const;                     ///< Coefficient for constant diffusion in the microscale [Global]
-    
+
     Real _current_diff;                   ///< Diffusion coefficient at current node
     Real _upper_diff;                     ///< Diffusion coefficient at upper node
     Real _lower_diff;                     ///< Diffusion coefficient at lower node
-    
+
     Real _flux_upper;                     ///< Calculated flux from upper neighbor diffusion
     Real _flux_lower;                     ///< Calculated flux from lower neighbor diffusion
-    
+
     Real _total_length;                   ///< Total length of the microscale [Global]
     Real _dr;                             ///< Segment length ( = _total_length / (_total_nodes - 1) )
-    
+
     Real _rl;                             ///< Spatial position at current node (internally calculated)
     Real _rd_l;                           ///< Spatial position raised to power at current node (internally calculated)
-    
+
     Real _rlp1;                           ///< Spatial position at upper node (internally calculated)
     Real _rd_lp1;                         ///< Spatial position raised to power at upper node (internally calculated)
-    
+
     Real _rlm1;                           ///< Spatial position at lower node (internally calculated)
     Real _rd_lm1;                         ///< Spatial position raised to power at lower node (internally calculated)
-    
+
     unsigned int _this_node;              ///< Current node in the microscale
     unsigned int _upper_node;             ///< Upper node in the microscale (should be 1+_this_node)
     int _lower_node;                      ///< Lower node in the microscale (should be 1-_this_node)
     unsigned int _total_nodes;            ///< Total number of nodes to discretize the microscale with [Global]
     unsigned int _coord_id;               ///< Coordinate id number ( 0 = cartesian, 1 = r-cylindrical, 2 = r-spherical ) [Global]
-    
+
     const VariableValue & _upper_neighbor;    ///< Coupled variable for the upper neighbor
     const unsigned int _upper_var;            ///< Variable identification for the upper neighbor
-    
+
     const VariableValue & _lower_neighbor;    ///< Coupled variable for the lower neighbor
     const unsigned int _lower_var;            ///< Variable identification for the lower neighbor
-    
+
 private:
 
 };
-
-

@@ -45,17 +45,6 @@
 
 registerMooseObject("catsApp", ArrheniusEquilibriumReaction);
 
-/*
-template<>
-InputParameters validParams<ArrheniusEquilibriumReaction>()
-{
-    InputParameters params = validParams<ArrheniusReaction>();
-    params.addParam< Real >("enthalpy",0.0,"Reaction enthalpy (J/mol)");
-    params.addParam< Real >("entropy",0.0,"Reaction entropy (J/K/mol)");
-    return params;
-}
- */
-
 InputParameters ArrheniusEquilibriumReaction::validParams()
 {
     InputParameters params = ArrheniusReaction::validParams();
@@ -71,12 +60,12 @@ _entropy(getParam< Real >("entropy"))
 {
     _beta_for = 0.0;
     _beta_rev = 0.0;
-    
+
     if (_reactants.size() == 0)
          moose::internal::mooseErrorRaw("EquilibriumReaction requires at least 1 reactant!");
     if (_products.size() == 0)
          moose::internal::mooseErrorRaw("EquilibriumReaction requires at least 1 product!");
-    
+
     //Calculate the reverse parameters here based on the forward parameters and site energies
     _act_energy_rev = _act_energy_for - _enthalpy;
     _pre_exp_rev = _pre_exp_for * std::exp(-_entropy/Rstd);

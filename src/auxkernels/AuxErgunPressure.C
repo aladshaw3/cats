@@ -43,17 +43,6 @@
 
 registerMooseObject("catsApp", AuxErgunPressure);
 
-/*
-template<>
-InputParameters validParams<AuxErgunPressure>()
-{
-    InputParameters params = validParams<GasPropertiesBase>();
-    params.addRequiredParam< unsigned int >("direction","Direction that the Ergun gradient acts on (0=x, 1=y, 2=z)");
-    params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");
-    return params;
-}
- */
-
 InputParameters AuxErgunPressure::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
@@ -78,7 +67,7 @@ _inlet(getParam<bool>("is_inlet_press"))
     {
         moose::internal::mooseErrorRaw("Invalid direction for pressure gradient!");
     }
-    
+
     if (_inlet == false && _end == -1.0)
     {
         moose::internal::mooseErrorRaw("Must provide an end_point if given pressure is not inlet pressure!");
@@ -89,7 +78,7 @@ Real AuxErgunPressure::computeValue()
 {
     prepareEgret();
     calculateAllProperties();
-    
+
     Real vis = _egret_dat.total_dyn_vis/1000.0*100.0;
     Real dens = _egret_dat.total_density/1000.0*100.0*100.0*100.0;
     Real vel = 0.0;
@@ -105,11 +94,11 @@ Real AuxErgunPressure::computeValue()
     {
         vel = _velz[_qp];
     }
-    
+
     Real z = _q_point[_qp](_dir);
     Real vis_term = 150.0*vis*(1.0-_porosity[_qp])*(1.0-_porosity[_qp])*_porosity[_qp]*vel/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
     Real dens_term = 1.75*(1.0-_porosity[_qp])*_char_len[_qp]*dens*_porosity[_qp]*vel*_porosity[_qp]*fabs(vel)/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
-    
+
     if (_inlet == true)
     {
         return _press[_qp] - (vis_term+dens_term)*(z-_start);

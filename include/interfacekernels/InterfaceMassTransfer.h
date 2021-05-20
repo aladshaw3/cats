@@ -41,12 +41,6 @@
 
 #include "InterfaceKernel.h"
 
-/// InterfaceMassTransfer class object forward declarations
-//class InterfaceMassTransfer;
-
-//template <>
-//InputParameters validParams<InterfaceMassTransfer>();
-
 /// InterfaceMassTransfer class object inherits from InterfaceKernel object
 /** This class object inherits from the InterfaceKernel object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -57,7 +51,7 @@ class InterfaceMassTransfer : public InterfaceKernel
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     InterfaceMassTransfer(const InputParameters & parameters);
 
@@ -65,7 +59,7 @@ protected:
     /// Required residual function for standard kernels in MOOSE
     /** This function returns a residual contribution for this object.*/
     virtual Real computeQpResidual(Moose::DGResidualType type) override;
-    
+
     /// Required Jacobian function for standard kernels in MOOSE
     /** This function returns a Jacobian contribution for this object. The Jacobian being
      computed is the associated diagonal element in the overall Jacobian matrix for the

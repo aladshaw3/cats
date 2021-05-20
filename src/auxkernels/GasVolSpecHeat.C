@@ -37,22 +37,11 @@
 
 registerMooseObject("catsApp", GasVolSpecHeat);
 
-/*
-template<>
-InputParameters validParams<GasVolSpecHeat>()
-{
-    InputParameters params = validParams<GasPropertiesBase>();
-    params.addParam< Real >("heat_cap_ratio",1.4,"Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
-    
-    return params;
-}
- */
-
 InputParameters GasVolSpecHeat::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
     params.addParam< Real >("heat_cap_ratio",1.4,"Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
-    
+
     return params;
 }
 

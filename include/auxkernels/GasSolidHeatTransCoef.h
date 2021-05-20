@@ -37,12 +37,6 @@
 
 #include "GasPropertiesBase.h"
 
-/// GasSolidHeatTransCoef class object forward declarations
-//class GasSolidHeatTransCoef;
-
-//template<>
-//InputParameters validParams<GasSolidHeatTransCoef>();
-
 /// GasSolidHeatTransCoef class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -52,7 +46,7 @@ class GasSolidHeatTransCoef : public GasPropertiesBase
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     GasSolidHeatTransCoef(const InputParameters & parameters);
 
@@ -62,14 +56,13 @@ protected:
         system pressure is needed. You are required to override this function for any inherited
         AuxKernel. */
     virtual Real computeValue() override;
-    
+
     Real _Cp_Cv_ratio;            ///< Value for the ratio of Cp to Cv for the gas (assumed = 1.4 if not given)
     const VariableValue & _solid_cond;                ///< Variable for the solid thermal conductivity (W/m/K)
     const unsigned int _solid_cond_var;               ///< Variable identification for the solid thermal conductivity
     const VariableValue & _porosity;                ///< Variable for the porosity
     const unsigned int _porosity_var;               ///< Variable identification for the porosity
-    
+
 private:
 
 };
-

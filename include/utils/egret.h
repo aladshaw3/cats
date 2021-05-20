@@ -8,7 +8,7 @@
  *		here are based on kinetic theory of gases, ideal gas law, and some emperical models that
  *		were developed to account for changes in density and viscosity with changes in temperature
  *		between standard temperatures and up to 1000 K.
- 
+
  *  \author Austin Ladshaw
  *	\date 01/29/2015
  *	\copyright This software was designed and built at the Georgia Institute
@@ -88,44 +88,44 @@
 
 /// Data structure holding all the parameters for each pure gas spieces
 /** C-style object that holds the constants and parameters associated with each pure
-	gas species in the overall mixture. This information is used in conjunction with 
+	gas species in the overall mixture. This information is used in conjunction with
 	the kinetic theory of gases to produce approximations to many different gas properties
 	needed in simulating gas dynamics, mobility of a gas through porous media, as well
 	as some kinetic adsorption parameters such as diffusivities. */
-typedef struct
-{	
+typedef struct PURE_GAS
+{
 	//Constants
 	double molecular_weight;				///< Given: molecular weights (g/mol)
 	double Sutherland_Temp;					///< Given: Sutherland's Reference Temperature (K)
 	double Sutherland_Const;				///< Given: Sutherland's Constant (K)
 	double Sutherland_Viscosity;			///< Given: Sutherland's Reference Viscosity (g/cm/s)
 	double specific_heat;					///< Given: Specific heat of the gas (J/g/K)
-	
+
 	//Parameters
 	double molecular_diffusion;				///< Calculated: molecular diffusivities (cm^2/s)
 	double dynamic_viscosity;				///< Calculated: dynamic viscosities (g/cm/s)
 	double density;							///< Calculated: gas densities (g/cm^3) {use RE3}
 	double Schmidt;							///< Calculated: Value of the Schmidt number (-)
-		
+
 }PURE_GAS;
 
 /// Data structure holding information necessary for computing mixed gas properties
 /** C-style object holding the mixed gas information necessary for performing gas dynamic
 	simulations. This object works in conjunction with the calculate_variables function
 	and uses the kinetic theory of gases to estimate mixed gas properties. */
-typedef struct
+typedef struct MIXED_GAS
 {
 	//Constants
 	int N;									///< Given: Total number of gas species
-	bool CheckMolefractions = true;			///< Given: True = Check Molefractions for errors
-	
+	bool CheckMolefractions;			///< Given: True = Check Molefractions for errors
+
 	//Variables
 	double total_pressure;					///< Given: Total gas pressure (kPa)
 	double gas_temperature;					///< Given: Gas temperature (K)
 	double velocity;						///< Given: Gas phase velocity (cm/s)
 	double char_length;						///< Given: Characteristic Length (cm)
 	std::vector<double> molefraction;		///< Given: Gas molefractions of each species (-)
-	
+
 	//Parameters
 	double total_density;					///< Calculated: Total gas density (g/cm^3) {use RE3}
 	double total_dyn_vis;					///< Calculated: Total dynamic viscosity (g/cm/s)
@@ -134,10 +134,10 @@ typedef struct
 	double total_specific_heat;				///< Calculated: Total specific heat (J/g/K)
 	double Reynolds;						///< Calculated: Value of the Reynold's number	(-)
 	MATRIX<double> binary_diffusion;		///< Calculated: Tensor matrix of binary gas diffusivities (cm^2/s)
-	
+
 	//All Species Info
 	std::vector<PURE_GAS> species_dat;		///< Vector of the pure gas info of all specie
-	
+
 }MIXED_GAS;
 
 /// Function to initialize the MIXED_GAS structure based on number of gas species
@@ -148,9 +148,9 @@ int initialize_data(int N, MIXED_GAS *gas_dat);
 /// Function to set the values of the parameters in the gas phase
 /** The gas phase properties are a function of total pressure, gas temperature, gas velocity,
 	characteristic length, and the mole fractions of each species in the gas phase. Prior to
-	calculating the gas phase properties, these parameters must be set and updated as they 
+	calculating the gas phase properties, these parameters must be set and updated as they
 	change.
- 
+
 	\param PT total gas pressure in kPa
 	\param T gas temperature in K
 	\param us gas velocity in cm/s

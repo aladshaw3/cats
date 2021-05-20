@@ -58,18 +58,6 @@
  */
 registerMooseObject("catsApp", DGFluxStepwiseBC);
 
-/*
-template<>
-InputParameters validParams<DGFluxStepwiseBC>()
-{
-    InputParameters params = validParams<DGFluxBC>();
-    params.addParam< std::vector<Real> >("input_vals","Values for u_input at corresponding times");
-    params.addParam< std::vector<Real> >("input_times","Time values at which to update u_input");
-    params.addParam< std::vector<Real> >("time_spans","Amount of time it takes to go from one input to the next");
-    return params;
-}
- */
-
 InputParameters DGFluxStepwiseBC::validParams()
 {
     InputParameters params = DGFluxBC::validParams();
@@ -149,4 +137,3 @@ Real DGFluxStepwiseBC::computeQpJacobian()
     _u_input = newInputValue(_t);
     return DGFluxBC::computeQpJacobian();
 }
-

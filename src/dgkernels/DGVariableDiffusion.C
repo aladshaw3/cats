@@ -66,18 +66,6 @@
  */
 registerMooseObject("catsApp", DGVariableDiffusion);
 
-/*
-template<>
-InputParameters validParams<DGVariableDiffusion>()
-{
-	InputParameters params = validParams<DGAnisotropicDiffusion>();
-    params.addRequiredCoupledVar("Dx","Variable for diffusion in x-direction");
-	params.addRequiredCoupledVar("Dy","Variable for diffusion in y-direction");
-	params.addRequiredCoupledVar("Dz","Variable for diffusion in z-direction");
-	return params;
-}
- */
-
 InputParameters DGVariableDiffusion::validParams()
 {
     InputParameters params = DGAnisotropicDiffusion::validParams();

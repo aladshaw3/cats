@@ -50,12 +50,6 @@
 #include "IntegratedBC.h"
 #include "libmesh/vector_value.h"
 
-/// DGFluxBC class object forward declaration
-//class DGFluxBC;
-
-//template<>
-//InputParameters validParams<DGFluxBC>();
-
 /// DGFluxBC class object inherits from IntegratedBC object
 /** This class object inherits from the IntegratedBC object.
 	All public and protected members of this class are required function overrides.
@@ -66,7 +60,7 @@ class DGFluxBC : public IntegratedBC
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
 	/// Required constructor for BC objects in MOOSE
 	DGFluxBC(const InputParameters & parameters);
 

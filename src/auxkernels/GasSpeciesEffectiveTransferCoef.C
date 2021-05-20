@@ -37,17 +37,6 @@
 
 registerMooseObject("catsApp", GasSpeciesEffectiveTransferCoef);
 
-/*
-template<>
-InputParameters validParams<GasSpeciesEffectiveTransferCoef>()
-{
-    InputParameters params = validParams<GasPropertiesBase>();
-    params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
-    params.addRequiredCoupledVar("micro_porosity","Name of the micro-porosity variable");
-    return params;
-}
- */
-
 InputParameters GasSpeciesEffectiveTransferCoef::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
@@ -72,8 +61,6 @@ Real GasSpeciesEffectiveTransferCoef::computeValue()
 {
     prepareEgret();
     calculateAllProperties();
-    
+
     return FilmMTCoeff(_egret_dat.species_dat[_index].molecular_diffusion*_porosity[_qp]*_porosity[_qp], _egret_dat.char_length, _egret_dat.Reynolds, ScNum(_egret_dat.kinematic_viscosity,_egret_dat.species_dat[_index].molecular_diffusion*_porosity[_qp]*_porosity[_qp]))/100.0;
 }
-
-

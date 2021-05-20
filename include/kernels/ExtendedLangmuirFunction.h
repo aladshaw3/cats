@@ -41,12 +41,6 @@
 
 #include "Kernel.h"
 
-/// ExtendedLangmuirFunction class object forward declarationss
-//class ExtendedLangmuirFunction;
-
-//template<>
-//InputParameters validParams<ExtendedLangmuirFunction>();
-
 /// ExtendedLangmuirFunction class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
 	All public and protected members of this class are required function overrides.
@@ -57,7 +51,7 @@ class ExtendedLangmuirFunction : public Kernel
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
 	/// Required constructor for objects in MOOSE
 	ExtendedLangmuirFunction(const InputParameters & parameters);
 

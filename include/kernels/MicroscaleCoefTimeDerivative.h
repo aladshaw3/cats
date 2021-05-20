@@ -35,12 +35,6 @@
 
 #include "TimeDerivative.h"
 
-/// MicroscaleCoefTimeDerivative class object forward declarationss
-//class MicroscaleCoefTimeDerivative;
-
-//template<>
-//InputParameters validParams<MicroscaleCoefTimeDerivative>();
-
 /// MicroscaleCoefTimeDerivative class object inherits from TimeDerivative object
 /** This class object inherits from the TimeDerivative object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -52,10 +46,10 @@ class MicroscaleCoefTimeDerivative : public TimeDerivative
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     MicroscaleCoefTimeDerivative(const InputParameters & parameters);
-    
+
 protected:
     /// Required residual function for standard kernels in MOOSE
     /** This function returns a residual contribution for this object.*/
@@ -65,7 +59,7 @@ protected:
         computed is the associated diagonal element in the overall Jacobian matrix for the
         system and is used in preconditioning of the linear sub-problem. */
     virtual Real computeQpJacobian();
-    
+
     Real _nodal_time_coef;                ///< Time coefficient for the coupled time derivative at given node in microscale
     Real _total_length;                   ///< Total length of the microscale [Global]
     Real _dr;                             ///< Segment length ( = _total_length / (_total_nodes - 1) )
@@ -73,9 +67,8 @@ protected:
     Real _rd_l;                           ///< Spatial position raised to power at current node (internally calculated)
     unsigned int _node;                   ///< Current node in the microscale
     unsigned int _total_nodes;            ///< Total number of nodes to discretize the microscale with [Global]
-    unsigned int _coord_id;               ///< Coordinate id number ( 0 = cartesian, 1 = r-cylindrical, 2 = r-spherical ) [Global] 
-    
+    unsigned int _coord_id;               ///< Coordinate id number ( 0 = cartesian, 1 = r-cylindrical, 2 = r-spherical ) [Global]
+
 private:
 
 };
-

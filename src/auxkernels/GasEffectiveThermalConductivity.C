@@ -37,18 +37,6 @@
 
 registerMooseObject("catsApp", GasEffectiveThermalConductivity);
 
-/*
-template<>
-InputParameters validParams<GasEffectiveThermalConductivity>()
-{
-    InputParameters params = validParams<GasPropertiesBase>();
-    params.addParam< Real >("heat_cap_ratio",1.4,"Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
-    params.addRequiredCoupledVar("macroscale_diameter","Name of the macrocale column diameter variable (m)");
-    params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");
-    return params;
-}
- */
-
 InputParameters GasEffectiveThermalConductivity::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
@@ -85,6 +73,6 @@ Real GasEffectiveThermalConductivity::computeValue()
     Real mu = _egret_dat.total_dyn_vis/1000.0*100.0;
     Real f = 0.25*(9.0*_Cp_Cv_ratio - 5.0);
     Real Kg = f*mu*Cv;
-    
+
     return (1.0-_porosity[_qp])*_solid_cond[_qp] + _porosity[_qp]*Kg;
 }

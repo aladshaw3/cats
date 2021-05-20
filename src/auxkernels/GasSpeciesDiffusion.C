@@ -37,16 +37,6 @@
 
 registerMooseObject("catsApp", GasSpeciesDiffusion);
 
-/*
-template<>
-InputParameters validParams<GasSpeciesDiffusion>()
-{
-    InputParameters params = validParams<GasPropertiesBase>();
-    params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
-    return params;
-}
- */
-
 InputParameters GasSpeciesDiffusion::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
@@ -68,6 +58,6 @@ Real GasSpeciesDiffusion::computeValue()
 {
     prepareEgret();
     calculateAllProperties();
-    
+
     return _egret_dat.species_dat[_index].molecular_diffusion/100.0/100.0;
 }

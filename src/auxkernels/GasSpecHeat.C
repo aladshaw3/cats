@@ -37,20 +37,10 @@
 
 registerMooseObject("catsApp", GasSpecHeat);
 
-/*
-template<>
-InputParameters validParams<GasSpecHeat>()
-{
-    InputParameters params = validParams<GasPropertiesBase>();
-    
-    return params;
-}
- */
-
 InputParameters GasSpecHeat::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
-    
+
     return params;
 }
 
@@ -64,9 +54,6 @@ Real GasSpecHeat::computeValue()
 {
     prepareEgret();
     calculateAllProperties();
-    
+
     return _egret_dat.total_specific_heat*1000.0;
 }
-
-
-

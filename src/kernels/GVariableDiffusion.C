@@ -44,18 +44,6 @@
  */
 registerMooseObject("catsApp", GVariableDiffusion);
 
-/*
-template<>
-InputParameters validParams<GVariableDiffusion>()
-{
-	InputParameters params = validParams<GAnisotropicDiffusion>();
-  params.addRequiredCoupledVar("Dx","Variable for diffusion in x-direction");
-	params.addRequiredCoupledVar("Dy","Variable for diffusion in y-direction");
-	params.addRequiredCoupledVar("Dz","Variable for diffusion in z-direction");
-	return params;
-}
- */
-
 InputParameters GVariableDiffusion::validParams()
 {
     InputParameters params = GAnisotropicDiffusion::validParams();

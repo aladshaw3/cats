@@ -43,12 +43,6 @@
 
 #include "GasPropertiesBase.h"
 
-/// AuxErgunPressure class object forward declarations
-//class AuxErgunPressure;
-
-//template<>
-//InputParameters validParams<AuxErgunPressure>();
-
 /// AuxErgunPressure class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -58,7 +52,7 @@ class AuxErgunPressure : public GasPropertiesBase
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     AuxErgunPressure(const InputParameters & parameters);
 
@@ -75,8 +69,7 @@ protected:
     Real _start;                                    ///< Distance from which pressure drop starts (m)
     Real _end;                                      ///< Distance at which pressure drop ends (m)
     bool _inlet;                                    ///< if true, then given pressure is inlet; if false, then given pressure is outlet
-    
+
 private:
 
 };
-

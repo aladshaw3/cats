@@ -35,21 +35,6 @@
 
 registerMooseObject("catsApp", MicroscaleIntegralTotal);
 
-/*
-template<>
-InputParameters validParams<MicroscaleIntegralTotal>()
-{
-    InputParameters params = validParams<AuxKernel>();
-    params.addParam<Real>("space_factor",1.0,"if coord_id = 0, then this is x-sec area, if coord_id = 1, then this is cylinder length, if coord_id = 2, then this is 1.0");
-    params.addRequiredParam<Real>("micro_length","[Global] Total length of the microscale");
-    params.addRequiredParam<unsigned int>("num_nodes","[Global] Total number of nodes in microscale");
-    params.addRequiredParam<unsigned int>("coord_id","[Global] Enum: 0 = cartesian, 1 = r-cylindrical, 2 = r-spherical");
-    params.addRequiredCoupledVar("micro_vars","List of names of the microscale variables");
-    params.addRequiredParam<unsigned int>("first_node","Node id for the first micro_var in the above list. WARNING: The micro_vars list must be in asscending order!!!");
-    return params;
-}
- */
-
 InputParameters MicroscaleIntegralTotal::validParams()
 {
     InputParameters params = AuxKernel::validParams();
@@ -77,7 +62,7 @@ _first_node(getParam<unsigned int>("first_node"))
     {
         _vars[i] = &coupledValue("micro_vars",i);
     }
-    
+
     if (_total_length <= 0.0)
     {
         moose::internal::mooseErrorRaw("Length of microscale must be a positive value!");
@@ -98,7 +83,7 @@ _first_node(getParam<unsigned int>("first_node"))
     {
         moose::internal::mooseErrorRaw("Number of nodes to integrate over do not match number of variables given!");
     }
-    
+
     _dr = _total_length / ((double)_total_nodes - 1.0);
 }
 
@@ -111,9 +96,9 @@ Real MicroscaleIntegralTotal::computeIntegral()
         total += 0.5*((*_vars[i])[_qp] + (*_vars[i+1])[_qp])*( std::pow((double)(l+1),(double)(_coord_id+1)) - std::pow((double)(l),(double)(_coord_id+1)) );
         l++;
     }
-    
+
     Real integral = total*std::pow(_dr,(double)(_coord_id+1));
-    
+
     if (_coord_id == 0)
     {
         integral = integral*_space_factor;

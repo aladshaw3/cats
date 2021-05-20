@@ -39,12 +39,6 @@
 
 #include "Kernel.h"
 
-/// ConstMassTransfer class object forward declarationss
-//class ConstMassTransfer;
-
-//template<>
-//InputParameters validParams<ConstMassTransfer>();
-
 /// ConstMassTransfer class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -55,7 +49,7 @@ class ConstMassTransfer : public Kernel
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     ConstMassTransfer(const InputParameters & parameters);
 
@@ -79,7 +73,7 @@ protected:
     Real _trans_rate;                                ///< Rate constant for mass/energy transfer
     const VariableValue & _coupled;                  ///< Coupled variable
     const unsigned int _coupled_var;                 ///< Variable identification for the coupled variable
-    
+
 private:
 
 };

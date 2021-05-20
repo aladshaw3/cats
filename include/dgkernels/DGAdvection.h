@@ -49,12 +49,6 @@
 #include "DGKernel.h"
 #include <cmath>
 
-/// DGAdvection class object forward declarations
-//class DGAdvection;
-
-//template<>
-//InputParameters validParams<DGAdvection>();
-
 /// DGAdvection class object inherits from DGKernel object
 /** This class object inherits from the DGKernel object in the MOOSE framework.
 	All public and protected members of this class are required function overrides. The object
@@ -70,7 +64,7 @@ class DGAdvection : public DGKernel
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
 	/// Required constructor for objects in MOOSE
 	DGAdvection(const InputParameters & parameters);
 

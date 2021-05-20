@@ -37,12 +37,6 @@
 
 #include "GasPropertiesBase.h"
 
-/// GasSpeciesDiffusion class object forward declarations
-//class GasSpeciesDiffusion;
-
-//template<>
-//InputParameters validParams<GasSpeciesDiffusion>();
-
 /// GasSpeciesDiffusion class object inherits from GasPropertiesBase object
 /** This class object inherits from the GasPropertiesBase object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -52,7 +46,7 @@ class GasSpeciesDiffusion : public GasPropertiesBase
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     GasSpeciesDiffusion(const InputParameters & parameters);
 
@@ -62,11 +56,9 @@ protected:
         system pressure is needed. You are required to override this function for any inherited
         AuxKernel. */
     virtual Real computeValue() override;
-    
+
     unsigned int _index;            ///< Index of the gas species to which the diffusion belongs
-    
+
 private:
 
 };
-
-

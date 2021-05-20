@@ -39,12 +39,6 @@
 
 #include "Kernel.h"
 
-/// MaterialBalance class object forward declarations
-//class MaterialBalance;
-
-//template<>
-//InputParameters validParams<MaterialBalance>();
-
 /// MaterialBalance class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -54,7 +48,7 @@ class MaterialBalance : public Kernel
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     MaterialBalance(const InputParameters & parameters);
 
@@ -84,8 +78,7 @@ protected:
     const unsigned int _main_var;                       ///< Variable identification for the main variable (i.e., diagonal)
     bool inList;                                        ///< Value is true if the main variable is the the variable list
     int index;                                          ///< Local index for the main variable if it is in the list
-    
+
 private:
 
 };
-

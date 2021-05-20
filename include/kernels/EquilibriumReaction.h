@@ -50,12 +50,6 @@
 #define lnKo(H,S,T)    -( H / ( Rstd * T ) ) + ( S / Rstd )
 #endif
 
-/// EquilibriumReaction class object forward declarationss
-//class EquilibriumReaction;
-
-//template<>
-//InputParameters validParams<EquilibriumReaction>();
-
 /// EquilibriumReaction class object inherits from ConstReaction object
 /** This class object inherits from the Kernel object in the MOOSE framework.
     All public and protected members of this class are required function overrides.
@@ -66,14 +60,14 @@ class EquilibriumReaction : public ConstReaction
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     EquilibriumReaction(const InputParameters & parameters);
 
 protected:
     ///  Function to compute the equilibrium constant
     void calculateEquilibriumConstant();
-    
+
     /// Required residual function for standard kernels in MOOSE
     /** This function returns a residual contribution for this object.*/
     virtual Real computeQpResidual();
@@ -94,10 +88,7 @@ protected:
     Real _entropy;                                 ///< Reaction entropy (J/K/mol)
     const VariableValue & _temp;                   ///< Coupled temperature variable (K)
     const unsigned int _temp_var;                  ///< Variable identification for temperature
-   
+
 private:
 
 };
-
-
-

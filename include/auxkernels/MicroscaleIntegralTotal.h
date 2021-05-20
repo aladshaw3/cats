@@ -35,13 +35,6 @@
 
 #include "AuxKernel.h"
 
-
-/// MicroscaleIntegralTotal class object forward declaration
-//class MicroscaleIntegralTotal;
-
-//template<>
-//InputParameters validParams<MicroscaleIntegralTotal>();
-
 /// MicroscaleIntegralTotal class inherits from AuxKernel
 /** This class object creates an AuxKernel for use in the MOOSE framework. The AuxKernel will
     calculate the integral result of all variables in the microscale. */
@@ -50,20 +43,20 @@ class MicroscaleIntegralTotal : public AuxKernel
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Standard MOOSE public constructor
     MicroscaleIntegralTotal(const InputParameters & parameters);
-    
+
 protected:
     /// Helper function to compute the microscale integral
     Real computeIntegral();
-    
+
     /// Required MOOSE function override
     /** This is the function that is called by the MOOSE framework when a calculation of the total
         system pressure is needed. You are required to override this function for any inherited
         AuxKernel. */
     virtual Real computeValue() override;
-    
+
     Real _space_factor;                   ///< Conversion factor for space (in cartesian --> face area, in cylindrical --> length, in sphere = 1)
     Real _total_length;                   ///< Total length of the microscale [Global]
     Real _dr;                             ///< Segment length ( = _total_length / (_total_nodes - 1) )
@@ -73,7 +66,7 @@ protected:
     /// Node id for the first microscale variable in the above list
     /*** WARNING:  This method assumes that the variables are in nodal order from lowest node to highest node! */
     unsigned int _first_node;
-    
+
 private:
-    
+
 };

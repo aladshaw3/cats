@@ -41,17 +41,6 @@
 
 registerMooseObject("catsApp", FilmMassTransfer);
 
-/*
-template<>
-InputParameters validParams<FilmMassTransfer>()
-{
-    InputParameters params = validParams<ConstMassTransfer>();
-    params.addParam< Real >("av_ratio",1.0,"Area to volume ratio at which mass transfer occurs");
-    params.addRequiredCoupledVar("rate_variable","Name of the coupled rate variable");
-    return params;
-}
- */
-
 InputParameters FilmMassTransfer::validParams()
 {
     InputParameters params = ConstMassTransfer::validParams();
@@ -66,7 +55,7 @@ _area_to_volume(getParam< Real >("av_ratio")),
 _coupled_rate(coupledValue("rate_variable")),
 _coupled_rate_var(coupled("rate_variable"))
 {
-    
+
 }
 
 Real FilmMassTransfer::computeQpResidual()
@@ -94,4 +83,3 @@ Real FilmMassTransfer::computeQpOffDiagJacobian(unsigned int jvar)
     }
     return 0.0;
 }
-

@@ -37,17 +37,6 @@
 
 registerMooseObject("catsApp", GasSpeciesAxialDispersion);
 
-/*
-template<>
-InputParameters validParams<GasSpeciesAxialDispersion>()
-{
-    InputParameters params = validParams<GasPropertiesBase>();
-    params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
-    params.addRequiredCoupledVar("macroscale_diameter","Name of the macrocale column diameter variable (m)");
-    return params;
-}
- */
-
 InputParameters GasSpeciesAxialDispersion::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
@@ -72,11 +61,10 @@ Real GasSpeciesAxialDispersion::computeValue()
 {
     prepareEgret();
     calculateAllProperties();
-    
+
     Real Sc = ScNum(_egret_dat.kinematic_viscosity,_egret_dat.species_dat[_index].molecular_diffusion);
     Real Re = ReNum(_egret_dat.velocity,_column_dia[_qp]*100.0,_egret_dat.kinematic_viscosity);
     Real factor = (20.0/Re/Sc) + 0.5;
-    
+
     return _egret_dat.velocity*_egret_dat.char_length*factor/100.0/100.0;
 }
-

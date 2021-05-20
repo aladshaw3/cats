@@ -50,18 +50,6 @@
  */
 registerMooseObject("catsApp", DGConcentrationFluxBC);
 
-/*
-template<>
-InputParameters validParams<DGConcentrationFluxBC>()
-{
-	InputParameters params = validParams<DGFluxBC>();
-	params.addRequiredCoupledVar("ux","Variable for velocity in x-direction");
-	params.addRequiredCoupledVar("uy","Variable for velocity in y-direction");
-	params.addRequiredCoupledVar("uz","Variable for velocity in z-direction");
-	return params;
-}
- */
-
 InputParameters DGConcentrationFluxBC::validParams()
 {
     InputParameters params = DGFluxBC::validParams();

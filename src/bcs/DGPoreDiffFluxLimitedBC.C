@@ -72,16 +72,6 @@
  */
 registerMooseObject("catsApp", DGPoreDiffFluxLimitedBC);
 
-/*
-template<>
-InputParameters validParams<DGPoreDiffFluxLimitedBC>()
-{
-	InputParameters params = validParams<DGVarVelDiffFluxLimitedBC>();
-  params.addRequiredCoupledVar("porosity","Variable for the porosity of the domain/subdomain");
-	return params;
-}
- */
-
 InputParameters DGPoreDiffFluxLimitedBC::validParams()
 {
     InputParameters params = DGVarVelDiffFluxLimitedBC::validParams();

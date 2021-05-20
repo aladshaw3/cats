@@ -70,12 +70,6 @@
 
 #include "DGConcentrationFluxLimitedBC.h"
 
-/// DGConcFluxLimitedStepwiseBC class object forward declaration
-//class DGConcFluxLimitedStepwiseBC;
-
-//template<>
-//InputParameters validParams<DGConcFluxLimitedStepwiseBC>();
-
 /// DGConcFluxLimitedStepwiseBC class object inherits from DGConcentrationFluxLimitedBC object
 /** This class object inherits from the DGConcentrationFluxLimitedBC object.
     All public and protected members of this class are required function overrides.  */
@@ -84,7 +78,7 @@ class DGConcFluxLimitedStepwiseBC : public DGConcentrationFluxLimitedBC
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for BC objects in MOOSE
     DGConcFluxLimitedStepwiseBC(const InputParameters & parameters);
 
@@ -117,4 +111,3 @@ protected:
 private:
 
 };
-

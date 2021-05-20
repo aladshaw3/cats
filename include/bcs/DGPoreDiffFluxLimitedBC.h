@@ -67,12 +67,6 @@
 
 #include "DGVarVelDiffFluxLimitedBC.h"
 
-/// DGPoreDiffFluxLimitedBC class object forward declaration
-//class DGPoreDiffFluxLimitedBC;
-
-//template<>
-//InputParameters validParams<DGPoreDiffFluxLimitedBC>();
-
 /// DGPoreDiffFluxLimitedBC class object inherits from IntegratedBC object
 /** This class object inherits from the IntegratedBC object.
 	All public and protected members of this class are required function overrides.  */
@@ -81,7 +75,7 @@ class DGPoreDiffFluxLimitedBC : public DGVarVelDiffFluxLimitedBC
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
 	/// Required constructor for BC objects in MOOSE
 	DGPoreDiffFluxLimitedBC(const InputParameters & parameters);
 
