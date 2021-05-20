@@ -76,6 +76,16 @@ _coupled_var_temp(coupled("coupled_temp"))
 	_coupled.resize(n);
 	_langmuir_coef.resize(n);
 
+  if (_coupled.size() != _enthalpies.size())
+  {
+    moose::internal::mooseErrorRaw("User is required to provide list of variables of the same length as list of enthalpy coefficients.");
+  }
+
+  if (_coupled.size() != _entropies.size())
+  {
+    moose::internal::mooseErrorRaw("User is required to provide list of variables of the same length as list of entropy coefficients.");
+  }
+
 	for (unsigned int i = 0; i<_coupled.size(); ++i)
 	{
 		_coupled_vars[i] = coupled("coupled_list",i);

@@ -64,7 +64,7 @@ InputParameters ExtendedLangmuirFunction::validParams()
     params.addRequiredCoupledVar("main_coupled","Name of the primary variable being coupled");
     return params;
 }
- 
+
 ExtendedLangmuirFunction::ExtendedLangmuirFunction(const InputParameters & parameters)
 : Kernel(parameters),
 _maxcap(getParam<Real>("site_density")),
@@ -128,6 +128,11 @@ Real ExtendedLangmuirFunction::computeExtLangmuirOffJacobi(int i)
 
 Real ExtendedLangmuirFunction::computeQpResidual()
 {
+  if (_coupled.size() != _langmuir_coef.size())
+  {
+    moose::internal::mooseErrorRaw("User is required to provide list of variables of the same length as list of Langmuir coefficients.");
+  }
+  
 	return -_test[_i][_qp]*computeExtLangmuirEquilibrium();
 }
 

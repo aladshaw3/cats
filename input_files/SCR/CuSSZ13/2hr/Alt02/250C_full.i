@@ -339,7 +339,7 @@
     [../]
 
 # =========== NOTE: Needed to add ICs here due to issues with site balances giving NAN/INF in linear res =========
-#		may need to consider a custom IC for sites with site balances 
+#		may need to consider a custom IC for sites with site balances
     [./S1]
         order = FIRST
         family = MONOMIAL
@@ -811,7 +811,7 @@
         type = WeightedCoupledSumFunction
         variable = q3
         coupled_list = 'r3 r9 r12 r16 r17 r20 r24 r30'
-        weights = '1 -1 -1 -1 -1 -1 -2 1' 
+        weights = '1 -1 -1 -1 -1 -1 -2 1'
     [../]
 
     [./q4a_dot]
@@ -874,7 +874,7 @@
         variable = qT
         this_variable = qT
         coupled_list = 'q1 q2a q2b q3 q1_NH4NO3 q2_NH4NO3 q3_NH4NO3'
-        weights = '1 1 2 1'
+        weights = '1 1 2 1 1 1 1'
         total_material = qT
     [../]
 
@@ -1037,16 +1037,16 @@
       variable = r5
       this_variable = r5
 
-      forward_activation_energy = 45916.39 
-      forward_pre_exponential = 16560637
+      forward_activation_energy = 45916.39
+      forward_pre_exponential = 8280318500
 
       reverse_activation_energy = 84189.57118
-      reverse_pre_exponential = 30089630
+      reverse_pre_exponential = 15044815235
 
       temperature = temp
       scale = 1.0
       reactants = 'S1 NOxw O2w'
-      reactant_stoich = '1 1'
+      reactant_stoich = '1 1 1'
       products = 'S1 NO2w'
       product_stoich = '1 1'
     [../]
@@ -1061,15 +1061,15 @@
       this_variable = r6
 
       forward_activation_energy = 41466.3167
-      forward_pre_exponential = 6256244
+      forward_pre_exponential = 3128122078
 
       reverse_activation_energy = 85751.51148
-      reverse_pre_exponential = 42291539
+      reverse_pre_exponential = 21145769407
 
       temperature = temp
       scale = 1.0
       reactants = 'S2 NOxw O2w'
-      reactant_stoich = '1 1'
+      reactant_stoich = '1 1 1'
       products = 'S2 NO2w'
       product_stoich = '1 1'
     [../]
@@ -1085,7 +1085,7 @@
       this_variable = r7
 
       forward_activation_energy = 77459.00445
-      forward_pre_exponential = 239330964.9
+      forward_pre_exponential = 265923294.3
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1108,7 +1108,7 @@
       this_variable = r8
 
       forward_activation_energy = 74122.66269
-      forward_pre_exponential = 113656520.6
+      forward_pre_exponential = 126285022.9
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1131,7 +1131,7 @@
       this_variable = r9
 
       forward_activation_energy = 74323.17448
-      forward_pre_exponential = 119421743.3
+      forward_pre_exponential = 132690825.9
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1225,7 +1225,7 @@
       this_variable = r13
 
       forward_activation_energy = 54989.46429
-      forward_pre_exponential = 3.53738E+13
+      forward_pre_exponential = 3.93042E+13
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1248,7 +1248,7 @@
       this_variable = r14
 
       forward_activation_energy = 57733.39847
-      forward_pre_exponential = 6.17138E+13
+      forward_pre_exponential = 6.85708E+13
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1271,7 +1271,7 @@
       this_variable = r15
 
       forward_activation_energy = 55398.91238
-      forward_pre_exponential = 4.24963E+13
+      forward_pre_exponential = 4.72181E+13
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1294,7 +1294,7 @@
       this_variable = r16
 
       forward_activation_energy = 60229.72112
-      forward_pre_exponential = 1.26006E+15
+      forward_pre_exponential = 1.40006E+15
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1317,7 +1317,7 @@
       this_variable = r17
 
       forward_activation_energy = 42369.42133
-      forward_pre_exponential = 6.87307E+13
+      forward_pre_exponential = 7.63674E+13
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1341,7 +1341,7 @@
       this_variable = r18
 
       forward_activation_energy = 49462.64319
-      forward_pre_exponential = 1.96771E+11
+      forward_pre_exponential = 2.18635E+11
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1364,7 +1364,7 @@
       this_variable = r19
 
       forward_activation_energy = 44323.79215
-      forward_pre_exponential = 70989274056
+      forward_pre_exponential = 78876971174
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1387,7 +1387,7 @@
       this_variable = r20
 
       forward_activation_energy = 37024.38533
-      forward_pre_exponential = 10003118519
+      forward_pre_exponential = 6.66875E+11
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1395,7 +1395,7 @@
       temperature = temp
       scale = 1.0
       reactants = 'q3 NOxw O2w S2'
-      reactant_stoich = '1 1 1'
+      reactant_stoich = '1 1 1 1'
       products = ''
       product_stoich = ''
     [../]
@@ -1411,7 +1411,7 @@
       this_variable = r21
 
       forward_activation_energy = 68215.9249
-      forward_pre_exponential = 2.05303E+12
+      forward_pre_exponential = 2.28114E+12
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1434,7 +1434,7 @@
       this_variable = r22
 
       forward_activation_energy = 68243.03474
-      forward_pre_exponential = 2.06609E+12
+      forward_pre_exponential = 2.29565E+12
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1457,7 +1457,7 @@
       this_variable = r23
 
       forward_activation_energy = 86550.90572
-      forward_pre_exponential = 5.7055E+13
+      forward_pre_exponential = 6.33945E+13
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1480,7 +1480,7 @@
       this_variable = r24
 
       forward_activation_energy = 68243.84412
-      forward_pre_exponential = 2.06646E+12
+      forward_pre_exponential = 2.29607E+12
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1504,7 +1504,7 @@
       this_variable = r25
 
       forward_activation_energy = 63279.2687
-      forward_pre_exponential = 1.16832E+12
+      forward_pre_exponential = 1.29813E+12
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1527,7 +1527,7 @@
       this_variable = r26
 
       forward_activation_energy = 55329.06547
-      forward_pre_exponential = 1.91395E+11
+      forward_pre_exponential = 2.12661E+11
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1550,7 +1550,7 @@
       this_variable = r27
 
       forward_activation_energy = 53922.06929
-      forward_pre_exponential = 1.28393E+11
+      forward_pre_exponential = 1.42659E+11
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1574,7 +1574,7 @@
       this_variable = r28
 
       forward_activation_energy = 68525.008
-      forward_pre_exponential = 20285218890
+      forward_pre_exponential = 22539132100
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1597,7 +1597,7 @@
       this_variable = r29
 
       forward_activation_energy = 67842.46782
-      forward_pre_exponential = 17694079281
+      forward_pre_exponential = 19660088090
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1620,7 +1620,7 @@
       this_variable = r30
 
       forward_activation_energy = 68293.82218
-      forward_pre_exponential = 19003693886
+      forward_pre_exponential = 21115215429
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1644,7 +1644,7 @@
       this_variable = r31
 
       forward_activation_energy = 91481.80071
-      forward_pre_exponential = 1.34031E+11
+      forward_pre_exponential = 1.48923E+11
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1667,7 +1667,7 @@
       this_variable = r32
 
       forward_activation_energy = 94891.77819
-      forward_pre_exponential = 3.3574E+11
+      forward_pre_exponential = 3.73044E+11
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1690,7 +1690,7 @@
       this_variable = r33
 
       forward_activation_energy = 68627.01632
-      forward_pre_exponential = 1587212083
+      forward_pre_exponential = 1763568982
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0

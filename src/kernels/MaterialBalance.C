@@ -77,6 +77,11 @@ _main_var(coupled("this_variable"))
     inList = false;
     index = -1;
 
+    if (_coupled.size() != _weights.size())
+    {
+      moose::internal::mooseErrorRaw("User is required to provide list of variables of the same length as list of weights.");
+    }
+
     for (unsigned int i = 0; i<_coupled.size(); ++i)
     {
         _coupled_vars[i] = coupled("coupled_list",i);

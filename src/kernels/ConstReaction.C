@@ -87,15 +87,25 @@ _main_var(coupled("this_variable"))
     unsigned int r = coupledComponents("reactants");
     _react_vars.resize(r);
     _reactants.resize(r);
-    
+
     unsigned int p = coupledComponents("products");
     _prod_vars.resize(p);
     _products.resize(p);
-    
+
     inReactList = false;
     inProdList = false;
     indexReact = -1;
     indexProd = -1;
+
+    if (_reactants.size() != _react_stoich.size())
+    {
+      moose::internal::mooseErrorRaw("User is required to provide list of reactant variables of the same length as list of reactant stoichiometry.");
+    }
+
+    if (_products.size() != _prod_stoich.size())
+    {
+      moose::internal::mooseErrorRaw("User is required to provide list of product variables of the same length as list of product stoichiometry.");
+    }
 
     for (unsigned int i = 0; i<_reactants.size(); ++i)
     {
@@ -104,7 +114,7 @@ _main_var(coupled("this_variable"))
         if (_react_vars[i] == _main_var)
             inReactList = true;
     }
-    
+
     for (unsigned int i = 0; i<_products.size(); ++i)
     {
         _prod_vars[i] = coupled("products",i);
@@ -112,7 +122,7 @@ _main_var(coupled("this_variable"))
         if (_prod_vars[i] == _main_var)
             inProdList = true;
     }
-    
+
     if (inReactList == true)
     {
         for (unsigned int i = 0; i<_reactants.size(); ++i)
@@ -121,7 +131,7 @@ _main_var(coupled("this_variable"))
                 indexReact = i;
         }
     }
-    
+
     if (inProdList == true)
        {
            for (unsigned int i = 0; i<_products.size(); ++i)
@@ -157,7 +167,7 @@ Real ConstReaction::computeQpResidual()
 Real ConstReaction::computeQpJacobian()
 {
     Real jac = 0.0;
-    
+
     if (inReactList == true)
     {
         Real react_prod = 1.0;
@@ -212,7 +222,7 @@ Real ConstReaction::computeQpOffDiagJacobian(unsigned int jvar)
     {
         return 0.0;
     }
-    
+
     Real offjac = 0.0;
     Real react_prod = 1.0;
     Real prod_prod = 1.0;
@@ -252,8 +262,8 @@ Real ConstReaction::computeQpOffDiagJacobian(unsigned int jvar)
         prod_prod = 0.0;
     else
         prod_prod = prod_prod*_prod_stoich[pi] * std::pow( (*_products[pi])[_qp], _prod_stoich[pi]-1.0 ) * _test[_i][_qp] * _phi[_j][_qp];
-    
+
     offjac = -_scale*_forward_rate*react_prod + _scale*_reverse_rate*prod_prod;
-    
+
     return offjac;
 }
