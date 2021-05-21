@@ -744,8 +744,11 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     def finalize_auto_scaling(self):
         Isothermal_Monolith_Simulator.finalize_auto_scaling(self)
 
-        if self.model.find_component('obj') == False and self.rescaleConstraint == False:
-            return
+        # # TODO: FIX THIS LINE
+        if self.model.find_component('obj'):
+            print("here")
+            if self.rescaleConstraint == False:
+                return
 
         # Reset constraints for variables and derivative variables
         #       NOT for the constraints though (these should not be rescaled)

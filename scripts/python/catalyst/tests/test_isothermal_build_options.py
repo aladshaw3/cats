@@ -686,31 +686,31 @@ class TestIsothermalCatalystBuildOptions():
         test.set_site_density("k","Unaged",0.2)
 
         # (site, age, loc, time)
-        assert test.model.Smax["i","Unaged",0,0] == 0.1
-        assert test.model.Smax["i","Unaged",0,1] == 0.1
-        assert test.model.Smax["i","Unaged",0,2] == 0.1
-        assert test.model.Smax["i","Unaged",0,3] == 0.1
-        assert test.model.Smax["i","Unaged",0,4] == 0.1
-        assert test.model.Smax["i","Unaged",0,5] == 0.1
-        assert test.model.Smax["i","Unaged",0,6] == 0.1
-        assert test.model.Smax["i","Unaged",0,7] == 0.1
-        assert test.model.Smax["i","Unaged",0,8] == 0.1
-        assert test.model.Smax["i","Unaged",0,9] == 0.1
-        assert test.model.Smax["i","Unaged",0,10] == 0.1
+        assert test.model.Smax["i","Unaged",0,0].value == 0.1
+        assert test.model.Smax["i","Unaged",0,1].value == 0.1
+        assert test.model.Smax["i","Unaged",0,2].value == 0.1
+        assert test.model.Smax["i","Unaged",0,3].value == 0.1
+        assert test.model.Smax["i","Unaged",0,4].value == 0.1
+        assert test.model.Smax["i","Unaged",0,5].value == 0.1
+        assert test.model.Smax["i","Unaged",0,6].value == 0.1
+        assert test.model.Smax["i","Unaged",0,7].value == 0.1
+        assert test.model.Smax["i","Unaged",0,8].value == 0.1
+        assert test.model.Smax["i","Unaged",0,9].value == 0.1
+        assert test.model.Smax["i","Unaged",0,10].value == 0.1
 
         test.set_site_density_by_zone("j", "Unaged", zone=(3,5), value=0)
-        assert test.model.Smax["j","Unaged",0,0] == 0.05
-        assert test.model.Smax["j","Unaged",1,1] == 0.05
-        assert test.model.Smax["j","Unaged",2,2] == 0.05
-        assert test.model.Smax["j","Unaged",3,3] == 1e-20
-        assert test.model.Smax["j","Unaged",4,4] == 1e-20
-        assert test.model.Smax["j","Unaged",5,5] == 1e-20
+        assert test.model.Smax["j","Unaged",0,0].value == 0.05
+        assert test.model.Smax["j","Unaged",1,1].value == 0.05
+        assert test.model.Smax["j","Unaged",2,2].value == 0.05
+        assert test.model.Smax["j","Unaged",3,3].value == 1e-20
+        assert test.model.Smax["j","Unaged",4,4].value == 1e-20
+        assert test.model.Smax["j","Unaged",5,5].value == 1e-20
 
         test.set_site_density_by_zone("k", "Unaged", zone=(0,1), value=0.3)
         test.set_site_density_by_zone("k", "Unaged", zone=(4,5), value=0.1)
-        assert test.model.Smax["k","Unaged",0,0] == 0.3
-        assert test.model.Smax["k","Unaged",1,1] == 0.3
-        assert test.model.Smax["k","Unaged",2,2] == 0.2
-        assert test.model.Smax["k","Unaged",3,3] == 0.2
-        assert test.model.Smax["k","Unaged",4,4] == 0.1
-        assert test.model.Smax["k","Unaged",5,5] == 0.1
+        assert test.model.Smax["k","Unaged",0,0].value == 0.3
+        assert test.model.Smax["k","Unaged",1,1].value == 0.3
+        assert test.model.Smax["k","Unaged",2,2].value == 0.2
+        assert test.model.Smax["k","Unaged",3,3].value == 0.2
+        assert test.model.Smax["k","Unaged",4,4].value == 0.1
+        assert test.model.Smax["k","Unaged",5,5].value == 0.1
