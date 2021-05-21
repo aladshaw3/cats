@@ -746,7 +746,6 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
         # # TODO: FIX THIS LINE
         if self.model.find_component('obj'):
-            print("here")
             if self.rescaleConstraint == False:
                 return
 
