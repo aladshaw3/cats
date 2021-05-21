@@ -414,12 +414,6 @@ class TestBasicNonisothermalCatalystBuild():
         obj = nonisothermal_object
         obj_inert = nonisothermal_object_no_rxns
 
-        # # TODO: After adding in override to 'run_solver', no longer need lines below
-        obj.fix_all_reactions()
-        obj.fix_all_heats()
-        obj_inert.fix_all_reactions()
-        obj_inert.fix_all_heats()
-
         (stat1, cond1) = obj.run_solver()
         assert cond1 == TerminationCondition.optimal
         assert stat1 == SolverStatus.ok

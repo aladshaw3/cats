@@ -126,7 +126,11 @@ test.set_time_dependent_BC_in_ppm("NH3","Unaged","250C",
 #test.fix_all_reactions()
 test.model.dHrxn["r1"].set_value(-54000)
 #test.model.dHrxn["r1"].set_value(0)
+
 test.fix_all_heats()
+
+#test.isObjectiveSet = False
+#test.model.del_component(test.model.obj)
 
 test.initialize_auto_scaling()
 test.initialize_simulator(console_out=False)

@@ -12,8 +12,6 @@ __author__ = "Austin Ladshaw"
 
 _log = logging.getLogger(__name__)
 
-# # TODO: Test loading and saving of model files (including specific states)
-
 # Start test class
 class TestIsothermalCatalystInputOutputOptions():
     @pytest.fixture(scope="class")
@@ -181,7 +179,10 @@ class TestIsothermalCatalystInputOutputOptions():
         test = isothermal_io_object
 
         test.initialize_auto_scaling()
-        test.initialize_simulator()
+
+        (stat, cond) = test.initialize_simulator()
+        assert cond == TerminationCondition.optimal
+        assert stat == SolverStatus.ok
 
         test.plot_vs_data("NH3", "Unaged", "250C", 5, display_live=False,
                             file_name="plot_v_data_end")
@@ -220,7 +221,10 @@ class TestIsothermalCatalystInputOutputOptions():
         test = isothermal_io_object
 
         test.finalize_auto_scaling()
-        test.run_solver()
+
+        (stat, cond) = test.run_solver()
+        assert cond == TerminationCondition.optimal
+        assert stat == SolverStatus.ok
 
         test.plot_vs_data("NH3", "Unaged", "250C", 5, display_live=False,
                             file_name="final_result_end")
@@ -249,3 +253,158 @@ class TestIsothermalCatalystInputOutputOptions():
 
         test.print_kinetic_parameter_info(file_name="optimal_params.txt")
         assert path.exists("output/optimal_params.txt") == True
+
+    @pytest.mark.unit
+    def test_save_model(self, isothermal_io_object):
+        test = isothermal_io_object
+
+        test.save_model_state(file_name="sample_model.json")
+        assert path.exists("output/sample_model.json") == True
+
+    @pytest.mark.unit
+    def test_load_full_model(self):
+        test = Isothermal_Monolith_Simulator()
+        test.load_model_full('output/sample_model.json')
+
+        assert hasattr(test.model, 'z_data')
+        assert isinstance(test.model.z_data, Set)
+        assert len(test.model.z_data) == 2
+
+        assert pytest.approx(0.0000057, rel=1e-3) == test.model.Cb_data["NH3","Unaged","250C",2.5,12.75].value
+        assert pytest.approx(0.000000006, rel=1e-3) == test.model.Cb_data["NH3","Unaged","250C",5,12.75].value
+
+        assert len(test.model.t) == 11
+        assert test.model.t[1] == 0
+        assert test.model.t[2] == 1.75
+        assert test.model.t[3] == 2.75
+        assert test.model.t[4] == 3.75
+        assert test.model.t[5] == 5.75
+        assert test.model.t[6] == 7.75
+        assert test.model.t[7] == 9.75
+        assert test.model.t[8] == 11.75
+        assert test.model.t[9] == 13.75
+        assert test.model.t[10] == 15.75
+        assert test.model.t[11] == 17.75
+
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,1.75].value, 1e-3) == 2.25E-10
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,2.75].value, 1e-3) == 7.50E-10
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,3.75].value, 1e-3) == 3.00E-09
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,5.75].value, 1e-3) == 6.00E-08
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,7.75].value, 1e-3) == 5.90E-06
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,9.75].value, 1e-3) == 6.60E-06
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,11.75].value, 1e-3) == 6.60E-06
+
+        # Loosen tolerance because different solvers may give different results
+        assert pytest.approx(test.model.A["r1"].value, 1e-1) == 2499992.910504999
+        assert value(test.model.A["r1"].lb) == 25000
+        assert value(test.model.A["r1"].ub) == 2500000
+
+        assert test.isBoundarySet["NH3"]["Unaged"]["250C"] == True
+
+        assert test.isInitialSet["q1"]["Unaged"]["250C"] == True
+
+    @pytest.mark.unit
+    def test_load_full_model_with_reset_bounds(self):
+        test = Isothermal_Monolith_Simulator()
+        test.load_model_full('output/sample_model.json',reset_param_bounds=True)
+
+        assert hasattr(test.model, 'z_data')
+        assert isinstance(test.model.z_data, Set)
+        assert len(test.model.z_data) == 2
+
+        assert pytest.approx(0.0000057, rel=1e-3) == test.model.Cb_data["NH3","Unaged","250C",2.5,12.75].value
+        assert pytest.approx(0.000000006, rel=1e-3) == test.model.Cb_data["NH3","Unaged","250C",5,12.75].value
+
+        assert len(test.model.t) == 11
+        assert test.model.t[1] == 0
+        assert test.model.t[2] == 1.75
+        assert test.model.t[3] == 2.75
+        assert test.model.t[4] == 3.75
+        assert test.model.t[5] == 5.75
+        assert test.model.t[6] == 7.75
+        assert test.model.t[7] == 9.75
+        assert test.model.t[8] == 11.75
+        assert test.model.t[9] == 13.75
+        assert test.model.t[10] == 15.75
+        assert test.model.t[11] == 17.75
+
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,1.75].value, 1e-3) == 2.25E-10
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,2.75].value, 1e-3) == 7.50E-10
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,3.75].value, 1e-3) == 3.00E-09
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,5.75].value, 1e-3) == 6.00E-08
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,7.75].value, 1e-3) == 5.90E-06
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,9.75].value, 1e-3) == 6.60E-06
+        assert pytest.approx(test.model.Cb["NH3","Unaged","250C",0,11.75].value, 1e-3) == 6.60E-06
+
+        # Loosen tolerance because different solvers may give different results
+        assert pytest.approx(test.model.A["r1"].value, 1e-1) == 2499992.910504999
+        assert pytest.approx(value(test.model.A["r1"].lb), 1e-3) == test.model.A["r1"].value*0.8
+        assert pytest.approx(value(test.model.A["r1"].ub), 1e-3) == test.model.A["r1"].value*1.2
+
+        assert test.isBoundarySet["NH3"]["Unaged"]["250C"] == True
+
+        assert test.isInitialSet["q1"]["Unaged"]["250C"] == True
+
+    @pytest.mark.unit
+    def test_load_model_state(self):
+        test = Isothermal_Monolith_Simulator()
+
+        # NOTE: When loading a model state, you cannot load a state that doesn't exist
+        #       In this case, the previous model ends at time 17.75 and because the user
+        #       did not provide a 'state' arg, the method assumes to use the final state.
+        #       However, 17.75 does not exist in the window from 60 to 80, thus the model
+        #       cannot load.
+        with pytest.raises(KeyError):
+            test.load_model_state_as_IC('output/sample_model.json', new_time_window=(60,80), tstep=10)
+
+        # NOTE: This attempt will also fail. Although the starting time window is within
+        #       the original model set of states, the user has still failed to provide a
+        #       'state' arg and thus this option results in a KeyError because the load
+        #       function is looking for time 17.75 in the new model, which will not exist.
+        test2 = Isothermal_Monolith_Simulator()
+        with pytest.raises(KeyError):
+            test2.load_model_state_as_IC('output/sample_model.json', new_time_window=(12,30), tstep=10)
+
+        # To properly use this feature, it is recommended that the user provides a 'state'
+        # arg when calling the function and that the time window begins at that same
+        # state arg value. Alternatively, just provide the final state of the model to
+        # load (i.e., 17.75 in this case) as the initial time value in the new time
+        # window and the method will take care of the rest.
+        test3 = Isothermal_Monolith_Simulator()
+        test3.load_model_state_as_IC('output/sample_model.json', new_time_window=(17.75,27.75), tstep=10)
+
+        assert len(test3.model.t) == 11
+        assert test3.model.t[1] == 17.75
+        assert test3.model.t[2] == 18.75
+        assert test3.model.t[3] == 19.75
+        assert test3.model.t[4] == 20.75
+        assert test3.model.t[5] == 21.75
+        assert test3.model.t[6] == 22.75
+        assert test3.model.t[7] == 23.75
+        assert test3.model.t[8] == 24.75
+        assert test3.model.t[9] == 25.75
+        assert test3.model.t[10] == 26.75
+        assert test3.model.t[11] == 27.75
+
+        # Check to make sure the correct values were put into correct places
+        assert pytest.approx(test3.model.Cb["NH3","Unaged","250C",0,17.75].value, 1e-3) == 6.60E-06
+        assert pytest.approx(test3.model.C["NH3","Unaged","250C",4.5,17.75].value, 1e-3) == 6.52E-06
+        assert pytest.approx(test3.model.q["q1","Unaged","250C",4,17.75].value, 1e-3) == 0.108787366
+        assert pytest.approx(test3.model.S["S1","Unaged","250C",2,17.75].value, 1e-3) == 2.82E-08
+
+        # Now we will test loading a specific state in the middle of the json file
+        #       NOTE: The 'state' arg must always match the first item in the time window
+        #       ALSO NOTE: when given a list of steps, you DO NOT give 'tstep' as an arg
+        test4 = Isothermal_Monolith_Simulator()
+        test4.load_model_state_as_IC('output/sample_model.json', new_time_window=[7.75,8.75,9.75,10.75], state=7.75)
+
+        assert len(test4.model.t) == 4
+        assert test4.model.t[1] == 7.75
+        assert test4.model.t[2] == 8.75
+        assert test4.model.t[3] == 9.75
+        assert test4.model.t[4] == 10.75
+
+        assert pytest.approx(test4.model.Cb["NH3","Unaged","250C",0,7.75].value, 1e-3) == 5.90E-06
+        assert pytest.approx(test4.model.C["NH3","Unaged","250C",4.5,7.75].value, 1e-3) == 1.85E-14
+        assert pytest.approx(test4.model.q["q1","Unaged","250C",4,7.75].value, 1e-3) == 9.78E-08
+        assert pytest.approx(test4.model.S["S1","Unaged","250C",2,7.75].value, 1e-3) == 0.107938705

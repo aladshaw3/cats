@@ -44,6 +44,11 @@ class TestIsothermalCatalystBuildOptions():
         obj = Isothermal_Monolith_Simulator()
         return obj
 
+    @pytest.fixture(scope="class")
+    def catalyst_zoning_varying_site_densities(self):
+        obj = Isothermal_Monolith_Simulator()
+        return obj
+
     @pytest.mark.build
     def test_temperature_ramping(self, temperature_ramp):
         test = temperature_ramp
@@ -577,3 +582,135 @@ class TestIsothermalCatalystBuildOptions():
 
         assert pytest.approx(431.02267281890863, rel=1e-3) == \
             value(test.model.km["NH3","Unaged","150C",test.model.z.first(),test.model.t.first()])
+
+    @pytest.mark.build
+    def test_site_density_variations_with_zone(self, catalyst_zoning_varying_site_densities):
+        test = catalyst_zoning_varying_site_densities
+        test.add_axial_dim(0,5)
+        test.add_temporal_dim(0,10)
+
+        test.add_age_set("Unaged")
+        test.add_temperature_set("150C")
+        test.add_gas_species(["A","B","C"])
+        test.add_surface_species(["x","y","z"])
+        test.add_surface_sites(["i","j","k"])
+
+        test.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
+                            "r2": ReactionType.Arrhenius,
+
+                            "r3": ReactionType.EquilibriumArrhenius,
+                            "r4": ReactionType.Arrhenius
+                            })
+
+        assert hasattr(test.model, 'all_rxns')
+        assert isinstance(test.model.all_rxns, Set)
+        assert len(test.model.all_rxns) == 4
+
+        assert hasattr(test.model, 'arrhenius_rxns')
+        assert isinstance(test.model.arrhenius_rxns, Set)
+        assert len(test.model.arrhenius_rxns) == 2
+
+        assert hasattr(test.model, 'equ_arrhenius_rxns')
+        assert isinstance(test.model.equ_arrhenius_rxns, Set)
+        assert len(test.model.equ_arrhenius_rxns) == 2
+
+        s1_data = {"mol_occupancy": {"x": 1, "y": 2}}
+        # NOTE: line below is not an accurate way to model site balances,
+        #       the A and j species will be ignored because they are not
+        #       members of the 'surface_species' set
+        s2_data = {"mol_occupancy": {"x": 1, "A": 1, "j": 1}}
+        s3a_data = {"mol_occupancy": {"z": 1}}
+
+        test.set_site_balance("i",s1_data)
+        test.set_site_balance("j",s2_data)
+        test.set_site_balance("k",s3a_data)
+
+        r1_equ = {"parameters": {"A": 250000, "E": 0, "dH": -55373.27775, "dS": -9.890904876},
+                  "mol_reactants": {"A": 1, "B": 1},
+                  "mol_products": {"C": 1},
+                  "rxn_orders": {"A": 1, "B": 1, "C": 1}
+                }
+        test.set_reaction_info("r1", r1_equ)
+
+        assert value(test.model.u_C["A","r1",test.model.z.first()]) == -1
+        assert value(test.model.u_C["B","r1",test.model.z.first()]) == -1
+        assert value(test.model.u_C["C","r1",test.model.z.first()]) == 1
+
+        assert value(test.model.rxn_orders["r1","A"]) == 1
+        assert value(test.model.rxn_orders["r1","B"]) == 1
+        assert value(test.model.rxn_orders["r1","C"]) == 1
+
+        r2_arr = {"parameters": {"A": 250000, "E": 0},
+                  "mol_reactants": {"A": 1, "x": 1},
+                  "mol_products": {"i": 1},
+                  "rxn_orders": {"A": 2, "x": 1}
+                }
+        test.set_reaction_info("r2", r2_arr)
+
+        assert value(test.model.u_C["A","r2",test.model.z.first()]) == -1
+        assert value(test.model.u_q["x","r2",test.model.z.first()]) == -1
+
+        assert value(test.model.rxn_orders["r2","A"]) == 2
+        assert value(test.model.rxn_orders["r2","x"]) == 1
+
+        r3_equ = {"parameters": {"A": 250000, "E": 0, "dH": -55373.27775, "dS": -9.890904876},
+                  "mol_reactants": {"i": 1, "j": 1},
+                  "mol_products": {"z": 2},
+                  "rxn_orders": {"i": 1, "j": 0, "z": 2}
+                }
+        test.set_reaction_info("r3", r3_equ)
+
+        assert value(test.model.u_q["z","r3",test.model.z.first()]) == 2
+
+        assert value(test.model.rxn_orders["r3","i"]) == 1
+        assert value(test.model.rxn_orders["r3","j"]) == 0
+        assert value(test.model.rxn_orders["r3","z"]) == 2
+
+        r4_arr = {"parameters": {"A": 250000, "E": 0},
+                  "mol_reactants": {"A": 1, "x": 1},
+                  "mol_products": {"i": 1},
+                  "rxn_orders": {"A": 2, "x": 1},
+                  "override_molar_contribution": {"A": -2, "x": 1}
+                }
+        test.set_reaction_info("r4", r4_arr)
+
+        test.build_constraints()
+        test.discretize_model(method=DiscretizationMethod.FiniteDifference,
+                            tstep=10,elems=5,colpoints=2)
+
+        # After discretization, user can setup site densities with zones
+        #   You can start by setting a constant site density, then modifying
+        #   that by zones.
+        test.set_site_density("i","Unaged",0.1)
+        test.set_site_density("j","Unaged",0.05)
+        test.set_site_density("k","Unaged",0.2)
+
+        # (site, age, loc, time)
+        assert test.model.Smax["i","Unaged",0,0] == 0.1
+        assert test.model.Smax["i","Unaged",0,1] == 0.1
+        assert test.model.Smax["i","Unaged",0,2] == 0.1
+        assert test.model.Smax["i","Unaged",0,3] == 0.1
+        assert test.model.Smax["i","Unaged",0,4] == 0.1
+        assert test.model.Smax["i","Unaged",0,5] == 0.1
+        assert test.model.Smax["i","Unaged",0,6] == 0.1
+        assert test.model.Smax["i","Unaged",0,7] == 0.1
+        assert test.model.Smax["i","Unaged",0,8] == 0.1
+        assert test.model.Smax["i","Unaged",0,9] == 0.1
+        assert test.model.Smax["i","Unaged",0,10] == 0.1
+
+        test.set_site_density_by_zone("j", "Unaged", zone=(3,5), value=0)
+        assert test.model.Smax["j","Unaged",0,0] == 0.05
+        assert test.model.Smax["j","Unaged",1,1] == 0.05
+        assert test.model.Smax["j","Unaged",2,2] == 0.05
+        assert test.model.Smax["j","Unaged",3,3] == 1e-20
+        assert test.model.Smax["j","Unaged",4,4] == 1e-20
+        assert test.model.Smax["j","Unaged",5,5] == 1e-20
+
+        test.set_site_density_by_zone("k", "Unaged", zone=(0,1), value=0.3)
+        test.set_site_density_by_zone("k", "Unaged", zone=(4,5), value=0.1)
+        assert test.model.Smax["k","Unaged",0,0] == 0.3
+        assert test.model.Smax["k","Unaged",1,1] == 0.3
+        assert test.model.Smax["k","Unaged",2,2] == 0.2
+        assert test.model.Smax["k","Unaged",3,3] == 0.2
+        assert test.model.Smax["k","Unaged",4,4] == 0.1
+        assert test.model.Smax["k","Unaged",5,5] == 0.1

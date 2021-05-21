@@ -4,7 +4,7 @@ from catalyst.isothermal_monolith_catalysis import *
 
 # Create a simulator object and Load a full model from json
 test = Isothermal_Monolith_Simulator()
-test.load_model_state_as_IC('output/example.json', new_time_window=(60,120), tstep=60)
+test.load_model_state_as_IC('output/example.json', new_time_window=(60,119), tstep=60)
 
 #Unlike when loading a full model, you MUST now add in new BCs before solving
 #       Additionally, you will need to add new temperature ramps, space-velocities,
@@ -17,7 +17,7 @@ test.set_temperature_ramp("Unaged", "250C", 60, 120, 500+273)
 test.fix_all_reactions()
 
 test.initialize_auto_scaling()
-test.initialize_simulator()
+test.initialize_simulator(console_out=False)
 
 test.finalize_auto_scaling()
 test.run_solver()

@@ -1713,7 +1713,6 @@ class Isothermal_Monolith_Simulator(object):
             raise Exception("Error! Cannot have a negative concentration of sites")
         if value < 1e-20:
             value = 1e-20
-        #self.model.Smax[site, age, loc, :].set_value(value)
 
         start_loc = zone[0]
         if start_loc > zone[1]:
@@ -1730,8 +1729,6 @@ class Isothermal_Monolith_Simulator(object):
 
             if inside == True:
                 self.model.Smax[site, age, loc, :].set_value(value)
-            else:
-                self.model.Smax[site, age, loc, :].set_value(1e-20)
 
     # Function to setup data for a specific data species, specific data age,
     #   specific data temperature run, at a specific location, based on a
@@ -3626,7 +3623,7 @@ class Isothermal_Monolith_Simulator(object):
         # Check the new time window
         if type(new_time_window) is list:
             self.add_temporal_dim(point_list=new_time_window)
-            tstep = len(new_time_window)
+            tstep = len(new_time_window)-1
         elif type(new_time_window) is tuple:
             if tstep==None:
                 raise Exception("Error! Cannot discretize if user does not provide number of time steps in 'tstep' arg")

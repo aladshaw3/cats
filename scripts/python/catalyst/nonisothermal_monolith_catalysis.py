@@ -1360,7 +1360,201 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             # End Initializer
 
 
-    # # TODO: Override 'run_solver' (YES, If no obj function set, then must fix all heats!!!)
+    # Override 'run_solver'
+    def run_solver(self, console_out=True, options={'print_user_options': 'yes',
+                                                    'linear_solver': LinearSolverMethod.MA97,
+                                                    'tol': 1e-6,
+                                                    'acceptable_tol': 1e-6,
+                                                    'compl_inf_tol': 1e-6,
+                                                    'constr_viol_tol': 1e-6,
+                                                    'max_iter': 3000,
+                                                    'obj_scaling_factor': 1,
+                                                    'diverging_iterates_tol': 1e50}):
+        for spec in self.model.gas_set:
+            for age in self.model.age_set:
+                for temp in self.model.T_set:
+                    if self.isBoundarySet[spec][age][temp] == False:
+                        raise Exception("Error! Must specify boundaries before attempting to solve. "
+                                        +str(spec)+","+str(age)+","+str(temp)+" given does not have BCs set")
+        if self.isSurfSpecSet == True:
+            for spec in self.model.surf_set:
+                for age in self.model.age_set:
+                    for temp in self.model.T_set:
+                        if self.isInitialSet[spec][age][temp] == False:
+                            raise Exception("Error! Must specify initial conditions before attempting to solve. "
+                                            +str(spec)+","+str(age)+","+str(temp)+" given does not have ICs set")
+        for age in self.model.age_set:
+            for temp in self.model.T_set:
+                if self.isBoundaryTempSet[age][temp] == False:
+                    raise Exception("Error! Must specify boundaries before attempting to solve. "
+                                    +str(age)+","+str(temp)+" given does not have BCs set for temperature")
+                if self.isAmbTempSet[age][temp] == False:
+                    raise Exception("Error! Must specify wall/ambient temperatures before attempting to solve. "
+                                    +str(age)+","+str(temp)+" given does not have wall/ambient temperatures set")
+
+        if self.isObjectiveSet == False:
+            print("Warning! No objective function set. Forcing all kinetics to be fixed.")
+            self.fix_all_reactions()
+            self.fix_all_heats()
+
+        if self.isVelocityRecalculated == False:
+            self.recalculate_linear_velocities(interally_called=True,isMonolith=self.isMonolith)
+        self.solve_time = TIME.time()
+
+        solver = SolverFactory('ipopt')
+
+        # Check user options
+        for item in options:
+            solver.options[item] = options[item]
+        if 'print_user_options' in options:
+            if options['print_user_options'] == "yes":
+                solver.options['print_user_options'] = options['print_user_options']
+        else:
+            solver.options['print_user_options'] = 'yes'
+        #   linear_solver -> valid options:
+        #   -------------------------------
+        #       Depends on installed libraries
+        #           'mumps'  --> available on Windows AND 'idaes'
+        #                       (Only option if NOT using 'idaes')
+        #           'ma27' --> NOT available on Windows
+        #                       BUT is available with 'idaes'
+        #                       (Best for Small problems, Not parallel)
+        #           'ma57' --> NOT available on Windows
+        #                       BUT is available with 'idaes'
+        #                       (Best for Medium problems, threaded blas)
+        #           'ma77' --> NOT functional with Windows OR 'idaes'
+        #           'ma86' --> NOT functional with Windows OR 'idaes'
+        #           'ma97' --> NOT available on Windows
+        #                       BUT is available with 'idaes'
+        #                       (Best for Large problems, parallel)
+        #           'pardiso' --> NOT functional with Windows OR 'idaes'
+        #           'wsmp' --> NOT functional with Windows OR 'idaes'
+        #
+        #   NOTE: The solver libraries bundled with 'idaes' are MUCH more
+        #           computationally efficient than the standard Windows
+        #           solver libraries
+        if 'linear_solver' in options:
+            # Force the use of MUMPS if conda environment is not setup for 'idaes'
+            if "idaes" not in os.environ['CONDA_DEFAULT_ENV']:
+                options['linear_solver'] = LinearSolverMethod.MUMPS
+            if options['linear_solver'] == LinearSolverMethod.MUMPS:
+                # Only available option without 'idaes' enviroment or
+                #   another precompiled HSL library: https://www.hsl.rl.ac.uk/ipopt/
+                solver.options['linear_solver'] = 'mumps'
+            elif options['linear_solver'] == LinearSolverMethod.MA27:
+                # Best for small problems (no parallelization)
+                solver.options['linear_solver'] = 'ma27'
+            elif options['linear_solver'] == LinearSolverMethod.MA57:
+                # Best for medium problems (threaded BLAS)
+                solver.options['linear_solver'] = 'ma57'
+            elif options['linear_solver'] == LinearSolverMethod.MA97:
+                # Best for large problems (maximizes parallelization)
+                solver.options['linear_solver'] = 'ma97'
+            else:
+                print("Error! Invalid solver option")
+                print("\tValid Options: 'LinearSolverMethod.MUMPS'")
+                print("\t               'LinearSolverMethod.MA27'")
+                print("\t               'LinearSolverMethod.MA57'")
+                print("\t               'LinearSolverMethod.MA97'")
+                raise Exception("\nNOTE: 'MA' solvers only available if 'idaes' environment is used...")
+        else:
+            if "idaes" not in os.environ['CONDA_DEFAULT_ENV']:
+                solver.options['linear_solver'] = 'mumps'
+            else:
+                solver.options['linear_solver'] = 'ma97'
+        if 'tol' in options:
+            solver.options['tol'] = options['tol']
+        else:
+            solver.options['tol'] = 1e-6
+        if 'acceptable_tol' in options:
+            solver.options['acceptable_tol'] = options['acceptable_tol']
+        else:
+            solver.options['acceptable_tol'] = 1e-6
+        if 'compl_inf_tol' in options:
+            solver.options['compl_inf_tol'] = options['compl_inf_tol']
+        else:
+            solver.options['compl_inf_tol'] = 1e-6
+        if 'constr_viol_tol' in options:
+            solver.options['constr_viol_tol'] = options['constr_viol_tol']
+        else:
+            solver.options['constr_viol_tol'] = 1e-6
+        if 'max_iter' in options:
+            solver.options['max_iter'] = options['max_iter']
+        else:
+            solver.options['max_iter'] = 3000
+        if 'obj_scaling_factor' in options:
+            solver.options['obj_scaling_factor'] = options['obj_scaling_factor']
+        else:
+            solver.options['obj_scaling_factor'] = 1
+        if 'diverging_iterates_tol' in options:
+            solver.options['diverging_iterates_tol'] = options['diverging_iterates_tol']
+        else:
+            solver.options['diverging_iterates_tol'] = 1e50
+        if 'warm_start_init_point' in options:
+            solver.options['warm_start_init_point'] = options['warm_start_init_point']
+        else:
+            solver.options['warm_start_init_point'] = 'yes'
+
+        # Call the solver
+        if self.isInitialized == True:
+            # MORE INFO: https://coin-or.github.io/Ipopt/OPTIONS.html
+            # -------------------------------------------------------
+            #       Check out the 'Initializer' section for ipopt options
+            #   If we have already initialized the solution, then we are already
+            #   at (or very close to) the solution to the problem. However, ipopt
+            #   does NOT like starting variables that are near the boundaries
+            #   of the optimization problem. Thus, we need to tell ipopt to not
+            #   change the initial values (at least not by much). To do that,
+            #   we are forced to specify very small numbers for 'bound_frac' and
+            #   'bound_push'. Otherwise, ipopt will essentially through out all
+            #   the hard work that our custom initializer does. (1e-6 or 1e-8 was old)
+            solver.options['bound_push'] = 1e-10
+            solver.options['bound_frac'] = 1e-10
+            solver.options['mu_init'] = 1e-4
+            solver.options['slack_bound_push'] = 1e-10
+            solver.options['slack_bound_frac'] = 1e-10
+            solver.options['warm_start_init_point'] = 'yes'
+
+            # Strictly enfore to ipopt that the variables are not to move
+            #       from their given initial states. This is needed if the
+            #       objective function is set because of how complex it is
+            #       for the model to converge when changing kinetic parameters.
+            if self.isObjectiveSet == True:
+                solver.options['bound_push'] = 1e-16
+                solver.options['bound_frac'] = 1e-16
+                solver.options['mu_init'] = 1e-4
+                solver.options['slack_bound_push'] = 1e-16
+                solver.options['slack_bound_frac'] = 1e-16
+                solver.options['warm_start_init_point'] = 'yes'
+
+        # Check if model has scaling factors
+        if self.model.find_component('scaling_factor'):
+            solver.options['nlp_scaling_method'] = 'user-scaling'
+        else:
+            solver.options['nlp_scaling_method'] = 'gradient-based'
+
+        results = solver.solve(self.model, tee=console_out, load_solutions=False)
+        if results.solver.status == SolverStatus.ok:
+            self.model.solutions.load_from(results)
+        elif results.solver.status == SolverStatus.warning:
+            print("WARNING: Solver did not exit normally...")
+            print("\tResults are loaded, but need to be checked")
+            self.model.solutions.load_from(results)
+        else:
+            self.model.solutions.load_from(results)
+            print("An Error has occurred!")
+            print("\tStatus: " + str(results.solver.status))
+            print("\tTermination Condition: " + str(results.solver.termination_condition))
+
+        self.solve_time = (TIME.time() - self.solve_time)
+
+        print("\nModel Statistics")
+        print("-----------------")
+        print("\tBuild Time (s)      = " + str(self.build_time))
+        print("\tInitialize Time (s) = " + str(self.initialize_time))
+        print("\tSolve Time (s)      = " + str(self.solve_time))
+        print()
+        return (results.solver.status, results.solver.termination_condition)
 
     # # TODO: Override saving and loading of models
 
