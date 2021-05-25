@@ -2274,6 +2274,9 @@ class Isothermal_Monolith_Simulator(object):
                             raise Exception("Error! Must specify initial conditions before attempting to solve. "
                                             +str(spec)+","+str(age)+","+str(temp)+" given does not have ICs set")
 
+        if self.isIsothermalTempSet == False:
+            raise Exception("Error! Cannot initialize if temperatures are not set first")
+
         if self.isVelocityRecalculated == False:
             self.recalculate_linear_velocities(interally_called=True,isMonolith=self.isMonolith)
 
@@ -2586,6 +2589,10 @@ class Isothermal_Monolith_Simulator(object):
                         if self.isInitialSet[spec][age][temp] == False:
                             raise Exception("Error! Must specify initial conditions before attempting to solve. "
                                             +str(spec)+","+str(age)+","+str(temp)+" given does not have ICs set")
+
+        if self.isIsothermalTempSet == False:
+            raise Exception("Error! Cannot solve if temperatures are not set first")
+
         if self.isObjectiveSet == False:
             print("Warning! No objective function set. Forcing all kinetics to be fixed.")
             self.fix_all_reactions()
