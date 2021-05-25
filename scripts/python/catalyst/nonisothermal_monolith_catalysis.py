@@ -885,7 +885,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
     # Override 'initialize_simulator'
     def initialize_simulator(self, console_out=False, options={'print_user_options': 'yes',
-                                                    'linear_solver': LinearSolverMethod.MA97,
+                                                    'linear_solver': LinearSolverMethod.MA27,
                                                     'tol': 1e-8,
                                                     'acceptable_tol': 1e-8,
                                                     'compl_inf_tol': 1e-8,
