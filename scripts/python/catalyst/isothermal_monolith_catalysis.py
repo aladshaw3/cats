@@ -1052,6 +1052,22 @@ class Isothermal_Monolith_Simulator(object):
 
         self.model.w[spec,age,temp].set_value(value)
 
+    # Function to automatically select weight factors based on data
+    def auto_select_weight_factor(self, spec, age, temp):
+        maxval = 1e-20
+        for z in self.model.z_data:
+            for t in self.model.t_data:
+                if self.model.Cb_data[spec,age,temp,z,t].value > maxval:
+                    maxval = self.model.Cb_data[spec,age,temp,z,t].value
+        self.set_weight_factor(spec, age, temp, 1/maxval)
+
+    # Function to iterate through all spec, age, temp to get all weight factors
+    def auto_select_all_weight_factors(self):
+        for spec in self.model.data_gas_set:
+            for age in self.model.data_age_set:
+                for temp in self.model.data_T_set:
+                    self.auto_select_weight_factor(spec, age, temp)
+
     # Function to set a reference diffusivity for a species
     #       spec = name of species to set gas phase diffusivity for
     #       val = value of gas phase diffusivity in cm**2/s

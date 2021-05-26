@@ -373,6 +373,17 @@ class TestIsothermalCatalystBuildOptions():
             value(test.model.v["A0","T0", test.model.t.last()]) * \
             value(test.model.Cb["CO","A0","T0", test.model.z.first(), test.model.t.last()])
 
+    @pytest.mark.unit
+    def test_custom_scaling(self, ppm_BCs_with_temp_ramp):
+        test = ppm_BCs_with_temp_ramp
+
+        test.initialize_auto_scaling(scale_to=0.1)
+
+        assert pytest.approx(456.4521666094155, rel=1e-3) == \
+            value(test.model.scaling_factor[test.model.Cb["CO","A0","T0",0,0]])
+
+
+
     @pytest.mark.build
     def test_catalyst_zones(self, catalyst_zoning):
         test = catalyst_zoning

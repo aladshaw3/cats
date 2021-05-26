@@ -7,19 +7,20 @@ from catalyst.isothermal_monolith_catalysis import *
 #       Beyond that point, concentrations are very near zero and
 #       convergence becomes problematic
 
-# # TODO: Add cut-off time in time point selector
 # # TODO: Add methods to give temperature info via data file
-# # TODO: Add a "cut-off" in the solver/initializer for very high temps or fast kinetics
 
 # Give x, y, z for the HC (CxHyOz)
+HC_name = "toluene"
 x = 7
 y = 8
 z = 0
 
-data = naively_read_data_file("inputfiles/toluene_lightoff_history.txt",factor=10)
-temp_data = naively_read_data_file("inputfiles/toluene_temp_history.txt",factor=10)
+data = naively_read_data_file("inputfiles/"+HC_name+"_lightoff_history.txt",factor=10)
+temp_data = naively_read_data_file("inputfiles/"+HC_name+"_temp_history.txt",factor=10)
 
-time_list = time_point_selector(data["time"], data, end_time=55)
+# # TODO: Add unit test for time_point_selector + options
+time_list = time_point_selector(data["time"], data)
+#time_list = time_point_selector(data["time"], data, end_time=55)
 
 sim = Isothermal_Monolith_Simulator()
 sim.add_axial_dim(0,5)         #cm
@@ -224,6 +225,16 @@ sim.set_reaction_info("r16", r16)
 sim.set_reaction_info("r17", r17)
 sim.set_reaction_info("r18", r18)
 
+for rxn in sim.model.arrhenius_rxns:
+    sim.model.A[rxn].set_value(1e10)
+    sim.model.E[rxn].set_value(100000)
+    sim.set_reaction_param_bounds(rxn, "A", bounds=(1e7,1e20))
+    sim.set_reaction_param_bounds(rxn, "E", bounds=(30000,200000))
+
+sim.model.A["r2r"].set_value(0)
+sim.model.E["r2r"].set_value(0)
+sim.fix_reaction("r2r")
+
 
 sim.build_constraints()
 sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
@@ -259,19 +270,19 @@ sim.set_const_BC_in_ppm("O2","A0","T0",6500)
 sim.set_const_BC_in_ppm("H2O","A0","T0",131905.812)
 
 # Fix all reactions for simulation mode only
-sim.fix_all_reactions()
+#sim.fix_all_reactions()
 
-sim.initialize_auto_scaling(scale_to=0.1)
-options={'print_user_options': 'yes',
-        'linear_solver': LinearSolverMethod.MA27,
-        'tol': 1e-8,
-        'acceptable_tol': 1e-8,
-        'compl_inf_tol': 1e-8,
-        'constr_viol_tol': 1e-8,
-        'max_iter': 3000,
-        'obj_scaling_factor': 1,
-        'diverging_iterates_tol': 1e50}
-sim.initialize_simulator(console_out=False, options=options)
+sim.auto_select_all_weight_factors()
+
+#sim.initialize_auto_scaling(scale_to=0.1)
+sim.initialize_auto_scaling()
+
+sim.initialize_simulator()
+
+sim.finalize_auto_scaling()
+
+sim.run_solver()
+
 
 sim.plot_vs_data("CO", "A0", "T0", 5, display_live=False)
 sim.plot_vs_data("NO", "A0", "T0", 5, display_live=False)
@@ -279,3 +290,8 @@ sim.plot_vs_data("HC", "A0", "T0", 5, display_live=False)
 sim.plot_vs_data("NH3", "A0", "T0", 5, display_live=False)
 sim.plot_vs_data("N2O", "A0", "T0", 5, display_live=False)
 sim.plot_vs_data("H2", "A0", "T0", 5, display_live=False)
+
+sim.print_results_of_breakthrough(["HC","CO","NO","NH3","N2O","H2","O2","H2O"],
+                                "A0", "T0", file_name=HC_name+"_lightoff.txt")
+sim.print_kinetic_parameter_info(file_name="toluene_params.txt")
+sim.save_model_state(file_name="toluene_model.json")
