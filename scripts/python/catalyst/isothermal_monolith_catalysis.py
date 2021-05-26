@@ -1929,7 +1929,7 @@ class Isothermal_Monolith_Simulator(object):
     #   # TODO: Fix autoscaling issues with different concentration units
     #           When using large concentration values (e.g., ppm instead of mol/L)
     #           the autoscaling feature tends to fail
-    def initialize_auto_scaling(self):
+    def initialize_auto_scaling(self, scale_to=1):
         for spec in self.model.gas_set:
             for age in self.model.age_set:
                 for temp in self.model.T_set:
@@ -1942,22 +1942,22 @@ class Isothermal_Monolith_Simulator(object):
         # set initial scaling factor to inverse of max values
         maxkey = max(self.model.Cb.get_values(), key=self.model.Cb.get_values().get)
         maxval = self.model.Cb[maxkey].value
-        self.model.scaling_factor.set_value(self.model.Cb, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.C, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.Cb, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.C, scale_to/maxval)
 
         # set scaling for surface species and sites
         if self.isSurfSpecSet == True:
             if self.isSitesSet == True:
                 maxkey = max(self.model.Smax.extract_values(), key=self.model.Smax.extract_values().get)
                 maxval = self.model.Smax[maxkey].value
-                self.model.scaling_factor.set_value(self.model.q, 1/maxval)
-                self.model.scaling_factor.set_value(self.model.S, 1/maxval)
+                self.model.scaling_factor.set_value(self.model.q, scale_to/maxval)
+                self.model.scaling_factor.set_value(self.model.S, scale_to/maxval)
             else:
                 maxkey = max(self.model.q.get_values(), key=self.model.q.get_values().get)
                 maxval = self.model.q[maxkey].value
                 if maxval < 1e-10:
                     maxval = 1
-                self.model.scaling_factor.set_value(self.model.q, 1/maxval)
+                self.model.scaling_factor.set_value(self.model.q, scale_to/maxval)
 
         # set scaling for reaction variables
         for r in self.model.arrhenius_rxns:
@@ -2004,7 +2004,7 @@ class Isothermal_Monolith_Simulator(object):
                 maxval = newval
         if maxval < 1e-5:
             maxval = 1e-5
-        self.model.scaling_factor.set_value(self.model.bulk_cons, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.bulk_cons, scale_to/maxval)
 
         # set scaling for pore constraints
         maxval = 0
@@ -2014,7 +2014,7 @@ class Isothermal_Monolith_Simulator(object):
                 maxval = newval
         if maxval < 1e-5:
             maxval = 1e-5
-        self.model.scaling_factor.set_value(self.model.pore_cons, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.pore_cons, scale_to/maxval)
 
         # set scaling for surf constraints
         if self.isSurfSpecSet == True:
@@ -2026,8 +2026,8 @@ class Isothermal_Monolith_Simulator(object):
                         maxval = newval
                 if maxval < 1e-2:
                     maxval = 1e-2
-                self.model.scaling_factor.set_value(self.model.site_cons, 1/maxval)
-                self.model.scaling_factor.set_value(self.model.surf_cons, 1/maxval)
+                self.model.scaling_factor.set_value(self.model.site_cons, scale_to/maxval)
+                self.model.scaling_factor.set_value(self.model.surf_cons, scale_to/maxval)
             else:
                 maxval = 0
                 for key in self.model.surf_cons:
@@ -2036,7 +2036,7 @@ class Isothermal_Monolith_Simulator(object):
                         maxval = newval
                 if maxval < 1e-2:
                     maxval = 1e-2
-                self.model.scaling_factor.set_value(self.model.surf_cons, 1/maxval)
+                self.model.scaling_factor.set_value(self.model.surf_cons, scale_to/maxval)
 
         # set scaling for derivative variables and constraints
         maxval = 0
@@ -2046,10 +2046,10 @@ class Isothermal_Monolith_Simulator(object):
                 maxval = newval
         if maxval < 1e-5:
             maxval = 1e-5
-        self.model.scaling_factor.set_value(self.model.dCb_dz_disc_eq, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dCb_dz, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dCb_dz_disc_eq, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dCb_dz, scale_to/maxval)
         if self.DiscType == "DiscretizationMethod.FiniteDifference":
-            self.model.scaling_factor.set_value(self.model.dCbdz_edge, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.dCbdz_edge, scale_to/maxval)
 
         maxval = 0
         for key in self.model.dCb_dt_disc_eq:
@@ -2058,10 +2058,10 @@ class Isothermal_Monolith_Simulator(object):
                 maxval = newval
         if maxval < 1e-5:
             maxval = 1e-5
-        self.model.scaling_factor.set_value(self.model.dCb_dt_disc_eq, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dCb_dt, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dC_dt_disc_eq, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dC_dt, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dCb_dt_disc_eq, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dCb_dt, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dC_dt_disc_eq, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dC_dt, scale_to/maxval)
 
         # surface and site constraints for derivatives
         if self.isSurfSpecSet == True:
@@ -2072,12 +2072,12 @@ class Isothermal_Monolith_Simulator(object):
                     maxval = newval
             if maxval < 1e-2:
                 maxval = 1e-2
-            self.model.scaling_factor.set_value(self.model.dq_dt_disc_eq, 1/maxval)
-            self.model.scaling_factor.set_value(self.model.dq_dt, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.dq_dt_disc_eq, scale_to/maxval)
+            self.model.scaling_factor.set_value(self.model.dq_dt, scale_to/maxval)
 
 
     # Function to finialize the scaling of system variables
-    def finalize_auto_scaling(self):
+    def finalize_auto_scaling(self, scale_to=1, obj_scale_to=1):
         if self.isInitialized == False:
             raise Exception("Error! Cannot automate final variable scaling if variables not initialized")
 
@@ -2093,9 +2093,9 @@ class Isothermal_Monolith_Simulator(object):
         if self.model.find_component('obj'):
             maxobj = value(self.model.obj)
             if maxobj >= 100:
-                self.model.scaling_factor.set_value(self.model.obj, 0.1 )
+                self.model.scaling_factor.set_value(self.model.obj, obj_scale_to )
             else:
-                self.model.scaling_factor.set_value(self.model.obj, 1/(maxobj) )
+                self.model.scaling_factor.set_value(self.model.obj, obj_scale_to/(maxobj) )
         else:
             if self.rescaleConstraint == False:
                 return
@@ -2104,8 +2104,8 @@ class Isothermal_Monolith_Simulator(object):
         #       NOT for the constraints though (these should not be rescaled)
         maxkey = max(self.model.Cb.get_values(), key=self.model.Cb.get_values().get)
         maxval = self.model.Cb[maxkey].value
-        self.model.scaling_factor.set_value(self.model.Cb, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.C, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.Cb, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.C, scale_to/maxval)
 
         # set scaling for surface species and sites
         if self.isSurfSpecSet == True:
@@ -2113,12 +2113,12 @@ class Isothermal_Monolith_Simulator(object):
             maxval = self.model.q[maxkey].value
             if maxval < 1e-10:
                 maxval = 1
-            self.model.scaling_factor.set_value(self.model.q, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.q, scale_to/maxval)
 
             if self.isSitesSet == True:
                 maxkey = max(self.model.S.get_values(), key=self.model.S.get_values().get)
                 maxval = self.model.S[maxkey].value
-                self.model.scaling_factor.set_value(self.model.S, 1/maxval)
+                self.model.scaling_factor.set_value(self.model.S, scale_to/maxval)
 
         # set scaling for derivative vars
         maxkey = max(self.model.dCb_dz.get_values(), key=self.model.dCb_dz.get_values().get)
@@ -2128,10 +2128,10 @@ class Isothermal_Monolith_Simulator(object):
             maxval = abs(self.model.dCb_dz[maxkey].value)
         else:
             maxval = abs(self.model.dCb_dz[minkey].value)
-        self.model.scaling_factor.set_value(self.model.dCb_dz, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dCb_dz_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dCb_dz, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dCb_dz_disc_eq, scale_to/maxval)
         if self.DiscType == "DiscretizationMethod.FiniteDifference":
-            self.model.scaling_factor.set_value(self.model.dCbdz_edge, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.dCbdz_edge, scale_to/maxval)
 
         maxkey = max(self.model.dCb_dt.get_values(), key=self.model.dCb_dt.get_values().get)
         minkey = min(self.model.dCb_dt.get_values(), key=self.model.dCb_dt.get_values().get)
@@ -2140,8 +2140,8 @@ class Isothermal_Monolith_Simulator(object):
             maxval = abs(self.model.dCb_dt[maxkey].value)
         else:
             maxval = abs(self.model.dCb_dt[minkey].value)
-        self.model.scaling_factor.set_value(self.model.dCb_dt, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dCb_dt_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dCb_dt, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dCb_dt_disc_eq, scale_to/maxval)
 
         maxkey = max(self.model.dC_dt.get_values(), key=self.model.dC_dt.get_values().get)
         minkey = min(self.model.dC_dt.get_values(), key=self.model.dC_dt.get_values().get)
@@ -2150,8 +2150,8 @@ class Isothermal_Monolith_Simulator(object):
             maxval = abs(self.model.dC_dt[maxkey].value)
         else:
             maxval = abs(self.model.dC_dt[minkey].value)
-        self.model.scaling_factor.set_value(self.model.dC_dt, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dC_dt_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dC_dt, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dC_dt_disc_eq, scale_to/maxval)
 
         if self.isSurfSpecSet == True:
             maxkey = max(self.model.dq_dt.get_values(), key=self.model.dq_dt.get_values().get)
@@ -2161,8 +2161,8 @@ class Isothermal_Monolith_Simulator(object):
                 maxval = abs(self.model.dq_dt[maxkey].value)
             else:
                 maxval = abs(self.model.dq_dt[minkey].value)
-            self.model.scaling_factor.set_value(self.model.dq_dt, 1/maxval)
-            self.model.scaling_factor.set_value(self.model.dq_dt_disc_eq, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.dq_dt, scale_to/maxval)
+            self.model.scaling_factor.set_value(self.model.dq_dt_disc_eq, scale_to/maxval)
 
 
         # Rescale the parameters just in case
@@ -2214,7 +2214,7 @@ class Isothermal_Monolith_Simulator(object):
                     maxval = newval
             if maxval < 1e-5:
                 maxval = 1e-5
-            self.model.scaling_factor.set_value(self.model.bulk_cons, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.bulk_cons, scale_to/maxval)
 
             # set scaling for pore constraints
             maxval = 0
@@ -2224,7 +2224,7 @@ class Isothermal_Monolith_Simulator(object):
                     maxval = newval
             if maxval < 1e-5:
                 maxval = 1e-5
-            self.model.scaling_factor.set_value(self.model.pore_cons, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.pore_cons, scale_to/maxval)
 
             # set scaling for surf constraints
             if self.isSurfSpecSet == True:
@@ -2236,8 +2236,8 @@ class Isothermal_Monolith_Simulator(object):
                             maxval = newval
                     if maxval < 1e-2:
                         maxval = 1e-2
-                    self.model.scaling_factor.set_value(self.model.site_cons, 1/maxval)
-                    self.model.scaling_factor.set_value(self.model.surf_cons, 1/maxval)
+                    self.model.scaling_factor.set_value(self.model.site_cons, scale_to/maxval)
+                    self.model.scaling_factor.set_value(self.model.surf_cons, scale_to/maxval)
                 else:
                     maxval = 0
                     for key in self.model.surf_cons:
@@ -2246,7 +2246,7 @@ class Isothermal_Monolith_Simulator(object):
                             maxval = newval
                     if maxval < 1e-2:
                         maxval = 1e-2
-                    self.model.scaling_factor.set_value(self.model.surf_cons, 1/maxval)
+                    self.model.scaling_factor.set_value(self.model.surf_cons, scale_to/maxval)
 
 
 

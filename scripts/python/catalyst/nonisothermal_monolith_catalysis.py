@@ -633,17 +633,17 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             self.heats_list["dHrxn"][r] = False
 
     # Override 'initialize_auto_scaling'
-    def initialize_auto_scaling(self):
-        Isothermal_Monolith_Simulator.initialize_auto_scaling(self)
+    def initialize_auto_scaling(self, scale_to=1):
+        Isothermal_Monolith_Simulator.initialize_auto_scaling(self, scale_to)
         if self.isBoundaryTempSet == False:
             raise Exception("Error! Must specify boundary conditions for temperature before attempting scaling")
 
         # set initial scaling factor to inverse of max values
         maxkey = max(self.model.T.get_values(), key=self.model.T.get_values().get)
         maxval = self.model.T[maxkey].value
-        self.model.scaling_factor.set_value(self.model.T, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.Tc, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.Tw, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.T, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.Tc, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.Tw, scale_to/maxval)
 
         # set initial scaling factors for heats
         self.model.scaling_factor.set_value(self.model.hc, 1/self.model.hc.value)
@@ -665,7 +665,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                 maxval = newval
         if maxval < 1e-1:
             maxval = 1e-1
-        self.model.scaling_factor.set_value(self.model.gas_energy, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.gas_energy, scale_to/maxval)
 
         # set scaling for solid energy constraints
         maxval = 0
@@ -675,7 +675,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                 maxval = newval
         if maxval < 1e-1:
             maxval = 1e-1
-        self.model.scaling_factor.set_value(self.model.solid_energy, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.solid_energy, scale_to/maxval)
 
         # set scaling for wall energy constraints
         maxval = 0
@@ -685,7 +685,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                 maxval = newval
         if maxval < 1e-1:
             maxval = 1e-1
-        self.model.scaling_factor.set_value(self.model.wall_energy, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.wall_energy, scale_to/maxval)
 
         # set scaling for derivative variables and constraints
         maxval = 0
@@ -695,10 +695,10 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                 maxval = newval
         if maxval < 1e-1:
             maxval = 1e-1
-        self.model.scaling_factor.set_value(self.model.dT_dz_disc_eq, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dT_dz, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dT_dz_disc_eq, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dT_dz, scale_to/maxval)
         if self.DiscType == "DiscretizationMethod.FiniteDifference":
-            self.model.scaling_factor.set_value(self.model.dTdz_edge, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.dTdz_edge, scale_to/maxval)
 
         maxval = 0
         for key in self.model.d2Tc_dz2_disc_eq:
@@ -707,11 +707,11 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                 maxval = newval
         if maxval < 1e-1:
             maxval = 1e-1
-        self.model.scaling_factor.set_value(self.model.d2Tc_dz2_disc_eq, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.d2Tc_dz2, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tc_dz2_disc_eq, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tc_dz2, scale_to/maxval)
         if self.DiscType == "DiscretizationMethod.FiniteDifference":
-            self.model.scaling_factor.set_value(self.model.d2Tcdz2_back, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.d2Tcdz2_front, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.d2Tcdz2_back, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tcdz2_front, scale_to/maxval)
 
         maxval = 0
         for key in self.model.d2Tw_dz2_disc_eq:
@@ -720,11 +720,11 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                 maxval = newval
         if maxval < 1e-1:
             maxval = 1e-1
-        self.model.scaling_factor.set_value(self.model.d2Tw_dz2_disc_eq, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.d2Tw_dz2, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tw_dz2_disc_eq, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tw_dz2, scale_to/maxval)
         if self.DiscType == "DiscretizationMethod.FiniteDifference":
-            self.model.scaling_factor.set_value(self.model.d2Twdz2_back, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.d2Twdz2_front, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.d2Twdz2_back, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Twdz2_front, scale_to/maxval)
 
         maxval = 0
         for key in self.model.dT_dt_disc_eq:
@@ -733,16 +733,16 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                 maxval = newval
         if maxval < 1e-1:
             maxval = 1e-1
-        self.model.scaling_factor.set_value(self.model.dT_dt_disc_eq, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dT_dt, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dTc_dt_disc_eq, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dTc_dt, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dTw_dt_disc_eq, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dTw_dt, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dT_dt_disc_eq, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dT_dt, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dTc_dt_disc_eq, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dTc_dt, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dTw_dt_disc_eq, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dTw_dt, scale_to/maxval)
 
     # Override 'finalize_auto_scaling'
-    def finalize_auto_scaling(self):
-        Isothermal_Monolith_Simulator.finalize_auto_scaling(self)
+    def finalize_auto_scaling(self, scale_to=1, obj_scale_to=1):
+        Isothermal_Monolith_Simulator.finalize_auto_scaling(self, scale_to, obj_scale_to)
 
         # # TODO: FIX THIS LINE
         if self.model.find_component('obj'):
@@ -753,9 +753,9 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         #       NOT for the constraints though (these should not be rescaled)
         maxkey = max(self.model.T.get_values(), key=self.model.T.get_values().get)
         maxval = self.model.T[maxkey].value
-        self.model.scaling_factor.set_value(self.model.T, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.Tc, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.Tw, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.T, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.Tc, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.Tw, scale_to/maxval)
 
         # set scaling for derivative vars
         maxkey = max(self.model.dT_dz.get_values(), key=self.model.dT_dz.get_values().get)
@@ -767,10 +767,10 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             maxval = abs(self.model.dT_dz[minkey].value)
         if maxval < 1e-1:
             maxval = 1e-1
-        self.model.scaling_factor.set_value(self.model.dT_dz, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dT_dz_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dT_dz, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dT_dz_disc_eq, scale_to/maxval)
         if self.DiscType == "DiscretizationMethod.FiniteDifference":
-            self.model.scaling_factor.set_value(self.model.dTdz_edge, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.dTdz_edge, scale_to/maxval)
 
         maxkey = max(self.model.d2Tc_dz2.get_values(), key=self.model.d2Tc_dz2.get_values().get)
         minkey = min(self.model.d2Tc_dz2.get_values(), key=self.model.d2Tc_dz2.get_values().get)
@@ -781,11 +781,11 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             maxval = abs(self.model.d2Tc_dz2[minkey].value)
         if maxval < 1e-1:
             maxval = 1e-1
-        self.model.scaling_factor.set_value(self.model.d2Tc_dz2, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.d2Tc_dz2_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tc_dz2, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tc_dz2_disc_eq, scale_to/maxval)
         if self.DiscType == "DiscretizationMethod.FiniteDifference":
-            self.model.scaling_factor.set_value(self.model.d2Tcdz2_back, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.d2Tcdz2_front, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.d2Tcdz2_back, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tcdz2_front, scale_to/maxval)
 
         maxkey = max(self.model.d2Tw_dz2.get_values(), key=self.model.d2Tw_dz2.get_values().get)
         minkey = min(self.model.d2Tw_dz2.get_values(), key=self.model.d2Tw_dz2.get_values().get)
@@ -796,11 +796,11 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             maxval = abs(self.model.d2Tw_dz2[minkey].value)
         if maxval < 1e-1:
             maxval = 1e-1
-        self.model.scaling_factor.set_value(self.model.d2Tw_dz2, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.d2Tw_dz2_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tw_dz2, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Tw_dz2_disc_eq, scale_to/maxval)
         if self.DiscType == "DiscretizationMethod.FiniteDifference":
-            self.model.scaling_factor.set_value(self.model.d2Twdz2_back, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.d2Twdz2_front, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.d2Twdz2_back, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.d2Twdz2_front, scale_to/maxval)
 
         maxkey = max(self.model.dT_dt.get_values(), key=self.model.dT_dt.get_values().get)
         minkey = min(self.model.dT_dt.get_values(), key=self.model.dT_dt.get_values().get)
@@ -811,8 +811,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             maxval = abs(self.model.dT_dt[minkey].value)
         if maxval < 1e-1:
             maxval = 1e-1
-        self.model.scaling_factor.set_value(self.model.dT_dt, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dT_dt_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dT_dt, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dT_dt_disc_eq, scale_to/maxval)
 
         maxkey = max(self.model.dTc_dt.get_values(), key=self.model.dTc_dt.get_values().get)
         minkey = min(self.model.dTc_dt.get_values(), key=self.model.dTc_dt.get_values().get)
@@ -823,8 +823,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             maxval = abs(self.model.dTc_dt[minkey].value)
         if maxval < 1e-1:
             maxval = 1e-1
-        self.model.scaling_factor.set_value(self.model.dTc_dt, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dTc_dt_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dTc_dt, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dTc_dt_disc_eq, scale_to/maxval)
 
         maxkey = max(self.model.dTw_dt.get_values(), key=self.model.dTw_dt.get_values().get)
         minkey = min(self.model.dTw_dt.get_values(), key=self.model.dTw_dt.get_values().get)
@@ -835,8 +835,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             maxval = abs(self.model.dTw_dt[minkey].value)
         if maxval < 1e-1:
             maxval = 1e-1
-        self.model.scaling_factor.set_value(self.model.dTw_dt, 1/maxval)
-        self.model.scaling_factor.set_value(self.model.dTw_dt_disc_eq, 1/maxval)
+        self.model.scaling_factor.set_value(self.model.dTw_dt, scale_to/maxval)
+        self.model.scaling_factor.set_value(self.model.dTw_dt_disc_eq, scale_to/maxval)
 
         # reset scaling factors for heats
         self.model.scaling_factor.set_value(self.model.Kc, 1/self.model.Kc.value)
@@ -860,7 +860,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                     maxval = newval
             if maxval < 1e-1:
                 maxval = 1e-1
-            self.model.scaling_factor.set_value(self.model.gas_energy, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.gas_energy, scale_to/maxval)
 
             # set scaling for solid energy constraints
             maxval = 0
@@ -870,7 +870,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                     maxval = newval
             if maxval < 1e-1:
                 maxval = 1e-1
-            self.model.scaling_factor.set_value(self.model.solid_energy, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.solid_energy, scale_to/maxval)
 
             # set scaling for wall energy constraints
             maxval = 0
@@ -880,7 +880,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
                     maxval = newval
             if maxval < 1e-1:
                 maxval = 1e-1
-            self.model.scaling_factor.set_value(self.model.wall_energy, 1/maxval)
+            self.model.scaling_factor.set_value(self.model.wall_energy, scale_to/maxval)
 
 
     # Override 'initialize_simulator'

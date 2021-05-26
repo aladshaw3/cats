@@ -19,7 +19,7 @@ z = 0
 data = naively_read_data_file("inputfiles/toluene_lightoff_history.txt",factor=10)
 temp_data = naively_read_data_file("inputfiles/toluene_temp_history.txt",factor=10)
 
-time_list = time_point_selector(data["time"], data)
+time_list = time_point_selector(data["time"], data, end_time=55)
 
 sim = Isothermal_Monolith_Simulator()
 sim.add_axial_dim(0,5)         #cm
@@ -261,7 +261,7 @@ sim.set_const_BC_in_ppm("H2O","A0","T0",131905.812)
 # Fix all reactions for simulation mode only
 sim.fix_all_reactions()
 
-sim.initialize_auto_scaling()
+sim.initialize_auto_scaling(scale_to=0.1)
 options={'print_user_options': 'yes',
         'linear_solver': LinearSolverMethod.MA27,
         'tol': 1e-8,
