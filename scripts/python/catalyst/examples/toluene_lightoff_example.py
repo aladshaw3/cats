@@ -8,7 +8,8 @@ from catalyst.isothermal_monolith_catalysis import *
 #       convergence becomes problematic
 
 # # TODO: Add cut-off time in time point selector
-# # TODO: Add methods to give temperature info via data file 
+# # TODO: Add methods to give temperature info via data file
+# # TODO: Add a "cut-off" in the solver/initializer for very high temps or fast kinetics 
 
 # Give x, y, z for the HC (CxHyOz)
 x = 7
