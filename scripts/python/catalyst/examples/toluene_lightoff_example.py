@@ -18,7 +18,6 @@ z = 0
 data = naively_read_data_file("inputfiles/"+HC_name+"_lightoff_history.txt",factor=10)
 temp_data = naively_read_data_file("inputfiles/"+HC_name+"_temp_history.txt",factor=10)
 
-# # TODO: Add unit test for time_point_selector + options
 time_list = time_point_selector(data["time"], data)
 #time_list = time_point_selector(data["time"], data, end_time=55)
 
@@ -27,6 +26,7 @@ sim.add_axial_dim(0,5)         #cm
 sim.add_axial_dataset(5)
 
 sim.add_temporal_dim(point_list=time_list)
+#sim.add_temporal_dim(0,102)
 sim.add_temporal_dataset(data["time"])
 
 sim.add_age_set("A0")
@@ -241,10 +241,7 @@ sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
                     tstep=90,elems=10,colpoints=2)
 
 # Setup temperature information from data
-
-# Sample
-sim.set_isothermal_temp("A0","T0",380)
-sim.set_temperature_ramp("A0", "T0", 14, 92, 825)
+sim.set_temperature_from_data("A0", "T0", temp_data, {"T_out": 5, "T_in": 0, "T_mid": 2.5})
 
 # Setup reaction zones for each reaction
 #sim.set_reaction_zone("r4", (2.5, 5))
@@ -270,18 +267,17 @@ sim.set_const_BC_in_ppm("O2","A0","T0",6500)
 sim.set_const_BC_in_ppm("H2O","A0","T0",131905.812)
 
 # Fix all reactions for simulation mode only
-#sim.fix_all_reactions()
+sim.fix_all_reactions()
 
 sim.auto_select_all_weight_factors()
 
-#sim.initialize_auto_scaling(scale_to=0.1)
 sim.initialize_auto_scaling()
 
 sim.initialize_simulator()
 
-sim.finalize_auto_scaling()
+#sim.finalize_auto_scaling()
 
-sim.run_solver()
+#sim.run_solver()
 
 
 sim.plot_vs_data("CO", "A0", "T0", 5, display_live=False)
@@ -292,6 +288,6 @@ sim.plot_vs_data("N2O", "A0", "T0", 5, display_live=False)
 sim.plot_vs_data("H2", "A0", "T0", 5, display_live=False)
 
 sim.print_results_of_breakthrough(["HC","CO","NO","NH3","N2O","H2","O2","H2O"],
-                                "A0", "T0", file_name=HC_name+"_lightoff.txt")
-sim.print_kinetic_parameter_info(file_name="toluene_params.txt")
-sim.save_model_state(file_name="toluene_model.json")
+                                "A0", "T0", file_name=HC_name+"_lightoff.txt", include_temp=True)
+#sim.print_kinetic_parameter_info(file_name="toluene_params.txt")
+#sim.save_model_state(file_name="toluene_model.json")

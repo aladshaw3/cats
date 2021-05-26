@@ -216,6 +216,14 @@ class TestIsothermalCatalystInputOutputOptions():
         assert path.exists("output/NH3_at_timesPlots.png") == True
         assert path.exists("output/q1_at_timesPlots.png") == True
 
+    @pytest.mark.unit
+    def test_custom_scaling(self, isothermal_io_object):
+        test = isothermal_io_object
+
+        test.auto_select_all_weight_factors()
+
+        assert pytest.approx(151515.15151515152, rel=1e-3) == test.model.w["NH3","Unaged","250C"].value
+
     @pytest.mark.solver
     def test_optimization(self, isothermal_io_object):
         test = isothermal_io_object

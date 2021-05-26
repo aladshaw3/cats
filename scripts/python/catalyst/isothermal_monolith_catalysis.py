@@ -1671,6 +1671,107 @@ class Isothermal_Monolith_Simulator(object):
         self.isVelocityRecalculated = False
         self.isIsothermalTempSet = True
 
+    # Function to set isothermal temperature via data
+    #       This function will attempt to setup temperature information via
+    #       a set of data in the given data_dict for a specific catalyst
+    #       "age" and "temp" run. You can read in temperature data via the
+    #       'naively_read_data_file' function and return data as lists.
+    #       Then, the data dictionary will hold the time stamps and
+    #       temperature data at specified locations. This dictionary can
+    #       come directly from the read method, but then use must also
+    #       provide a 'key_loc_pairs' dictionary to decode the names of
+    #       temperatures from the files and know what location they
+    #       belong to
+    def set_temperature_from_data(self, age, temp, data_dict, key_loc_pairs):
+        if type(data_dict) is not dict:
+            raise Exception("Error! Must specify temperature information using a formatted dictionary. "
+                            +str(data_dict)+" given in not a dict object")
+        all_lower_keys = []
+        for item in data_dict:
+            all_lower_keys.append(str(item).lower())
+        time_key = ""
+        for key in all_lower_keys:
+            if "time" == key:
+                time_key = key
+                break
+        if time_key == "":
+            raise Exception("Error! data_dict must contain a 'time' key to a list of time stamps")
+        for item in key_loc_pairs:
+            if item not in data_dict.keys():
+                raise Exception("Error! 'key_loc_pairs' must be a subset of the same keys in 'data_dict'")
+
+        key_loc_pairs = dict(sorted(key_loc_pairs.items(), key=lambda item: item[1]))
+
+        # Embedded helper function for setting up temperatures
+        def _set_temperature(model, age, temp, time, data_index, data_dict, key_loc_pairs):
+            slope = {}
+            i=0
+            current_key = ""
+            previous_key = ""
+            key_list = []
+            for key in key_loc_pairs:
+                key_list.append(key)
+                current_key = key
+                if i==0:
+                    slope[key] = 0
+                    previous_key = key
+                else:
+                    slope[current_key] = (data_dict[current_key][data_index] - data_dict[previous_key][data_index])/(key_loc_pairs[current_key] - key_loc_pairs[previous_key])
+                i+=1
+                previous_key = current_key
+
+            key_id=0
+            key_id_old=0
+            loc_id=0
+            for loc in model.z:
+                if loc <= key_loc_pairs[key_list[key_id]]:
+                    pass
+                else:
+                    if key_id != -1:
+                        key_id_old = key_id
+                        key_id+=1
+                    if key_id < len(key_list):
+                        key_id=key_id
+                    else:
+                        key_id=-1
+                loc_id+=1
+
+                if loc <= key_loc_pairs[key_list[0]]:
+                    model.T[age,temp,loc,time].set_value(data_dict[key_list[0]][data_index])
+                elif loc >= key_loc_pairs[key_list[-1]]:
+                    model.T[age,temp,loc,time].set_value(data_dict[key_list[-1]][data_index])
+                else:
+                    Tnew = slope[key_list[key_id]]*(loc - key_loc_pairs[key_list[key_id_old]]) + data_dict[key_list[key_id_old]][data_index]
+                    model.T[age,temp,loc,time].set_value(Tnew)
+
+            #End loc loop
+
+
+
+        data_index = 0
+        for time in self.model.t:
+            if time == self.model.t.first():
+                # Setup initial data
+                _set_temperature(self.model, age, temp, time, data_index, data_dict, key_loc_pairs)
+            else:
+                if time <= data_dict["time"][data_index]:
+                    pass
+                else:
+                    if data_index != -1:
+                        data_index+=1
+                    if data_index < len(data_dict["time"]):
+                        data_index=data_index
+                    else:
+                        data_index=-1
+
+                # Setup current data
+                # # TODO: Linearly interpolate in time as well???
+                _set_temperature(self.model, age, temp, time, data_index, data_dict, key_loc_pairs)
+
+        #End for loop over all model time
+        self.isVelocityRecalculated = False
+        self.isIsothermalTempSet = True
+
     # Function to define reaction 'zones'
     #       By default, all reactions occur in all zones. Users can
     #       utilize this function to specify if a particular reaction
