@@ -9,7 +9,7 @@ from catalyst.isothermal_monolith_catalysis import *
 
 # # TODO: Add cut-off time in time point selector
 # # TODO: Add methods to give temperature info via data file
-# # TODO: Add a "cut-off" in the solver/initializer for very high temps or fast kinetics 
+# # TODO: Add a "cut-off" in the solver/initializer for very high temps or fast kinetics
 
 # Give x, y, z for the HC (CxHyOz)
 x = 7
@@ -271,8 +271,11 @@ options={'print_user_options': 'yes',
         'max_iter': 3000,
         'obj_scaling_factor': 1,
         'diverging_iterates_tol': 1e50}
-sim.initialize_simulator(console_out=True, options=options)
+sim.initialize_simulator(console_out=False, options=options)
 
-sim.plot_vs_data("CO", "A0", "T0", 5, display_live=True)
-sim.plot_vs_data("NO", "A0", "T0", 5, display_live=True)
-sim.plot_vs_data("HC", "A0", "T0", 5, display_live=True)
+sim.plot_vs_data("CO", "A0", "T0", 5, display_live=False)
+sim.plot_vs_data("NO", "A0", "T0", 5, display_live=False)
+sim.plot_vs_data("HC", "A0", "T0", 5, display_live=False)
+sim.plot_vs_data("NH3", "A0", "T0", 5, display_live=False)
+sim.plot_vs_data("N2O", "A0", "T0", 5, display_live=False)
+sim.plot_vs_data("H2", "A0", "T0", 5, display_live=False)

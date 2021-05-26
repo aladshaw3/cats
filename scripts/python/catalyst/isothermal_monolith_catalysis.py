@@ -3597,6 +3597,7 @@ class Isothermal_Monolith_Simulator(object):
                     self.isBoundarySet[spec][age][temp] = True
 
         self.isInitialized = True
+        self.isIsothermalTempSet = True
 
         self.load_time = (TIME.time() - self.load_time)
         print("============ Loading Completed in "+str(self.load_time)+" (s) ============\n")
