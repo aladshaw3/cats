@@ -1746,9 +1746,12 @@ class Isothermal_Monolith_Simulator(object):
 
             #End loc loop
 
-
-
+        temp_dict = {}
+        for key in key_loc_pairs:
+            temp_dict[key] = [0]
         data_index = 0
+        time_old = self.model.t.first()
+        data_index_old = 0
         for time in self.model.t:
             if time == self.model.t.first():
                 # Setup initial data
@@ -1758,6 +1761,7 @@ class Isothermal_Monolith_Simulator(object):
                     pass
                 else:
                     if data_index != -1:
+                        data_index_old = data_index
                         data_index+=1
                     if data_index < len(data_dict["time"]):
                         data_index=data_index
@@ -1765,8 +1769,14 @@ class Isothermal_Monolith_Simulator(object):
                         data_index=-1
 
                 # Setup current data
-                # # TODO: Linearly interpolate in time as well???
+                # # TODO: See if we can make this smoother 
+                for key in temp_dict:
+                    #Tnew = (data_dict[key][data_index]-data_dict[key][data_index_old])/(data_dict["time"][data_index]-data_dict["time"][data_index_old])*(time - time_old) + data_dict[key][data_index_old]
+                    Tnew = data_dict[key][data_index]*(0.5)+data_dict[key][data_index_old]*(0.5)
+                    temp_dict[key][0] = Tnew
                 _set_temperature(self.model, age, temp, time, data_index, data_dict, key_loc_pairs)
+                #_set_temperature(self.model, age, temp, time, 0, temp_dict, key_loc_pairs)
+            time_old = time
 
         #End for loop over all model time
         self.isVelocityRecalculated = False
