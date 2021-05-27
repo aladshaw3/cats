@@ -24,7 +24,7 @@ sim.add_axial_dim(0,5)         #cm
 sim.add_axial_dataset(5)
 
 sim.add_temporal_dim(point_list=time_list)
-#sim.add_temporal_dim(50,152)
+#sim.add_temporal_dim(50,122)
 sim.add_temporal_dataset(data["time"])
 
 sim.add_age_set("A0")

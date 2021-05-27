@@ -274,6 +274,27 @@ class TestIsothermalCatalystInputOutputOptions():
         test = isothermal_io_object
 
         temp_data = naively_read_data_file("sample_tempinput_data.txt",factor=1)
+        assert len(temp_data["time"]) == 14
+        assert "T_in" in temp_data.keys()
+        assert "T_mid" in temp_data.keys()
+        assert "T_out" in temp_data.keys()
+
+        test.set_temperature_from_data("Unaged", "250C", temp_data, {"T_in": 0, "T_mid": 2.5, "T_out": 5})
+
+        assert pytest.approx(523.15, rel=1e-3) == test.model.T["Unaged","250C",0,0].value
+        assert pytest.approx(523.15, rel=1e-3) == test.model.T["Unaged","250C",1,0].value
+        assert pytest.approx(523.15, rel=1e-3) == test.model.T["Unaged","250C",3,0].value
+        assert pytest.approx(523.15, rel=1e-3) == test.model.T["Unaged","250C",5,0].value
+
+        assert pytest.approx(537.15, rel=1e-3) == test.model.T["Unaged","250C",0,9.75].value
+        assert pytest.approx(535.9, rel=1e-3) == test.model.T["Unaged","250C",1,9.75].value
+        assert pytest.approx(533.9, rel=1e-3) == test.model.T["Unaged","250C",3,9.75].value
+        assert pytest.approx(532.15, rel=1e-3) == test.model.T["Unaged","250C",5,9.75].value
+
+        assert pytest.approx(576.9, rel=1e-3) == test.model.T["Unaged","250C",0,17.75].value
+        assert pytest.approx(575.9, rel=1e-3) == test.model.T["Unaged","250C",1,17.75].value
+        assert pytest.approx(573.9, rel=1e-3) == test.model.T["Unaged","250C",3,17.75].value
+        assert pytest.approx(571.9, rel=1e-3) == test.model.T["Unaged","250C",5,17.75].value
 
     @pytest.mark.unit
     def test_load_full_model(self):

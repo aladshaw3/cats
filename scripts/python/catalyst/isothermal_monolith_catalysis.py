@@ -1765,10 +1765,10 @@ class Isothermal_Monolith_Simulator(object):
                     data_index_old=-2
                     break
 
-            if time == self.model.t.first() and data_index == data_index_old:
+            if data_index == data_index_old:
                 # Setup initial data
                 _set_temperature(self.model, age, temp, time, data_index, data_dict, key_loc_pairs)
-            elif time == self.model.t.last() or time > data_dict["time"][-1]:
+            elif time > data_dict["time"][-1]:
                 # Setup final data
                 _set_temperature(self.model, age, temp, time, -1, data_dict, key_loc_pairs)
             else:
