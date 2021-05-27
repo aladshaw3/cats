@@ -270,6 +270,12 @@ class TestIsothermalCatalystInputOutputOptions():
         assert path.exists("output/sample_model.json") == True
 
     @pytest.mark.unit
+    def test_read_temperature_data(self, isothermal_io_object):
+        test = isothermal_io_object
+
+        temp_data = naively_read_data_file("sample_tempinput_data.txt",factor=1)
+
+    @pytest.mark.unit
     def test_load_full_model(self):
         test = Isothermal_Monolith_Simulator()
         test.load_model_full('output/sample_model.json')
