@@ -223,18 +223,6 @@ sim.set_reaction_info("r16", r16)
 sim.set_reaction_info("r17", r17)
 sim.set_reaction_info("r18", r18)
 
-'''
-for rxn in sim.model.arrhenius_rxns:
-    sim.model.A[rxn].set_value(1e10)
-    sim.model.E[rxn].set_value(100000)
-    sim.set_reaction_param_bounds(rxn, "A", bounds=(1e7,1e20))
-    sim.set_reaction_param_bounds(rxn, "E", bounds=(30000,200000))
-
-sim.model.A["r2r"].set_value(0)
-sim.model.E["r2r"].set_value(0)
-sim.fix_reaction("r2r")
-'''
-
 sim.build_constraints()
 sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
                     tstep=90,elems=10,colpoints=2)
@@ -243,7 +231,12 @@ sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
 sim.set_temperature_from_data("A0", "T0", temp_data, {"T_in": 0, "T_mid": 2.5, "T_out": 5})
 
 # Setup reaction zones for each reaction
-#sim.set_reaction_zone("r4", (2.5, 5))
+#   These are just guesses for now (Assuming the co-reactions between CO and NO
+#       only occur on Pd/Rh zone)
+sim.set_reaction_zone("r4", (2.5, 5))
+sim.set_reaction_zone("r5", (2.5, 5))
+sim.set_reaction_zone("r8", (2.5, 5))
+sim.set_reaction_zone("r9", (2.5, 5))
 
 # ICs in ppm
 sim.set_const_IC_in_ppm("HC","A0","T0",3000/x)
@@ -267,16 +260,17 @@ sim.set_const_BC_in_ppm("H2O","A0","T0",131905.812)
 
 # Fix all reactions for simulation mode only
 #sim.fix_all_reactions()
+for rxn in sim.model.arrhenius_rxns:
+    sim.set_reaction_param_bounds(rxn, "A", factor=0.5)
+    sim.set_reaction_param_bounds(rxn, "E", factor=0.5)
 
 sim.auto_select_all_weight_factors()
 
 sim.initialize_auto_scaling()
-
 sim.initialize_simulator()
 
-#sim.finalize_auto_scaling()
-
-#sim.run_solver()
+sim.finalize_auto_scaling()
+sim.run_solver()
 
 
 sim.plot_vs_data("CO", "A0", "T0", 5, display_live=False)
@@ -288,5 +282,5 @@ sim.plot_vs_data("H2", "A0", "T0", 5, display_live=False)
 
 sim.print_results_of_breakthrough(["HC","CO","NO","NH3","N2O","H2","O2","H2O"],
                                 "A0", "T0", file_name=HC_name+"_lightoff.txt", include_temp=True)
-#sim.print_kinetic_parameter_info(file_name="toluene_params.txt")
-#sim.save_model_state(file_name="toluene_model.json")
+sim.print_kinetic_parameter_info(file_name=HC_name+"_params.txt")
+sim.save_model_state(file_name=HC_name+"_model.json")
