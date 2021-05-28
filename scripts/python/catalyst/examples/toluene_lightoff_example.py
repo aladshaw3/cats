@@ -68,7 +68,7 @@ sim.set_bulk_porosity(0.3309)
 sim.set_washcoat_porosity(0.4)
 sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(500)
-sim.set_cell_density(62)
+sim.set_cell_density(62) #400 cpsi 
 
 # CO + 0.5 O2 --> CO2
 r1 = {"parameters": {"A": 2.05E+18, "E": 110521.4141},

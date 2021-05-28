@@ -194,6 +194,7 @@ class Isothermal_Monolith_Simulator(object):
         self.isDataAgeSet = False
         self.isDataTempSet = False
         self.isDataGasSpecSet = False
+        self.isDataSurfSpecSet = False
         self.isDataValuesSet = {}
         self.isIsothermalTempSet = False
 
@@ -517,6 +518,60 @@ class Isothermal_Monolith_Simulator(object):
                                 +str(surf_species)+" given is not a string object")
         self.isSurfSpecSet = True
         self.model.dq_dt = DerivativeVar(self.model.q, wrt=self.model.t, initialize=0, units=units.mol/units.L/units.min)
+
+    # # TODO: Modify model save/load to accommodate new infor
+    # Add surface species for data observations and a weight factor 'wq' to be used for
+    #   changing the behavior of the objective function
+    def add_data_surface_species(self, surface_species):
+        if self.isDataTimesSet == False or self.isDataBoundsSet == False:
+            raise Exception("Error! Cannot specify surface species until the data time and spatial observations are set")
+        if self.isDataTempSet == False or self.isDataAgeSet == False:
+            raise Exception("Error! Cannot specify surface species until the data temperatures and ages are set")
+        if self.isSurfSpecSet == False:
+            raise Exception("Error! Cannot specify data surface species until the simulation surface species are set")
+
+        if type(surface_species) is list:
+            self.model.data_surface_set = Set(initialize=surface_species)
+            self.model.q_data = Param(self.model.data_surface_set, self.model.data_age_set,
+                            self.model.data_T_set, self.model.z_data, self.model.t_data,
+                            within=Reals, mutable=True,
+                            initialize=1e-20, units=units.mol/units.L)
+            self.model.q_data_full = Param(self.model.data_surface_set, self.model.data_age_set,
+                            self.model.data_T_set, self.model.z_data, self.model.t_data_full,
+                            within=Reals, mutable=True,
+                            initialize=1e-20, units=units.mol/units.L)
+            self.model.wq = Param(self.model.data_surface_set, self.model.data_age_set,
+                            self.model.data_T_set,
+                            within=NonNegativeReals, mutable=True,
+                            initialize=1, units=None)
+        else:
+            if isinstance(surface_species, str):
+                self.model.data_surface_set = Set(initialize=[surface_species])
+                self.model.q_data = Param(self.model.data_surface_set, self.model.data_age_set,
+                                self.model.data_T_set, self.model.z_data, self.model.t_data,
+                                within=Reals, mutable=True,
+                                initialize=1e-20, units=units.mol/units.L)
+                self.model.q_data_full = Param(self.model.data_surface_set, self.model.data_age_set,
+                                self.model.data_T_set, self.model.z_data, self.model.t_data_full,
+                                within=Reals, mutable=True,
+                                initialize=1e-20, units=units.mol/units.L)
+                self.model.wq = Param(self.model.data_surface_set, self.model.data_age_set,
+                                self.model.data_T_set,
+                                within=NonNegativeReals, mutable=True,
+                                initialize=1, units=None)
+            else:
+                raise Exception("Error! Surface species must be a string. "
+                                +str(gas_species)+" given is not a string object")
+        # Check to see if each temp in the data set has a cooresponding simulation set
+        for spec in self.model.data_surface_set:
+            self.isDataValuesSet[spec] = {}
+            if spec not in self.model.surf_set:
+                raise Exception("Error! Data surface species must be a sub-set of simulation species. "
+                                +str(spec)+ " given is not in model.surface_set")
+            for loc in self.model.z_data:
+                self.isDataValuesSet[spec][loc] = False
+
+        self.isDataSurfSpecSet = True
 
     # Add surface sites (optional, but necessary when using surface species) [Must be strings]
     #       Currently expects surface concentrations in mol/L
@@ -1047,26 +1102,43 @@ class Isothermal_Monolith_Simulator(object):
 
     # Function to define weight factors to be used in the objective function
     def set_weight_factor(self, spec, age, temp, value):
-        if self.isDataGasSpecSet == False:
+        if self.isDataGasSpecSet == False and self.isDataSurfSpecSet == False:
             raise Exception("Error! Cannot specify weight factors prior to setting up the data")
 
-        self.model.w[spec,age,temp].set_value(value)
+        if self.isDataGasSpecSet == True:
+            if spec in self.model.data_gas_set:
+                self.model.w[spec,age,temp].set_value(value)
+        if self.isDataSurfSpecSet == True:
+            if spec in self.model.data_surface_set:
+                self.model.wq[spec,age,temp].set_value(value)
 
     # Function to automatically select weight factors based on data
     def auto_select_weight_factor(self, spec, age, temp):
         maxval = 1e-20
         for z in self.model.z_data:
             for t in self.model.t_data:
-                if self.model.Cb_data[spec,age,temp,z,t].value > maxval:
-                    maxval = self.model.Cb_data[spec,age,temp,z,t].value
+                if self.isDataGasSpecSet == True:
+                    if spec in self.model.data_gas_set:
+                        if self.model.Cb_data[spec,age,temp,z,t].value > maxval:
+                            maxval = self.model.Cb_data[spec,age,temp,z,t].value
+                if self.isDataSurfSpecSet == True:
+                    if spec in self.model.data_surface_set:
+                        if self.model.q_data[spec,age,temp,z,t].value > maxval:
+                            maxval = self.model.q_data[spec,age,temp,z,t].value
         self.set_weight_factor(spec, age, temp, 1/maxval)
 
     # Function to iterate through all spec, age, temp to get all weight factors
     def auto_select_all_weight_factors(self):
-        for spec in self.model.data_gas_set:
-            for age in self.model.data_age_set:
-                for temp in self.model.data_T_set:
-                    self.auto_select_weight_factor(spec, age, temp)
+        if self.isDataGasSpecSet == True:
+            for spec in self.model.data_gas_set:
+                for age in self.model.data_age_set:
+                    for temp in self.model.data_T_set:
+                        self.auto_select_weight_factor(spec, age, temp)
+        if self.isDataSurfSpecSet == True:
+            for spec in self.model.data_surface_set:
+                for age in self.model.data_age_set:
+                    for temp in self.model.data_T_set:
+                        self.auto_select_weight_factor(spec, age, temp)
 
     # Function to set a reference diffusivity for a species
     #       spec = name of species to set gas phase diffusivity for
@@ -1241,14 +1313,27 @@ class Isothermal_Monolith_Simulator(object):
         return m.dCb_dz[gas, age, temp, m.z[-1], t] == (m.Cb[gas, age, temp, m.z[-1], t] - m.Cb[gas, age, temp, m.z[-2], t])/(m.z[-1]-m.z[-2])
 
     # Objective function
+    # # TODO: Can this be optimized?
     def norm_objective(self, m):
         sum = 0
-        for spec in m.data_gas_set:
-            for age in m.data_age_set:
-                for temp in m.data_T_set:
-                    for z in m.z_data:
-                        for t in m.t_data:
-                            sum+=m.w[spec,age,temp]*(m.Cb_data[spec,age,temp,z,t] - self.interpret_var(m.Cb,spec,age,temp,z,t))**2
+        try:
+            for spec in m.data_gas_set:
+                for age in m.data_age_set:
+                    for temp in m.data_T_set:
+                        for z in m.z_data:
+                            for t in m.t_data:
+                                sum+=m.w[spec,age,temp]*(m.Cb_data[spec,age,temp,z,t] - self.interpret_var(m.Cb,spec,age,temp,z,t))**2
+        except:
+            pass
+        try:
+            for spec in m.data_surface_set:
+                for age in m.data_age_set:
+                    for temp in m.data_T_set:
+                        for z in m.z_data:
+                            for t in m.t_data:
+                                sum+=m.wq[spec,age,temp]*(m.q_data[spec,age,temp,z,t] - self.interpret_var(m.q,spec,age,temp,z,t))**2
+        except:
+            pass
         return sum
 
 
@@ -1416,13 +1501,21 @@ class Isothermal_Monolith_Simulator(object):
         self.isDiscrete = True
 
         # Build the objective function (if possible)
+        # # TODO: Fix this statement for surface speceis
         anyFalse = False
-        if self.isDataGasSpecSet == True:
-            for spec in self.model.data_gas_set:
-                for loc_dat in self.model.z_data:
-                    if self.isDataValuesSet[spec][loc_dat] == False:
-                        anyFalse = True
-                        break
+        if self.isDataGasSpecSet == True or self.isDataSurfSpecSet == True:
+            if self.isDataGasSpecSet == True:
+                for spec in self.model.data_gas_set:
+                    for loc_dat in self.model.z_data:
+                        if self.isDataValuesSet[spec][loc_dat] == False:
+                            anyFalse = True
+                            break
+            if self.isDataSurfSpecSet == True:
+                for spec in self.model.data_surface_set:
+                    for loc_dat in self.model.z_data:
+                        if self.isDataValuesSet[spec][loc_dat] == False:
+                            anyFalse = True
+                            break
             if anyFalse == True:
                 raise Exception("Error! Some data for gases not set. Cannot create objective function. "
                                 +str(self.isDataValuesSet)+ " check dict for missing pieces")
@@ -1865,8 +1958,8 @@ class Isothermal_Monolith_Simulator(object):
     #   NOTE: The list of time values and cooresponding data points should be
     #           in their correct order (we don't check order for you)
     def set_data_values_for(self, spec, age, temp, loc, times, values):
-        if self.isDataGasSpecSet == False:
-            raise Exception("Error! Data gas species must be set in model data before providing values")
+        #if self.isDataGasSpecSet == False:
+        #    raise Exception("Error! Data gas species must be set in model data before providing values")
 
         if type(times) is not list:
             raise Exception("Error! Given times must be a list of values")
@@ -1884,12 +1977,32 @@ class Isothermal_Monolith_Simulator(object):
         if len(times) > 500:
             print("Setting up large data space for "+spec+"->"+str(age)+"->"+str(temp)+" at loc = "+str(loc)+"...")
 
-        i=0
-        for t in times:
-            self.model.Cb_data_full[spec, age, temp, loc, t].set_value(values[i])
-            if t >= self.model.t.first() and t <= self.model.t.last():
-                self.model.Cb_data[spec, age, temp, loc, t].set_value(values[i])
-            i+=1
+        found = False
+        if self.isDataGasSpecSet == True:
+            if spec in self.model.data_gas_set:
+                i=0
+                for t in times:
+                    self.model.Cb_data_full[spec, age, temp, loc, t].set_value(values[i])
+                    if t >= self.model.t.first() and t <= self.model.t.last():
+                        self.model.Cb_data[spec, age, temp, loc, t].set_value(values[i])
+                    i+=1
+                found = True
+        else:
+            pass #possible error
+        if self.isDataSurfSpecSet == True:
+            if spec in self.model.data_surface_set:
+                i=0
+                for t in times:
+                    self.model.q_data_full[spec, age, temp, loc, t].set_value(values[i])
+                    if t >= self.model.t.first() and t <= self.model.t.last():
+                        self.model.q_data[spec, age, temp, loc, t].set_value(values[i])
+                    i+=1
+                found = True
+        else:
+            pass #possible error
+
+        if found == False:
+            raise Exception("Error! Data species name given is invalid!")
 
         self.isDataValuesSet[spec][loc] = True
 
@@ -3265,6 +3378,10 @@ class Isothermal_Monolith_Simulator(object):
                             model.Cb_data       dict        Param(data_gas_set,data_age_set,data_T_set,z_data,t_data)
                             model.Cb_data_full  dict        Param(data_gas_set,data_age_set,data_T_set,z_data,t_data_full)
                             model.w             dict        Param(data_gas_set,data_age_set,data_T_set)
+                            model.data_surface_set  list    Set
+                            model.q_data        dict        Param(data_surface_set,data_age_set,data_T_set,z_data,t_data)
+                            model.q_data_full   dict        Param(data_surface_set,data_age_set,data_T_set,z_data,t_data_full)
+                            model.wq            dict        Param(data_surface_set,data_age_set,data_T_set)
                             model.surf_set      list        Set
                             model.q             dict        Var(surf_set,age_set,T_set,z,t)
                             model.dq_dt         dict        DerivativeVar(surf_set,age_set,T_set,z,t)
@@ -3337,6 +3454,11 @@ class Isothermal_Monolith_Simulator(object):
                         for item in self.model.data_gas_set:
                             obj['model']['data_gas_set'].append(item)
 
+                    if self.isDataSurfSpecSet == True:
+                        obj['model']['data_surface_set'] = []
+                        for item in self.model.data_surface_set:
+                            obj['model']['data_surface_set'].append(item)
+
                     #NOTE: tuple keys must be saved as strings
                     obj['model']['T'] = {str(k):v for k, v in self.model.T.extract_values().items()}
                     obj['model']['space_velocity'] = {str(k):v for k, v in self.model.space_velocity.extract_values().items()}
@@ -3362,6 +3484,11 @@ class Isothermal_Monolith_Simulator(object):
                         obj['model']['Cb_data'] = {str(k):v for k, v in self.model.Cb_data.extract_values().items()}
                         obj['model']['Cb_data_full'] = {str(k):v for k, v in self.model.Cb_data_full.extract_values().items()}
                         obj['model']['w'] = {str(k):v for k, v in self.model.w.extract_values().items()}
+
+                    if self.isDataSurfSpecSet == True:
+                        obj['model']['q_data'] = {str(k):v for k, v in self.model.q_data.extract_values().items()}
+                        obj['model']['q_data_full'] = {str(k):v for k, v in self.model.q_data_full.extract_values().items()}
+                        obj['model']['wq'] = {str(k):v for k, v in self.model.wq.extract_values().items()}
 
                     if self.isSurfSpecSet == True:
                         obj['model']['surf_set'] = []
@@ -3497,6 +3624,10 @@ class Isothermal_Monolith_Simulator(object):
         except:
             print(file_name+" does not contain surface species set")
         try:
+            self.add_data_surface_species(obj['model']['data_surface_set'])
+        except:
+            print(file_name+" does not contain data surface species set")
+        try:
             self.add_surface_sites(obj['model']['site_set'])
         except:
             print(file_name+" does not contain site species set")
@@ -3544,7 +3675,24 @@ class Isothermal_Monolith_Simulator(object):
                                 values.append(self.model.Cb_data_full[spec,age,temp,loc,time].value)
                             self.set_data_values_for(spec,age,temp,loc,times,values)
         except:
-            print(file_name+" does not contain proper data for optimization")
+            print(file_name+" does not contain proper gas data for optimization")
+
+        try:
+            for key in obj['model']['q_data_full']:
+                self.model.q_data_full[literal_eval(key)].set_value(obj['model']['q_data_full'][key])
+            #Use manually set data to call the sub-routine to automate selection of data sub-set
+            for spec in self.model.data_surface_set:
+                for age in self.model.data_age_set:
+                    for temp in self.model.data_T_set:
+                        for loc in self.model.z_data:
+                            times = []
+                            values = []
+                            for time in self.model.t_data_full:
+                                times.append(time)
+                                values.append(self.model.q_data_full[spec,age,temp,loc,time].value)
+                            self.set_data_values_for(spec,age,temp,loc,times,values)
+        except:
+            print(file_name+" does not contain proper surface data for optimization")
 
         try:
             cp = 1
@@ -3609,6 +3757,9 @@ class Isothermal_Monolith_Simulator(object):
         if self.isDataGasSpecSet == True:
             for key in obj['model']['w']:
                 self.model.w[literal_eval(key)].set_value(obj['model']['w'][key])
+        if self.isDataSurfSpecSet == True:
+            for key in obj['model']['wq']:
+                self.model.wq[literal_eval(key)].set_value(obj['model']['wq'][key])
         if self.isSurfSpecSet == True:
             for key in obj['model']['q']:
                 self.model.q[literal_eval(key)].set_value(obj['model']['q'][key])
@@ -3833,6 +3984,10 @@ class Isothermal_Monolith_Simulator(object):
         except:
             print(file_name+" does not contain surface species set")
         try:
+            self.add_data_surface_species(obj['model']['data_surface_set'])
+        except:
+            print(file_name+" does not contain data surface species set")
+        try:
             self.add_surface_sites(obj['model']['site_set'])
         except:
             print(file_name+" does not contain site species set")
@@ -3881,6 +4036,23 @@ class Isothermal_Monolith_Simulator(object):
                             self.set_data_values_for(spec,age,temp,loc,times,values)
         except:
             print(file_name+" does not contain proper data for optimization")
+
+        try:
+            for key in obj['model']['q_data_full']:
+                self.model.q_data_full[literal_eval(key)].set_value(obj['model']['q_data_full'][key])
+            #Use manually set data to call the sub-routine to automate selection of data sub-set
+            for spec in self.model.data_surface_set:
+                for age in self.model.data_age_set:
+                    for temp in self.model.data_T_set:
+                        for loc in self.model.z_data:
+                            times = []
+                            values = []
+                            for time in self.model.t_data_full:
+                                times.append(time)
+                                values.append(self.model.q_data_full[spec,age,temp,loc,time].value)
+                            self.set_data_values_for(spec,age,temp,loc,times,values)
+        except:
+            print(file_name+" does not contain proper surface data for optimization")
 
         try:
             cp = 1
@@ -3935,6 +4107,10 @@ class Isothermal_Monolith_Simulator(object):
         if self.isDataGasSpecSet == True:
             for key in obj['model']['w']:
                 self.model.w[literal_eval(key)].set_value(obj['model']['w'][key])
+
+        if self.isDataSurfSpecSet == True:
+            for key in obj['model']['wq']:
+                self.model.wq[literal_eval(key)].set_value(obj['model']['wq'][key])
 
         for key in obj['model']['Cb']:
             if literal_eval(key)[-1] == IC_time:
@@ -4292,11 +4468,27 @@ class Isothermal_Monolith_Simulator(object):
     def plot_vs_data(self, spec, age, temp, loc,
                     display_live=False, file_name="", file_type=".png"):
         if spec not in self.model.gas_set:
-            raise Exception("Error! Species name not found in set of model gases. "
+            if self.isSurfSpecSet == True:
+                if spec not in self.model.surf_set:
+                    raise Exception("Error! Species name not found in set of model surfaces. "
+                                +str(spec)+" given is not in model.surf_set")
+            else:
+                raise Exception("Error! Species name not found in set of model gases. "
                             +str(spec)+" given is not in model.gas_set")
-        if spec not in self.model.data_gas_set:
-            raise Exception("Error! Species name not found in set of data gases. "
-                            +str(spec)+" given is not in model.data_gas_set")
+        if self.isDataGasSpecSet == True:
+            if spec not in self.model.data_gas_set:
+                if self.isSurfSpecSet == True:
+                    if spec not in self.model.data_surface_set:
+                        raise Exception("Error! Species name not found in set of data surfaces. "
+                                    +str(spec)+" given is not in model.data_surface_set")
+                else:
+                    raise Exception("Error! Species name not found in set of data gases. "
+                                +str(spec)+" given is not in model.data_gas_set")
+        else:
+            if self.isSurfSpecSet == True:
+                if spec not in self.model.data_surface_set:
+                    raise Exception("Error! Species name not found in set of data surfaces. "
+                                +str(spec)+" given is not in model.data_surface_set")
 
         if age not in self.model.age_set:
             raise Exception("Error! Age name not found in set of model ages. "
@@ -4347,11 +4539,19 @@ class Isothermal_Monolith_Simulator(object):
         xlab = "Time "+x_units
 
         leg.append(spec+"_Data")
-        yvals_data = list(self.model.Cb_data[spec,age,temp,true_data_loc,:].value)
+        if self.isDataGasSpecSet == True:
+            if spec in self.model.data_gas_set:
+                yvals_data = list(self.model.Cb_data[spec,age,temp,true_data_loc,:].value)
+        if self.isDataSurfSpecSet == True:
+            if spec in self.model.data_surface_set:
+                yvals_data = list(self.model.q_data[spec,age,temp,true_data_loc,:].value)
         ax.plot(xvals_data,yvals_data,'or')
 
         leg.append(spec+"_Model")
-        yvals_model = list(self.model.Cb[spec,age,temp,true_loc,:].value)
+        if spec in self.model.gas_set:
+            yvals_model = list(self.model.Cb[spec,age,temp,true_loc,:].value)
+        else:
+            yvals_model = list(self.model.q[spec,age,temp,true_loc,:].value)
         ax.plot(xvals_model,yvals_model,'-k')
 
         plt.legend(leg, loc='best')
