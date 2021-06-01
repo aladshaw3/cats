@@ -351,10 +351,10 @@ class TestIsothermalCatalystBuildOptions():
         assert pytest.approx(1.6181801913110364e-05, rel=1e-3) == \
             value(test.model.Cb["NO","A0","T0", test.model.z.first(), test.model.t.last()])
 
-        assert pytest.approx(7005.664099711817, rel=1e-3) == \
+        assert pytest.approx(7261.619365381414, rel=1e-3) == \
             value(test.model.v["A0","T0", test.model.t.first()])
 
-        assert pytest.approx(14133.390514272996, rel=1e-3) == \
+        assert pytest.approx(14649.76065026649, rel=1e-3) == \
             value(test.model.v["A0","T0", test.model.t.last()])
 
 
@@ -588,10 +588,10 @@ class TestIsothermalCatalystBuildOptions():
         test.discretize_model(method=DiscretizationMethod.OrthogonalCollocation,
                             tstep=10,elems=5,colpoints=2)
 
-        assert pytest.approx(4.577827237450853, rel=1e-3) == \
+        assert pytest.approx(5.261349377462189, rel=1e-3) == \
             value(test.model.Sh["NH3","Unaged","150C",test.model.t.first()])
 
-        assert pytest.approx(431.02267281890863, rel=1e-3) == \
+        assert pytest.approx(495.5051857073, rel=1e-3) == \
             value(test.model.km["NH3","Unaged","150C",test.model.z.first(),test.model.t.first()])
 
     @pytest.mark.build

@@ -201,6 +201,10 @@ class Isothermal_Monolith_Simulator(object):
         self.DiscType = "DiscretizationMethod.FiniteDifference"
         self.colpoints = 2
         self.isMonolith = True
+        self.full_length = 1
+        self.svf = 0.3309
+        # # TODO: Require users to provide full catalyst length (auto calculated for now)
+        # # TODO: Move temp param svf 
 
 
     # Add a continuous set for spatial dimension (current expected units = cm)
@@ -210,6 +214,7 @@ class Isothermal_Monolith_Simulator(object):
         else:
             self.model.z = ContinuousSet(initialize=point_list)
         self.isBoundsSet = True
+        self.full_length = (self.model.z.last()-self.model.z.first())
 
     # Add axial points for data (if avaialbe)
     def add_axial_dataset(self, point_set):
@@ -332,7 +337,7 @@ class Isothermal_Monolith_Simulator(object):
         self.model.P = Var(self.model.age_set, self.model.T_set, self.model.z, self.model.t,
                                     domain=NonNegativeReals, initialize=101.35, units=units.kPa)
         self.model.Tref = Param(self.model.age_set, self.model.T_set, within=NonNegativeReals,
-                                initialize=423.15, mutable=True, units=units.K)
+                                initialize=273.15, mutable=True, units=units.K)
         self.model.Pref = Param(self.model.age_set, self.model.T_set, within=NonNegativeReals,
                                 initialize=101.35, mutable=True, units=units.kPa)
         self.model.rho = Var(self.model.age_set, self.model.T_set, self.model.t,
@@ -734,6 +739,11 @@ class Isothermal_Monolith_Simulator(object):
     def set_reactor_radius(self,rad):
         self.model.r.set_value(rad)
 
+    def set_reactor_length(self,len):
+        if len <= 0:
+            raise Exception("Error! Length must be a non-negative and non-zero value")
+        self.full_length = len
+
     def set_mass_transfer_coef(self, km):
         self.model.km[:,:,:,:,:].set_value(km)
 
@@ -779,7 +789,7 @@ class Isothermal_Monolith_Simulator(object):
     #   Assumes same value for all times (can be reset later)
     #       User may also provide reference pressure and temperature
     #       associated with this space velocity
-    def set_space_velocity(self,age,temp,value,Pref=101.15,Tref=423.15):
+    def set_space_velocity(self,age,temp,value,Pref=101.15,Tref=273.15):
         self.model.space_velocity[age,temp,:].set_value(value)
         self.model.Pref[age,temp].set_value(Pref)
         self.model.Tref[age,temp].set_value(Tref)
@@ -787,7 +797,7 @@ class Isothermal_Monolith_Simulator(object):
     # Set a space velocity that is common to all runs
     #       User may also provide reference pressure and temperature
     #       associated with this space velocity
-    def set_space_velocity_all_runs(self,value,Pref=101.15,Tref=423.15):
+    def set_space_velocity_all_runs(self,value,Pref=101.15,Tref=273.15):
         self.model.space_velocity[:,:,:].set_value(value)
         self.model.Pref[:,:].set_value(Pref)
         self.model.Tref[:,:].set_value(Tref)
@@ -1405,7 +1415,7 @@ class Isothermal_Monolith_Simulator(object):
         self.model.space_velocity[:,:,:].fix()
         self.model.v[:,:,:].fix()
         self.model.P[:,:,:,:].fix()
-        volume = (self.model.z.last()-self.model.z.first())*3.14159*value(self.model.r)**2
+        volume = self.full_length*3.14159*value(self.model.r)**2*(1-self.svf)
         for age in self.model.age_set:
             for temp in self.model.T_set:
                 flow_rate_ref = volume*value(self.model.space_velocity[age,temp,self.model.t.first()])
@@ -2015,7 +2025,8 @@ class Isothermal_Monolith_Simulator(object):
     #                       then it notes that this doesn't need to be called again
     def recalculate_linear_velocities(self, interally_called=False, isMonolith=True):
         full_area = 3.14159*value(self.model.r)**2
-        volume = (self.model.z.last()-self.model.z.first())*full_area
+        #volume = (self.model.z.last()-self.model.z.first())*full_area
+        volume = self.full_length*full_area*(1-self.svf)
         open_area = full_area*value(self.model.eb)
         for age in self.model.age_set:
             for temp in self.model.T_set:

@@ -559,7 +559,7 @@ class TestBasicIsothermalCatalystBuild():
         assert len(obj.model.t) == len(obj_with_lists.model.t)
         assert len(obj.model.z) == len(obj_with_lists.model.z)
 
-        assert pytest.approx(107.25954498560644, rel=1e-3) == \
+        assert pytest.approx(111.63437198706396, rel=1e-3) == \
             value(obj.model.P["Unaged","250C",obj.model.z.first(),obj.model.t.first()])
 
         assert pytest.approx(
@@ -567,7 +567,7 @@ class TestBasicIsothermalCatalystBuild():
                 obj_with_lists.model.t.first()]), rel=1e-3) == \
             value(obj.model.P["Unaged","250C",obj.model.z.first(),obj.model.t.first()])
 
-        assert pytest.approx(18644.3503688884, rel=1e-3) == \
+        assert pytest.approx(28882.87336113903, rel=1e-3) == \
             value(obj.model.v["Unaged","250C",obj.model.t.first()])
 
         assert pytest.approx(value(obj_with_lists.model.v["Unaged","250C",
@@ -588,7 +588,7 @@ class TestBasicIsothermalCatalystBuild():
                 obj_with_lists.model.t.first()]), rel=1e-3) == \
             value(obj.model.mu["Unaged","250C",obj.model.t.first()])
 
-        assert pytest.approx(59.20788402535169, rel=1e-3) == \
+        assert pytest.approx(91.7218236329034, rel=1e-3) == \
             value(obj.model.Re["Unaged","250C",obj.model.t.first()])
 
         assert pytest.approx(value(obj_with_lists.model.Re["Unaged","250C",
@@ -602,14 +602,14 @@ class TestBasicIsothermalCatalystBuild():
                 obj_with_lists.model.t.first()]), rel=1e-3) == \
             value(obj.model.Sc["NH3","Unaged","250C",obj.model.t.first()])
 
-        assert pytest.approx(3.3161014589313917, rel=1e-3) == \
+        assert pytest.approx(4.058710793831378, rel=1e-3) == \
             value(obj.model.Sh["NH3","Unaged","250C",obj.model.t.first()])
 
         assert pytest.approx(value(obj_with_lists.model.Sh["NH3","Unaged","250C",
                 obj_with_lists.model.t.first()]), rel=1e-3) == \
             value(obj.model.Sh["NH3","Unaged","250C",obj.model.t.first()])
 
-        assert pytest.approx(1011.5898144520548, rel=1e-3) == \
+        assert pytest.approx(1238.1257177123603, rel=1e-3) == \
             value(obj.model.km["NH3","Unaged","250C",obj.model.z.first(),obj.model.t.first()])
 
         assert pytest.approx(value(obj_with_lists.model.km["NH3","Unaged","250C",
@@ -769,6 +769,12 @@ class TestBasicIsothermalCatalystBuild():
         (stat2, cond2) = obj_with_lists.run_solver()
         assert cond2 == TerminationCondition.optimal
         assert stat2 == SolverStatus.ok
+
+        assert pytest.approx(19325.530565938127, rel=1e-3) == \
+            value(obj.model.v["Unaged","250C",obj.model.t.first()])
+
+        assert pytest.approx(value(obj_with_lists.model.v["Unaged","250C",obj.model.t.first()]), rel=1e-3) == \
+            value(obj.model.v["Unaged","250C",obj.model.t.first()])
 
         assert pytest.approx(value(obj.model.Cb["NH3","Unaged","250C",
                                 obj.model.z.last(),0.0]), rel=1e-3) == \

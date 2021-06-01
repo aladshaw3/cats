@@ -27,6 +27,7 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
 test.set_bulk_porosity(0.3309)
 test.set_washcoat_porosity(0.4)
 test.set_reactor_radius(1)
+# # TODO: Fix the reference temperature and the space velocity calculations
 test.set_space_velocity_all_runs(500)       #volumes / min
 test.set_cell_density(62)                   # 62 cells per cm^2 (~400 cpsi)
 
@@ -142,7 +143,7 @@ test.set_temperature_ramp("Unaged", "150C", 225.425, 305.3, 809.5651714)
 # Fix the kinetics to only run a simulation
 test.fix_all_reactions()
 #test.initialize_auto_scaling()  #Sometimes, it works best to NOT initialize scaling
-test.initialize_simulator(console_out=True)
+test.initialize_simulator(console_out=False)
 test.finalize_auto_scaling()
 test.run_solver()
 
