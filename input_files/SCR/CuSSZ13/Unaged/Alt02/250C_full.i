@@ -1834,7 +1834,7 @@
         space_velocity = 1000   #volumes per min
         inlet_temperature = temp
         ref_pressure = 101.35
-        ref_temperature = 423.15
+        ref_temperature = 273.15
         radius = 1  #cm
         length = 5  #cm
         execute_on = 'initial timestep_end'

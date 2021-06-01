@@ -81,7 +81,7 @@ _pressure_ref(getParam<Real>("ref_pressure"))
 Real GasVelocityCylindricalReactor::computeValue()
 {
     Real _area = _radius*_radius*3.14159;
-    Real _ref_flow_rate = _space_velocity[_qp]*_length*_area;
+    Real _ref_flow_rate = _space_velocity[_qp]*_length*_area*(1-_porosity);
     Real _true_flow_rate = _temperature_in[_qp]*_ref_flow_rate/_temperature_ref*_pressure_ref/(_pressure_in[_qp]);
     return _true_flow_rate/_area/_porosity;
 }

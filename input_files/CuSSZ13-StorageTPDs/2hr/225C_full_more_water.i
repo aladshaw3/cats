@@ -461,7 +461,7 @@
         porosity = 0.3309
         space_velocity = 500   #volumes per min
         inlet_temperature = temp
-        ref_temperature = 423.15
+        ref_temperature = 273.15
         radius = 1  #cm
         length = 5  #cm
         execute_on = 'initial timestep_end'
