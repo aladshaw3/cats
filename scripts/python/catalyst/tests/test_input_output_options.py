@@ -19,6 +19,11 @@ class TestIsothermalCatalystInputOutputOptions():
         test = Isothermal_Monolith_Simulator()
         return test
 
+    @pytest.fixture(scope="class")
+    def isothermal_io_object_with_surface_data(self):
+        test = Isothermal_Monolith_Simulator()
+        return test
+
     @pytest.mark.build
     def test_add_axial_dataset(self, isothermal_io_object):
         test = isothermal_io_object
@@ -106,6 +111,220 @@ class TestIsothermalCatalystInputOutputOptions():
         assert pytest.approx(0.000000006, rel=1e-3) == test.model.Cb_data["NH3","Unaged","250C",5,12.75].value
 
     @pytest.mark.build
+    def test_read_data_list_for_inputs(self, isothermal_io_object_with_surface_data):
+        test = isothermal_io_object_with_surface_data
+
+        times = [1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30]
+
+        data = [1.28974E-17,
+                2.68312E-17,
+                4.06564E-17,
+                5.3727E-17,
+                0.009580668,
+                0.018367207,
+                0.028776912,
+                0.042714283,
+                0.051162187,
+                0.067497076,
+                0.075562396,
+                0.092561437,
+                0.09546322,
+                0.105378353,
+                0.10793464,
+                0.105547164,
+                0.109986865,
+                0.118470458,
+                0.114271973,
+                0.116700814,
+                0.112250971,
+                0.116830351,
+                0.107776986,
+                0.113460716,
+                0.113466493,
+                0.108930678,
+                0.116875105,
+                0.111202321,
+                0.111202712,
+                0.107798742]
+
+        nh3_data = [9.80E-21,
+                    1.00E-20,
+                    1.00E-20,
+                    1.00E-20,
+                    2.32E-06,
+                    2.52E-06,
+                    2.69E-06,
+                    3.26E-06,
+                    3.71E-06,
+                    4.19E-06,
+                    4.94E-06,
+                    5.50E-06,
+                    5.50E-06,
+                    5.89E-06,
+                    6.81E-06,
+                    6.62E-06,
+                    6.74E-06,
+                    6.60E-06,
+                    6.92E-06,
+                    7.08E-06,
+                    6.68E-06,
+                    6.76E-06,
+                    6.90E-06,
+                    6.69E-06,
+                    7.25E-06,
+                    7.18E-06,
+                    6.84E-06,
+                    6.98E-06,
+                    6.63E-06,
+                    6.84E-06]
+        test.add_axial_dim(0,0.1)
+        test.add_axial_dataset(0.05)
+
+        test.add_temporal_dim(0,30)
+        test.add_temporal_dataset(times)
+
+        assert hasattr(test.model, 't_data')
+        assert isinstance(test.model.t_data, Set)
+        assert len(test.model.t_data) == len(times)
+
+        assert hasattr(test.model, 't_data_full')
+        assert isinstance(test.model.t_data_full, Set)
+        assert len(test.model.t_data_full) == len(times)
+
+        test.add_age_set("Unaged")
+        test.add_data_age_set("Unaged")
+
+        test.add_temperature_set("250C")
+        test.add_data_temperature_set("250C")
+
+        test.add_gas_species("NH3")
+        test.add_data_gas_species("NH3")
+
+        test.add_surface_species("q1")
+        test.add_data_surface_species("q1")
+
+        assert hasattr(test.model, 'q_data')
+        assert isinstance(test.model.q_data, Param)
+
+        assert hasattr(test.model, 'q_data_full')
+        assert isinstance(test.model.q_data_full, Param)
+
+        assert hasattr(test.model, 'wq')
+        assert isinstance(test.model.wq, Param)
+
+        test.set_data_values_for("q1","Unaged","250C",0.05,times,data)
+        test.set_data_values_for("NH3","Unaged","250C",0.05,times,nh3_data)
+
+        assert (test.isDataValuesSet["NH3"][0.05]) == True
+        assert (test.isDataValuesSet["q1"][0.05]) == True
+
+        assert pytest.approx(2.32E-06, rel=1e-3) == test.model.Cb_data["NH3","Unaged","250C",0.05,5].value
+        assert pytest.approx(0.009580668, rel=1e-3) == test.model.q_data["q1","Unaged","250C",0.05,5].value
+
+        test.add_surface_sites("S1")
+        test.add_reactions({"r1": ReactionType.EquilibriumArrhenius})
+
+        test.set_bulk_porosity(0.3309)
+        test.set_washcoat_porosity(0.6)
+        test.set_reactor_radius(1)
+        test.set_space_velocity_all_runs(1000)
+        test.set_cell_density(62)
+
+        s1_data = {"mol_occupancy": {"q1": 1}}
+        test.set_site_balance("S1",s1_data)
+
+        r1_equ = {"parameters": {"A": 100000, "E": 0,
+                                "dH": -54000, "dS": 30},
+                  "mol_reactants": {"S1": 1, "NH3": 1},
+                  "mol_products": {"q1": 1},
+                  "rxn_orders": {"S1": 1, "NH3": 1, "q1": 1}
+                }
+        test.set_reaction_info("r1", r1_equ)
+
+        test.set_site_density("S1","Unaged",0.1152619)
+
+    @pytest.mark.build
+    def test_build_mixed_objective(self, isothermal_io_object_with_surface_data):
+        test = isothermal_io_object_with_surface_data
+
+        test.build_constraints()
+        test.discretize_model(method=DiscretizationMethod.OrthogonalCollocation,
+                            tstep=30,elems=2,colpoints=2)
+
+        test.set_isothermal_temp("Unaged","250C",250+273.15)
+
+        test.set_const_IC_in_ppm("NH3","Unaged","250C",0)
+
+        test.set_const_IC("q1","Unaged","250C",0)
+
+        test.set_time_dependent_BC_in_ppm("NH3","Unaged","250C",
+                                    time_value_pairs=[(5,300)],
+                                    initial_value=0)
+
+        assert hasattr(test.model, 'obj')
+        assert isinstance(test.model.obj, Objective)
+
+        assert pytest.approx(0.24584164283488227, rel=1e-3) == value(test.model.obj)
+
+    @pytest.mark.solver
+    def test_mixed_run_initialize(self, isothermal_io_object_with_surface_data):
+        test = isothermal_io_object_with_surface_data
+
+        test.initialize_auto_scaling()
+        (stat1, cond1) = test.initialize_simulator()
+
+        assert cond1 == TerminationCondition.optimal
+        assert stat1 == SolverStatus.ok
+
+    @pytest.mark.build
+    def test_all_weight_factors(self, isothermal_io_object_with_surface_data):
+        test = isothermal_io_object_with_surface_data
+
+        test.auto_select_all_weight_factors()
+
+        assert pytest.approx(8.440922883914233, rel=1e-3) == test.model.wq["q1","Unaged","250C"].value
+        assert pytest.approx(137931.0344827586, rel=1e-3) == test.model.w["NH3","Unaged","250C"].value
+
+    @pytest.mark.solver
+    def test_mixed_run_solver(self, isothermal_io_object_with_surface_data):
+        test = isothermal_io_object_with_surface_data
+
+        test.finalize_auto_scaling()
+        (stat1, cond1) = test.run_solver()
+
+        assert cond1 == TerminationCondition.optimal
+        assert stat1 == SolverStatus.ok
+
+    @pytest.mark.build
     def test_read_data_file_for_BCs(self, isothermal_io_object):
         test = isothermal_io_object
 
@@ -152,6 +371,11 @@ class TestIsothermalCatalystInputOutputOptions():
         test.set_time_dependent_BC("NH3","Unaged","250C",
                                     time_value_pairs=data_tup["NH3_inlet"],
                                     initial_value=0)
+
+        assert hasattr(test.model, 'obj')
+        assert isinstance(test.model.obj, Objective)
+
+        assert pytest.approx(3.302666761662488e-10, rel=1e-3) == value(test.model.obj)
 
         assert len(test.model.t) == 11
         assert test.model.t[1] == 0
@@ -263,11 +487,16 @@ class TestIsothermalCatalystInputOutputOptions():
         assert path.exists("output/optimal_params.txt") == True
 
     @pytest.mark.unit
-    def test_save_model(self, isothermal_io_object):
+    def test_save_model(self, isothermal_io_object, isothermal_io_object_with_surface_data):
         test = isothermal_io_object
 
         test.save_model_state(file_name="sample_model.json")
         assert path.exists("output/sample_model.json") == True
+
+        test2 = isothermal_io_object_with_surface_data
+
+        test2.save_model_state(file_name="sample_model_with_surface.json")
+        assert path.exists("output/sample_model_with_surface.json") == True
 
     @pytest.mark.unit
     def test_read_temperature_data(self, isothermal_io_object):
@@ -443,3 +672,28 @@ class TestIsothermalCatalystInputOutputOptions():
         assert pytest.approx(test4.model.C["NH3","Unaged","250C",4.5,7.75].value, 1e-3) == 1.85E-14
         assert pytest.approx(test4.model.q["q1","Unaged","250C",4,7.75].value, 1e-3) == 9.78E-08
         assert pytest.approx(test4.model.S["S1","Unaged","250C",2,7.75].value, 1e-3) == 0.107938705
+
+        # Now we will test loading in another model with surface data
+        test5 = Isothermal_Monolith_Simulator()
+
+        test5.load_model_full("output/sample_model_with_surface.json", reset_param_bounds=False)
+        test5.plot_vs_data("q1", "Unaged", "250C", 0.05, display_live=False,
+                            file_name="surface_plot_v_data_mid")
+        assert path.exists("output/surface_plot_v_data_midComparisonPlots.png") == True
+        assert pytest.approx(test5.model.q["q1","Unaged","250C",0.05,9].value, 1e-3) == 0.05581806304720433
+
+        # Test loading of a model state
+        test6 = Isothermal_Monolith_Simulator()
+        test6.load_model_state_as_IC('output/sample_model_with_surface.json', new_time_window=(30,40), tstep=10)
+
+        assert hasattr(test6.model, 'q_data')
+        assert isinstance(test6.model.q_data, Param)
+
+        assert hasattr(test6.model, 'q_data_full')
+        assert isinstance(test6.model.q_data_full, Param)
+
+        assert hasattr(test6.model, 'wq')
+        assert isinstance(test6.model.wq, Param)
+
+        assert pytest.approx(8.440922883914233, rel=1e-3) == test6.model.wq["q1","Unaged","250C"].value
+        assert pytest.approx(137931.0344827586, rel=1e-3) == test6.model.w["NH3","Unaged","250C"].value

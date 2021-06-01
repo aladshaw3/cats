@@ -69,6 +69,38 @@ data = [1.28974E-17,
         0.111202712,
         0.107798742]
 
+nh3_data = [9.80E-21,
+            1.00E-20,
+            1.00E-20,
+            1.00E-20,
+            2.32E-06,
+            2.52E-06,
+            2.69E-06,
+            3.26E-06,
+            3.71E-06,
+            4.19E-06,
+            4.94E-06,
+            5.50E-06,
+            5.50E-06,
+            5.89E-06,
+            6.81E-06,
+            6.62E-06,
+            6.74E-06,
+            6.60E-06,
+            6.92E-06,
+            7.08E-06,
+            6.68E-06,
+            6.76E-06,
+            6.90E-06,
+            6.69E-06,
+            7.25E-06,
+            7.18E-06,
+            6.84E-06,
+            6.98E-06,
+            6.63E-06,
+            6.84E-06]
+
+
 # Testing
 test = Isothermal_Monolith_Simulator()
 test.add_axial_dim(0,0.1)
@@ -84,17 +116,19 @@ test.add_temperature_set("250C")
 test.add_data_temperature_set("250C")
 
 test.add_gas_species("NH3")
+test.add_data_gas_species("NH3")
 
 test.add_surface_species("q1")
 test.add_data_surface_species("q1")
 
 test.set_data_values_for("q1","Unaged","250C",0.05,times,data)
+test.set_data_values_for("NH3","Unaged","250C",0.05,times,nh3_data)
 
 test.add_surface_sites("S1")
 test.add_reactions({"r1": ReactionType.EquilibriumArrhenius})
 
 test.set_bulk_porosity(0.3309)
-test.set_washcoat_porosity(0.4)
+test.set_washcoat_porosity(0.6)
 test.set_reactor_radius(1)                      #cm
 test.set_space_velocity_all_runs(1000)          #volumes per min
 test.set_cell_density(62)                       # 62 cells per cm^2 (~400 cpsi)
@@ -154,6 +188,8 @@ test.save_model_state(file_name="surface_example.json")
 test.print_kinetic_parameter_info(file_name="surface_example_params.txt")
 
 test.plot_vs_data("q1", "Unaged", "250C", 0.05, display_live=True)
+
+test.plot_vs_data("NH3", "Unaged", "250C", 0.05, display_live=True)
 
 
 # ------------------------------------------------------------------------------
