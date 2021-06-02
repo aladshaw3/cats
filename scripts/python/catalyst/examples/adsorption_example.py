@@ -78,7 +78,7 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius})
 test.set_bulk_porosity(0.3309)
 test.set_washcoat_porosity(0.4)
 test.set_reactor_radius(1)                      #cm
-test.set_space_velocity_all_runs(1000*1.4945,Pref=101.15,Tref=423.15)          #volumes per min
+test.set_space_velocity_all_runs(1000,Pref=101.15,Tref=273.15)          #volumes per min
 test.set_cell_density(62)                       # 62 cells per cm^2 (~400 cpsi)
 
 # Setting up site balances using dicts
@@ -110,8 +110,7 @@ test.set_isothermal_temp("Unaged","250C",250+273.15)
 test.build_constraints()
 test.discretize_model(method=DiscretizationMethod.OrthogonalCollocation,
                     tstep=20,elems=5,colpoints=2)
-test.model.v.pprint()
-#exit()
+
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 test.set_const_IC_in_ppm("NH3","Unaged","250C",0)
 
@@ -148,4 +147,5 @@ test.plot_at_locations(["q1","S1"], ["Unaged"], ["250C"], [0,1,2,3,4,5], display
 test.plot_at_times(["q1"], ["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=False)
 test.plot_at_times(["NH3"], ["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=False)
 test.model.v.pprint()
+test.model.P.pprint()
 test.plot_vs_data("NH3", "Unaged", "250C", 5, display_live=True)

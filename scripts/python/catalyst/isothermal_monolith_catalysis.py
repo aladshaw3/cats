@@ -202,9 +202,7 @@ class Isothermal_Monolith_Simulator(object):
         self.colpoints = 2
         self.isMonolith = True
         self.full_length = 1
-        self.svf = 0.3309
         # # TODO: Require users to provide full catalyst length (auto calculated for now)
-        # # TODO: Move temp param svf 
 
 
     # Add a continuous set for spatial dimension (current expected units = cm)
@@ -323,7 +321,7 @@ class Isothermal_Monolith_Simulator(object):
             self.model.T = Var(self.model.age_set, self.model.T_set, self.model.z, self.model.t,
                                 domain=NonNegativeReals, initialize=298, units=units.K)
         # Create time dependent parameter for space velocity
-        #       NOTE: Space velocity is reactor volumes of gas per unit time
+        #       NOTE: Space velocity is volumetric flow rate of gas at STP per catalyst volume
         #               Different experimental runs may have different space velocities
         self.model.space_velocity = Var(self.model.age_set, self.model.T_set, self.model.t,
                                     domain=NonNegativeReals, initialize=1000, units=units.min**-1)
@@ -729,6 +727,7 @@ class Isothermal_Monolith_Simulator(object):
         if eb > 1 or eb < 0:
             raise Exception("Error! Porosity must be a value between 0 and 1")
         self.model.eb.set_value(eb)
+        self.svf = eb
         self.calculate_form_factors(self.isMonolith, self.model.dh.value)
 
     def set_washcoat_porosity(self, ew):
@@ -1415,7 +1414,7 @@ class Isothermal_Monolith_Simulator(object):
         self.model.space_velocity[:,:,:].fix()
         self.model.v[:,:,:].fix()
         self.model.P[:,:,:,:].fix()
-        volume = self.full_length*3.14159*value(self.model.r)**2*(1-self.svf)
+        volume = self.full_length*3.14159*value(self.model.r)**2*(1-self.model.eb.value)
         for age in self.model.age_set:
             for temp in self.model.T_set:
                 flow_rate_ref = volume*value(self.model.space_velocity[age,temp,self.model.t.first()])
@@ -2025,8 +2024,7 @@ class Isothermal_Monolith_Simulator(object):
     #                       then it notes that this doesn't need to be called again
     def recalculate_linear_velocities(self, interally_called=False, isMonolith=True):
         full_area = 3.14159*value(self.model.r)**2
-        #volume = (self.model.z.last()-self.model.z.first())*full_area
-        volume = self.full_length*full_area*(1-self.svf)
+        volume = self.full_length*full_area*(1-self.model.eb.value)
         open_area = full_area*value(self.model.eb)
         for age in self.model.age_set:
             for temp in self.model.T_set:
