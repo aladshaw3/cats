@@ -49,6 +49,8 @@ Parameter | Meaning | Units
 ------------ | ------------- | -------------
 &rho; | gas density | g/cm<sup>3</sup>
 c<sub>pg</sub> | specific heat capacity of gas | J/g/K
+c<sub>pc</sub> | specific heat capacity of solids | J/g/K
+c<sub>pw</sub> | specific heat capacity of wall | J/g/K
 T | temperature of gas | K
 T<sub>c</sub> | temperature of solids | K
 T<sub>w</sub> | temperature of wall | K
@@ -57,6 +59,7 @@ T<sub>a</sub> | temperature of ambient air | K
 &alpha;<sub>w</sub> | surface to volume ratio for cylindrical reactor outer wall | cm<sup>-1</sup>
 h<sub>c</sub> | heat transfer rate from gas to solids | J/K/min/cm<sup>2</sup>
 h<sub>wg</sub> | heat transfer rate from gas to wall | J/K/min/cm<sup>2</sup>
+h<sub>wc</sub> | heat transfer rate from solids to wall | J/K/min/cm<sup>2</sup>
 
 Notes
 -----
