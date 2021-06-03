@@ -6,7 +6,7 @@ This directory contains a set of python tools for performing data analyses assoc
 Isothermal_Monolith_Simulator Equations
 -----
 
-&epsilon;<sub>b</sub> &part;C<sub>b</sub>/&part;t + &epsilon;<sub>b</sub> v &part;C<sub>b</sub>/&part;z = -(1-&epsilon;<sub>b</sub>) G<sub>a</sub> k<sub>m</sub> (C<sub>b</sub> - C)
+&epsilon;<sub>b</sub> &part;C<sub>b,i</sub>/&part;t + &epsilon;<sub>b</sub> v &part;C<sub>b,i</sub>/&part;z = -(1-&epsilon;<sub>b</sub>) G<sub>a</sub> k<sub>m,i</sub> (C<sub>b,i</sub> - C<sub>i</sub>)
 
 ew*(1-eb)*dC/dt = (1-eb)*Ga*km*(Cb - C) + (1-eb)*SUM(all i, u_ci * ri)
 
