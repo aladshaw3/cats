@@ -26,10 +26,13 @@ G<sub>a</sub> | solids surface area to solids volume ratio | cm<sup>-1</sup>
 k<sub>m,i</sub> | mass transfer rate of i<sup>th</sup> gas species | cm/min
 C<sub>i</sub> | pore-space concentration of i<sup>th</sup> gas species | mol/L-gas
 &epsilon;<sub>w</sub> | washcoat/solid pore volume to bulk solids volume | (unitless) L-gas/L-solids
-u<sub>C<sub>i,j</sub></sub> | molar contribution of reaction j to change in concentration of species i | (unitless)
+u<sub>C<sub>i,j</sub></sub> | molar contribution of reaction j to change in pore-space concentration of species i | (unitless)
 u<sub>q<sub>i,j</sub></sub> | molar contribution of reaction j to change in surface concentration of species i | (unitless)
 u<sub>s<sub>i,j</sub></sub> | molar contribution of surface species j to mass balance of site i | (unitless)
-
+r<sub>j</sub> | rate of reaction j | units
+q<sub>i</sub> | surface concentration of species i | mol/L-solids
+S<sub>i</sub> | open-site concentration of site i | mol/L-solids
+S<sub>max,i</sub> | maximum number of available sites for site i | mol/L-solids 
 
 Nonisothermal_Monolith_Simulator Equations
 -----
