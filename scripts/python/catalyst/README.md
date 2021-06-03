@@ -29,10 +29,10 @@ C<sub>i</sub> | pore-space concentration of i<sup>th</sup> gas species | mol/L-g
 u<sub>C<sub>i,j</sub></sub> | molar contribution of reaction j to change in pore-space concentration of species i | (unitless)
 u<sub>q<sub>i,j</sub></sub> | molar contribution of reaction j to change in surface concentration of species i | (unitless)
 u<sub>s<sub>i,j</sub></sub> | molar contribution of surface species j to mass balance of site i | (unitless)
-r<sub>j</sub> | rate of reaction j | units
+r<sub>j</sub> | rate of reaction j | mol/L-solids/min
 q<sub>i</sub> | surface concentration of species i | mol/L-solids
 S<sub>i</sub> | open-site concentration of site i | mol/L-solids
-S<sub>max,i</sub> | maximum number of available sites for site i | mol/L-solids 
+S<sub>max,i</sub> | maximum number of available sites for site i | mol/L-solids
 
 Nonisothermal_Monolith_Simulator Equations
 -----
