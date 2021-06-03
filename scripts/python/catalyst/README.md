@@ -9,7 +9,7 @@ h<sub>&theta;</sub>(x) = &theta;<sub>o</sub> x + &theta;<sub>1</sub>x
 
 &part;
 
-&epsilon;<sub>b</sub>*dC<sub>b</sub>/dt + &epsilon;<sub>b</sub>*v*dC<sub>b</sub>/dz = -(1-eb)*Ga*km*(Cb - C)
+&epsilon;<sub>b</sub>&part;C<sub>b</sub>/dt + &epsilon;<sub>b</sub>*v*dC<sub>b</sub>/dz = -(1-eb)*Ga*km*(Cb - C)
 
 ew*(1-eb)*dC/dt = (1-eb)*Ga*km*(Cb - C) + (1-eb)*SUM(all i, u_ci * ri)
 
