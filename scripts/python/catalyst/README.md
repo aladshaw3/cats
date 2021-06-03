@@ -37,7 +37,7 @@ S<sub>max,i</sub> | maximum number of available sites for site i | mol/L-solids
 Nonisothermal_Monolith_Simulator Equations
 -----
 
-(Includes the above in addition to the following...)
+(<i>NOTE: Includes the above in addition to the following...</i>)
 
 &epsilon;<sub>b</sub> &rho; c<sub>pg</sub> &part;T/&part;t + &epsilon;<sub>b</sub> &rho; c<sub>pg</sub> v &part;T/&part;z = -(1-&epsilon;<sub>b</sub>) G<sub>a</sub> h<sub>c</sub> (T - T<sub>c</sub>) - &epsilon;<sub>b</sub> &alpha; h<sub>wg</sub> (T - T<sub>w</sub>)
 
