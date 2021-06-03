@@ -25,7 +25,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Other import statements
-import yaml
 import os.path
 from os import path
 from enum import Enum
