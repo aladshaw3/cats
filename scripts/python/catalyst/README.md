@@ -8,7 +8,7 @@ Isothermal_Monolith_Simulator Equations
 
 &epsilon;<sub>b</sub> &part;C<sub>b,i</sub>/&part;t + &epsilon;<sub>b</sub> v &part;C<sub>b,i</sub>/&part;z = -(1-&epsilon;<sub>b</sub>) G<sub>a</sub> k<sub>m,i</sub> (C<sub>b,i</sub> - C<sub>i</sub>)
 
-&epsilon;<sub>w</sub> (1-&epsilon;<sub>b</sub>) dC<sub>i</sub>/dt = (1-&epsilon;<sub>b</sub>) G<sub>a</sub> k<sub>m,i</sub> (C<sub>b,i</sub> - C<sub>i</sub>) + (1-&epsilon;<sub>b</sub>) <span>&sum;</span><sub>&forall;j</sub> (u<sub>C<sub>j</sub></sub> r<sub>j</sub>)
+&epsilon;<sub>w</sub> (1-&epsilon;<sub>b</sub>) dC<sub>i</sub>/dt = (1-&epsilon;<sub>b</sub>) G<sub>a</sub> k<sub>m,i</sub> (C<sub>b,i</sub> - C<sub>i</sub>) + (1-&epsilon;<sub>b</sub>) <span>&sum;</span><sub>&forall;j</sub> (u<sub>C<sub>i,j</sub></sub> r<sub>j</sub>)
 
 dq<sub>i</sub>/dt = <span>&sum;</span><sub>&forall;j</sub> (u<sub>q<sub>j</sub></sub> r<sub>j</sub>)
 
@@ -25,7 +25,8 @@ v | average linear gas velocity | cm/min
 G<sub>a</sub> | solids surface area to solids volume ratio | cm<sup>-1</sup>
 k<sub>m,i</sub> | mass transfer rate of i<sup>th</sup> gas species | cm/min
 C<sub>i</sub> | pore-space concentration of i<sup>th</sup> gas species | mol/L-gas
-&epsilon;<sub>w</sub> | washcoat/solid pore volume to bulk solids volume | (unitless) L-pores/L-solids
+&epsilon;<sub>w</sub> | washcoat/solid pore volume to bulk solids volume | (unitless) L-gas/L-solids
+u<sub>C<sub>i,j</sub></sub> | molar contribution of reaction j to change in concentration of species i | (unitless)
 
 
 Nonisothermal_Monolith_Simulator Equations
