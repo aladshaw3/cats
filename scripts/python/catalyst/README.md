@@ -10,9 +10,9 @@ Isothermal_Monolith_Simulator Equations
 
 &epsilon;<sub>w</sub> (1-&epsilon;<sub>b</sub>) dC<sub>i</sub>/dt = (1-&epsilon;<sub>b</sub>) G<sub>a</sub> k<sub>m,i</sub> (C<sub>b,i</sub> - C<sub>i</sub>) + (1-&epsilon;<sub>b</sub>) <span>&sum;</span><sub>&forall;j</sub> (u<sub>C<sub>i,j</sub></sub> r<sub>j</sub>)
 
-dq<sub>i</sub>/dt = <span>&sum;</span><sub>&forall;j</sub> (u<sub>q<sub>j</sub></sub> r<sub>j</sub>)
+dq<sub>i</sub>/dt = <span>&sum;</span><sub>&forall;j</sub> (u<sub>q<sub>i,j</sub></sub> r<sub>j</sub>)
 
-S<sub>max,i</sub> = S<sub>i</sub> + <span>&sum;</span><sub>&forall;q<sub>j</sub></sub> (u<sub>s<sub>j</sub></sub> q<sub>j</sub>)
+S<sub>max,i</sub> = S<sub>i</sub> + <span>&sum;</span><sub>&forall;q<sub>j</sub></sub> (u<sub>s<sub>i,j</sub></sub> q<sub>j</sub>)
 
 Parameter | Meaning | Units
 ------------ | ------------- | -------------
@@ -27,6 +27,7 @@ k<sub>m,i</sub> | mass transfer rate of i<sup>th</sup> gas species | cm/min
 C<sub>i</sub> | pore-space concentration of i<sup>th</sup> gas species | mol/L-gas
 &epsilon;<sub>w</sub> | washcoat/solid pore volume to bulk solids volume | (unitless) L-gas/L-solids
 u<sub>C<sub>i,j</sub></sub> | molar contribution of reaction j to change in concentration of species i | (unitless)
+u<sub>q<sub>i,j</sub></sub> | blach | a
 
 
 Nonisothermal_Monolith_Simulator Equations
