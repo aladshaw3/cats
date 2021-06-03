@@ -10,9 +10,12 @@ Isothermal_Monolith_Simulator Equations
 
 &epsilon;<sub>w</sub> (1-&epsilon;<sub>b</sub>) dC<sub>i</sub>/dt = (1-&epsilon;<sub>b</sub>) G<sub>a</sub> k<sub>m,i</sub> (C<sub>b,i</sub> - C<sub>i</sub>) + (1-&epsilon;<sub>b</sub>) <span>&sum;</span><sub>&forall;j</sub> (u<sub>C<sub>i,j</sub></sub> r<sub>j</sub>)
 
-dq<sub>i</sub>/dt = <span>&sum;</span><sub>&forall;j</sub> (u<sub>q<sub>i,j</sub></sub> r<sub>j</sub>)
+* dq<sub>i</sub>/dt = <span>&sum;</span><sub>&forall;j</sub> (u<sub>q<sub>i,j</sub></sub> r<sub>j</sub>)
 
-S<sub>max,i</sub> = S<sub>i</sub> + <span>&sum;</span><sub>&forall;q<sub>j</sub></sub> (u<sub>s<sub>i,j</sub></sub> q<sub>j</sub>)
+** S<sub>max,i</sub> = S<sub>i</sub> + <span>&sum;</span><sub>&forall;q<sub>j</sub></sub> (u<sub>s<sub>i,j</sub></sub> q<sub>j</sub>)
+
+* NOTE: This is optional when building a model. User may opt to not explicitly include surface species
+** NOTE: This is also optional when building a model and only available if the user is using the surface species. Alternatively, user may specify the sites themselves to be surface species. 
 
 Parameter | Meaning | Units
 ------------ | ------------- | -------------
