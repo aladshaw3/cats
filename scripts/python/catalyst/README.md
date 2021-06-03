@@ -48,6 +48,8 @@ Nonisothermal_Monolith_Simulator Equations
 Parameter | Meaning | Units
 ------------ | ------------- | -------------
 &rho; | gas density | g/cm<sup>3</sup>
+&rho;<sub>c</sub> | solids density | g/cm<sup>3</sup>
+&rho;<sub>w</sub> | wall density | g/cm<sup>3</sup>
 c<sub>pg</sub> | specific heat capacity of gas | J/g/K
 c<sub>pc</sub> | specific heat capacity of solids | J/g/K
 c<sub>pw</sub> | specific heat capacity of wall | J/g/K
