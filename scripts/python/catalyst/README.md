@@ -12,7 +12,7 @@ Isothermal_Monolith_Simulator Equations
 
 dq<sub>i</sub>/dt = <span>&sum;</span><sub>&forall;j</sub> (u<sub>q<sub>j</sub></sub> r<sub>j</sub>)
 
-Smax = S + SUM(all qi, u_si*qi)
+S<sub>max,i</sub> = S<sub>i</sub> + <span>&sum;</span><sub>&forall;q<sub>j</sub></sub> (u<sub>s<sub>j</sub></sub> q<sub>j</sub>)
 
 
 Nonisothermal_Monolith_Simulator Equations
