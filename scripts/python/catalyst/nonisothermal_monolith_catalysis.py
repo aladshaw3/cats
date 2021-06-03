@@ -72,7 +72,7 @@ def spec_heat_of_air(T):
 #           Energy balance in the washcoat
 #
 #                   (1-eb)*rhoc*cpc*dTc/dt = (1-eb)*Kc*d^2T/dz^2 + (1-eb)*Ga*hc*(T - Tc)
-#                           - (1-eb)*a*hwc*(Tc - Tw) + (1-eb)/1000*SUM(all rj, (-dHrxnj)*d_rxnj**rj)
+#                           - (1-eb)*a*hwc*(Tc - Tw) + (1-eb)/1000*SUM(all rj, (-dHrxnj)*d_rxnj*rj)
 #
 #               NOTE: d_rxnj = Kronecker Delta based on reaction/catalyst zoning
 #
@@ -294,7 +294,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
     # Energy balance in solid phase
     #                   (1-eb)*rhoc*cpc*dTc/dt = (1-eb)*Kc*d^2T/dz^2 + (1-eb)*Ga*hc*(T - Tc)
-    #                           - (1-eb)*a*hwc*(Tc - Tw) + (1-eb)/1000*SUM(all rj, (-dHrxnj)*d_rxnj**rj)
+    #                           - (1-eb)*a*hwc*(Tc - Tw) + (1-eb)/1000*SUM(all rj, (-dHrxnj)*d_rxnj*rj)
     def solid_eb_constraint(self, m, age, temp, z, t):
         rxn_sum=self.reaction_sum_heats(m, age, temp, z, t)
         return (1-m.eb)*m.rhoc*m.cpc*m.dTc_dt[age,temp,z,t] == (1-m.eb)*m.Kc*m.d2Tc_dz2[age,temp,z,t] + (1-m.eb)*m.Ga*m.hc*(m.T[age,temp,z,t]-m.Tc[age,temp,z,t]) \
