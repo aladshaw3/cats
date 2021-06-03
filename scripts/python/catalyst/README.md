@@ -45,6 +45,12 @@ Nonisothermal_Monolith_Simulator Equations
 
 &rho;<sub>w</sub> c<sub>pw</sub> &part;T<sub>w</sub>/&part;t = K<sub>w</sub> &part;<sup>2</sup>T<sub>w</sub>/&part;z<sup>2</sup> - &epsilon;<sub>b</sub> &alpha; h<sub>wg</sub> (T<sub>w</sub> - T) - (1-&epsilon;<sub>b</sub>) &alpha; h<sub>wc</sub> (T<sub>w</sub> - T<sub>c</sub>) - &alpha;<sub>w</sub> h<sub>wg</sub> (T<sub>w</sub> - T<sub>a</sub>)
 
+Parameter | Meaning | Units
+------------ | ------------- | -------------
+&rho; | gas density | g/cm<sup>3</sup>
+c<sub>pg</sub> | specific heat capacity of gas | J/g/K
+T | temperature of gas | K
+h<sub>c</sub> | heat transfer rate from gas to solids | J/K/min/cm<sup>2</sup>
 
 Notes
 -----
