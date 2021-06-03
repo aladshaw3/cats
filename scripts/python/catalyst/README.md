@@ -8,9 +8,9 @@ Isothermal_Monolith_Simulator Equations
 
 &epsilon;<sub>b</sub> &part;C<sub>b,i</sub>/&part;t + &epsilon;<sub>b</sub> v &part;C<sub>b,i</sub>/&part;z = -(1-&epsilon;<sub>b</sub>) G<sub>a</sub> k<sub>m,i</sub> (C<sub>b,i</sub> - C<sub>i</sub>)
 
-&epsilon;<sub>w</sub> (1-&epsilon;<sub>b</sub>) dC<sub>i</sub>/dt = (1-&epsilon;<sub>b</sub>) G<sub>a</sub> k<sub>m,i</sub> (C<sub>b,i</sub> - C<sub>i</sub>) + (1-&epsilon;<sub>b</sub>) <span>&#8721;</span><sub>&forall;i</sub> (u<sub>C<sub>i</sub></sub> r<sub>i</sub>)
+&epsilon;<sub>w</sub> (1-&epsilon;<sub>b</sub>) dC<sub>i</sub>/dt = (1-&epsilon;<sub>b</sub>) G<sub>a</sub> k<sub>m,i</sub> (C<sub>b,i</sub> - C<sub>i</sub>) + (1-&epsilon;<sub>b</sub>) <span>&#8721;</span><sub>&forall;j</sub> (u<sub>C<sub>j</sub></sub> r<sub>j</sub>)
 
-dq/dt = SUM(all i, u_qi * ri)
+dq<sub>i</sub>/dt = <span>&sum;</span><sub>&forall;j</sub> (u<sub>q<sub>j</sub></sub> r<sub>j</sub>)
 
 Smax = S + SUM(all qi, u_si*qi)
 
