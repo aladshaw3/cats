@@ -15,6 +15,7 @@ Isothermal_Monolith_Simulator Equations
 ** S<sub>max,i</sub> = S<sub>i</sub> + <span>&sum;</span><sub>&forall;q<sub>j</sub></sub> (u<sub>s<sub>i,j</sub></sub> q<sub>j</sub>)
 
 &ast; NOTE: This is optional when building a model. User may opt to not explicitly include surface species
+
 ** NOTE: This is also optional when building a model and only available if the user is using the surface species. Alternatively, user may specify the sites themselves to be surface species.
 
 Parameter | Meaning | Units
@@ -70,7 +71,7 @@ K<sub>w</sub> | wall thermal conductivity | J/K/min/cm
 &Delta;H<sub>rxn<sub>j</sub></sub> | heat of the j<sup>th</sup> reaction | J/K/mol
 d<sub>j</sub> | &ast;multiplier for heat of reaction | (unitless)
 
-&ast;NOTE: This multiplier is set to 1 by default.
+&ast; NOTE: This multiplier is set to 1 by default.
 
 Notes
 -----
