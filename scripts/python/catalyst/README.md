@@ -14,10 +14,10 @@ dq<sub>i</sub>/dt = <span>&sum;</span><sub>&forall;j</sub> (u<sub>q<sub>j</sub><
 
 S<sub>max,i</sub> = S<sub>i</sub> + <span>&sum;</span><sub>&forall;q<sub>j</sub></sub> (u<sub>s<sub>j</sub></sub> q<sub>j</sub>)
 
-First Header | Second Header
------------- | -------------
-Content from cell 1 | Content from cell 2
-Content in the first column | Content in the second column
+Parameter | Meaning | Units
+------------ | ------------- | -------------
+Content from cell 1 | Content from cell 2 | unit
+Content in the first column | Content in the second column | unit
 
 
 Nonisothermal_Monolith_Simulator Equations
