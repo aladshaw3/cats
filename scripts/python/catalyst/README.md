@@ -66,7 +66,8 @@ K<sub>c</sub> | solids thermal conductivity | J/K/min/cm
 K<sub>w</sub> | wall thermal conductivity | J/K/min/cm
 &Delta;H<sub>rxn<sub>j</sub></sub> | heat of the j<sup>th</sup> reaction | J/K/mol
 d<sub>j</sub> | * multiplier for heat of reaction | (unitless)
-*NOTE: This multiplier is set to 1 by default. 
+
+*NOTE: This multiplier is set to 1 by default.
 
 Notes
 -----
