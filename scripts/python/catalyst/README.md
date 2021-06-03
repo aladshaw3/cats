@@ -27,12 +27,15 @@ eb*rho*cpg*dT/dt + eb*rho*cpg*v*dT/dz = -(1-eb)*Ga*hc*(T - Tc) - eb*a*hwg*(T - T
 rhow*cpw*dTw/dt = Kw*d^2Tw/dz^2 - eb*a*hwg*(Tw - T) - (1-eb)*a*hwc*(Tw - Tc) - aw*hwg*(Tw - Ta)
 
 
-NOTE: These tools are a work in progress.
+Notes
+-----
+
+These tools are a work in progress.
 
 Requirements/Recommendations
 -----
 - (Recommended): Create a conda environment for (pyomo) or (idaes) to run
-- (Min Dependent Libraries): [pyomo, numpy, ipopt, pyyaml, matplotlib, scipy, pint, pytest, unittest]
-- (Rec Libraries): [idaes-pse]
+- (Minimum Dependent Libraries): [pyomo, numpy, ipopt, pyyaml, matplotlib, scipy, pint, pytest, unittest]
+- (Recommended Libraries): [idaes-pse]
 - NOTE: If you install pyomo and ipopt through idaes-pse and use 'idaes get-extensions' to get access to additional HSL optimized libraries
 - NOTE: If manually installing ipopt on Windows, you will need to specify ipopt=3.11.1
