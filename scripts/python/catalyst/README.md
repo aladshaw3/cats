@@ -18,6 +18,9 @@ Parameter | Meaning | Units
 ------------ | ------------- | -------------
 &epsilon;<sub>b</sub> | bulk voids to total volume ratio | (unitless) L-gas/L-total
 C<sub>b,i</sub> | bulk concentration of i<sup>th</sup> gas species | mol/L-gas
+t | time dimension | min
+z | axial dimension | cm
+v | average linear gas velocity | cm/min
 
 
 Nonisothermal_Monolith_Simulator Equations
