@@ -5,6 +5,7 @@ This directory contains a set of python tools for performing data analyses assoc
 
 Isothermal_Monolith_Simulator Equations
 -----
+h<sub>&theta;</sub>(x) = &theta;<sub>o</sub> x + &theta;<sub>1</sub>x
 
 eb*dCb/dt + eb*v*dCb/dz = -(1-eb)*Ga*km*(Cb - C)
 
