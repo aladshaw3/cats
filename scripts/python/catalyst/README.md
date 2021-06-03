@@ -24,7 +24,7 @@ Nonisothermal_Monolith_Simulator Equations
 
 (1-&epsilon;<sub>b</sub>) &rho;<sub>c</sub> c<sub>pc</sub> &part;T<sub>c</sub>/&part;t = (1-&epsilon;<sub>b</sub>) K<sub>c</sub> &part;<sup>2</sup>T<sub>c</sub>/&part;z<sup>2</sup> + (1-&epsilon;<sub>b</sub>) G<sub>a</sub> h<sub>c</sub> (T - T<sub>c</sub>) - (1-&epsilon;<sub>b</sub>) &alpha; h<sub>wc</sub> (T<sub>c</sub> - T<sub>w</sub>) + [(1-eb)/1000]  <span>&sum;</span><sub>&forall;j</sub> ((-&Delta;H<sub>rxn<sub>j</sub></sub>) d<sub>j</sub> r<sub>j</sub>)
 
-&rho;<sub>w</sub> c<sub>pw</sub> &part;T<sub>w</sub>/&part;t = K<sub>w</sub> &part;<sup>2</sup>T<sub>w</sub>/&part;z<sup>2</sup> - eb*a*hwg*(Tw - T) - (1-eb)*a*hwc*(Tw - Tc) - aw*hwg*(Tw - Ta)
+&rho;<sub>w</sub> c<sub>pw</sub> &part;T<sub>w</sub>/&part;t = K<sub>w</sub> &part;<sup>2</sup>T<sub>w</sub>/&part;z<sup>2</sup> - &epsilon;<sub>b</sub> &alpha; h<sub>wg</sub> (T<sub>w</sub> - T) - (1-&epsilon;<sub>b</sub>) &alpha; h<sub>wc</sub> (T<sub>w</sub> - T<sub>c</sub>) - &alpha;<sub>w</sub> h<sub>wg</sub> (Tw - Ta)
 
 
 Notes
