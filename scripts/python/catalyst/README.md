@@ -14,6 +14,10 @@ dq<sub>i</sub>/dt = <span>&sum;</span><sub>&forall;j</sub> (u<sub>q<sub>j</sub><
 
 S<sub>max,i</sub> = S<sub>i</sub> + <span>&sum;</span><sub>&forall;q<sub>j</sub></sub> (u<sub>s<sub>j</sub></sub> q<sub>j</sub>)
 
+Parameters
+.....
+test
+
 
 Nonisothermal_Monolith_Simulator Equations
 -----
