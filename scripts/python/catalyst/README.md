@@ -20,7 +20,7 @@ Nonisothermal_Monolith_Simulator Equations
 
 (Includes the above in addition to the following...)
 
-&epsilon;<sub>b</sub> &rho; c<sub>pg</sub> &part;T/&part;t + &epsilon;<sub>b</sub> &rho; c<sub>pg</sub> v &part;T/&part;z = -(1-eb)*Ga*hc*(T - Tc) - eb*a*hwg*(T - Tw)
+&epsilon;<sub>b</sub> &rho; c<sub>pg</sub> &part;T/&part;t + &epsilon;<sub>b</sub> &rho; c<sub>pg</sub> v &part;T/&part;z = -(1-&epsilon;<sub>b</sub>) G<sub>a</sub> h<sub>c</sub> (T - T<sub>c</sub>) - &epsilon;<sub>b</sub> a h<sub>wg</sub> (T - T<sub>w</sub>)
 
 (1-eb)*rhoc*cpc*dTc/dt = (1-eb)*Kc*d^2T/dz^2 + (1-eb)*Ga*hc*(T - Tc) - (1-eb)*a*hwc*(Tc - Tw) + (1-eb)/1000*SUM(all rj, (-dHrxnj)*d_rxnj**rj)
 
