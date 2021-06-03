@@ -16,8 +16,8 @@ S<sub>max,i</sub> = S<sub>i</sub> + <span>&sum;</span><sub>&forall;q<sub>j</sub>
 
 Parameter | Meaning | Units
 ------------ | ------------- | -------------
-Content from cell 1 | Content from cell 2 | unit
-Content in the first column | Content in the second column | unit
+&epsilon;<sub>b</sub> | bulk voids to total volume ratio | (unitless) L-gas/L-total
+C<sub>b,i</sub> | bulk concentration of i<sup>th</sup> gas species | mol/L-gas
 
 
 Nonisothermal_Monolith_Simulator Equations
