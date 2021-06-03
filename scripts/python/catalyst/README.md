@@ -50,6 +50,8 @@ Parameter | Meaning | Units
 &rho; | gas density | g/cm<sup>3</sup>
 c<sub>pg</sub> | specific heat capacity of gas | J/g/K
 T | temperature of gas | K
+&alpha; | surface to volume ratio for cylindrical reactor inner wall | cm<sup>-1</sup>
+&alpha;<sub>w</sub> | surface to volume ratio for cylindrical reactor outer wall | cm<sup>-1</sup>
 h<sub>c</sub> | heat transfer rate from gas to solids | J/K/min/cm<sup>2</sup>
 
 Notes
