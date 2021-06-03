@@ -23,6 +23,9 @@ z | axial dimension | cm
 v | average linear gas velocity | cm/min
 (1-&epsilon;<sub>b</sub>) | bulk solids to total volume ratio | (unitless) L-solids/L-total
 G<sub>a</sub> | solids surface area to solids volume ratio | cm<sup>-1</sup>
+k<sub>m,i</sub> | mass transfer rate of i<sup>th</sup> gas species | cm/min
+C<sub>i</sub> | pore-space concentration of i<sup>th</sup> gas species | mol/L-gas
+&epsilon;<sub>w</sub> | washcoat/solid pore volume to bulk solids volume | (unitless) L-pores/L-solids
 
 
 Nonisothermal_Monolith_Simulator Equations
