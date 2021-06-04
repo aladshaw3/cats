@@ -88,6 +88,20 @@ Requirements/Recommendations
 
 Creating an Environment to Run Code (without IDAES)
 -----
+- Install Anaconda (or Miniconda) if it is not already installed
+
+https://www.anaconda.com/products/individual 
+
 - Create a new conda environment
-<code> conda create --name <* NAME> </code>
+
+<code> conda create --name <&ast;NAME> </code>
+
 &ast; NOTE: You can name this environment whatever you want.
+
+- Activate your new conda environment
+
+<code> conda activate <&ast;NAME> </code>
+
+- Install the Minimum Dependent Libraries (see above)
+
+<code>
