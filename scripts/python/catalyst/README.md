@@ -132,3 +132,5 @@ https://www.anaconda.com/products/individual
 - Install the custom idaes HSL libraries for the solvers
 
 <code> idaes get-extensions </code>
+
+ - Additional information on IDAES can be found at https://idaes-pse.readthedocs.io/en/stable/getting_started/index.html#installation 
