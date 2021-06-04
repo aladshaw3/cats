@@ -85,3 +85,9 @@ Requirements/Recommendations
 - (Recommended Libraries): [idaes-pse]
 - NOTE: If you install pyomo and ipopt through idaes-pse and use 'idaes get-extensions' to get access to additional HSL optimized libraries
 - NOTE: If manually installing ipopt on Windows, you will need to specify ipopt=3.11.1
+
+Creating an Environment to Run Code (without IDAES)
+-----
+- Create a new conda environment
+<code> conda create --name <* NAME> </code>
+&ast; NOTE: You can name this environment whatever you want.
