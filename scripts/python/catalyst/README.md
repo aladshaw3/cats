@@ -81,8 +81,8 @@ These tools are a work in progress.
 Requirements/Recommendations
 -----
 - (Recommended): Create a conda environment for (pyomo) or (idaes) to run
-- (Minimum Dependent Libraries): [pyomo, numpy, ipopt, matplotlib, scipy, pint, pytest, unittest]
-- (Recommended Libraries): [idaes-pse]
+- (Minimum Dependent Packages): [pyomo, numpy, ipopt, matplotlib, scipy, pint, pytest, unittest]
+- (Recommended Packages): [idaes-pse]
 - NOTE: If you install pyomo and ipopt through idaes-pse and use 'idaes get-extensions' to get access to additional HSL optimized libraries
 - NOTE: If manually installing ipopt on Windows, you will need to specify ipopt=3.11.1
 
@@ -90,18 +90,22 @@ Creating an Environment to Run Code (without IDAES)
 -----
 - Install Anaconda (or Miniconda) if it is not already installed
 
-https://www.anaconda.com/products/individual 
+https://www.anaconda.com/products/individual
 
 - Create a new conda environment
 
 <code> conda create --name <&ast;NAME> </code>
 
-&ast; NOTE: You can name this environment whatever you want.
+&ast;NOTE: You can name this environment whatever you want.
 
 - Activate your new conda environment
 
 <code> conda activate <&ast;NAME> </code>
 
-- Install the Minimum Dependent Libraries (see above)
+- Install the Minimum Dependent Packages (see above)
 
-<code>
+<code> conda install -c conda-forge <&ast;&ast;PACKAGE_NAME> </code>
+
+&ast;&ast;NOTE: If you are on Windows, you will need to specify <code>ipopt=3.11.1</code>
+
+- Whenever you run the code, ensure your conda environment is active first 
