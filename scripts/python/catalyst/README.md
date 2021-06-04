@@ -108,4 +108,27 @@ https://www.anaconda.com/products/individual
 
 &ast;&ast;NOTE: If you are on Windows, you will need to specify <code>ipopt=3.11.1</code>
 
-- Whenever you run the code, ensure your conda environment is active first 
+- Whenever you run the code, ensure your conda environment is active first
+
+
+Creating an IDAES Environment to Run Code
+-----
+- Install Anaconda (or Miniconda) if it is not already installed
+
+https://www.anaconda.com/products/individual
+
+- Create a new conda environment
+
+<code> conda create --name idaes </code>
+
+- Activate your new conda environment
+
+<code> conda activate idaes </code>
+
+- Install the idaes-pse package into the idaes environment
+
+<code> pip install idaes-pse </code>
+
+- Install the custom idaes HSL libraries for the solvers
+
+<code> idaes get-extensions </code>
