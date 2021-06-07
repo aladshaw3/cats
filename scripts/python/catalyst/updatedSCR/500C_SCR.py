@@ -4,7 +4,7 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 # Read in the data (data is now a dictionary containing the data we want)
-data = naively_read_data_file("inputfiles/SCR_all-ages_450C.txt",factor=1)
+data = naively_read_data_file("inputfiles/SCR_all-ages_500C.txt",factor=1)
 
 time_list = time_point_selector(data["time"], data)
 
@@ -19,36 +19,36 @@ sim.add_temporal_dataset(data["time"])   #Temporal observations (in s)
 sim.add_age_set(["Unaged","2hr","4hr","8hr","16hr"])
 sim.add_data_age_set(["Unaged","2hr","4hr","8hr","16hr"])  # Data observations can be a sub-set
 
-sim.add_temperature_set(["450C"])
-sim.add_data_temperature_set(["450C"])     # Data observations can be a sub-set
+sim.add_temperature_set(["500C"])
+sim.add_data_temperature_set(["500C"])     # Data observations can be a sub-set
 
 sim.add_gas_species(["NH3","H2O","O2","NO","NO2","N2O","N2"])
 sim.add_data_gas_species(["NH3","NO","NO2","N2O"])    # Data observations can be a sub-set
 
-sim.set_data_values_for("NH3","Unaged","450C",5,data["time"],data["NH3_Unaged"])
-sim.set_data_values_for("NO","Unaged","450C",5,data["time"],data["NO_Unaged"])
-sim.set_data_values_for("NO2","Unaged","450C",5,data["time"],data["NO2_Unaged"])
-sim.set_data_values_for("N2O","Unaged","450C",5,data["time"],data["N2O_Unaged"])
+sim.set_data_values_for("NH3","Unaged","500C",5,data["time"],data["NH3_Unaged"])
+sim.set_data_values_for("NO","Unaged","500C",5,data["time"],data["NO_Unaged"])
+sim.set_data_values_for("NO2","Unaged","500C",5,data["time"],data["NO2_Unaged"])
+sim.set_data_values_for("N2O","Unaged","500C",5,data["time"],data["N2O_Unaged"])
 
-sim.set_data_values_for("NH3","2hr","450C",5,data["time"],data["NH3_2hr"])
-sim.set_data_values_for("NO","2hr","450C",5,data["time"],data["NO_2hr"])
-sim.set_data_values_for("NO2","2hr","450C",5,data["time"],data["NO2_2hr"])
-sim.set_data_values_for("N2O","2hr","450C",5,data["time"],data["N2O_2hr"])
+sim.set_data_values_for("NH3","2hr","500C",5,data["time"],data["NH3_2hr"])
+sim.set_data_values_for("NO","2hr","500C",5,data["time"],data["NO_2hr"])
+sim.set_data_values_for("NO2","2hr","500C",5,data["time"],data["NO2_2hr"])
+sim.set_data_values_for("N2O","2hr","500C",5,data["time"],data["N2O_2hr"])
 
-sim.set_data_values_for("NH3","4hr","450C",5,data["time"],data["NH3_4hr"])
-sim.set_data_values_for("NO","4hr","450C",5,data["time"],data["NO_4hr"])
-sim.set_data_values_for("NO2","4hr","450C",5,data["time"],data["NO2_4hr"])
-sim.set_data_values_for("N2O","4hr","450C",5,data["time"],data["N2O_4hr"])
+sim.set_data_values_for("NH3","4hr","500C",5,data["time"],data["NH3_4hr"])
+sim.set_data_values_for("NO","4hr","500C",5,data["time"],data["NO_4hr"])
+sim.set_data_values_for("NO2","4hr","500C",5,data["time"],data["NO2_4hr"])
+sim.set_data_values_for("N2O","4hr","500C",5,data["time"],data["N2O_4hr"])
 
-sim.set_data_values_for("NH3","8hr","450C",5,data["time"],data["NH3_8hr"])
-sim.set_data_values_for("NO","8hr","450C",5,data["time"],data["NO_8hr"])
-sim.set_data_values_for("NO2","8hr","450C",5,data["time"],data["NO2_8hr"])
-sim.set_data_values_for("N2O","8hr","450C",5,data["time"],data["N2O_8hr"])
+sim.set_data_values_for("NH3","8hr","500C",5,data["time"],data["NH3_8hr"])
+sim.set_data_values_for("NO","8hr","500C",5,data["time"],data["NO_8hr"])
+sim.set_data_values_for("NO2","8hr","500C",5,data["time"],data["NO2_8hr"])
+sim.set_data_values_for("N2O","8hr","500C",5,data["time"],data["N2O_8hr"])
 
-sim.set_data_values_for("NH3","16hr","450C",5,data["time"],data["NH3_16hr"])
-sim.set_data_values_for("NO","16hr","450C",5,data["time"],data["NO_16hr"])
-sim.set_data_values_for("NO2","16hr","450C",5,data["time"],data["NO2_16hr"])
-sim.set_data_values_for("N2O","16hr","450C",5,data["time"],data["N2O_16hr"])
+sim.set_data_values_for("NH3","16hr","500C",5,data["time"],data["NH3_16hr"])
+sim.set_data_values_for("NO","16hr","500C",5,data["time"],data["NO_16hr"])
+sim.set_data_values_for("NO2","16hr","500C",5,data["time"],data["NO2_16hr"])
+sim.set_data_values_for("N2O","16hr","500C",5,data["time"],data["N2O_16hr"])
 
 #Clear up memory space after we don't need the dictionary anymore
 data.clear()
@@ -178,25 +178,25 @@ r4b_equ = {"parameters": {"A": 70000, "E": 0, "dH": -28889.23, "dS": -26.674},
 
 # Arrhenius Reactions
 #  ---------- NO Oxidation Reactions ------------
-r5f = {"parameters": {"A": 3994751.005, "E": 0},
+r5f = {"parameters": {"A": 6545956.996, "E": 0},
           "mol_reactants": {"Z1CuOH": 1, "NO": 1, "O2": 0.5},
           "mol_products": {"Z1CuOH": 1, "NO2": 1},
           "rxn_orders": {"Z1CuOH": 1, "NO": 1, "O2": 1}
         }
 
-r5r = {"parameters": {"A": 12483.7129, "E": 0},
+r5r = {"parameters": {"A": 30875.06582, "E": 0},
           "mol_reactants": {"Z1CuOH": 1, "NO2": 1},
           "mol_products": {"Z1CuOH": 1, "NO": 1, "O2": 0.5},
           "rxn_orders": {"Z1CuOH": 1, "NO2": 1}
         }
 
-r6f = {"parameters": {"A": 3163418.753, "E": 0},
+r6f = {"parameters": {"A": 4941434.663, "E": 0},
           "mol_reactants": {"Z2Cu": 1, "NO": 1, "O2": 0.5},
           "mol_products": {"Z2Cu": 1, "NO2": 1},
           "rxn_orders": {"Z2Cu": 1, "NO": 1, "O2": 1}
         }
 
-r6r = {"parameters": {"A": 13531.96589, "E": 0},
+r6r = {"parameters": {"A": 34034.6359, "E": 0},
           "mol_reactants": {"Z2Cu": 1, "NO2": 1},
           "mol_products": {"Z2Cu": 1, "NO": 1, "O2": 0.5},
           "rxn_orders": {"Z2Cu": 1, "NO2": 1}
@@ -204,19 +204,19 @@ r6r = {"parameters": {"A": 13531.96589, "E": 0},
 
 
 #  ---------- NH3 Oxidation to N2 Reactions ------------
-r7 = {"parameters": {"A": 675.8721609, "E": 0},
+r7 = {"parameters": {"A": 1554.851909, "E": 0},
           "mol_reactants": {"Z2Cu-NH3": 1, "O2": 0.75},
           "mol_products": {"Z2Cu": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-NH3": 1, "O2": 1}
         }
 
-r8 = {"parameters": {"A": 559.0429714, "E": 0},
+r8 = {"parameters": {"A": 1240.752138, "E": 0},
           "mol_reactants": {"Z2Cu-(NH3)2": 1, "O2": 0.75},
           "mol_products": {"Z2Cu-NH3": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "O2": 1}
         }
 
-r9 = {"parameters": {"A": 568.1345523, "E": 0},
+r9 = {"parameters": {"A": 1263.652523, "E": 0},
           "mol_reactants": {"ZNH4": 1, "O2": 0.75},
           "mol_products": {"ZH": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"ZNH4": 1, "O2": 1}
@@ -243,31 +243,31 @@ r12 = {"parameters": {"A": 0, "E": 0},
 
 #  ---------- NO-SCR Reactions ------------
 
-r13 = {"parameters": {"A": 4193048874, "E": 0},
+r13 = {"parameters": {"A": 7575220345, "E": 0},
           "mol_reactants": {"Z1CuOH-NH3": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"Z1CuOH": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"Z1CuOH-NH3": 1, "NO": 1, "O2": 1}
         }
 
-r14 = {"parameters": {"A": 4634845943, "E": 0},
+r14 = {"parameters": {"A": 8624184563, "E": 0},
           "mol_reactants": {"Z2Cu-NH3": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"Z2Cu": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-NH3": 1, "NO": 1, "O2": 1}
         }
 
-r15 = {"parameters": {"A": 4705713312, "E": 0},
+r15 = {"parameters": {"A": 8538929218, "E": 0},
           "mol_reactants": {"Z2Cu-(NH3)2": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"Z2Cu-NH3": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "NO": 1, "O2": 1}
         }
 
-r16 = {"parameters": {"A": 62478812407, "E": 0},
+r16 = {"parameters": {"A": 1.1942E+11, "E": 0},
           "mol_reactants": {"ZNH4": 1, "NO": 1, "O2": 0.25, "Z1CuOH": 1},
           "mol_products": {"ZH": 1, "N2": 1, "H2O": 1.5, "Z1CuOH": 1},
           "rxn_orders": {"ZNH4": 1, "NO": 1, "O2": 1, "Z1CuOH": 1}
         }
 
-r17 = {"parameters": {"A": 66458330752, "E": 0},
+r17 = {"parameters": {"A": 1.04825E+11, "E": 0},
           "mol_reactants": {"ZNH4": 1, "NO": 1, "O2": 0.25, "Z2Cu": 1},
           "mol_products": {"ZH": 1, "N2": 1, "H2O": 1.5, "Z2Cu": 1},
           "rxn_orders": {"ZNH4": 1, "NO": 1, "O2": 1, "Z2Cu": 1}
@@ -276,19 +276,19 @@ r17 = {"parameters": {"A": 66458330752, "E": 0},
 
 #  ---------- N2O Formation from NO-SCR Reactions ------------
 
-r18 = {"parameters": {"A": 58480965.06, "E": 0},
+r18 = {"parameters": {"A": 99555013.18, "E": 0},
           "mol_reactants": {"Z2Cu-NH3": 1, "NO": 1, "O2": 0.75},
           "mol_products": {"Z2Cu": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-NH3": 1, "NO": 1, "O2": 1}
         }
 
-r19 = {"parameters": {"A": 49593725.59, "E": 0},
+r19 = {"parameters": {"A": 79886036, "E": 0},
           "mol_reactants": {"Z2Cu-(NH3)2": 1, "NO": 1, "O2": 0.75},
           "mol_products": {"Z2Cu-NH3": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "NO": 1, "O2": 1}
         }
 
-r20 = {"parameters": {"A": 1411755380, "E": 0},
+r20 = {"parameters": {"A": 2102358574, "E": 0},
           "mol_reactants": {"ZNH4": 1, "NO": 1, "O2": 0.75, "Z2Cu": 1},
           "mol_products": {"ZH": 1, "N2O": 1, "H2O": 1.5, "Z2Cu": 1},
           "rxn_orders": {"ZNH4": 1, "NO": 1, "O2": 1, "Z2Cu": 1}
@@ -296,25 +296,25 @@ r20 = {"parameters": {"A": 1411755380, "E": 0},
 
 #  ---------- NH4NO3 Formation Reactions ------------
 
-r21 = {"parameters": {"A": 26970685.66, "E": 0},
+r21 = {"parameters": {"A": 56174656.99, "E": 0},
           "mol_reactants": {"Z1CuOH-NH3": 2, "NO2": 2},
           "mol_products": {"Z1CuOH": 1, "N2": 1, "H2O": 1, "Z1CuOH-NH4NO3": 1},
           "rxn_orders": {"Z1CuOH-NH3": 1, "NO2": 1}
         }
 
-r22 = {"parameters": {"A": 27020090.34, "E": 0},
+r22 = {"parameters": {"A": 56293969.47, "E": 0},
           "mol_reactants": {"Z2Cu-NH3": 2, "NO2": 2},
           "mol_products": {"Z2Cu": 1, "N2": 1, "H2O": 1, "Z2Cu-NH4NO3": 1},
           "rxn_orders": {"Z2Cu-NH3": 1, "NO2": 1}
         }
 
-r23 = {"parameters": {"A": 35517992.81, "E": 0},
+r23 = {"parameters": {"A": 90103723.62, "E": 0},
           "mol_reactants": {"Z2Cu-(NH3)2": 2, "NO2": 2},
           "mol_products": {"Z2Cu-NH3": 1, "N2": 1, "H2O": 1, "Z2Cu-NH4NO3": 1},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "NO2": 1}
         }
 
-r24 = {"parameters": {"A": 27021369.77, "E": 0},
+r24 = {"parameters": {"A": 56297125.16, "E": 0},
           "mol_reactants": {"ZNH4": 2, "NO2": 2},
           "mol_products": {"ZH": 1, "N2": 1, "H2O": 1, "ZH-NH4NO3": 1},
           "rxn_orders": {"ZNH4": 1, "NO2": 1}
@@ -322,19 +322,19 @@ r24 = {"parameters": {"A": 27021369.77, "E": 0},
 
 #  ---------- NH4NO3 Fast SCR Reactions ------------
 
-r25 = {"parameters": {"A": 34884582.21, "E": 0},
+r25 = {"parameters": {"A": 68900438.95, "E": 0},
           "mol_reactants": {"Z1CuOH-NH4NO3": 1, "NO": 1},
           "mol_products": {"Z1CuOH": 1, "N2": 1, "H2O": 2, "NO2": 1},
           "rxn_orders": {"Z1CuOH-NH4NO3": 1, "NO": 1}
         }
 
-r26 = {"parameters": {"A": 21441265.23, "E": 0},
+r26 = {"parameters": {"A": 38877836.65, "E": 0},
           "mol_reactants": {"Z2Cu-NH4NO3": 1, "NO": 1},
           "mol_products": {"Z2Cu": 1, "N2": 1, "H2O": 2, "NO2": 1},
           "rxn_orders": {"Z2Cu-NH4NO3": 1, "NO": 1}
         }
 
-r27 = {"parameters": {"A": 18175631.34, "E": 0},
+r27 = {"parameters": {"A": 32461520.86, "E": 0},
           "mol_reactants": {"ZH-NH4NO3": 1, "NO": 1},
           "mol_products": {"ZH": 1, "N2": 1, "H2O": 2, "NO2": 1},
           "rxn_orders": {"ZH-NH4NO3": 1, "NO": 1}
@@ -342,19 +342,19 @@ r27 = {"parameters": {"A": 18175631.34, "E": 0},
 
 #  ---------- NH4NO3 NO2 SCR Reactions ------------
 
-r28 = {"parameters": {"A": 253134.3894, "E": 0},
+r28 = {"parameters": {"A": 528985.0187, "E": 0},
           "mol_reactants": {"Z1CuOH-NH4NO3": 1},
           "mol_products": {"Z1CuOH-NH3": 1, "O2": 0.25, "H2O": 0.5, "NO2": 1},
           "rxn_orders": {"Z1CuOH-NH4NO3": 1}
         }
 
-r29 = {"parameters": {"A": 247342.9543, "E": 0},
+r29 = {"parameters": {"A": 513101.758, "E": 0},
           "mol_reactants": {"Z2Cu-NH4NO3": 1},
           "mol_products": {"Z2Cu-NH3": 1, "O2": 0.25, "H2O": 0.5, "NO2": 1},
           "rxn_orders": {"Z2Cu-NH4NO3": 1}
         }
 
-r30 = {"parameters": {"A": 246438.248, "E": 0},
+r30 = {"parameters": {"A": 513712.8463, "E": 0},
           "mol_reactants": {"ZH-NH4NO3": 1},
           "mol_products": {"ZNH4": 1, "O2": 0.25, "H2O": 0.5, "NO2": 1},
           "rxn_orders": {"ZH-NH4NO3": 1}
@@ -362,19 +362,19 @@ r30 = {"parameters": {"A": 246438.248, "E": 0},
 
 #  ---------- NH4NO3 N2O Formation Reactions ------------
 
-r31 = {"parameters": {"A": 36745.01686, "E": 0},
+r31 = {"parameters": {"A": 98293.73604, "E": 0},
           "mol_reactants": {"Z1CuOH-NH4NO3": 1},
           "mol_products": {"Z1CuOH": 1, "H2O": 2, "N2O": 1},
           "rxn_orders": {"Z1CuOH-NH4NO3": 1}
         }
 
-r32 = {"parameters": {"A": 52202.68638, "E": 0},
+r32 = {"parameters": {"A": 144860.1203, "E": 0},
           "mol_reactants": {"Z2Cu-NH4NO3": 1},
           "mol_products": {"Z2Cu": 1, "H2O": 2, "N2O": 1},
           "rxn_orders": {"Z2Cu-NH4NO3": 1}
         }
 
-r33 = {"parameters": {"A": 19473.2444, "E": 0},
+r33 = {"parameters": {"A": 40738.68777, "E": 0},
           "mol_reactants": {"ZH-NH4NO3": 1},
           "mol_products": {"ZH": 1, "H2O": 2, "N2O": 1},
           "rxn_orders": {"ZH-NH4NO3": 1}
@@ -476,11 +476,11 @@ sim.set_site_density("ZH","16hr",0.000159082+2.79637E-10+0.009755058)
 sim.set_site_density("CuO","16hr",2.33028E-12)
 
 
-sim.set_isothermal_temp("Unaged","450C",450+273.15)
-sim.set_isothermal_temp("2hr","450C",450+273.15)
-sim.set_isothermal_temp("4hr","450C",450+273.15)
-sim.set_isothermal_temp("8hr","450C",450+273.15)
-sim.set_isothermal_temp("16hr","450C",450+273.15)
+sim.set_isothermal_temp("Unaged","500C",500+273.15)
+sim.set_isothermal_temp("2hr","500C",500+273.15)
+sim.set_isothermal_temp("4hr","500C",500+273.15)
+sim.set_isothermal_temp("8hr","500C",500+273.15)
+sim.set_isothermal_temp("16hr","500C",500+273.15)
 
 # Build the constraints then discretize
 sim.build_constraints()
@@ -490,233 +490,233 @@ sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 
 # ---------------- Unaged ICs ------------------
-sim.set_const_IC("O2","Unaged","450C",0.001685618)
-sim.set_const_IC("H2O","Unaged","450C",0.000840133)
-sim.set_const_IC("NH3","Unaged","450C",0)
-sim.set_const_IC("NO","Unaged","450C",0)
-sim.set_const_IC("NO2","Unaged","450C",0)
-sim.set_const_IC("N2O","Unaged","450C",0)
-sim.set_const_IC("N2","Unaged","450C",0.0184)
+sim.set_const_IC("O2","Unaged","500C",0.001576608)
+sim.set_const_IC("H2O","Unaged","500C",0.000785801)
+sim.set_const_IC("NH3","Unaged","500C",0)
+sim.set_const_IC("NO","Unaged","500C",0)
+sim.set_const_IC("NO2","Unaged","500C",0)
+sim.set_const_IC("N2O","Unaged","500C",0)
+sim.set_const_IC("N2","Unaged","500C",0.0184)
 
-sim.set_const_IC("Z1CuOH-NH3","Unaged","450C",0)
-sim.set_const_IC("Z2Cu-NH3","Unaged","450C",0)
-sim.set_const_IC("Z2Cu-(NH3)2","Unaged","450C",0)
-sim.set_const_IC("ZNH4","Unaged","450C",0)
-sim.set_const_IC("Z1CuOH-H2O","Unaged","450C",0)
-sim.set_const_IC("Z2Cu-H2O","Unaged","450C",0)
-sim.set_const_IC("Z1CuOH-NH4NO3","Unaged","450C",0)
-sim.set_const_IC("Z2Cu-NH4NO3","Unaged","450C",0)
-sim.set_const_IC("ZH-NH4NO3","Unaged","450C",0)
+sim.set_const_IC("Z1CuOH-NH3","Unaged","500C",0)
+sim.set_const_IC("Z2Cu-NH3","Unaged","500C",0)
+sim.set_const_IC("Z2Cu-(NH3)2","Unaged","500C",0)
+sim.set_const_IC("ZNH4","Unaged","500C",0)
+sim.set_const_IC("Z1CuOH-H2O","Unaged","500C",0)
+sim.set_const_IC("Z2Cu-H2O","Unaged","500C",0)
+sim.set_const_IC("Z1CuOH-NH4NO3","Unaged","500C",0)
+sim.set_const_IC("Z2Cu-NH4NO3","Unaged","500C",0)
+sim.set_const_IC("ZH-NH4NO3","Unaged","500C",0)
 
 # ---------------- 2hr ICs ------------------
-sim.set_const_IC("O2","2hr","450C",0.001685618)
-sim.set_const_IC("H2O","2hr","450C",0.000840133)
-sim.set_const_IC("NH3","2hr","450C",0)
-sim.set_const_IC("NO","2hr","450C",0)
-sim.set_const_IC("NO2","2hr","450C",0)
-sim.set_const_IC("N2O","2hr","450C",0)
-sim.set_const_IC("N2","2hr","450C",0.0184)
+sim.set_const_IC("O2","2hr","500C",0.001576608)
+sim.set_const_IC("H2O","2hr","500C",0.000785801)
+sim.set_const_IC("NH3","2hr","500C",0)
+sim.set_const_IC("NO","2hr","500C",0)
+sim.set_const_IC("NO2","2hr","500C",0)
+sim.set_const_IC("N2O","2hr","500C",0)
+sim.set_const_IC("N2","2hr","500C",0.0184)
 
-sim.set_const_IC("Z1CuOH-NH3","2hr","450C",0)
-sim.set_const_IC("Z2Cu-NH3","2hr","450C",0)
-sim.set_const_IC("Z2Cu-(NH3)2","2hr","450C",0)
-sim.set_const_IC("ZNH4","2hr","450C",0)
-sim.set_const_IC("Z1CuOH-H2O","2hr","450C",0)
-sim.set_const_IC("Z2Cu-H2O","2hr","450C",0)
-sim.set_const_IC("Z1CuOH-NH4NO3","2hr","450C",0)
-sim.set_const_IC("Z2Cu-NH4NO3","2hr","450C",0)
-sim.set_const_IC("ZH-NH4NO3","2hr","450C",0)
+sim.set_const_IC("Z1CuOH-NH3","2hr","500C",0)
+sim.set_const_IC("Z2Cu-NH3","2hr","500C",0)
+sim.set_const_IC("Z2Cu-(NH3)2","2hr","500C",0)
+sim.set_const_IC("ZNH4","2hr","500C",0)
+sim.set_const_IC("Z1CuOH-H2O","2hr","500C",0)
+sim.set_const_IC("Z2Cu-H2O","2hr","500C",0)
+sim.set_const_IC("Z1CuOH-NH4NO3","2hr","500C",0)
+sim.set_const_IC("Z2Cu-NH4NO3","2hr","500C",0)
+sim.set_const_IC("ZH-NH4NO3","2hr","500C",0)
 
 # ---------------- 4hr ICs ------------------
-sim.set_const_IC("O2","4hr","450C",0.001685618)
-sim.set_const_IC("H2O","4hr","450C",0.000840133)
-sim.set_const_IC("NH3","4hr","450C",0)
-sim.set_const_IC("NO","4hr","450C",0)
-sim.set_const_IC("NO2","4hr","450C",0)
-sim.set_const_IC("N2O","4hr","450C",0)
-sim.set_const_IC("N2","4hr","450C",0.0184)
+sim.set_const_IC("O2","4hr","500C",0.001576608)
+sim.set_const_IC("H2O","4hr","500C",0.000785801)
+sim.set_const_IC("NH3","4hr","500C",0)
+sim.set_const_IC("NO","4hr","500C",0)
+sim.set_const_IC("NO2","4hr","500C",0)
+sim.set_const_IC("N2O","4hr","500C",0)
+sim.set_const_IC("N2","4hr","500C",0.0184)
 
-sim.set_const_IC("Z1CuOH-NH3","4hr","450C",0)
-sim.set_const_IC("Z2Cu-NH3","4hr","450C",0)
-sim.set_const_IC("Z2Cu-(NH3)2","4hr","450C",0)
-sim.set_const_IC("ZNH4","4hr","450C",0)
-sim.set_const_IC("Z1CuOH-H2O","4hr","450C",0)
-sim.set_const_IC("Z2Cu-H2O","4hr","450C",0)
-sim.set_const_IC("Z1CuOH-NH4NO3","4hr","450C",0)
-sim.set_const_IC("Z2Cu-NH4NO3","4hr","450C",0)
-sim.set_const_IC("ZH-NH4NO3","4hr","450C",0)
+sim.set_const_IC("Z1CuOH-NH3","4hr","500C",0)
+sim.set_const_IC("Z2Cu-NH3","4hr","500C",0)
+sim.set_const_IC("Z2Cu-(NH3)2","4hr","500C",0)
+sim.set_const_IC("ZNH4","4hr","500C",0)
+sim.set_const_IC("Z1CuOH-H2O","4hr","500C",0)
+sim.set_const_IC("Z2Cu-H2O","4hr","500C",0)
+sim.set_const_IC("Z1CuOH-NH4NO3","4hr","500C",0)
+sim.set_const_IC("Z2Cu-NH4NO3","4hr","500C",0)
+sim.set_const_IC("ZH-NH4NO3","4hr","500C",0)
 
 # ---------------- 8hr ICs ------------------
-sim.set_const_IC("O2","8hr","450C",0.001685618)
-sim.set_const_IC("H2O","8hr","450C",0.000840133)
-sim.set_const_IC("NH3","8hr","450C",0)
-sim.set_const_IC("NO","8hr","450C",0)
-sim.set_const_IC("NO2","8hr","450C",0)
-sim.set_const_IC("N2O","8hr","450C",0)
-sim.set_const_IC("N2","8hr","450C",0.0184)
+sim.set_const_IC("O2","8hr","500C",0.001576608)
+sim.set_const_IC("H2O","8hr","500C",0.000785801)
+sim.set_const_IC("NH3","8hr","500C",0)
+sim.set_const_IC("NO","8hr","500C",0)
+sim.set_const_IC("NO2","8hr","500C",0)
+sim.set_const_IC("N2O","8hr","500C",0)
+sim.set_const_IC("N2","8hr","500C",0.0184)
 
-sim.set_const_IC("Z1CuOH-NH3","8hr","450C",0)
-sim.set_const_IC("Z2Cu-NH3","8hr","450C",0)
-sim.set_const_IC("Z2Cu-(NH3)2","8hr","450C",0)
-sim.set_const_IC("ZNH4","8hr","450C",0)
-sim.set_const_IC("Z1CuOH-H2O","8hr","450C",0)
-sim.set_const_IC("Z2Cu-H2O","8hr","450C",0)
-sim.set_const_IC("Z1CuOH-NH4NO3","8hr","450C",0)
-sim.set_const_IC("Z2Cu-NH4NO3","8hr","450C",0)
-sim.set_const_IC("ZH-NH4NO3","8hr","450C",0)
+sim.set_const_IC("Z1CuOH-NH3","8hr","500C",0)
+sim.set_const_IC("Z2Cu-NH3","8hr","500C",0)
+sim.set_const_IC("Z2Cu-(NH3)2","8hr","500C",0)
+sim.set_const_IC("ZNH4","8hr","500C",0)
+sim.set_const_IC("Z1CuOH-H2O","8hr","500C",0)
+sim.set_const_IC("Z2Cu-H2O","8hr","500C",0)
+sim.set_const_IC("Z1CuOH-NH4NO3","8hr","500C",0)
+sim.set_const_IC("Z2Cu-NH4NO3","8hr","500C",0)
+sim.set_const_IC("ZH-NH4NO3","8hr","500C",0)
 
 # ---------------- 16hr ICs ------------------
-sim.set_const_IC("O2","16hr","450C",0.001685618)
-sim.set_const_IC("H2O","16hr","450C",0.000840133)
-sim.set_const_IC("NH3","16hr","450C",0)
-sim.set_const_IC("NO","16hr","450C",0)
-sim.set_const_IC("NO2","16hr","450C",0)
-sim.set_const_IC("N2O","16hr","450C",0)
-sim.set_const_IC("N2","16hr","450C",0.0184)
+sim.set_const_IC("O2","16hr","500C",0.001576608)
+sim.set_const_IC("H2O","16hr","500C",0.000785801)
+sim.set_const_IC("NH3","16hr","500C",0)
+sim.set_const_IC("NO","16hr","500C",0)
+sim.set_const_IC("NO2","16hr","500C",0)
+sim.set_const_IC("N2O","16hr","500C",0)
+sim.set_const_IC("N2","16hr","500C",0.0184)
 
-sim.set_const_IC("Z1CuOH-NH3","16hr","450C",0)
-sim.set_const_IC("Z2Cu-NH3","16hr","450C",0)
-sim.set_const_IC("Z2Cu-(NH3)2","16hr","450C",0)
-sim.set_const_IC("ZNH4","16hr","450C",0)
-sim.set_const_IC("Z1CuOH-H2O","16hr","450C",0)
-sim.set_const_IC("Z2Cu-H2O","16hr","450C",0)
-sim.set_const_IC("Z1CuOH-NH4NO3","16hr","450C",0)
-sim.set_const_IC("Z2Cu-NH4NO3","16hr","450C",0)
-sim.set_const_IC("ZH-NH4NO3","16hr","450C",0)
+sim.set_const_IC("Z1CuOH-NH3","16hr","500C",0)
+sim.set_const_IC("Z2Cu-NH3","16hr","500C",0)
+sim.set_const_IC("Z2Cu-(NH3)2","16hr","500C",0)
+sim.set_const_IC("ZNH4","16hr","500C",0)
+sim.set_const_IC("Z1CuOH-H2O","16hr","500C",0)
+sim.set_const_IC("Z2Cu-H2O","16hr","500C",0)
+sim.set_const_IC("Z1CuOH-NH4NO3","16hr","500C",0)
+sim.set_const_IC("Z2Cu-NH4NO3","16hr","500C",0)
+sim.set_const_IC("ZH-NH4NO3","16hr","500C",0)
 
 
 #Read in data tuples to use as BCs
-data_tup = naively_read_data_file("inputfiles/protocol_SCR_all-ages_450C.txt",
+data_tup = naively_read_data_file("inputfiles/protocol_SCR_all-ages_500C.txt",
                                     factor=1,dict_of_tuples=True)
 
 # ---------------- Unaged BCs ------------------
-sim.set_time_dependent_BC("O2","Unaged","450C",
+sim.set_time_dependent_BC("O2","Unaged","500C",
                             time_value_pairs=data_tup["O2_Unaged"],
-                            initial_value=0.001685618)
+                            initial_value=0.001576608)
 
-sim.set_time_dependent_BC("H2O","Unaged","450C",
+sim.set_time_dependent_BC("H2O","Unaged","500C",
                             time_value_pairs=data_tup["H2O_Unaged"],
-                            initial_value=0.000840133)
+                            initial_value=0.000785801)
 
-sim.set_time_dependent_BC("NH3","Unaged","450C",
+sim.set_time_dependent_BC("NH3","Unaged","500C",
                             time_value_pairs=data_tup["NH3_Unaged"],
                             initial_value=0)
 
-sim.set_time_dependent_BC("NO","Unaged","450C",
+sim.set_time_dependent_BC("NO","Unaged","500C",
                             time_value_pairs=data_tup["NO_Unaged"],
                             initial_value=0)
 
-sim.set_time_dependent_BC("NO2","Unaged","450C",
+sim.set_time_dependent_BC("NO2","Unaged","500C",
                             time_value_pairs=data_tup["NO2_Unaged"],
                             initial_value=0)
 
-sim.set_const_BC("N2O","Unaged","450C",0)
+sim.set_const_BC("N2O","Unaged","500C",0)
 
-sim.set_const_BC("N2","Unaged","450C",0.0184)
+sim.set_const_BC("N2","Unaged","500C",0.0184)
 
 
 # ---------------- 2hr BCs ------------------
-sim.set_time_dependent_BC("O2","2hr","450C",
+sim.set_time_dependent_BC("O2","2hr","500C",
                             time_value_pairs=data_tup["O2_2hr"],
-                            initial_value=0.001685618)
+                            initial_value=0.001576608)
 
-sim.set_time_dependent_BC("H2O","2hr","450C",
+sim.set_time_dependent_BC("H2O","2hr","500C",
                             time_value_pairs=data_tup["H2O_2hr"],
-                            initial_value=0.000840133)
+                            initial_value=0.000785801)
 
-sim.set_time_dependent_BC("NH3","2hr","450C",
+sim.set_time_dependent_BC("NH3","2hr","500C",
                             time_value_pairs=data_tup["NH3_2hr"],
                             initial_value=0)
 
-sim.set_time_dependent_BC("NO","2hr","450C",
+sim.set_time_dependent_BC("NO","2hr","500C",
                             time_value_pairs=data_tup["NO_2hr"],
                             initial_value=0)
 
-sim.set_time_dependent_BC("NO2","2hr","450C",
+sim.set_time_dependent_BC("NO2","2hr","500C",
                             time_value_pairs=data_tup["NO2_2hr"],
                             initial_value=0)
 
-sim.set_const_BC("N2O","2hr","450C",0)
+sim.set_const_BC("N2O","2hr","500C",0)
 
-sim.set_const_BC("N2","2hr","450C",0.0184)
+sim.set_const_BC("N2","2hr","500C",0.0184)
 
 
 # ---------------- 4hr BCs ------------------
-sim.set_time_dependent_BC("O2","4hr","450C",
+sim.set_time_dependent_BC("O2","4hr","500C",
                             time_value_pairs=data_tup["O2_4hr"],
-                            initial_value=0.001685618)
+                            initial_value=0.001576608)
 
-sim.set_time_dependent_BC("H2O","4hr","450C",
+sim.set_time_dependent_BC("H2O","4hr","500C",
                             time_value_pairs=data_tup["H2O_4hr"],
-                            initial_value=0.000840133)
+                            initial_value=0.000785801)
 
-sim.set_time_dependent_BC("NH3","4hr","450C",
+sim.set_time_dependent_BC("NH3","4hr","500C",
                             time_value_pairs=data_tup["NH3_4hr"],
                             initial_value=0)
 
-sim.set_time_dependent_BC("NO","4hr","450C",
+sim.set_time_dependent_BC("NO","4hr","500C",
                             time_value_pairs=data_tup["NO_4hr"],
                             initial_value=0)
 
-sim.set_time_dependent_BC("NO2","4hr","450C",
+sim.set_time_dependent_BC("NO2","4hr","500C",
                             time_value_pairs=data_tup["NO2_4hr"],
                             initial_value=0)
 
-sim.set_const_BC("N2O","4hr","450C",0)
+sim.set_const_BC("N2O","4hr","500C",0)
 
-sim.set_const_BC("N2","4hr","450C",0.0184)
+sim.set_const_BC("N2","4hr","500C",0.0184)
 
 
 # ---------------- 8hr BCs ------------------
-sim.set_time_dependent_BC("O2","8hr","450C",
+sim.set_time_dependent_BC("O2","8hr","500C",
                             time_value_pairs=data_tup["O2_8hr"],
-                            initial_value=0.001685618)
+                            initial_value=0.001576608)
 
-sim.set_time_dependent_BC("H2O","8hr","450C",
+sim.set_time_dependent_BC("H2O","8hr","500C",
                             time_value_pairs=data_tup["H2O_8hr"],
-                            initial_value=0.000840133)
+                            initial_value=0.000785801)
 
-sim.set_time_dependent_BC("NH3","8hr","450C",
+sim.set_time_dependent_BC("NH3","8hr","500C",
                             time_value_pairs=data_tup["NH3_8hr"],
                             initial_value=0)
 
-sim.set_time_dependent_BC("NO","8hr","450C",
+sim.set_time_dependent_BC("NO","8hr","500C",
                             time_value_pairs=data_tup["NO_8hr"],
                             initial_value=0)
 
-sim.set_time_dependent_BC("NO2","8hr","450C",
+sim.set_time_dependent_BC("NO2","8hr","500C",
                             time_value_pairs=data_tup["NO2_8hr"],
                             initial_value=0)
 
-sim.set_const_BC("N2O","8hr","450C",0)
+sim.set_const_BC("N2O","8hr","500C",0)
 
-sim.set_const_BC("N2","8hr","450C",0.0184)
+sim.set_const_BC("N2","8hr","500C",0.0184)
 
 
 # ---------------- 16hr BCs ------------------
-sim.set_time_dependent_BC("O2","16hr","450C",
+sim.set_time_dependent_BC("O2","16hr","500C",
                             time_value_pairs=data_tup["O2_16hr"],
-                            initial_value=0.001685618)
+                            initial_value=0.001576608)
 
-sim.set_time_dependent_BC("H2O","16hr","450C",
+sim.set_time_dependent_BC("H2O","16hr","500C",
                             time_value_pairs=data_tup["H2O_16hr"],
-                            initial_value=0.000840133)
+                            initial_value=0.000785801)
 
-sim.set_time_dependent_BC("NH3","16hr","450C",
+sim.set_time_dependent_BC("NH3","16hr","500C",
                             time_value_pairs=data_tup["NH3_16hr"],
                             initial_value=0)
 
-sim.set_time_dependent_BC("NO","16hr","450C",
+sim.set_time_dependent_BC("NO","16hr","500C",
                             time_value_pairs=data_tup["NO_16hr"],
                             initial_value=0)
 
-sim.set_time_dependent_BC("NO2","16hr","450C",
+sim.set_time_dependent_BC("NO2","16hr","500C",
                             time_value_pairs=data_tup["NO2_16hr"],
                             initial_value=0)
 
-sim.set_const_BC("N2O","16hr","450C",0)
+sim.set_const_BC("N2O","16hr","500C",0)
 
-sim.set_const_BC("N2","16hr","450C",0.0184)
+sim.set_const_BC("N2","16hr","500C",0.0184)
 
 # Fix the kinetics to only run a simulation
 sim.fix_reaction("r1")
@@ -736,44 +736,44 @@ sim.finalize_auto_scaling()
 sim.run_solver()
 
 sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "Unaged", "450C", file_name="Unaged_SCR_450C_breakthrough.txt")
+                                        "Unaged", "500C", file_name="Unaged_SCR_500C_breakthrough.txt")
 sim.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "Unaged", "450C", 0, file_name="Unaged_SCR_450C_bypass.txt")
+                                        "Unaged", "500C", 0, file_name="Unaged_SCR_500C_bypass.txt")
 sim.print_results_of_integral_average(["Z1CuOH-NH3","Z2Cu-NH3","Z2Cu-(NH3)2","ZNH4",
                                         "Z1CuOH-NH4NO3", "Z2Cu-NH4NO3", "ZH-NH4NO3"],
-                                        "Unaged", "450C", file_name="Unaged_SCR_450C_average_ads.txt")
+                                        "Unaged", "500C", file_name="Unaged_SCR_500C_average_ads.txt")
 
 sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "2hr", "450C", file_name="2hr_SCR_450C_breakthrough.txt")
+                                        "2hr", "500C", file_name="2hr_SCR_500C_breakthrough.txt")
 sim.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "2hr", "450C", 0, file_name="2hr_SCR_450C_bypass.txt")
+                                        "2hr", "500C", 0, file_name="2hr_SCR_500C_bypass.txt")
 sim.print_results_of_integral_average(["Z1CuOH-NH3","Z2Cu-NH3","Z2Cu-(NH3)2","ZNH4",
                                         "Z1CuOH-NH4NO3", "Z2Cu-NH4NO3", "ZH-NH4NO3"],
-                                        "2hr", "450C", file_name="2hr_SCR_450C_average_ads.txt")
+                                        "2hr", "500C", file_name="2hr_SCR_500C_average_ads.txt")
 
 sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "4hr", "450C", file_name="4hr_SCR_450C_breakthrough.txt")
+                                        "4hr", "500C", file_name="4hr_SCR_500C_breakthrough.txt")
 sim.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "4hr", "450C", 0, file_name="4hr_SCR_450C_bypass.txt")
+                                        "4hr", "500C", 0, file_name="4hr_SCR_500C_bypass.txt")
 sim.print_results_of_integral_average(["Z1CuOH-NH3","Z2Cu-NH3","Z2Cu-(NH3)2","ZNH4",
                                         "Z1CuOH-NH4NO3", "Z2Cu-NH4NO3", "ZH-NH4NO3"],
-                                        "4hr", "450C", file_name="4hr_SCR_450C_average_ads.txt")
+                                        "4hr", "500C", file_name="4hr_SCR_500C_average_ads.txt")
 
 sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "8hr", "450C", file_name="8hr_SCR_450C_breakthrough.txt")
+                                        "8hr", "500C", file_name="8hr_SCR_500C_breakthrough.txt")
 sim.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "8hr", "450C", 0, file_name="8hr_SCR_450C_bypass.txt")
+                                        "8hr", "500C", 0, file_name="8hr_SCR_500C_bypass.txt")
 sim.print_results_of_integral_average(["Z1CuOH-NH3","Z2Cu-NH3","Z2Cu-(NH3)2","ZNH4",
                                         "Z1CuOH-NH4NO3", "Z2Cu-NH4NO3", "ZH-NH4NO3"],
-                                        "8hr", "450C", file_name="8hr_SCR_450C_average_ads.txt")
+                                        "8hr", "500C", file_name="8hr_SCR_500C_average_ads.txt")
 
 sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "16hr", "450C", file_name="16hr_SCR_450C_breakthrough.txt")
+                                        "16hr", "500C", file_name="16hr_SCR_500C_breakthrough.txt")
 sim.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "16hr", "450C", 0, file_name="16hr_SCR_450C_bypass.txt")
+                                        "16hr", "500C", 0, file_name="16hr_SCR_500C_bypass.txt")
 sim.print_results_of_integral_average(["Z1CuOH-NH3","Z2Cu-NH3","Z2Cu-(NH3)2","ZNH4",
                                         "Z1CuOH-NH4NO3", "Z2Cu-NH4NO3", "ZH-NH4NO3"],
-                                        "16hr", "450C", file_name="16hr_SCR_450C_average_ads.txt")
+                                        "16hr", "500C", file_name="16hr_SCR_500C_average_ads.txt")
 
-sim.print_kinetic_parameter_info(file_name="450C_opt_params.txt")
-sim.save_model_state(file_name="450C_model.json")
+sim.print_kinetic_parameter_info(file_name="500C_opt_params.txt")
+sim.save_model_state(file_name="500C_model.json")
