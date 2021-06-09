@@ -697,3 +697,23 @@ class TestIsothermalCatalystInputOutputOptions():
 
         assert pytest.approx(8.440922883914233, rel=1e-3) == test6.model.wq["q1","Unaged","250C", test6.model.t_data.first()].value
         assert pytest.approx(137931.0344827586, rel=1e-3) == test6.model.w["NH3","Unaged","250C", test6.model.t_data.first()].value
+
+    @pytest.mark.build
+    def test_remove_select_weight_factors(self, isothermal_io_object_with_surface_data):
+        test = isothermal_io_object_with_surface_data
+
+        test.ignore_weight_factor("q1", "Unaged", "250C", time_window=(0,7))
+
+        assert pytest.approx(0, rel=1e-3) == test.model.wq["q1","Unaged","250C", test.model.t_data.first()].value
+        assert pytest.approx(0, rel=1e-3) == test.model.wq["q1","Unaged","250C", 5.0].value
+        assert pytest.approx(8.440922883914233, rel=1e-3) == test.model.wq["q1","Unaged","250C", 10.0].value
+        assert pytest.approx(8.440922883914233, rel=1e-3) == test.model.wq["q1","Unaged","250C", test.model.t_data.last()].value
+
+        test.ignore_all_weight_factors(time_window=(27.5, 31))
+
+        assert pytest.approx(0, rel=1e-3) == test.model.wq["q1","Unaged","250C", test.model.t_data.last()].value
+        assert pytest.approx(0, rel=1e-3) == test.model.wq["q1","Unaged","250C", 5.0].value
+        assert pytest.approx(8.440922883914233, rel=1e-3) == test.model.wq["q1","Unaged","250C", 10.0].value
+
+        assert pytest.approx(137931.0344827586, rel=1e-3) == test.model.w["NH3","Unaged","250C", test.model.t_data.first()].value
+        assert pytest.approx(0, rel=1e-3) == test.model.w["NH3","Unaged","250C", test.model.t_data.last()].value

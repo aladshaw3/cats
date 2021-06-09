@@ -1148,6 +1148,48 @@ class Isothermal_Monolith_Simulator(object):
                     for temp in self.model.data_T_set:
                         self.auto_select_weight_factor(spec, age, temp)
 
+    # Function to ignore weight factors between a specified time range
+    #   time_window = tuple of (start_time, end_time) where the weight
+    #               factors are to be set to zero
+    def ignore_weight_factor(self, spec, age, temp, time_window):
+        if self.isDataGasSpecSet == False and self.isDataSurfSpecSet == False:
+            raise Exception("Error! Cannot specify weight factors prior to setting up the data")
+
+        if type(time_window) is not tuple:
+            raise Exception("Error! Argument 'time_window' must be tuple (start, end)")
+
+        if time_window[0] > time_window[1]:
+            raise Exception("Error! Tuple must be (lower_time, higher_time)")
+
+        inside = False
+        for time in self.model.t_data:
+            if time >= time_window[0] and time <= time_window[1]:
+                inside = True
+            else:
+                inside = False
+
+            if inside == True:
+                if self.isDataGasSpecSet == True:
+                    if spec in self.model.data_gas_set:
+                        self.model.w[spec,age,temp,time].set_value(0)
+                if self.isDataSurfSpecSet == True:
+                    if spec in self.model.data_surface_set:
+                        self.model.wq[spec,age,temp,time].set_value(0)
+
+
+    # Function to ignore all weight factors within a specified time range
+    def ignore_all_weight_factors(self, time_window):
+        if self.isDataGasSpecSet == True:
+            for spec in self.model.data_gas_set:
+                for age in self.model.data_age_set:
+                    for temp in self.model.data_T_set:
+                        self.ignore_weight_factor(spec, age, temp, time_window)
+        if self.isDataSurfSpecSet == True:
+            for spec in self.model.data_surface_set:
+                for age in self.model.data_age_set:
+                    for temp in self.model.data_T_set:
+                        self.ignore_weight_factor(spec, age, temp, time_window)
+
     # Function to set a reference diffusivity for a species
     #       spec = name of species to set gas phase diffusivity for
     #       val = value of gas phase diffusivity in cm**2/s
