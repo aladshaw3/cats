@@ -458,7 +458,7 @@ class Isothermal_Monolith_Simulator(object):
                             within=Reals, mutable=True,
                             initialize=1e-20, units=units.mol/units.L)
             self.model.w = Param(self.model.data_gas_set, self.model.data_age_set,
-                            self.model.data_T_set,
+                            self.model.data_T_set, self.model.t_data_full,
                             within=NonNegativeReals, mutable=True,
                             initialize=1, units=None)
         else:
@@ -473,7 +473,7 @@ class Isothermal_Monolith_Simulator(object):
                                 within=Reals, mutable=True,
                                 initialize=1e-20, units=units.mol/units.L)
                 self.model.w = Param(self.model.data_gas_set, self.model.data_age_set,
-                                self.model.data_T_set,
+                                self.model.data_T_set, self.model.t_data_full,
                                 within=NonNegativeReals, mutable=True,
                                 initialize=1, units=None)
             else:
@@ -543,7 +543,7 @@ class Isothermal_Monolith_Simulator(object):
                             within=Reals, mutable=True,
                             initialize=1e-20, units=units.mol/units.L)
             self.model.wq = Param(self.model.data_surface_set, self.model.data_age_set,
-                            self.model.data_T_set,
+                            self.model.data_T_set, self.model.t_data_full,
                             within=NonNegativeReals, mutable=True,
                             initialize=1, units=None)
         else:
@@ -558,7 +558,7 @@ class Isothermal_Monolith_Simulator(object):
                                 within=Reals, mutable=True,
                                 initialize=1e-20, units=units.mol/units.L)
                 self.model.wq = Param(self.model.data_surface_set, self.model.data_age_set,
-                                self.model.data_T_set,
+                                self.model.data_T_set, self.model.t_data_full,
                                 within=NonNegativeReals, mutable=True,
                                 initialize=1, units=None)
             else:
@@ -1115,10 +1115,10 @@ class Isothermal_Monolith_Simulator(object):
 
         if self.isDataGasSpecSet == True:
             if spec in self.model.data_gas_set:
-                self.model.w[spec,age,temp].set_value(value)
+                self.model.w[spec,age,temp,:].set_value(value)
         if self.isDataSurfSpecSet == True:
             if spec in self.model.data_surface_set:
-                self.model.wq[spec,age,temp].set_value(value)
+                self.model.wq[spec,age,temp,:].set_value(value)
 
     # Function to automatically select weight factors based on data
     def auto_select_weight_factor(self, spec, age, temp):
@@ -1330,7 +1330,7 @@ class Isothermal_Monolith_Simulator(object):
                     for temp in m.data_T_set:
                         for z in m.z_data:
                             for t in m.t_data:
-                                sum+=m.w[spec,age,temp]*(m.Cb_data[spec,age,temp,z,t] - self.interpret_var(m.Cb,spec,age,temp,z,t))**2
+                                sum+=m.w[spec,age,temp,t]*(m.Cb_data[spec,age,temp,z,t] - self.interpret_var(m.Cb,spec,age,temp,z,t))**2
         except:
             pass
         try:
@@ -1339,7 +1339,7 @@ class Isothermal_Monolith_Simulator(object):
                     for temp in m.data_T_set:
                         for z in m.z_data:
                             for t in m.t_data:
-                                sum+=m.wq[spec,age,temp]*(m.q_data[spec,age,temp,z,t] - self.interpret_var(m.q,spec,age,temp,z,t))**2
+                                sum+=m.wq[spec,age,temp,t]*(m.q_data[spec,age,temp,z,t] - self.interpret_var(m.q,spec,age,temp,z,t))**2
         except:
             pass
         return sum

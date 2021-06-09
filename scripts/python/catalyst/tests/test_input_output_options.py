@@ -311,8 +311,8 @@ class TestIsothermalCatalystInputOutputOptions():
 
         test.auto_select_all_weight_factors()
 
-        assert pytest.approx(8.440922883914233, rel=1e-3) == test.model.wq["q1","Unaged","250C"].value
-        assert pytest.approx(137931.0344827586, rel=1e-3) == test.model.w["NH3","Unaged","250C"].value
+        assert pytest.approx(8.440922883914233, rel=1e-3) == test.model.wq["q1","Unaged","250C", test.model.t_data.first()].value
+        assert pytest.approx(137931.0344827586, rel=1e-3) == test.model.w["NH3","Unaged","250C", test.model.t_data.first()].value
 
     @pytest.mark.solver
     def test_mixed_run_solver(self, isothermal_io_object_with_surface_data):
@@ -446,7 +446,7 @@ class TestIsothermalCatalystInputOutputOptions():
 
         test.auto_select_all_weight_factors()
 
-        assert pytest.approx(151515.15151515152, rel=1e-3) == test.model.w["NH3","Unaged","250C"].value
+        assert pytest.approx(151515.15151515152, rel=1e-3) == test.model.w["NH3","Unaged","250C", test.model.t_data.first()].value
 
     @pytest.mark.solver
     def test_optimization(self, isothermal_io_object):
@@ -695,5 +695,5 @@ class TestIsothermalCatalystInputOutputOptions():
         assert hasattr(test6.model, 'wq')
         assert isinstance(test6.model.wq, Param)
 
-        assert pytest.approx(8.440922883914233, rel=1e-3) == test6.model.wq["q1","Unaged","250C"].value
-        assert pytest.approx(137931.0344827586, rel=1e-3) == test6.model.w["NH3","Unaged","250C"].value
+        assert pytest.approx(8.440922883914233, rel=1e-3) == test6.model.wq["q1","Unaged","250C", test6.model.t_data.first()].value
+        assert pytest.approx(137931.0344827586, rel=1e-3) == test6.model.w["NH3","Unaged","250C", test6.model.t_data.first()].value

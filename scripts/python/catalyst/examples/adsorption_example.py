@@ -146,6 +146,16 @@ test.plot_at_locations(["q1","S1"], ["Unaged"], ["250C"], [0,1,2,3,4,5], display
 
 test.plot_at_times(["q1"], ["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=False)
 test.plot_at_times(["NH3"], ["Unaged"], ["250C"], [0,10,20,30,40,50,60], display_live=False)
-test.model.v.pprint()
-test.model.P.pprint()
-test.plot_vs_data("NH3", "Unaged", "250C", 5, display_live=True)
+#test.model.v.pprint()
+#test.model.P.pprint()
+test.plot_vs_data("NH3", "Unaged", "250C", 5, display_live=False)
+
+#yvals =
+xvals_model = list(test.model.t.data())
+xvals_data = list(test.model.t_data.data())
+yvals_model = list(test.model.Cb["NH3","Unaged","250C",test.model.z.last(),:].value)
+yvals_data = list(test.model.Cb_data["NH3","Unaged","250C",test.model.z_data.last(),:].value)
+print(xvals_model)
+print(xvals_data)
+print(yvals_model)
+print(yvals_data)
