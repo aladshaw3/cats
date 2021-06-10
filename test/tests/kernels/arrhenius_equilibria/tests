@@ -1,6 +1,7 @@
 [Tests]
   [./coupled_arrhenius_equilibria]
     type = 'Exodiff'
+    rel_err = 1e-4
     input = 'temp_coupled_arrhenius_equ.i'
     exodiff = 'temp_coupled_arrhenius_equ_out.e'
   [../]

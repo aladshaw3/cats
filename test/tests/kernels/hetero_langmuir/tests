@@ -1,6 +1,7 @@
 [Tests]
   [./hetero_langmuir_test]
     type = 'Exodiff'
+    rel_err = 1e-3
     input = 'lang_sorption.i'
     exodiff = 'lang_sorption_out.e'
   [../]

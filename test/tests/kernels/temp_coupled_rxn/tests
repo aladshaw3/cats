@@ -1,6 +1,7 @@
 [Tests]
   [./temperature_coupling_reactions]
     type = 'Exodiff'
+    rel_err = 1e-4
     input = 'temp_coupled_rxns.i'
     exodiff = 'temp_coupled_rxns_out.e'
   [../]
