@@ -81,7 +81,7 @@ These tools are a work in progress.
 Requirements/Recommendations
 -----
 - (Recommended): Create a conda environment for (pyomo) or (idaes) to run
-- (Minimum Dependent Packages): [pyomo, numpy, ipopt, matplotlib, scipy, pint, pytest, unittest]
+- (Minimum Dependent Packages): [pyomo, numpy, ipopt, matplotlib, scipy, pint, pytest, unittest2, pyyaml]
 - (Recommended Packages): [idaes-pse]
 - NOTE: If you install pyomo and ipopt through idaes-pse and use 'idaes get-extensions' to get access to additional HSL optimized libraries
 - NOTE: If manually installing ipopt on Windows, you will need to specify ipopt=3.11.1
@@ -133,4 +133,4 @@ https://www.anaconda.com/products/individual
 
 <code> idaes get-extensions </code>
 
- - Additional information on IDAES can be found at https://idaes-pse.readthedocs.io/en/stable/getting_started/index.html#installation 
+ - Additional information on IDAES can be found at https://idaes-pse.readthedocs.io/en/stable/getting_started/index.html#installation
