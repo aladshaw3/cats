@@ -7,8 +7,8 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 # Create a simulator object and Load a full model from json
-run = "02"                              #update this number to reflect changes in runs
-readfile = 'output/450C_model.json'     #update this name to reflect which model to load
+run = "04"                              #update this number to reflect changes in runs
+readfile = 'output/450C_model03.json'     #update this name to reflect which model to load
 writefile = "450C_model"+run+".json"
 
 #NOTE: Other output names can remain the same, most important thing is .json file
@@ -30,32 +30,41 @@ new_oxd_rxns = ["r10","r11","r12"]
 cuo_rxns = ["r34","r35","r36"]
 n2o_rxns = ["r37","r38","r39"]
 
-upper = 1+0.1
-lower = 1-0.1
+upper = 1+0.05
+lower = 1-0.05
 for rxn in old_rxns:
     sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
-    sim.fix_reaction(rxn)
+    #sim.fix_reaction(rxn)
 
-upper = 1+0.1
-lower = 1-0.5
+upper = 1+0.05
+lower = 1-0.05
 for rxn in new_rxns:
     sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
-    sim.fix_reaction(rxn)
+    #sim.fix_reaction(rxn)
 
 upper_val = 1000
 lower_val = 0
+upper = 1+0.5
+lower = 1-0.5
 for rxn in new_oxd_rxns:
-    sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
+    #sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
+    sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
 
 upper_val = 10000
 lower_val = 0
+upper = 1+2
+lower = 1-0.5
 for rxn in cuo_rxns:
-    sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
+    #sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
+    sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
 
 upper_val = 1000
 lower_val = 0
+upper = 1+2
+lower = 1-0.5
 for rxn in n2o_rxns:
-    sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
+    #sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
+    sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
 
 #Customize the weight factors
 sim.auto_select_all_weight_factors()
