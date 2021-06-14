@@ -122,7 +122,13 @@ sim.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
 
                     #CuO NH3 Oxidation @ High Temp
                     "r34": ReactionType.Arrhenius,
-                    "r35": ReactionType.Arrhenius
+                    "r35": ReactionType.Arrhenius,
+                    "r36": ReactionType.Arrhenius,
+
+                    #N2O formation from NH3 oxidation
+                    "r37": ReactionType.Arrhenius,
+                    "r38": ReactionType.Arrhenius,
+                    "r39": ReactionType.Arrhenius
                     })
 
 sim.set_bulk_porosity(0.3309)
@@ -394,6 +400,33 @@ r35 = {"parameters": {"A": 0, "E": 0},
           "rxn_orders": {"ZNH4": 1, "CuO": 1, "O2": 1}
         }
 
+r36 = {"parameters": {"A": 0, "E": 0},
+          "mol_reactants": {"ZNH4": 1, "CuO": 1, "O2": 1},
+          "mol_products": {"ZH": 1, "CuO": 1, "H2O": 1.5, "N2O": 0.5},
+          "rxn_orders": {"ZNH4": 1, "CuO": 1, "O2": 1}
+        }
+
+#  ---------- N2O formation from NH3 oxidation ------------
+
+r37 = {"parameters": {"A": 0, "E": 0},
+          "mol_reactants": {"Z2Cu-NH3": 1, "O2": 1},
+          "mol_products": {"Z2Cu": 1, "N2O": 0.5, "H2O": 1.5},
+          "rxn_orders": {"Z2Cu-NH3": 1, "O2": 1}
+        }
+
+r38 = {"parameters": {"A": 0, "E": 0},
+          "mol_reactants": {"Z2Cu-(NH3)2": 1, "O2": 1},
+          "mol_products": {"Z2Cu-NH3": 1, "N2O": 0.5, "H2O": 1.5},
+          "rxn_orders": {"Z2Cu-(NH3)2": 1, "O2": 1}
+        }
+
+r39 = {"parameters": {"A": 0, "E": 0},
+          "mol_reactants": {"ZNH4": 1, "O2": 1},
+          "mol_products": {"ZH": 1, "N2O": 0.5, "H2O": 1.5},
+          "rxn_orders": {"ZNH4": 1, "O2": 1}
+        }
+
+
 sim.set_reaction_info("r1", r1_equ)
 sim.set_reaction_info("r2a", r2a_equ)
 sim.set_reaction_info("r2b", r2b_equ)
@@ -443,6 +476,11 @@ sim.set_reaction_info("r33", r33)
 
 sim.set_reaction_info("r34", r34)
 sim.set_reaction_info("r35", r35)
+sim.set_reaction_info("r36", r36)
+
+sim.set_reaction_info("r37", r37)
+sim.set_reaction_info("r38", r38)
+sim.set_reaction_info("r39", r39)
 
 
 # ----------------- Unaged Site Densities -----------

@@ -27,7 +27,8 @@ sim.fix_reaction("r4b")
 old_rxns = ["r5f","r5r","r6f","r6r","r7","r8","r9","r13","r14","r15","r18","r19"]
 new_rxns = ["r16","r17","r20","r21","r22","r23","r24","r25","r26","r27","r28","r29","r30","r31","r32","r33"]
 new_oxd_rxns = ["r10","r11","r12"]
-cuo_rxns = ["r34","r35"]
+cuo_rxns = ["r34","r35","r36"]
+n2o_rxns = ["r37","r38","r39"]
 
 upper = 1+0.1
 lower = 1-0.1
@@ -46,10 +47,64 @@ lower_val = 0
 for rxn in new_oxd_rxns:
     sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
 
-upper_val = 100000
+upper_val = 10000
 lower_val = 0
 for rxn in cuo_rxns:
     sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
+
+upper_val = 1000
+lower_val = 0
+for rxn in n2o_rxns:
+    sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
+
+#Customize the weight factors
+sim.auto_select_all_weight_factors()
+
+#Select specific weight factor windows based on observed data
+sim.ignore_weight_factor("NH3","Unaged","550C",time_window=(64,120))
+sim.ignore_weight_factor("NO","Unaged","550C",time_window=(64,120))
+sim.ignore_weight_factor("NO2","Unaged","550C",time_window=(64,120))
+sim.ignore_weight_factor("N2O","Unaged","550C",time_window=(64,120))
+
+sim.ignore_weight_factor("NH3","2hr","550C",time_window=(57,81))
+sim.ignore_weight_factor("NO","2hr","550C",time_window=(57,81))
+sim.ignore_weight_factor("NO2","2hr","550C",time_window=(57,81))
+sim.ignore_weight_factor("N2O","2hr","550C",time_window=(57,81))
+sim.ignore_weight_factor("NH3","2hr","550C",time_window=(96,101))
+sim.ignore_weight_factor("NO","2hr","550C",time_window=(96,101))
+sim.ignore_weight_factor("NO2","2hr","550C",time_window=(96,101))
+sim.ignore_weight_factor("N2O","2hr","550C",time_window=(96,101))
+
+sim.ignore_weight_factor("NH3","4hr","550C",time_window=(54,87))
+sim.ignore_weight_factor("NO","4hr","550C",time_window=(54,87))
+sim.ignore_weight_factor("NO2","4hr","550C",time_window=(54,87))
+sim.ignore_weight_factor("N2O","4hr","550C",time_window=(54,87))
+sim.ignore_weight_factor("NH3","4hr","550C",time_window=(103,109))
+sim.ignore_weight_factor("NO","4hr","550C",time_window=(103,109))
+sim.ignore_weight_factor("NO2","4hr","550C",time_window=(103,109))
+sim.ignore_weight_factor("N2O","4hr","550C",time_window=(103,109))
+
+sim.ignore_weight_factor("NH3","8hr","550C",time_window=(55,82))
+sim.ignore_weight_factor("NO","8hr","550C",time_window=(55,82))
+sim.ignore_weight_factor("NO2","8hr","550C",time_window=(55,82))
+sim.ignore_weight_factor("N2O","8hr","550C",time_window=(55,82))
+sim.ignore_weight_factor("NH3","8hr","550C",time_window=(99,110))
+sim.ignore_weight_factor("NO","8hr","550C",time_window=(99,110))
+sim.ignore_weight_factor("NO2","8hr","550C",time_window=(99,110))
+sim.ignore_weight_factor("N2O","8hr","550C",time_window=(99,110))
+
+sim.ignore_weight_factor("NH3","16hr","550C",time_window=(44,64))
+sim.ignore_weight_factor("NO","16hr","550C",time_window=(44,64))
+sim.ignore_weight_factor("NO2","16hr","550C",time_window=(44,64))
+sim.ignore_weight_factor("N2O","16hr","550C",time_window=(44,64))
+sim.ignore_weight_factor("NH3","16hr","550C",time_window=(82,94))
+sim.ignore_weight_factor("NO","16hr","550C",time_window=(82,94))
+sim.ignore_weight_factor("NO2","16hr","550C",time_window=(82,94))
+sim.ignore_weight_factor("N2O","16hr","550C",time_window=(82,94))
+sim.ignore_weight_factor("NH3","16hr","550C",time_window=(103,120))
+sim.ignore_weight_factor("NO","16hr","550C",time_window=(103,120))
+sim.ignore_weight_factor("NO2","16hr","550C",time_window=(103,120))
+sim.ignore_weight_factor("N2O","16hr","550C",time_window=(103,120))
 
 sim.finalize_auto_scaling()
 sim.run_solver()
