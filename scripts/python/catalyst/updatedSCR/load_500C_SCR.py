@@ -7,8 +7,8 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 # Create a simulator object and Load a full model from json
-run = "04"                              #update this number to reflect changes in runs
-readfile = 'output/500C_model03.json'     #update this name to reflect which model to load
+run = "05"                              #update this number to reflect changes in runs
+readfile = 'output/500C_model04.json'     #update this name to reflect which model to load
 writefile = "500C_model"+run+".json"
 
 #NOTE: Other output names can remain the same, most important thing is .json file
@@ -30,48 +30,45 @@ new_oxd_rxns = ["r10","r11","r12"]
 cuo_rxns = ["r34","r35","r36"]
 n2o_rxns = ["r37","r38","r39"]
 
-upper = 1+0.1
-lower = 1-0.1
+upper = 1+1
+lower = 1-0.5
 for rxn in old_rxns:
     sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
-    sim.fix_reaction(rxn)
+    #sim.fix_reaction(rxn)
 
-upper = 1+0.1
+upper = 1+1
 lower = 1-0.5
 for rxn in new_rxns:
     sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
-    sim.fix_reaction(rxn)
+    #sim.fix_reaction(rxn)
 
-upper = 1+3
+upper_val = 20000
+lower_val = 10000
+upper = 1+5
 lower = 1-0.2
-#NOTE: 7 - 9 cannot go higher than what we got in run 04, put more emphasis on 10-12, run another with only oxidation (10-12), then the full  
-all_ox = ["r7","r8","r9","r10","r11","r12"]
-for rxn in all_ox:
-    sim.unfix_reaction(rxn)
+for rxn in new_oxd_rxns:
+    #sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
     sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
-
-#upper_val = 20000
-#lower_val = 10000
-#for rxn in new_oxd_rxns:
-#    sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
-#    sim.fix_reaction(rxn)
+    #sim.fix_reaction(rxn)
 #sim.set_reaction_param_bounds("r12", "A", bounds=(350,700))
 
 upper_val = 400000
 lower_val = 100000
-upper = 1+10
+upper = 1+5
 lower = 1-0.2
 for rxn in cuo_rxns:
-    sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
+    #sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
     sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
-    sim.fix_reaction(rxn)
+    #sim.fix_reaction(rxn)
 #sim.set_reaction_param_bounds("r36", "A", bounds=(10000,40000))
 
 upper_val = 10000
 lower_val = 0
+upper = 1+5
+lower = 1-0.2
 for rxn in n2o_rxns:
     sim.set_reaction_param_bounds(rxn, "A", bounds=(lower_val,upper_val))
-    sim.fix_reaction(rxn)
+    #sim.fix_reaction(rxn)
 #sim.set_reaction_param_bounds("r37", "A", bounds=(500,10000))
 #sim.set_reaction_param_bounds("r38", "A", bounds=(35,700))
 #sim.set_reaction_param_bounds("r39", "A", bounds=(0.0035,0.7))

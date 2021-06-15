@@ -184,25 +184,25 @@ r4b_equ = {"parameters": {"A": 70000, "E": 0, "dH": -28889.23, "dS": -26.674},
 
 # Arrhenius Reactions
 #  ---------- NO Oxidation Reactions ------------
-r5f = {"parameters": {"A": 10101832.42, "E": 0},
+r5f = {"parameters": {"A": 10621246.8881622, "E": 0},
           "mol_reactants": {"Z1CuOH": 1, "NO": 1, "O2": 0.5},
           "mol_products": {"Z1CuOH": 1, "NO2": 1},
           "rxn_orders": {"Z1CuOH": 1, "NO": 1, "O2": 1}
         }
 
-r5r = {"parameters": {"A": 68406.36303, "E": 0},
+r5r = {"parameters": {"A": 69687.3139664707, "E": 0},
           "mol_reactants": {"Z1CuOH": 1, "NO2": 1},
           "mol_products": {"Z1CuOH": 1, "NO": 1, "O2": 0.5},
           "rxn_orders": {"Z1CuOH": 1, "NO2": 1}
         }
 
-r6f = {"parameters": {"A": 7311699.177, "E": 0},
+r6f = {"parameters": {"A": 7366086.69489048, "E": 0},
           "mol_reactants": {"Z2Cu": 1, "NO": 1, "O2": 0.5},
           "mol_products": {"Z2Cu": 1, "NO2": 1},
           "rxn_orders": {"Z2Cu": 1, "NO": 1, "O2": 1}
         }
 
-r6r = {"parameters": {"A": 76527.83895, "E": 0},
+r6r = {"parameters": {"A": 44545.1369466204, "E": 0},
           "mol_reactants": {"Z2Cu": 1, "NO2": 1},
           "mol_products": {"Z2Cu": 1, "NO": 1, "O2": 0.5},
           "rxn_orders": {"Z2Cu": 1, "NO2": 1}
@@ -210,38 +210,38 @@ r6r = {"parameters": {"A": 76527.83895, "E": 0},
 
 
 #  ---------- NH3 Oxidation to N2 Reactions ------------
-r7 = {"parameters": {"A": 3232.640607, "E": 0},
+r7 = {"parameters": {"A": 11209.19749306, "E": 0},
           "mol_reactants": {"Z2Cu-NH3": 1, "O2": 0.75},
           "mol_products": {"Z2Cu": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-NH3": 1, "O2": 1}
         }
 
-r8 = {"parameters": {"A": 2499.551474, "E": 0},
+r8 = {"parameters": {"A": 8628.92250137833, "E": 0},
           "mol_reactants": {"Z2Cu-(NH3)2": 1, "O2": 0.75},
           "mol_products": {"Z2Cu-NH3": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "O2": 1}
         }
 
-r9 = {"parameters": {"A": 2550.513115, "E": 0},
+r9 = {"parameters": {"A": 3725.67758336868, "E": 0},
           "mol_reactants": {"ZNH4": 1, "O2": 0.75},
           "mol_products": {"ZH": 1, "N2": 0.5, "H2O": 1.5},
           "rxn_orders": {"ZNH4": 1, "O2": 1}
         }
 
 #  ---------- NH3 Oxidation to NO Reactions ------------
-r10 = {"parameters": {"A": 0, "E": 0},
+r10 = {"parameters": {"A": 2039682.02993256, "E": 0},
           "mol_reactants": {"Z2Cu-NH3": 1, "O2": 1.25},
           "mol_products": {"Z2Cu": 1, "NO": 1, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-NH3": 1, "O2": 1}
         }
 
-r11 = {"parameters": {"A": 0, "E": 0},
+r11 = {"parameters": {"A": 60480565.6928142, "E": 0},
           "mol_reactants": {"Z2Cu-(NH3)2": 1, "O2": 1.25},
           "mol_products": {"Z2Cu-NH3": 1, "NO": 1, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "O2": 1}
         }
 
-r12 = {"parameters": {"A": 0, "E": 0},
+r12 = {"parameters": {"A": 2263.444365474, "E": 0},
           "mol_reactants": {"ZNH4": 1, "O2": 1.25},
           "mol_products": {"ZH": 1, "NO": 1, "H2O": 1.5},
           "rxn_orders": {"ZNH4": 1, "O2": 1}
@@ -249,31 +249,31 @@ r12 = {"parameters": {"A": 0, "E": 0},
 
 #  ---------- NO-SCR Reactions ------------
 
-r13 = {"parameters": {"A": 12736656806, "E": 0},
+r13 = {"parameters": {"A": 15595794885.2373, "E": 0},
           "mol_reactants": {"Z1CuOH-NH3": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"Z1CuOH": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"Z1CuOH-NH3": 1, "NO": 1, "O2": 1}
         }
 
-r14 = {"parameters": {"A": 14881218629, "E": 0},
+r14 = {"parameters": {"A": 18200752117.3511, "E": 0},
           "mol_reactants": {"Z2Cu-NH3": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"Z2Cu": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-NH3": 1, "NO": 1, "O2": 1}
         }
 
-r15 = {"parameters": {"A": 14412650052, "E": 0},
+r15 = {"parameters": {"A": 17895370001.2145, "E": 0},
           "mol_reactants": {"Z2Cu-(NH3)2": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"Z2Cu-NH3": 1, "N2": 1, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "NO": 1, "O2": 1}
         }
 
-r16 = {"parameters": {"A": 2.1098E+11, "E": 0},
+r16 = {"parameters": {"A": 260291186980.644, "E": 0},
           "mol_reactants": {"ZNH4": 1, "NO": 1, "O2": 0.25, "Z1CuOH": 1},
           "mol_products": {"ZH": 1, "N2": 1, "H2O": 1.5, "Z1CuOH": 1},
           "rxn_orders": {"ZNH4": 1, "NO": 1, "O2": 1, "Z1CuOH": 1}
         }
 
-r17 = {"parameters": {"A": 1.56436E+11, "E": 0},
+r17 = {"parameters": {"A": 191331964139.727, "E": 0},
           "mol_reactants": {"ZNH4": 1, "NO": 1, "O2": 0.25, "Z2Cu": 1},
           "mol_products": {"ZH": 1, "N2": 1, "H2O": 1.5, "Z2Cu": 1},
           "rxn_orders": {"ZNH4": 1, "NO": 1, "O2": 1, "Z2Cu": 1}
@@ -282,19 +282,19 @@ r17 = {"parameters": {"A": 1.56436E+11, "E": 0},
 
 #  ---------- N2O Formation from NO-SCR Reactions ------------
 
-r18 = {"parameters": {"A": 158870368.9, "E": 0},
+r18 = {"parameters": {"A": 262152791.983322, "E": 0},
           "mol_reactants": {"Z2Cu-NH3": 1, "NO": 1, "O2": 0.75},
           "mol_products": {"Z2Cu": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-NH3": 1, "NO": 1, "O2": 1}
         }
 
-r19 = {"parameters": {"A": 121440164.5, "E": 0},
+r19 = {"parameters": {"A": 174234904.103855, "E": 0},
           "mol_reactants": {"Z2Cu-(NH3)2": 1, "NO": 1, "O2": 0.75},
           "mol_products": {"Z2Cu-NH3": 1, "N2O": 1, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "NO": 1, "O2": 1}
         }
 
-r20 = {"parameters": {"A": 2982934392, "E": 0},
+r20 = {"parameters": {"A": 4922357171.45753, "E": 0},
           "mol_reactants": {"ZNH4": 1, "NO": 1, "O2": 0.75, "Z2Cu": 1},
           "mol_products": {"ZH": 1, "N2O": 1, "H2O": 1.5, "Z2Cu": 1},
           "rxn_orders": {"ZNH4": 1, "NO": 1, "O2": 1, "Z2Cu": 1}
@@ -302,25 +302,25 @@ r20 = {"parameters": {"A": 2982934392, "E": 0},
 
 #  ---------- NH4NO3 Formation Reactions ------------
 
-r21 = {"parameters": {"A": 107023219.5, "E": 0},
+r21 = {"parameters": {"A": 176367152.320444, "E": 0},
           "mol_reactants": {"Z1CuOH-NH3": 2, "NO2": 2},
           "mol_products": {"Z1CuOH": 1, "N2": 1, "H2O": 1, "Z1CuOH-NH4NO3": 1},
           "rxn_orders": {"Z1CuOH-NH3": 1, "NO2": 1}
         }
 
-r22 = {"parameters": {"A": 107278009.3, "E": 0},
+r22 = {"parameters": {"A": 64602111.9809884, "E": 0},
           "mol_reactants": {"Z2Cu-NH3": 2, "NO2": 2},
           "mol_products": {"Z2Cu": 1, "N2": 1, "H2O": 1, "Z2Cu-NH4NO3": 1},
           "rxn_orders": {"Z2Cu-NH3": 1, "NO2": 1}
         }
 
-r23 = {"parameters": {"A": 204136917.5, "E": 0},
+r23 = {"parameters": {"A": 168022891.877971, "E": 0},
           "mol_reactants": {"Z2Cu-(NH3)2": 2, "NO2": 2},
           "mol_products": {"Z2Cu-NH3": 1, "N2": 1, "H2O": 1, "Z2Cu-NH4NO3": 1},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "NO2": 1}
         }
 
-r24 = {"parameters": {"A": 107284843.5, "E": 0},
+r24 = {"parameters": {"A": 156372424.952128, "E": 0},
           "mol_reactants": {"ZNH4": 2, "NO2": 2},
           "mol_products": {"ZH": 1, "N2": 1, "H2O": 1, "ZH-NH4NO3": 1},
           "rxn_orders": {"ZNH4": 1, "NO2": 1}
@@ -328,19 +328,19 @@ r24 = {"parameters": {"A": 107284843.5, "E": 0},
 
 #  ---------- NH4NO3 Fast SCR Reactions ------------
 
-r25 = {"parameters": {"A": 125285561.2, "E": 0},
+r25 = {"parameters": {"A": 94833884.2792555, "E": 0},
           "mol_reactants": {"Z1CuOH-NH4NO3": 1, "NO": 1},
           "mol_products": {"Z1CuOH": 1, "N2": 1, "H2O": 2, "NO2": 1},
           "rxn_orders": {"Z1CuOH-NH4NO3": 1, "NO": 1}
         }
 
-r26 = {"parameters": {"A": 65577655.85, "E": 0},
+r26 = {"parameters": {"A": 55824127.3615727, "E": 0},
           "mol_reactants": {"Z2Cu-NH4NO3": 1, "NO": 1},
           "mol_products": {"Z2Cu": 1, "N2": 1, "H2O": 2, "NO2": 1},
           "rxn_orders": {"Z2Cu-NH4NO3": 1, "NO": 1}
         }
 
-r27 = {"parameters": {"A": 54031717.51, "E": 0},
+r27 = {"parameters": {"A": 32509628.2641949, "E": 0},
           "mol_reactants": {"ZH-NH4NO3": 1, "NO": 1},
           "mol_products": {"ZH": 1, "N2": 1, "H2O": 2, "NO2": 1},
           "rxn_orders": {"ZH-NH4NO3": 1, "NO": 1}
@@ -348,19 +348,19 @@ r27 = {"parameters": {"A": 54031717.51, "E": 0},
 
 #  ---------- NH4NO3 NO2 SCR Reactions ------------
 
-r28 = {"parameters": {"A": 1010763.006, "E": 0},
+r28 = {"parameters": {"A": 588920.000893384, "E": 0},
           "mol_reactants": {"Z1CuOH-NH4NO3": 1},
           "mol_products": {"Z1CuOH-NH3": 1, "O2": 0.25, "H2O": 0.5, "NO2": 1},
           "rxn_orders": {"Z1CuOH-NH4NO3": 1}
         }
 
-r29 = {"parameters": {"A": 974111.1837, "E": 0},
+r29 = {"parameters": {"A": 1184609.98403304, "E": 0},
           "mol_reactants": {"Z2Cu-NH4NO3": 1},
           "mol_products": {"Z2Cu-NH3": 1, "O2": 0.25, "H2O": 0.5, "NO2": 1},
           "rxn_orders": {"Z2Cu-NH4NO3": 1}
         }
 
-r30 = {"parameters": {"A": 979439.6361, "E": 0},
+r30 = {"parameters": {"A": 651430.51678019, "E": 0},
           "mol_reactants": {"ZH-NH4NO3": 1},
           "mol_products": {"ZNH4": 1, "O2": 0.25, "H2O": 0.5, "NO2": 1},
           "rxn_orders": {"ZH-NH4NO3": 1}
@@ -368,19 +368,19 @@ r30 = {"parameters": {"A": 979439.6361, "E": 0},
 
 #  ---------- NH4NO3 N2O Formation Reactions ------------
 
-r31 = {"parameters": {"A": 233313.3352, "E": 0},
+r31 = {"parameters": {"A": 384602.716331004, "E": 0},
           "mol_reactants": {"Z1CuOH-NH4NO3": 1},
           "mol_products": {"Z1CuOH": 1, "H2O": 2, "N2O": 1},
           "rxn_orders": {"Z1CuOH-NH4NO3": 1}
         }
 
-r32 = {"parameters": {"A": 355104.4218, "E": 0},
+r32 = {"parameters": {"A": 280420.67717765, "E": 0},
           "mol_reactants": {"Z2Cu-NH4NO3": 1},
           "mol_products": {"Z2Cu": 1, "H2O": 2, "N2O": 1},
           "rxn_orders": {"Z2Cu-NH4NO3": 1}
         }
 
-r33 = {"parameters": {"A": 77916.89063, "E": 0},
+r33 = {"parameters": {"A": 46311.6291751424, "E": 0},
           "mol_reactants": {"ZH-NH4NO3": 1},
           "mol_products": {"ZH": 1, "H2O": 2, "N2O": 1},
           "rxn_orders": {"ZH-NH4NO3": 1}
@@ -388,19 +388,19 @@ r33 = {"parameters": {"A": 77916.89063, "E": 0},
 
 #  ---------- CuO High Temp NH3 oxidation reactions ------------
 
-r34 = {"parameters": {"A": 0, "E": 0},
+r34 = {"parameters": {"A": 1820506445.01069, "E": 0},
           "mol_reactants": {"ZNH4": 1, "CuO": 1, "O2": 0.75},
           "mol_products": {"ZH": 1, "CuO": 1, "H2O": 1.5, "N2": 0.5},
           "rxn_orders": {"ZNH4": 1, "CuO": 1, "O2": 1}
         }
 
-r35 = {"parameters": {"A": 0, "E": 0},
+r35 = {"parameters": {"A": 1337820.92927024, "E": 0},
           "mol_reactants": {"ZNH4": 1, "CuO": 1, "O2": 1.25},
           "mol_products": {"ZH": 1, "CuO": 1, "H2O": 1.5, "NO": 1},
           "rxn_orders": {"ZNH4": 1, "CuO": 1, "O2": 1}
         }
 
-r36 = {"parameters": {"A": 0, "E": 0},
+r36 = {"parameters": {"A": 933356.579690862, "E": 0},
           "mol_reactants": {"ZNH4": 1, "CuO": 1, "O2": 1},
           "mol_products": {"ZH": 1, "CuO": 1, "H2O": 1.5, "N2O": 0.5},
           "rxn_orders": {"ZNH4": 1, "CuO": 1, "O2": 1}
@@ -408,19 +408,19 @@ r36 = {"parameters": {"A": 0, "E": 0},
 
 #  ---------- N2O formation from NH3 oxidation ------------
 
-r37 = {"parameters": {"A": 0, "E": 0},
+r37 = {"parameters": {"A": 133472.347179727, "E": 0},
           "mol_reactants": {"Z2Cu-NH3": 1, "O2": 1},
           "mol_products": {"Z2Cu": 1, "N2O": 0.5, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-NH3": 1, "O2": 1}
         }
 
-r38 = {"parameters": {"A": 0, "E": 0},
+r38 = {"parameters": {"A": 5685385.28253767, "E": 0},
           "mol_reactants": {"Z2Cu-(NH3)2": 1, "O2": 1},
           "mol_products": {"Z2Cu-NH3": 1, "N2O": 0.5, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "O2": 1}
         }
 
-r39 = {"parameters": {"A": 0, "E": 0},
+r39 = {"parameters": {"A": 0.005689907286157, "E": 0},
           "mol_reactants": {"ZNH4": 1, "O2": 1},
           "mol_products": {"ZH": 1, "N2O": 0.5, "H2O": 1.5},
           "rxn_orders": {"ZNH4": 1, "O2": 1}
@@ -766,6 +766,54 @@ sim.fix_reaction("r4b")
 # Fix all reactions for simulation mode only
 sim.fix_all_reactions()
 
+#Customize the weight factors
+sim.auto_select_all_weight_factors()
+
+#Select specific weight factor windows based on observed data
+sim.ignore_weight_factor("NH3","Unaged","550C",time_window=(64,120))
+sim.ignore_weight_factor("NO","Unaged","550C",time_window=(64,120))
+sim.ignore_weight_factor("NO2","Unaged","550C",time_window=(64,120))
+sim.ignore_weight_factor("N2O","Unaged","550C",time_window=(64,120))
+
+sim.ignore_weight_factor("NH3","2hr","550C",time_window=(57,81))
+sim.ignore_weight_factor("NO","2hr","550C",time_window=(57,81))
+sim.ignore_weight_factor("NO2","2hr","550C",time_window=(57,81))
+sim.ignore_weight_factor("N2O","2hr","550C",time_window=(57,81))
+sim.ignore_weight_factor("NH3","2hr","550C",time_window=(96,101))
+sim.ignore_weight_factor("NO","2hr","550C",time_window=(96,101))
+sim.ignore_weight_factor("NO2","2hr","550C",time_window=(96,101))
+sim.ignore_weight_factor("N2O","2hr","550C",time_window=(96,101))
+
+sim.ignore_weight_factor("NH3","4hr","550C",time_window=(54,87))
+sim.ignore_weight_factor("NO","4hr","550C",time_window=(54,87))
+sim.ignore_weight_factor("NO2","4hr","550C",time_window=(54,87))
+sim.ignore_weight_factor("N2O","4hr","550C",time_window=(54,87))
+sim.ignore_weight_factor("NH3","4hr","550C",time_window=(103,109))
+sim.ignore_weight_factor("NO","4hr","550C",time_window=(103,109))
+sim.ignore_weight_factor("NO2","4hr","550C",time_window=(103,109))
+sim.ignore_weight_factor("N2O","4hr","550C",time_window=(103,109))
+
+sim.ignore_weight_factor("NH3","8hr","550C",time_window=(55,82))
+sim.ignore_weight_factor("NO","8hr","550C",time_window=(55,82))
+sim.ignore_weight_factor("NO2","8hr","550C",time_window=(55,82))
+sim.ignore_weight_factor("N2O","8hr","550C",time_window=(55,82))
+sim.ignore_weight_factor("NH3","8hr","550C",time_window=(99,110))
+sim.ignore_weight_factor("NO","8hr","550C",time_window=(99,110))
+sim.ignore_weight_factor("NO2","8hr","550C",time_window=(99,110))
+sim.ignore_weight_factor("N2O","8hr","550C",time_window=(99,110))
+
+sim.ignore_weight_factor("NH3","16hr","550C",time_window=(44,64))
+sim.ignore_weight_factor("NO","16hr","550C",time_window=(44,64))
+sim.ignore_weight_factor("NO2","16hr","550C",time_window=(44,64))
+sim.ignore_weight_factor("N2O","16hr","550C",time_window=(44,64))
+sim.ignore_weight_factor("NH3","16hr","550C",time_window=(82,94))
+sim.ignore_weight_factor("NO","16hr","550C",time_window=(82,94))
+sim.ignore_weight_factor("NO2","16hr","550C",time_window=(82,94))
+sim.ignore_weight_factor("N2O","16hr","550C",time_window=(82,94))
+sim.ignore_weight_factor("NH3","16hr","550C",time_window=(103,120))
+sim.ignore_weight_factor("NO","16hr","550C",time_window=(103,120))
+sim.ignore_weight_factor("NO2","16hr","550C",time_window=(103,120))
+sim.ignore_weight_factor("N2O","16hr","550C",time_window=(103,120))
 
 sim.initialize_auto_scaling()
 sim.initialize_simulator()
