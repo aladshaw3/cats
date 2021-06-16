@@ -229,19 +229,19 @@ r9 = {"parameters": {"A": 3725.67758336868, "E": 0},
         }
 
 #  ---------- NH3 Oxidation to NO Reactions ------------
-r10 = {"parameters": {"A": 2039682.02993256, "E": 0},
+r10 = {"parameters": {"A": 78964, "E": 0},
           "mol_reactants": {"Z2Cu-NH3": 1, "O2": 1.25},
           "mol_products": {"Z2Cu": 1, "NO": 1, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-NH3": 1, "O2": 1}
         }
 
-r11 = {"parameters": {"A": 60480565.6928142, "E": 0},
+r11 = {"parameters": {"A": 479368, "E": 0},
           "mol_reactants": {"Z2Cu-(NH3)2": 1, "O2": 1.25},
           "mol_products": {"Z2Cu-NH3": 1, "NO": 1, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "O2": 1}
         }
 
-r12 = {"parameters": {"A": 2263.444365474, "E": 0},
+r12 = {"parameters": {"A": 448, "E": 0},
           "mol_reactants": {"ZNH4": 1, "O2": 1.25},
           "mol_products": {"ZH": 1, "NO": 1, "H2O": 1.5},
           "rxn_orders": {"ZNH4": 1, "O2": 1}
@@ -388,19 +388,19 @@ r33 = {"parameters": {"A": 46311.6291751424, "E": 0},
 
 #  ---------- CuO High Temp NH3 oxidation reactions ------------
 
-r34 = {"parameters": {"A": 1820506445.01069, "E": 0},
+r34 = {"parameters": {"A": 11927907, "E": 0},
           "mol_reactants": {"ZNH4": 1, "CuO": 1, "O2": 0.75},
           "mol_products": {"ZH": 1, "CuO": 1, "H2O": 1.5, "N2": 0.5},
           "rxn_orders": {"ZNH4": 1, "CuO": 1, "O2": 1}
         }
 
-r35 = {"parameters": {"A": 1337820.92927024, "E": 0},
+r35 = {"parameters": {"A": 256067, "E": 0},
           "mol_reactants": {"ZNH4": 1, "CuO": 1, "O2": 1.25},
           "mol_products": {"ZH": 1, "CuO": 1, "H2O": 1.5, "NO": 1},
           "rxn_orders": {"ZNH4": 1, "CuO": 1, "O2": 1}
         }
 
-r36 = {"parameters": {"A": 933356.579690862, "E": 0},
+r36 = {"parameters": {"A": 69992, "E": 0},
           "mol_reactants": {"ZNH4": 1, "CuO": 1, "O2": 1},
           "mol_products": {"ZH": 1, "CuO": 1, "H2O": 1.5, "N2O": 0.5},
           "rxn_orders": {"ZNH4": 1, "CuO": 1, "O2": 1}
@@ -408,19 +408,19 @@ r36 = {"parameters": {"A": 933356.579690862, "E": 0},
 
 #  ---------- N2O formation from NH3 oxidation ------------
 
-r37 = {"parameters": {"A": 133472.347179727, "E": 0},
+r37 = {"parameters": {"A": 4776, "E": 0},
           "mol_reactants": {"Z2Cu-NH3": 1, "O2": 1},
           "mol_products": {"Z2Cu": 1, "N2O": 0.5, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-NH3": 1, "O2": 1}
         }
 
-r38 = {"parameters": {"A": 5685385.28253767, "E": 0},
+r38 = {"parameters": {"A": 9955, "E": 0},
           "mol_reactants": {"Z2Cu-(NH3)2": 1, "O2": 1},
           "mol_products": {"Z2Cu-NH3": 1, "N2O": 0.5, "H2O": 1.5},
           "rxn_orders": {"Z2Cu-(NH3)2": 1, "O2": 1}
         }
 
-r39 = {"parameters": {"A": 0.005689907286157, "E": 0},
+r39 = {"parameters": {"A": 0.002219, "E": 0},
           "mol_reactants": {"ZNH4": 1, "O2": 1},
           "mol_products": {"ZH": 1, "N2O": 0.5, "H2O": 1.5},
           "rxn_orders": {"ZNH4": 1, "O2": 1}
