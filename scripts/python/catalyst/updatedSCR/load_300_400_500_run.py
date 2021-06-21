@@ -5,13 +5,23 @@
 import sys
 sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
+import json
+
 
 # Create a simulator object and Load a full model from json
-run = "02"                              #update this number to reflect changes in runs
-oldrun=""                               #update this name to reflect which model to load
+run = "03"                              #update this number to reflect changes in runs
+oldrun="02"                               #update this name to reflect which model to load
 readfile = 'output/300C_400C_500C_model'+oldrun+'.json'
 writefile = "300C_400C_500C_model"+run+".json"
 
+'''
+obj = json.load(open(readfile))
+for key in obj['model']['A']:
+    print(key)
+    print(obj['model']['A'][key]['value'])
+    print()
+exit()
+'''
 #NOTE: Other output names can remain the same, most important thing is .json file
 sim = Isothermal_Monolith_Simulator()
 sim.load_model_full(readfile, reset_param_bounds=True)
@@ -25,7 +35,12 @@ sim.fix_reaction("r4a")
 sim.fix_reaction("r4b")
 
 #  ============= Modify parameter bounds =================
-
+#sim.fix_all_reactions()
+upper = 1+0.3
+lower = 1-0.3
+for rxn in sim.model.arrhenius_rxns:
+    sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
+    sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
 
 #Customize the weight factors
 sim.auto_select_all_weight_factors()
