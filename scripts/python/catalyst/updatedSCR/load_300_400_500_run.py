@@ -36,11 +36,16 @@ sim.fix_reaction("r4b")
 
 #  ============= Modify parameter bounds =================
 #sim.fix_all_reactions()
-upper = 1+0.3
-lower = 1-0.3
+upper = 1+0.2
+lower = 1-0.2
 for rxn in sim.model.arrhenius_rxns:
     sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
     sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
+
+problem_rxns = ["r11","r34","r38"]
+
+#for rxn in problem_rxns:
+#    sim.fix_reaction(rxn)
 
 #Customize the weight factors
 sim.auto_select_all_weight_factors()
@@ -145,6 +150,7 @@ sim.ignore_weight_factor("N2O","16hr","500C",time_window=(118,130))
 
 #call solver
 sim.finalize_auto_scaling()
+
 sim.run_solver()
 
 # ========================================== 300C ============================================================
