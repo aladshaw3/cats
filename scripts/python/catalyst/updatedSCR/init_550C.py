@@ -560,8 +560,8 @@ sim.ignore_weight_factor("N2O","16hr",Tstr,time_window=(103,120))
 sim.initialize_auto_scaling()
 sim.initialize_simulator()
 
-sim.finalize_auto_scaling()
-sim.run_solver()
+#sim.finalize_auto_scaling()
+#sim.run_solver()
 
 
 sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
