@@ -7,8 +7,8 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 Tstr = "450C"
-run = "02"
-oldrun=""
+run = "03"
+oldrun="02"
 
 readfile = 'output/'+Tstr+'_model'+oldrun+'.json'
 writefile = Tstr+"_model"+run+".json"
