@@ -59,6 +59,9 @@ data_conv = {}  #temp, species, age, time --> value
 model_conv = {}
 time_windows = {} #temp, age, type --> (start, stop)
 
+nox_data_conv = {} #temp, age, time --> value
+nox_model_conv = {}
+
 t=0
 for file_name in files_to_read:
     print("working on conversions for "+ file_name + "...")
@@ -89,6 +92,10 @@ for file_name in files_to_read:
 
                     data_conv[temps[t]][spec][age][time] = (((obj['model']['Cb'][key_in]-obj['model']['Cb_data'][key_out])/obj['model']['Cb'][key_in]))*100
                     model_conv[temps[t]][spec][age][time] = (((obj['model']['Cb'][key_in]-obj['model']['Cb'][key_out])/obj['model']['Cb'][key_in]))*100
+
+                    #If statement only excutes on first species iteration 
+                    if spec == "NH3":
+                        pass
 
             #End model time loop
         #End Age loop

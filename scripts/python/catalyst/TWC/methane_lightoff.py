@@ -272,14 +272,18 @@ for i in range(MC_iter):
     print("\nMC iter =\t"+str(i)+"\n")
     if i > 0:
         for rxn in sim.model.arrhenius_rxns:
-            sim.set_reaction_param_bounds(rxn, "A", factor=100)
-            sim.set_reaction_param_bounds(rxn, "E", factor=5)
+            #sim.set_reaction_param_bounds(rxn, "A", factor=100)
+            #sim.set_reaction_param_bounds(rxn, "E", factor=5)
 
             #Pick random sets
-            Aval = random.uniform(sim.model.A[rxn].lb, sim.model.A[rxn].ub)
-            Eval = random.uniform(sim.model.E[rxn].lb, sim.model.E[rxn].ub)
+            Apow = random.uniform(6, 22)
+            Aval = random.uniform(pow(10,Apow-1), pow(10,Apow+1))
+            Eval = random.uniform(20000, 300000)
             sim.model.A[rxn].set_value(Aval)
             sim.model.E[rxn].set_value(Eval)
+            if rxn == "r2r":
+                sim.model.A[rxn].set_value(0)
+                sim.model.E[rxn].set_value(0)
 
             sim.set_reaction_param_bounds(rxn, "A", factor=0.1)
             sim.set_reaction_param_bounds(rxn, "E", factor=0.1)
