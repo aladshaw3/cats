@@ -3,6 +3,9 @@ import sys
 sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
+# Use random numbers for basic MC approach
+import random
+
 # NOTE: We don't really need to go beyond 60 min for this case
 #       Beyond that point, concentrations are very near zero and
 #       convergence becomes problematic
@@ -12,6 +15,7 @@ HC_name = "methane"
 x = 1
 y = 4
 z = 0
+MC_iter = 1000
 
 data = naively_read_data_file("inputfiles/"+HC_name+"_lightoff_history.txt",factor=10)
 temp_data = naively_read_data_file("inputfiles/"+HC_name+"_temp_history.txt",factor=10)
@@ -259,27 +263,51 @@ sim.set_const_BC_in_ppm("H2O","A0","T0",130165.9469)
 
 # Fix all reactions for simulation mode only
 #sim.fix_all_reactions()
-for rxn in sim.model.arrhenius_rxns:
-    sim.set_reaction_param_bounds(rxn, "A", factor=100)
-    sim.set_reaction_param_bounds(rxn, "E", factor=2)
 
+file = open(HC_name+"_iterations.txt","w")
+file.write('iter\tobj\n')
 sim.auto_select_all_weight_factors()
+obj = 0
+for i in range(MC_iter):
+    print("\nMC iter =\t"+str(i)+"\n")
+    for rxn in sim.model.arrhenius_rxns:
+        sim.set_reaction_param_bounds(rxn, "A", factor=1000)
+        sim.set_reaction_param_bounds(rxn, "E", factor=10)
 
-sim.initialize_auto_scaling()
-sim.initialize_simulator()
+        #Pick random sets
+        Aval = random.uniform(sim.model.A[rxn].lb, sim.model.A[rxn].ub)
+        Eval = random.uniform(sim.model.E[rxn].lb, sim.model.E[rxn].ub)
+        sim.model.A[rxn].set_value(Aval)
+        sim.model.E[rxn].set_value(Eval)
 
-sim.finalize_auto_scaling()
-sim.run_solver()
+        sim.set_reaction_param_bounds(rxn, "A", factor=0.1)
+        sim.set_reaction_param_bounds(rxn, "E", factor=0.1)
 
+    sim.initialize_auto_scaling()
+    sim.initialize_simulator()
 
-sim.plot_vs_data("CO", "A0", "T0", 5, display_live=False)
-sim.plot_vs_data("NO", "A0", "T0", 5, display_live=False)
-sim.plot_vs_data("HC", "A0", "T0", 5, display_live=False)
-sim.plot_vs_data("NH3", "A0", "T0", 5, display_live=False)
-sim.plot_vs_data("N2O", "A0", "T0", 5, display_live=False)
-sim.plot_vs_data("H2", "A0", "T0", 5, display_live=False)
+    #sim.finalize_auto_scaling()
+    #sim.run_solver()
 
-sim.print_results_of_breakthrough(["HC","CO","NO","NH3","N2O","H2","O2","H2O"],
-                                "A0", "T0", file_name=HC_name+"_lightoff.txt", include_temp=True)
-sim.print_kinetic_parameter_info(file_name=HC_name+"_params.txt")
-sim.save_model_state(file_name=HC_name+"_model.json")
+    obj = value(sim.model.obj)
+    file.write(str(i)+'\t'+str(obj)+'\n')
+
+    name = "CO_"+str(i)
+    sim.plot_vs_data("CO", "A0", "T0", 5, display_live=False, file_name=name)
+    name = "NO_"+str(i)
+    sim.plot_vs_data("NO", "A0", "T0", 5, display_live=False, file_name=name)
+    name = "HC_"+str(i)
+    sim.plot_vs_data("HC", "A0", "T0", 5, display_live=False, file_name=name)
+    name = "NH3_"+str(i)
+    sim.plot_vs_data("NH3", "A0", "T0", 5, display_live=False, file_name=name)
+    name = "N2O_"+str(i)
+    sim.plot_vs_data("N2O", "A0", "T0", 5, display_live=False, file_name=name)
+    name = "H2_"+str(i)
+    sim.plot_vs_data("H2", "A0", "T0", 5, display_live=False, file_name=name)
+
+    sim.print_results_of_breakthrough(["HC","CO","NO","NH3","N2O","H2","O2","H2O"],
+                                    "A0", "T0", file_name=HC_name+"_lightoff"+str(i)+".txt", include_temp=True)
+    sim.print_kinetic_parameter_info(file_name=HC_name+"_params"+str(i)+".txt")
+    sim.save_model_state(file_name=HC_name+"_model"+str(i)+".json")
+
+file.close()
