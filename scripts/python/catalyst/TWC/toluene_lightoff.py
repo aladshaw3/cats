@@ -270,18 +270,19 @@ sim.auto_select_all_weight_factors()
 obj = 0
 for i in range(MC_iter):
     print("\nMC iter =\t"+str(i)+"\n")
-    for rxn in sim.model.arrhenius_rxns:
-        sim.set_reaction_param_bounds(rxn, "A", factor=1000)
-        sim.set_reaction_param_bounds(rxn, "E", factor=10)
+    if i > 0:
+        for rxn in sim.model.arrhenius_rxns:
+            sim.set_reaction_param_bounds(rxn, "A", factor=100)
+            sim.set_reaction_param_bounds(rxn, "E", factor=5)
 
-        #Pick random sets
-        Aval = random.uniform(sim.model.A[rxn].lb, sim.model.A[rxn].ub)
-        Eval = random.uniform(sim.model.E[rxn].lb, sim.model.E[rxn].ub)
-        sim.model.A[rxn].set_value(Aval)
-        sim.model.E[rxn].set_value(Eval)
+            #Pick random sets
+            Aval = random.uniform(sim.model.A[rxn].lb, sim.model.A[rxn].ub)
+            Eval = random.uniform(sim.model.E[rxn].lb, sim.model.E[rxn].ub)
+            sim.model.A[rxn].set_value(Aval)
+            sim.model.E[rxn].set_value(Eval)
 
-        sim.set_reaction_param_bounds(rxn, "A", factor=0.1)
-        sim.set_reaction_param_bounds(rxn, "E", factor=0.1)
+            sim.set_reaction_param_bounds(rxn, "A", factor=0.1)
+            sim.set_reaction_param_bounds(rxn, "E", factor=0.1)
 
     sim.initialize_auto_scaling()
     sim.initialize_simulator()
@@ -291,18 +292,19 @@ for i in range(MC_iter):
 
     obj = value(sim.model.obj)
     file.write(str(i)+'\t'+str(obj)+'\n')
+    print(str(i)+'\t'+str(obj)+'\n')
 
-    name = "CO_"+str(i)
+    name = HC_name+"_CO_"+str(i)
     sim.plot_vs_data("CO", "A0", "T0", 5, display_live=False, file_name=name)
-    name = "NO_"+str(i)
+    name = HC_name+"_NO_"+str(i)
     sim.plot_vs_data("NO", "A0", "T0", 5, display_live=False, file_name=name)
-    name = "HC_"+str(i)
+    name = HC_name+"_HC_"+str(i)
     sim.plot_vs_data("HC", "A0", "T0", 5, display_live=False, file_name=name)
-    name = "NH3_"+str(i)
+    name = HC_name+"_NH3_"+str(i)
     sim.plot_vs_data("NH3", "A0", "T0", 5, display_live=False, file_name=name)
-    name = "N2O_"+str(i)
+    name = HC_name+"_N2O_"+str(i)
     sim.plot_vs_data("N2O", "A0", "T0", 5, display_live=False, file_name=name)
-    name = "H2_"+str(i)
+    name = HC_name+"_H2_"+str(i)
     sim.plot_vs_data("H2", "A0", "T0", 5, display_live=False, file_name=name)
 
     sim.print_results_of_breakthrough(["HC","CO","NO","NH3","N2O","H2","O2","H2O"],
