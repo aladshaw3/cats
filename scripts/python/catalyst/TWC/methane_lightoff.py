@@ -15,7 +15,7 @@ HC_name = "methane"
 x = 1
 y = 4
 z = 0
-MC_iter = 1000
+MC_iter = 1
 
 data = naively_read_data_file("inputfiles/"+HC_name+"_lightoff_history.txt",factor=10)
 temp_data = naively_read_data_file("inputfiles/"+HC_name+"_temp_history.txt",factor=10)
@@ -266,7 +266,18 @@ sim.set_const_BC_in_ppm("H2O","A0","T0",130165.9469)
 
 file = open(HC_name+"_iterations.txt","w")
 file.write('iter\tobj\n')
+
+#Edit the weight factors
 sim.auto_select_all_weight_factors()
+
+sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,100))
+sim.ignore_weight_factor("NO","A0","T0",time_window=(0,100))
+sim.ignore_weight_factor("CO","A0","T0",time_window=(0,100))
+sim.ignore_weight_factor("HC","A0","T0",time_window=(0,100))
+#sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,100))
+sim.ignore_weight_factor("H2","A0","T0",time_window=(0,100))
+
+
 obj = 0
 for i in range(MC_iter):
     print("\nMC iter =\t"+str(i)+"\n")
@@ -287,12 +298,16 @@ for i in range(MC_iter):
 
             sim.set_reaction_param_bounds(rxn, "A", factor=0.1)
             sim.set_reaction_param_bounds(rxn, "E", factor=0.1)
+    else:
+        for rxn in sim.model.arrhenius_rxns:
+            sim.set_reaction_param_bounds(rxn, "A", factor=100)
+            sim.set_reaction_param_bounds(rxn, "E", factor=10)
 
     sim.initialize_auto_scaling()
     sim.initialize_simulator()
 
-    #sim.finalize_auto_scaling()
-    #sim.run_solver()
+    sim.finalize_auto_scaling()
+    sim.run_solver()
 
     obj = value(sim.model.obj)
     file.write(str(i)+'\t'+str(obj)+'\n')

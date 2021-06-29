@@ -15,7 +15,7 @@ HC_name = "toluene"
 x = 7
 y = 8
 z = 0
-MC_iter = 1000
+MC_iter = 1
 
 data = naively_read_data_file("inputfiles/"+HC_name+"_lightoff_history.txt",factor=10)
 temp_data = naively_read_data_file("inputfiles/"+HC_name+"_temp_history.txt",factor=10)
@@ -287,12 +287,16 @@ for i in range(MC_iter):
 
             sim.set_reaction_param_bounds(rxn, "A", factor=0.1)
             sim.set_reaction_param_bounds(rxn, "E", factor=0.1)
+    else:
+        for rxn in sim.model.arrhenius_rxns:
+            sim.set_reaction_param_bounds(rxn, "A", factor=10)
+            sim.set_reaction_param_bounds(rxn, "E", factor=10)
 
     sim.initialize_auto_scaling()
     sim.initialize_simulator()
 
-    #sim.finalize_auto_scaling()
-    #sim.run_solver()
+    sim.finalize_auto_scaling()
+    sim.run_solver()
 
     obj = value(sim.model.obj)
     file.write(str(i)+'\t'+str(obj)+'\n')
