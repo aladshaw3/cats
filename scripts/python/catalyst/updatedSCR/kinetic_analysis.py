@@ -8,6 +8,7 @@ files_to_read = ["250C_model02.json",
                 "500C_model02.json",
                 "550C_model02.json"]
 '''
+'''
 files_to_read = ["250C_model02.json",
                 "300C_model02.json",
                 "350C_model03.json",
@@ -15,6 +16,16 @@ files_to_read = ["250C_model02.json",
                 "450C_model03.json",
                 "500C_model02.json",
                 "550C_model03.json"]
+
+'''
+files_to_read = ["250C_model02.json",
+                "300C_model02.json",
+                "350C_model03.json",
+                "400C_model04.json",
+                "450C_model03.json",
+                "500C_model02.json",
+                "550C_model04.json"]
+
 
 T_list = [250+273.15,300+273.15,350+273.15,400+273.15,450+273.15,500+273.15,550+273.15]
 
@@ -59,9 +70,6 @@ data_conv = {}  #temp, species, age, time --> value
 model_conv = {}
 time_windows = {} #temp, age, type --> (start, stop)
 
-nox_data_conv = {} #temp, age, time --> value
-nox_model_conv = {}
-
 t=0
 for file_name in files_to_read:
     print("working on conversions for "+ file_name + "...")
@@ -92,10 +100,6 @@ for file_name in files_to_read:
 
                     data_conv[temps[t]][spec][age][time] = (((obj['model']['Cb'][key_in]-obj['model']['Cb_data'][key_out])/obj['model']['Cb'][key_in]))*100
                     model_conv[temps[t]][spec][age][time] = (((obj['model']['Cb'][key_in]-obj['model']['Cb'][key_out])/obj['model']['Cb'][key_in]))*100
-
-                    #If statement only excutes on first species iteration 
-                    if spec == "NH3":
-                        pass
 
             #End model time loop
         #End Age loop
