@@ -7,8 +7,8 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 Tstr = "550C"
-run = "04"
-oldrun="03"
+run = "05"
+oldrun="04"
 
 readfile = 'output/'+Tstr+'_model'+oldrun+'.json'
 writefile = Tstr+"_model"+run+".json"
@@ -19,16 +19,24 @@ sim.load_model_full(readfile, reset_param_bounds=True)
 sim.unfix_all_reactions()
 
 # Fix the isotherm parameters (we assume that these are knowns)
+'''
 sim.fix_reaction("r1")
 sim.fix_reaction("r2a")
 sim.fix_reaction("r2b")
 sim.fix_reaction("r3")
 sim.fix_reaction("r4a")
 sim.fix_reaction("r4b")
-
+'''
 #  ============= Modify parameter bounds =================
 #   Specify modifications to parameter boundaries (default = +/- 20%)
 
+for rxn in sim.model.arrhenius_rxns:
+    sim.fix_reaction(rxn)
+
+for rxn in sim.model.equ_arrhenius_rxns:
+    sim.set_reaction_param_bounds(rxn, "A", factor=0)
+    sim.set_reaction_param_bounds(rxn, "E", factor=0)
+    sim.set_reaction_param_bounds(rxn, "dS", factor=0)
 
 #call solver
 sim.finalize_auto_scaling()
