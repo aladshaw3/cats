@@ -316,6 +316,22 @@ sim.fix_reaction("r9")
 sim.fix_reaction("r35")
 sim.fix_reaction("r36")
 
+# Fix std SCR reactions
+sim.fix_reaction("r5f")
+sim.fix_reaction("r5r")
+sim.fix_reaction("r6f")
+sim.fix_reaction("r6r")
+
+sim.fix_reaction("r13")
+sim.fix_reaction("r14")
+sim.fix_reaction("r15")
+sim.fix_reaction("r16")
+sim.fix_reaction("r17")
+
+sim.fix_reaction("r18")
+sim.fix_reaction("r19")
+sim.fix_reaction("r20")
+
 
 sim.run_solver()
 

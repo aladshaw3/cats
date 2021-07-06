@@ -283,6 +283,12 @@ sim.fix_reaction("r3")
 sim.fix_reaction("r4a")
 sim.fix_reaction("r4b")
 
+upper = 1+0.0125
+lower = 1-0.0125
+for rxn in rxn_list:
+    sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
+    sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*lower,sim.model.E[rxn].value*upper))
+
 # Problematic reactions: r10, r11, r12, r34, r37, r38, r39 (all NH3 oxidation reactions)
 sim.fix_reaction("r10")
 sim.fix_reaction("r11")
@@ -298,6 +304,11 @@ sim.fix_reaction("r8")
 sim.fix_reaction("r9")
 sim.fix_reaction("r35")
 sim.fix_reaction("r36")
+
+sim.fix_all_reactions()
+sim.unfix_reaction("r18")
+sim.unfix_reaction("r19")
+sim.unfix_reaction("r20")
 
 sim.run_solver()
 
