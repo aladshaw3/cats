@@ -16,18 +16,16 @@ rxn_list = {"r5f": r5f,"r5r": r5r,"r6f": r6f,"r6r": r6r,"r7": r7,"r8": r8,"r9": 
 
 O2 = 0.002330029
 H2O = 0.001174
-NO = 6.71143E-06
-NO2 = 3 #ppm inlet (not exact, but close. Not a true 0 ppm at inlet as seen by data)
-# 3 ppm is roughly 1% of NO inlet (so if data has a 1% error, then this is within that range)
+NO = 145
+NO2 = 145
 Tstr = "T0"
 
-data = naively_read_data_file("inputfiles/NOSCR_150_to_250_data.txt",factor=5)
-temp_data = naively_read_data_file("inputfiles/NOSCR_150_to_250_temp.txt",factor=5)
-data_tup = naively_read_data_file("inputfiles/NOSCR_150_to_250_protocol.txt",
+data = naively_read_data_file("inputfiles/FastSCR_150_to_250_data.txt",factor=5)
+temp_data = naively_read_data_file("inputfiles/FastSCR_150_to_250_temp.txt",factor=5)
+data_tup = naively_read_data_file("inputfiles/FastSCR_150_to_250_protocol.txt",
                                     factor=5,dict_of_tuples=True)
 
 time_list = time_point_selector(data["time"], data)
-
 
 sim = Isothermal_Monolith_Simulator()
 sim.add_axial_dim(0,5)
@@ -219,7 +217,7 @@ sim.set_temperature_from_data("Unaged", Tstr, temp_data, {"T": 5})
 sim.set_const_IC("O2","Unaged",Tstr,O2)
 sim.set_const_IC("H2O","Unaged",Tstr,H2O)
 sim.set_const_IC("NH3","Unaged",Tstr,0)
-sim.set_const_IC("NO","Unaged",Tstr,NO)
+sim.set_const_IC_in_ppm("NO","Unaged",Tstr,NO)
 sim.set_const_IC_in_ppm("NO2","Unaged",Tstr,NO2)
 sim.set_const_IC("N2O","Unaged",Tstr,0)
 sim.set_const_IC("N2","Unaged",Tstr,0.0184)
@@ -246,27 +244,39 @@ sim.set_time_dependent_BC("H2O","Unaged",Tstr,
 sim.set_time_dependent_BC("NH3","Unaged",Tstr,
                             time_value_pairs=data_tup["NH3_Unaged"],
                             initial_value=0)
-
+'''
 sim.set_time_dependent_BC("NO","Unaged",Tstr,
                             time_value_pairs=data_tup["NO_Unaged"],
                             initial_value=NO)
 
-# # TODO: NOTE: There is NO2 at the inlet, but it is unclear how much
+sim.set_time_dependent_BC("NO2","Unaged",Tstr,
+                            time_value_pairs=data_tup["NO2_Unaged"],
+                            initial_value=NO2)
+'''
+
+sim.set_const_BC_in_ppm("NO","Unaged",Tstr,NO)
 sim.set_const_BC_in_ppm("NO2","Unaged",Tstr,NO2)
 sim.set_const_BC("N2O","Unaged",Tstr,0)
 
 sim.set_const_BC("N2","Unaged",Tstr,0.0184)
 
 # Fix all reactions for simulation mode only
+sim.fix_reaction("r1")
+sim.fix_reaction("r2a")
+sim.fix_reaction("r2b")
+sim.fix_reaction("r3")
+sim.fix_reaction("r4a")
+sim.fix_reaction("r4b")
+
 sim.fix_all_reactions()
 
 #Customize the weight factors
 sim.auto_select_all_weight_factors()
 
-sim.ignore_weight_factor("NH3","Unaged",Tstr,time_window=(325,510))
-sim.ignore_weight_factor("NO","Unaged",Tstr,time_window=(325,510))
-sim.ignore_weight_factor("NO2","Unaged",Tstr,time_window=(325,510))
-sim.ignore_weight_factor("N2O","Unaged",Tstr,time_window=(325,510))
+sim.ignore_weight_factor("NH3","Unaged",Tstr,time_window=(390,510))
+sim.ignore_weight_factor("NO","Unaged",Tstr,time_window=(390,510))
+sim.ignore_weight_factor("NO2","Unaged",Tstr,time_window=(390,510))
+sim.ignore_weight_factor("N2O","Unaged",Tstr,time_window=(390,510))
 
 sim.initialize_auto_scaling()
 sim.initialize_simulator()
@@ -276,6 +286,13 @@ sim.run_solver()
 
 #NOTE: For some reason, IPOPT is pushing values outside of the bounds I set
 sim.unfix_all_reactions()
+
+upper = 1+0.0125
+lower = 1-0.0125
+for rxn in rxn_list:
+    sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
+    sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*lower,sim.model.E[rxn].value*upper))
+
 sim.fix_reaction("r1")
 sim.fix_reaction("r2a")
 sim.fix_reaction("r2b")
@@ -299,18 +316,19 @@ sim.fix_reaction("r9")
 sim.fix_reaction("r35")
 sim.fix_reaction("r36")
 
+
 sim.run_solver()
 
 sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "Unaged", Tstr, file_name="Unaged_NOSCR_lowtemp_breakthrough.txt")
+                                        "Unaged", Tstr, file_name="Unaged_FastSCR_lowtemp_breakthrough.txt")
 sim.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"],
-                                        "Unaged", Tstr, 0, file_name="Unaged_NOSCR_lowtemp_bypass.txt")
+                                        "Unaged", Tstr, 0, file_name="Unaged_FastSCR_lowtemp_bypass.txt")
 sim.print_results_of_integral_average(["Z1CuOH-NH3","Z2Cu-NH3","Z2Cu-(NH3)2","ZNH4",
                                         "Z1CuOH-NH4NO3", "Z2Cu-NH4NO3", "ZH-NH4NO3"],
-                                        "Unaged", Tstr, file_name="Unaged_NOSCR_lowtemp_average_ads.txt")
+                                        "Unaged", Tstr, file_name="Unaged_FastSCR_lowtemp_average_ads.txt")
 
-sim.print_kinetic_parameter_info(file_name="NOSCR_lowtemp_opt_params.txt")
-sim.save_model_state(file_name="NOSCR_lowtemp_model.json")
+sim.print_kinetic_parameter_info(file_name="FastSCR_lowtemp_opt_params.txt")
+sim.save_model_state(file_name="FastSCR_lowtemp_model.json")
 
 sim.plot_vs_data("NH3", "Unaged", Tstr, 5, display_live=False)
 
