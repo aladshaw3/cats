@@ -10,6 +10,15 @@ Tstr = "T0"
 run = "02"
 oldrun=""
 
+# Create dict to iterate through
+rxn_list = {"r5f": r5f,"r5r": r5r,"r6f": r6f,"r6r": r6r,"r7": r7,"r8": r8,"r9": r9,
+            "r10": r10,"r11": r11,"r12": r12,"r13": r13,"r14": r14,
+            "r15": r15,"r16": r16,"r17": r17,"r18": r18,"r19": r19,"r20": r20,
+            "r21": r21,"r22": r22,"r23": r23,"r24": r24,"r25": r25,
+            "r26": r26,"r27": r27,"r28": r28,"r29": r29,"r30": r30,"r31": r31,
+            "r32": r32,"r33": r33,"r34": r34,"r35": r35,"r36": r36,
+            "r37": r37,"r38": r38,"r39": r39}
+
 readfile = 'output/FastSCR_lowtemp_model'+oldrun+'.json'
 writefile = "FastSCR_lowtemp_model"+run+".json"
 
