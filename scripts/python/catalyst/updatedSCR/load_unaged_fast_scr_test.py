@@ -80,10 +80,10 @@ sim.print_results_of_integral_average(["Z1CuOH-NH3","Z2Cu-NH3","Z2Cu-(NH3)2","ZN
 sim.print_kinetic_parameter_info(file_name="FastSCR_lowtemp_opt_params"+run+".txt")
 sim.save_model_state(file_name=writefile)
 
-sim.plot_vs_data("NH3", "Unaged", Tstr, 5, display_live=False)
+sim.plot_vs_data("NH3", "Unaged", Tstr, 5, display_live=False, file_name="unaged_NH3_fastSCR_run"+run)
 
-sim.plot_vs_data("NO", "Unaged", Tstr, 5, display_live=False)
+sim.plot_vs_data("NO", "Unaged", Tstr, 5, display_live=False, file_name="unaged_NO_fastSCR_run"+run)
 
-sim.plot_vs_data("NO2", "Unaged", Tstr, 5, display_live=False)
+sim.plot_vs_data("NO2", "Unaged", Tstr, 5, display_live=False, file_name="unaged_NO2_fastSCR_run"+run)
 
-sim.plot_vs_data("N2O", "Unaged", Tstr, 5, display_live=False)
+sim.plot_vs_data("N2O", "Unaged", Tstr, 5, display_live=False, file_name="unaged_N2O_fastSCR_run"+run)
