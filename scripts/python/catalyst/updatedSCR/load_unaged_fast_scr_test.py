@@ -7,8 +7,8 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 Tstr = "T0"
-run = "02"
-oldrun=""
+run = "08"
+oldrun="07"
 
 readfile = 'output/FastSCR_lowtemp_model'+oldrun+'.json'
 writefile = "FastSCR_lowtemp_model"+run+".json"
@@ -20,8 +20,8 @@ sim.unfix_all_reactions()
 
 #  ============= Modify parameter bounds =================
 #   Specify modifications to parameter boundaries (default = +/- 20%)
-upper = 1+0.0125
-lower = 1-0.0125
+upper = 1+0.125
+lower = 1-0.125
 for rxn in sim.model.arrhenius_rxns:
     sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
     sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*lower,sim.model.E[rxn].value*upper))
@@ -67,7 +67,16 @@ sim.fix_reaction("r20")
 
 #call solver
 sim.finalize_auto_scaling()
-sim.run_solver()
+options={'print_user_options': 'yes',
+        'linear_solver': LinearSolverMethod.MA97,
+        'tol': 1e-6,
+        'acceptable_tol': 1e-6,
+        'compl_inf_tol': 1e-6,
+        'constr_viol_tol': 1e-6,
+        'max_iter': 3000,
+        'obj_scaling_factor': 1,
+        'diverging_iterates_tol': 1e50}
+sim.run_solver(options=options)
 
 sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
                                         "Unaged", Tstr, file_name="Unaged_FastSCR_lowtemp_breakthrough.txt")
