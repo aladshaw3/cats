@@ -156,7 +156,7 @@ r12 = {"parameters": {"A": 36753619.4, "E":  30005.30375},
         }
 
 # N2O + CO --> N2 + CO2
-r13 = {"parameters": {"A": 2.22E+17, "E":  95838.98253},
+r13 = {"parameters": {"A": 0, "E":  0},
           "mol_reactants": {"N2O": 1, "CO": 1},
           "mol_products": {},
           "rxn_orders": {"N2O": 1, "CO": 1}
@@ -170,7 +170,7 @@ r14 = {"parameters": {"A": 1.17999E+11, "E":  37524.05203},
         }
 
 # N2O + CO + O2 --> 2 NO + CO2
-r15 = {"parameters": {"A": 9.99871E+14, "E":  114932.6086},
+r15 = {"parameters": {"A": 0, "E":  0},
           "mol_reactants": {"N2O": 1, "CO": 1, "O2": 1},
           "mol_products": {"NO": 2},
           "rxn_orders": {"N2O": 1, "CO": 1, "O2": 1}
@@ -184,7 +184,7 @@ r16 = {"parameters": {"A": 9.99871E+14, "E": 115105.6884},
         }
 
 # 2 NH3 + 1.5 O2 --> N2 + 3 H2O
-r17 = {"parameters": {"A": 1.80668E+13, "E": 62310.78927},
+r17 = {"parameters": {"A": 0, "E": 0},
           "mol_reactants": {"NH3": 2, "O2": 1.5},
           "mol_products": {"H2O": 3},
           "rxn_orders": {"NH3": 1, "O2": 1}
@@ -227,10 +227,12 @@ sim.set_temperature_from_data("A0", "T0", temp_data, {"T_in": 0, "T_mid": 2.5, "
 #   These are just guesses for now (Assuming the co-reactions between CO and NO
 #       only occur on Pd/Rh zone)
 #-------------------------------------------------------------------------------
-#sim.set_reaction_zone("r4", (2.5, 5))
-#sim.set_reaction_zone("r5", (2.5, 5))
-#sim.set_reaction_zone("r8", (2.5, 5))
-#sim.set_reaction_zone("r9", (2.5, 5))
+sim.set_reaction_zone("r4", (2.5, 5))
+sim.set_reaction_zone("r5", (2.5, 5))
+sim.set_reaction_zone("r8", (2.5, 5))
+sim.set_reaction_zone("r9", (2.5, 5))
+sim.set_reaction_zone("r15", (2.5, 5))
+
 
 # ICs in ppm
 sim.set_const_IC_in_ppm("HC","A0","T0",3000/x)
@@ -257,7 +259,20 @@ sim.set_const_BC_in_ppm("H2O","A0","T0",131905.812)
 
 file = open(HC_name+"_iterations.txt","w")
 file.write('iter\tobj\n')
+
+# ========== Selecting weight factors
 sim.auto_select_all_weight_factors()
+
+# Low temp
+sim.ignore_weight_factor("N2O","A0","T0",time_window=(25,50))
+sim.ignore_weight_factor("NO","A0","T0",time_window=(25,42))
+sim.ignore_weight_factor("NH3","A0","T0",time_window=(35,65))
+
+#sim.ignore_weight_factor("HC","A0","T0",time_window=(25,100))
+##sim.ignore_weight_factor("CO","A0","T0",time_window=(25,100))
+#sim.ignore_weight_factor("H2","A0","T0",time_window=(25,100))
+
+
 obj = 0
 for i in range(MC_iter):
     print("\nMC iter =\t"+str(i)+"\n")
@@ -280,8 +295,8 @@ for i in range(MC_iter):
             sim.set_reaction_param_bounds(rxn, "E", factor=0.1)
     else:
         for rxn in sim.model.arrhenius_rxns:
-            sim.set_reaction_param_bounds(rxn, "A", factor=0.2)
-            sim.set_reaction_param_bounds(rxn, "E", factor=0.2)
+            sim.set_reaction_param_bounds(rxn, "A", factor=1000)
+            sim.set_reaction_param_bounds(rxn, "E", factor=0.5)
 
     sim.initialize_auto_scaling()
     sim.initialize_simulator()

@@ -86,7 +86,7 @@ r2 = {"parameters": {"A": 46157501893, "E": 40443.38926},
         }
 
 # CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
-r3 = {"parameters": {"A": 6.37E+17, "E":  112652.853},
+r3 = {"parameters": {"A": 0, "E":  0},
           "mol_reactants": {"HC": 1, "O2": (x + y/4 - z/2)},
           "mol_products": {"H2O": y/2},
           "rxn_orders": {"HC": 1, "O2": 1}
@@ -135,7 +135,7 @@ r9 = {"parameters": {"A": 1E+15, "E":  114999.6822},
         }
 
 # CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-r10 = {"parameters": {"A": 3.72E+17, "E": 110475.8891},
+r10 = {"parameters": {"A": 0, "E": 0},
           "mol_reactants": {"HC": 1, "NO": (2*x + y/2 - z)},
           "mol_products": {"H2O": y/2},
           "rxn_orders": {"HC": 1, "NO": 1}
@@ -149,7 +149,7 @@ r11 = {"parameters": {"A": 2.33E+16, "E": 115968.1085},
         }
 
 # CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
-r12 = {"parameters": {"A": 36753619.4, "E":  30005.30375},
+r12 = {"parameters": {"A": 0, "E":  0},
           "mol_reactants": {"HC": 1, "H2O": x},
           "mol_products": {"CO": x, "H2": (x + y/2), "O2": z/2},
           "rxn_orders": {"HC": 1, "H2O": 1}
@@ -177,7 +177,7 @@ r15 = {"parameters": {"A": 9.99871E+14, "E":  114932.6086},
         }
 
 # CxHyOz + NO + (2x + ((y/2) - (3/2)) - z - 1) O2 --> x CO2 + ((y/2) - (3/2)) H2O + NH3
-r16 = {"parameters": {"A": 9.99871E+14, "E": 115105.6884},
+r16 = {"parameters": {"A": 0, "E": 0},
           "mol_reactants": {"HC": 1, "NO": 1, "O2": (2*x + (y/2 - (3/2)) - z - 1)},
           "mol_products": {"H2O": (y/2 - (3/2)), "NH3": 1},
           "rxn_orders": {"HC": 1, "NO": 1, "O2": 1}
@@ -191,7 +191,7 @@ r17 = {"parameters": {"A": 1.80668E+13, "E": 62310.78927},
         }
 
 # CxHyOz + 2 NO + (x + (y/4) - (z/2) - (1/2)) O2 --> N2O + x CO2 + (y/2) H2O
-r18 = {"parameters": {"A": 9.99936E+14, "E": 115060.3755},
+r18 = {"parameters": {"A": 0, "E": 0},
           "mol_reactants": {"HC": 1, "NO": 2, "O2": (x + (y/4) - (z/2) - (1/2))},
           "mol_products": {"N2O": 1, "H2O": y/2},
           "rxn_orders": {"HC": 1, "NO": 1, "O2": 1}
@@ -227,10 +227,11 @@ sim.set_temperature_from_data("A0", "T0", temp_data, {"T_in": 0, "T_mid": 2.5, "
 #   These are just guesses for now (Assuming the co-reactions between CO and NO
 #       only occur on Pd/Rh zone)
 #-------------------------------------------------------------------------------
-#sim.set_reaction_zone("r4", (2.5, 5))
-#sim.set_reaction_zone("r5", (2.5, 5))
-#sim.set_reaction_zone("r8", (2.5, 5))
-#sim.set_reaction_zone("r9", (2.5, 5))
+sim.set_reaction_zone("r4", (2.5, 5))
+sim.set_reaction_zone("r5", (2.5, 5))
+sim.set_reaction_zone("r8", (2.5, 5))
+sim.set_reaction_zone("r9", (2.5, 5))
+sim.set_reaction_zone("r15", (2.5, 5))
 
 # ICs in ppm
 sim.set_const_IC_in_ppm("HC","A0","T0",3000/x)
@@ -258,15 +259,17 @@ sim.set_const_BC_in_ppm("H2O","A0","T0",130165.9469)
 file = open(HC_name+"_iterations.txt","w")
 file.write('iter\tobj\n')
 
-#Edit the weight factors
+# ========== Selecting weight factors
 sim.auto_select_all_weight_factors()
 
-sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,100))
-sim.ignore_weight_factor("NO","A0","T0",time_window=(0,100))
-sim.ignore_weight_factor("CO","A0","T0",time_window=(0,100))
-sim.ignore_weight_factor("HC","A0","T0",time_window=(0,100))
-#sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,100))
-sim.ignore_weight_factor("H2","A0","T0",time_window=(0,100))
+# Low temp
+sim.ignore_weight_factor("N2O","A0","T0",time_window=(50,100))
+sim.ignore_weight_factor("NO","A0","T0",time_window=(50,100))
+sim.ignore_weight_factor("NH3","A0","T0",time_window=(50,100))
+
+sim.ignore_weight_factor("HC","A0","T0",time_window=(50,100))
+sim.ignore_weight_factor("CO","A0","T0",time_window=(50,100))
+sim.ignore_weight_factor("H2","A0","T0",time_window=(50,100))
 
 
 obj = 0
@@ -291,8 +294,8 @@ for i in range(MC_iter):
             sim.set_reaction_param_bounds(rxn, "E", factor=0.1)
     else:
         for rxn in sim.model.arrhenius_rxns:
-            sim.set_reaction_param_bounds(rxn, "A", factor=100)
-            sim.set_reaction_param_bounds(rxn, "E", factor=10)
+            sim.set_reaction_param_bounds(rxn, "A", factor=1000)
+            sim.set_reaction_param_bounds(rxn, "E", factor=0.5)
 
     sim.initialize_auto_scaling()
     sim.initialize_simulator()
