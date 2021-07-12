@@ -46,8 +46,7 @@ sim.set_data_values_for("NH3","A0","T0",5,data["time"],data["NH3"])
 sim.set_data_values_for("H2","A0","T0",5,data["time"],data["H2"])
 
 sim.add_reactions({"r1": ReactionType.Arrhenius,
-                    "r2f": ReactionType.Arrhenius,
-                    "r2r": ReactionType.Arrhenius,
+                    "r2": ReactionType.Arrhenius,
                     "r3": ReactionType.Arrhenius,
                     "r4": ReactionType.Arrhenius,
                     "r5": ReactionType.Arrhenius,
@@ -80,17 +79,10 @@ r1 = {"parameters": {"A": 2.05E+18, "E": 110521.4141},
         }
 
 # H2 + 0.5 O2 --> H2O
-r2f = {"parameters": {"A": 46157501893, "E": 40443.38926},
+r2 = {"parameters": {"A": 46157501893, "E": 40443.38926},
           "mol_reactants": {"H2": 1, "O2": 0.5},
           "mol_products": {"H2O": 1},
           "rxn_orders": {"H2": 1, "O2": 1}
-        }
-
-# H2 + 0.5 O2 <-- H2O
-r2r = {"parameters": {"A": 0, "E": 0},
-          "mol_reactants": {"H2O": 1},
-          "mol_products": {"H2": 1, "O2": 0.5},
-          "rxn_orders": {"H2O": 1}
         }
 
 # CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
@@ -206,8 +198,7 @@ r18 = {"parameters": {"A": 9.99936E+14, "E": 115060.3755},
         }
 
 sim.set_reaction_info("r1", r1)
-sim.set_reaction_info("r2f", r2f)
-sim.set_reaction_info("r2r", r2r)
+sim.set_reaction_info("r2", r2)
 sim.set_reaction_info("r3", r3)
 sim.set_reaction_info("r4", r4)
 sim.set_reaction_info("r5", r5)
