@@ -4,8 +4,8 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 HC_name = "methane"
-run = "1"
-oldrun="0"
+run = "9"
+oldrun="8"
 
 readfile = 'output/'+HC_name+'_model'+oldrun+'.json'
 writefile = HC_name+"_model"+run+".json"
@@ -18,7 +18,7 @@ sim.unfix_all_reactions()
 # CO + 0.5 O2 --> CO2
 #r1
 
-# H2 + 0.5 O2 --> H2O
+# H2 + 0.5 O2 --> H2O5
 #r2
 
 # CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
@@ -72,6 +72,26 @@ sim.unfix_all_reactions()
 
 #  ============= Modify parameter bounds =================
 #   Specify modifications to parameter boundaries (default = +/- 20%)
+H2_rxns = ["r2","r6","r9","r11","r12","r14"]
+
+HC_rxns = ["r3","r10","r12","r16","r18"]
+
+for rxn in sim.model.arrhenius_rxns:
+    sim.set_reaction_param_bounds(rxn, "A", factor=0.2)
+    sim.set_reaction_param_bounds(rxn, "E", factor=0.2)
+
+#sim.fix_all_reactions()
+
+#for rxn in HC_rxns:
+    #sim.model.A[rxn].set_value(1e15)
+    #sim.model.E[rxn].set_value(150000)
+
+#    sim.unfix_reaction(rxn)
+#    sim.set_reaction_param_bounds(rxn, "A", factor=0.15)
+#    sim.set_reaction_param_bounds(rxn, "E", factor=0.15)
+
+# Will need to rerun auto_select_all_weight_factors() to add later times back
+sim.auto_select_all_weight_factors()
 
 
 #call solver
