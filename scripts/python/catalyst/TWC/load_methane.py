@@ -4,8 +4,8 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 HC_name = "methane"
-run = "9"
-oldrun="8"
+run = "1"
+oldrun="0"
 
 readfile = 'output/'+HC_name+'_model'+oldrun+'.json'
 writefile = HC_name+"_model"+run+".json"
