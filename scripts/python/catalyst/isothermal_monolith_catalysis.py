@@ -2540,6 +2540,24 @@ class Isothermal_Monolith_Simulator(object):
                     self.model.scaling_factor.set_value(self.model.surf_cons, scale_to/maxval)
 
 
+    # Helper function to establish a guess based on another time step
+    #       This is a helper function that will use the information
+    #       of the model at 'time_ref' (for the same age and temp)
+    #       to guess the solution at 'time_solve' for all model
+    #       variables.
+    def _initial_guesser(self, age_solve, temp_solve, time_solve, time_ref):
+        for spec in self.model.gas_set:
+            for loc in self.model.z:
+                self.model.Cb[spec, age_solve, temp_solve, loc, time_solve].set_value(self.model.Cb[spec, age_solve, temp_solve, loc, time_ref].value)
+                self.model.C[spec, age_solve, temp_solve, loc, time_solve].set_value(self.model.C[spec, age_solve, temp_solve, loc, time_ref].value)
+        if self.isSurfSpecSet == True:
+            for spec in self.model.surf_set:
+                for loc in self.model.z:
+                    self.model.q[spec, age_solve, temp_solve, loc, time_solve].set_value(self.model.q[spec, age_solve, temp_solve, loc, time_ref].value)
+            if self.isSitesSet == True:
+                for spec in self.model.site_set:
+                    for loc in self.model.z:
+                        self.model.S[spec, age_solve, temp_solve, loc, time_solve].set_value(self.model.S[spec, age_solve, temp_solve, loc, time_ref].value)
 
     # Function to initilize the simulator
     def initialize_simulator(self, console_out=False, options={'print_user_options': 'yes',
@@ -2550,7 +2568,9 @@ class Isothermal_Monolith_Simulator(object):
                                                     'constr_viol_tol': 1e-8,
                                                     'max_iter': 3000,
                                                     'obj_scaling_factor': 1,
-                                                    'diverging_iterates_tol': 1e50}):
+                                                    'diverging_iterates_tol': 1e50},
+                                                    restart_on_warning=False,
+                                                    restart_on_error=False):
         for spec in self.model.gas_set:
             for age in self.model.age_set:
                 for temp in self.model.T_set:
@@ -2766,15 +2786,63 @@ class Isothermal_Monolith_Simulator(object):
                         if results.solver.status == SolverStatus.ok:
                             self.model.solutions.load_from(results)
                         elif results.solver.status == SolverStatus.warning:
-                            print("WARNING: Solver did not exit normally at (" + str(age_solve) + ", " + str(temp_solve) + ", " + str(time_solve) + ")")
-                            print("\tResults are loaded, but need to be checked")
-                            self.model.solutions.load_from(results)
+                            if restart_on_warning == False:
+                                print("WARNING: Solver did not exit normally at (" + str(age_solve) + ", " + str(temp_solve) + ", " + str(time_solve) + ")")
+                                print("\tResults are loaded, but need to be checked")
+                                self.model.solutions.load_from(results)
+                            else:
+                                print("WARNING: Solver did not exit normally at (" + str(age_solve) + ", " + str(temp_solve) + ", " + str(time_solve) + ")")
+                                print("\tAttempting to correct with restart...")
+                                #Establish initial guess
+                                self._initial_guesser(age_solve, temp_solve, time_solve, time_solve_old)
+
+                                #After initial guess, rerun solver
+                                results = solver.solve(self.model, tee=console_out, load_solutions=False)
+
+                                if results.solver.status == SolverStatus.ok:
+                                    self.model.solutions.load_from(results)
+                                    print("\tCorrection success!")
+                                elif results.solver.status == SolverStatus.warning:
+                                    print("\tSame issue persists...")
+                                    print("\tResults are loaded, but need to be checked")
+                                    self.model.solutions.load_from(results)
+                                else:
+                                    #self.model.solutions.load_from(results)
+                                    print("An Error has occurred at (" + str(age_solve) + ", " + str(temp_solve) + ", " + str(time_solve) + ")")
+                                    print("\tStatus: " + str(results.solver.status))
+                                    print("\tTermination Condition: " + str(results.solver.termination_condition))
+                                    return (results.solver.status, results.solver.termination_condition)
+
                         else:
-                            #self.model.solutions.load_from(results)
-                            print("An Error has occurred at (" + str(age_solve) + ", " + str(temp_solve) + ", " + str(time_solve) + ")")
-                            print("\tStatus: " + str(results.solver.status))
-                            print("\tTermination Condition: " + str(results.solver.termination_condition))
-                            return (results.solver.status, results.solver.termination_condition)
+                            if restart_on_error == False:
+                                #self.model.solutions.load_from(results)
+                                print("An Error has occurred at (" + str(age_solve) + ", " + str(temp_solve) + ", " + str(time_solve) + ")")
+                                print("\tStatus: " + str(results.solver.status))
+                                print("\tTermination Condition: " + str(results.solver.termination_condition))
+                                return (results.solver.status, results.solver.termination_condition)
+                            else:
+                                print("An Error has occurred at (" + str(age_solve) + ", " + str(temp_solve) + ", " + str(time_solve) + ")")
+                                print("\tAttempting to recover with restart...")
+                                #Establish initial guess
+                                self._initial_guesser(age_solve, temp_solve, time_solve, time_solve_old)
+
+                                #After initial guess, rerun solver
+                                results = solver.solve(self.model, tee=console_out, load_solutions=False)
+
+                                if results.solver.status == SolverStatus.ok:
+                                    self.model.solutions.load_from(results)
+                                    print("\tRecovery success!")
+                                elif results.solver.status == SolverStatus.warning:
+                                    print("\tWARNING: Solver did not exit normally at (" + str(age_solve) + ", " + str(temp_solve) + ", " + str(time_solve) + ")")
+                                    print("\tResults are loaded, but need to be checked")
+                                    self.model.solutions.load_from(results)
+                                else:
+                                    #self.model.solutions.load_from(results)
+                                    print("\tUnable to recover...")
+                                    print("An Error has occurred at (" + str(age_solve) + ", " + str(temp_solve) + ", " + str(time_solve) + ")")
+                                    print("\tStatus: " + str(results.solver.status))
+                                    print("\tTermination Condition: " + str(results.solver.termination_condition))
+                                    return (results.solver.status, results.solver.termination_condition)
 
                         # Fix the steps that were just solved
                         self.model.Cb[:, age_solve, temp_solve, :, time_solve].fix()
