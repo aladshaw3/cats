@@ -71,9 +71,9 @@ sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(500)
 sim.set_cell_density(62)
 
-'''
+
 # CO + 0.5 O2 --> CO2
-r1 = {"parameters": {"A": 2.05E+18, "E": 110521.4141},
+r1 = {"parameters": {"A": 46157501893, "E": 40443.38926},
           "mol_reactants": {"CO": 1, "O2": 0.5},
           "mol_products": {},
           "rxn_orders": {"CO": 1, "O2": 1}
@@ -87,84 +87,84 @@ r2 = {"parameters": {"A": 46157501893, "E": 40443.38926},
         }
 
 # CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
-r3 = {"parameters": {"A": 6.37E+17, "E":  112652.853},
+r3 = {"parameters": {"A": 46157501893, "E": 40443.38926},
           "mol_reactants": {"HC": 1, "O2": (x + y/4 - z/2)},
           "mol_products": {"H2O": y/2},
           "rxn_orders": {"HC": 1, "O2": 1}
         }
 
 # CO + NO --> CO2 + 0.5 N2
-r4 = {"parameters": {"A": 9.85111E+14, "E":  130481.2229},
+r4 = {"parameters": {"A": 46157501893, "E": 40443.38926},
           "mol_reactants": {"CO": 1, "NO": 1},
           "mol_products": {},
           "rxn_orders": {"CO": 1, "NO": 1}
         }
 
 # CO + 2 NO --> N2O + CO2
-r5 = {"parameters": {"A": 9.83667E+14, "E": 132741.1425},
+r5 = {"parameters": {"A": 46157501893, "E": 40443.38926},
           "mol_reactants": {"CO": 1, "NO": 2},
           "mol_products": {"N2O": 1},
           "rxn_orders": {"CO": 1, "NO": 1}
         }
 
 # 2.5 H2 + NO --> NH3 + H2O
-r6 = {"parameters": {"A": 2.17911E+15, "E": 77531.59042},
+r6 = {"parameters": {"A": 46157501893, "E": 40443.38926},
           "mol_reactants": {"H2": 2.5, "NO": 1},
           "mol_products": {"NH3": 1, "H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}
         }
 
 # H2 + NO --> H2O + 0.5 N2
-r7 = {"parameters": {"A": 2.75E+16, "E": 112920.0924},
+r7 = {"parameters": {"A": 46157501893, "E": 40443.38926},
           "mol_reactants": {"H2": 1, "NO": 1},
           "mol_products": {"H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}
         }
 
 # 2.5 CO + NO + 1.5 H2O --> NH3 + 2.5 CO2
-r8 = {"parameters": {"A": 9.98873E+14, "E":  116323.3955},
+r8 = {"parameters": {"A": 46157501893, "E": 40443.38926},
           "mol_reactants": {"CO": 2.5, "NO": 1, "H2O": 1.5},
           "mol_products": {"NH3": 1},
           "rxn_orders": {"CO": 1, "NO": 1, "H2O": 1}
         }
 
 # CO + NO + 1.5 H2 --> NH3 + CO2
-r9 = {"parameters": {"A": 1E+15, "E":  114999.6822},
+r9 = {"parameters": {"A": 46157501893, "E":  40443.38926},
           "mol_reactants": {"CO": 1, "NO": 1, "H2": 1.5},
           "mol_products": {"NH3": 1},
           "rxn_orders": {"CO": 1, "NO": 1, "H2": 1}
         }
 
 # CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-r10 = {"parameters": {"A": 3.72E+17, "E": 110475.8891},
+r10 = {"parameters": {"A": 46157501893, "E": 40443.38926},
           "mol_reactants": {"HC": 1, "NO": (2*x + y/2 - z)},
           "mol_products": {"H2O": y/2},
           "rxn_orders": {"HC": 1, "NO": 1}
         }
 
 # CO + H2O --> CO2 + H2
-r11 = {"parameters": {"A": 2.33E+16, "E": 115968.1085},
+r11 = {"parameters": {"A": 46157501893, "E": 40443.38926},
           "mol_reactants": {"CO": 1, "H2O": 1},
           "mol_products": {"H2": 1},
           "rxn_orders": {"CO": 1, "H2O": 1}
         }
 
 # CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
-r12 = {"parameters": {"A": 36753619.4, "E":  30005.30375},
+r12 = {"parameters": {"A": 46157501893, "E":  40443.38926},
           "mol_reactants": {"HC": 1, "H2O": x},
           "mol_products": {"CO": x, "H2": (x + y/2), "O2": z/2},
           "rxn_orders": {"HC": 1, "H2O": 1}
         }
 
 # N2O + CO --> N2 + CO2
-r13 = {"parameters": {"A": 0, "E":  0},
+r13 = {"parameters": {"A": 46157501893, "E": 40443.38926},
           "mol_reactants": {"N2O": 1, "CO": 1},
           "mol_products": {},
           "rxn_orders": {"N2O": 1, "CO": 1}
         }
 
 # H2 + 2 NO --> N2O + H2O
-r14 = {"parameters": {"A": 1.17999E+11, "E":  37524.05203},
+r14 = {"parameters": {"A": 46157501893, "E":  40443.38926},
           "mol_reactants": {"H2": 1, "NO": 2},
           "mol_products": {"N2O": 1, "H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}
@@ -178,7 +178,7 @@ r15 = {"parameters": {"A": 0, "E":  0},
         }
 
 # CxHyOz + NO + (2x + ((y/2) - (3/2)) - z - 1) O2 --> x CO2 + ((y/2) - (3/2)) H2O + NH3
-r16 = {"parameters": {"A": 9.99871E+14, "E": 115105.6884},
+r16 = {"parameters": {"A": 0, "E": 0},
           "mol_reactants": {"HC": 1, "NO": 1, "O2": (2*x + (y/2 - (3/2)) - z - 1)},
           "mol_products": {"H2O": (y/2 - (3/2)), "NH3": 1},
           "rxn_orders": {"HC": 1, "NO": 1, "O2": 1}
@@ -192,12 +192,12 @@ r17 = {"parameters": {"A": 0, "E": 0},
         }
 
 # CxHyOz + 2 NO + (x + (y/4) - (z/2) - (1/2)) O2 --> N2O + x CO2 + (y/2) H2O
-r18 = {"parameters": {"A": 9.99936E+14, "E": 115060.3755},
+r18 = {"parameters": {"A": 0, "E": 0},
           "mol_reactants": {"HC": 1, "NO": 2, "O2": (x + (y/4) - (z/2) - (1/2))},
           "mol_products": {"N2O": 1, "H2O": y/2},
           "rxn_orders": {"HC": 1, "NO": 1, "O2": 1}
         }
-'''
+
 '''
 # CO + 0.5 O2 --> CO2
 # E = 186352.08072195025
@@ -328,7 +328,7 @@ r18 = {"parameters": {"A": 1062518358413954.9, "E": 162946.8009040302},
         }
 
 '''
-
+'''
 # CO + 0.5 O2 --> CO2
 r1 = {"parameters": {"A": 2.175036531247799e+27, "E": 212815.22529668908},
           "mol_reactants": {"CO": 1, "O2": 0.5},
@@ -454,7 +454,7 @@ r18 = {"parameters": {"A": 5.366248921630829e+16, "E": 162946.90649225743},
           "mol_products": {"N2O": 1, "H2O": y/2},
           "rxn_orders": {"HC": 1, "NO": 1, "O2": 1}
         }
-
+'''
 sim.set_reaction_info("r1", r1)
 sim.set_reaction_info("r2", r2)
 sim.set_reaction_info("r3", r3)
@@ -530,6 +530,7 @@ sim.auto_select_all_weight_factors()
 ##sim.ignore_weight_factor("CO","A0","T0",time_window=(25,100))
 #sim.ignore_weight_factor("H2","A0","T0",time_window=(25,100))
 
+sim.fix_all_reactions()
 
 obj = 0
 for i in range(MC_iter):
@@ -552,10 +553,21 @@ for i in range(MC_iter):
             sim.set_reaction_param_bounds(rxn, "A", factor=0.1)
             sim.set_reaction_param_bounds(rxn, "E", factor=0.1)
     else:
+        H2_rxns = ["r2","r6","r7","r9","r11","r12","r14"]
+        all_rxns = ["r1","r2","r3","r4","r5","r6","r7","r8","r9","r10","r11","r12","r13","r14"]
+        '''
         for rxn in sim.model.arrhenius_rxns:
-            sim.set_reaction_param_bounds(rxn, "A", factor=0.5)
-            sim.set_reaction_param_bounds(rxn, "E", factor=0.2)
-            sim.fix_reaction(rxn)
+            #sim.set_reaction_param_bounds(rxn, "A", factor=0.5)
+            #sim.set_reaction_param_bounds(rxn, "E", factor=0.2)
+            sim.set_reaction_param_bounds(rxn, "A", bounds=(1e6,1e16))
+            sim.set_reaction_param_bounds(rxn, "E", bounds=(25000,250000))
+            #sim.fix_reaction(rxn)
+        '''
+        for rxn in all_rxns:
+            sim.set_reaction_param_bounds(rxn, "A", bounds=(1e6,1e20))
+            sim.set_reaction_param_bounds(rxn, "E", bounds=(25000,350000))
+            sim.unfix_reaction(rxn)
+
 
     sim.initialize_auto_scaling()
     sim.initialize_simulator(console_out=False, restart_on_warning=True, restart_on_error=True)
