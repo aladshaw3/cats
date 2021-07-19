@@ -1575,6 +1575,34 @@ class Isothermal_Monolith_Simulator(object):
         self.build_time = (TIME.time() - self.build_time)
         print("\tComplete! Elapsed time (s) = "+str(self.build_time))
 
+    # Set initial condition for surface species as fraction of surface sites
+    def set_surf_IC_as_fraction_of_sites(self, surf_spec, site, age, temp, fraction):
+        if self.isSurfSpecSet == False:
+            raise Exception("Error! Cannot use this function is there is no surface species")
+        if self.isSitesSet == False:
+            raise Exception("Error! Cannot use this function is there is no sites defined")
+        if surf_spec not in self.model.surf_set:
+            raise Exception("Error! "+surf_spec+" is not a valid surface species in the model")
+        if site not in self.model.site_set:
+            raise Exception("Error! "+site+" is not a valid surface site in the model")
+
+        if self.model.u_S[site, surf_spec].value <= 0:
+            raise Exception("Error! "+site+","+surf_spec+" pair is not a valid combination according to model site balance")
+
+        if fraction > 1:
+            fraction = 1
+        if fraction < 0:
+            fraction = 0
+
+        for loc in self.model.z:
+            value = fraction*self.model.Smax[site, age, loc, self.model.t.first()].value
+            if value < 1e-20:
+                value = 1e-20
+            self.model.q[surf_spec,age,temp, loc, self.model.t.first()].set_value(value)
+            self.model.q[surf_spec,age,temp, loc, self.model.t.first()].fix()
+        self.isInitialSet[surf_spec][age][temp] = True
+
+
     # Set constant initial conditions
     def set_const_IC(self,spec,age,temp,value):
         if self.isDiscrete == False:
