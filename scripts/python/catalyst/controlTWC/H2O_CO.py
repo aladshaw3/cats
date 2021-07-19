@@ -72,7 +72,7 @@ r1_ads = {"parameters": {"A": 250000, "E": 0, "dH": -90000, "dS": -114},
         }
 
 # s1-CO + H2O --> CO2 + H2
-r11 = {"parameters": {"A": 4600000, "E": 40000},
+r11 = {"parameters": {"A": 4600000, "E": 80000},
           "mol_reactants": {"Pd-CO": 1, "H2O": 1},
           "mol_products": {"H2": 1, "CO2": 1},
           "rxn_orders": {"Pd-CO": 1, "H2O": 1}
