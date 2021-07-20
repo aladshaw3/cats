@@ -57,7 +57,7 @@ sim.set_space_velocity_all_runs(500)
 sim.set_cell_density(62)
 
 # CO + 0.5 O2 --> CO2
-r1 = {"parameters": {"A": 1e6, "E": 60000},
+r1 = {"parameters": {"A": 1e17, "E": 120000},
           "mol_reactants": {"CO": 1, "O2": 0.5},
           "mol_products": {"CO2": 1},
           "rxn_orders": {"CO": 1, "O2": 1}
@@ -133,7 +133,7 @@ sim.plot_vs_data("NO", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_n
 sim.plot_vs_data("NH3", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-NH3-out")
 sim.plot_vs_data("N2O", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-N2O-out")
 sim.plot_vs_data("H2", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-H2-out")
-sim.plot_at_locations(["O2"], ["A0"], ["T0"], [5], display_live=False, file_name="exp-"+exp_name+"-O2-out")
+sim.plot_at_locations(["O2"], ["A0"], ["T0"], [0, 5], display_live=False, file_name="exp-"+exp_name+"-O2-out")
 
 sim.print_results_of_breakthrough(["CO","NO","NH3","N2O","H2","O2","H2O","CO2"],
                                 "A0", "T0", file_name=exp_name+"_lightoff"+".txt", include_temp=True)
