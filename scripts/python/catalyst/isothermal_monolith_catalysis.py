@@ -4409,11 +4409,11 @@ class Isothermal_Monolith_Simulator(object):
         if type(spec_list) is not list:
             raise Exception("Error! Need to provide species as a list (even if it is just one species)")
         if type(age_list) is not list:
-            raise Exception("Error! Need to provide ages as a list (even if it is just one species)")
+            raise Exception("Error! Need to provide ages as a list (even if it is just one age)")
         if type(temp_list) is not list:
-            raise Exception("Error! Need to provide temperature sets as a list (even if it is just one species)")
+            raise Exception("Error! Need to provide temperature sets as a list (even if it is just one temperature)")
         if type(loc_list) is not list:
-            raise Exception("Error! Need to provide locations as a list (even if it is just one species)")
+            raise Exception("Error! Need to provide locations as a list (even if it is just one location)")
 
         #Check lists for errors
         for spec in spec_list:
@@ -4513,11 +4513,11 @@ class Isothermal_Monolith_Simulator(object):
         if type(spec_list) is not list:
             raise Exception("Error! Need to provide species as a list (even if it is just one species)")
         if type(age_list) is not list:
-            raise Exception("Error! Need to provide ages as a list (even if it is just one species)")
+            raise Exception("Error! Need to provide ages as a list (even if it is just one age)")
         if type(temp_list) is not list:
-            raise Exception("Error! Need to provide temperature sets as a list (even if it is just one species)")
+            raise Exception("Error! Need to provide temperature sets as a list (even if it is just one temperature)")
         if type(time_list) is not list:
-            raise Exception("Error! Need to provide times as a list (even if it is just one species)")
+            raise Exception("Error! Need to provide times as a list (even if it is just one time)")
 
         #Check lists for errors
         for spec in spec_list:
