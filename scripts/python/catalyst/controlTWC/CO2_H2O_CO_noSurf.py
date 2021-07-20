@@ -9,7 +9,7 @@ exp_name = "CO2_H2O_CO"
 O2_in = 2300
 CO2_in = 130000
 H2O_in = 130000
-CO_in = 300
+CO_in = 5000
 H2_in = 0
 NO_in = 0
 NH3_in = 0
@@ -43,7 +43,10 @@ sim.set_data_values_for("NH3","A0","T0",5,data["time"],data["NH3"])
 sim.set_data_values_for("H2","A0","T0",5,data["time"],data["H2"])
 
 sim.add_reactions({
-                    # s1-CO + H2O --> CO2 + H2
+                    # CO + 0.5 O2 --> CO2
+                    "r1": ReactionType.Arrhenius,
+
+                    # CO + H2O --> CO2 + H2
                     "r11": ReactionType.Arrhenius,
                   })
 
@@ -53,6 +56,13 @@ sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(500)
 sim.set_cell_density(62)
 
+# CO + 0.5 O2 --> CO2
+r1 = {"parameters": {"A": 1e6, "E": 60000},
+          "mol_reactants": {"CO": 1, "O2": 0.5},
+          "mol_products": {"CO2": 1},
+          "rxn_orders": {"CO": 1, "O2": 1}
+        }
+
 # CO + H2O --> CO2 + H2
 r11 = {"parameters": {"A": 2.8792674874290595e+17, "E": 153399.10305342107},
           "mol_reactants": {"CO": 1, "H2O": 1},
@@ -60,6 +70,7 @@ r11 = {"parameters": {"A": 2.8792674874290595e+17, "E": 153399.10305342107},
           "rxn_orders": {"CO": 1, "H2O": 1}
         }
 
+sim.set_reaction_info("r1", r1)
 sim.set_reaction_info("r11", r11)
 
 sim.build_constraints()
@@ -109,7 +120,7 @@ sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,110))
 sim.ignore_weight_factor("NO","A0","T0",time_window=(0,110))
 sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,110))
 
-sim.fix_all_reactions()
+sim.fix_reaction("r11")
 
 sim.initialize_auto_scaling()
 sim.initialize_simulator()
@@ -122,6 +133,7 @@ sim.plot_vs_data("NO", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_n
 sim.plot_vs_data("NH3", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-NH3-out")
 sim.plot_vs_data("N2O", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-N2O-out")
 sim.plot_vs_data("H2", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-H2-out")
+sim.plot_at_locations(["O2"], ["A0"], ["T0"], [5], display_live=False, file_name="exp-"+exp_name+"-O2-out")
 
 sim.print_results_of_breakthrough(["CO","NO","NH3","N2O","H2","O2","H2O","CO2"],
                                 "A0", "T0", file_name=exp_name+"_lightoff"+".txt", include_temp=True)

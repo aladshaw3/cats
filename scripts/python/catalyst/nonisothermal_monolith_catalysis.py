@@ -81,6 +81,8 @@ def spec_heat_of_air(T):
 #                   rhow*cpw*dTw/dt = Kw*d^2Tw/dz^2 - eb*a*hwg*(Tw - T) - (1-eb)*a*hwc*(Tw - Tc)
 #                                   - aw*hwg*(Tw - Ta)
 #
+
+# # TODO: The velocity may need to be made into a variable now 
 class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     # Override of base class initialization to add new params and tracking info
     def __init__(self):

@@ -54,7 +54,7 @@ sim.set_space_velocity_all_runs(500)
 sim.set_cell_density(62)
 
 # CO + H2O --> CO2 + H2
-r11 = {"parameters": {"A": 461575018930000, "E": 130000},
+r11 = {"parameters": {"A": 2.8792674874290595e+17, "E": 153399.10305342107},
           "mol_reactants": {"CO": 1, "H2O": 1},
           "mol_products": {"H2": 1, "CO2": 1},
           "rxn_orders": {"CO": 1, "H2O": 1}
@@ -108,6 +108,8 @@ sim.auto_select_all_weight_factors()
 sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,110))
 sim.ignore_weight_factor("NO","A0","T0",time_window=(0,110))
 sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,110))
+
+sim.fix_all_reactions()
 
 sim.initialize_auto_scaling()
 sim.initialize_simulator()
