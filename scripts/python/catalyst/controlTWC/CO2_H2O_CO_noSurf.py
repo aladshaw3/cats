@@ -15,8 +15,8 @@ NO_in = 0
 NH3_in = 0
 N2O_in = 0
 
-data = naively_read_data_file("inputfiles/"+exp_name+"_lightoff.txt",factor=1)
-temp_data = naively_read_data_file("inputfiles/"+exp_name+"_temp.txt",factor=1)
+data = naively_read_data_file("inputfiles/"+exp_name+"_lightoff.txt",factor=2)
+temp_data = naively_read_data_file("inputfiles/"+exp_name+"_temp.txt",factor=2)
 
 time_list = time_point_selector(data["time"], data)
 
@@ -56,10 +56,9 @@ sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(500)
 sim.set_cell_density(62)
 
-# A = 1.4670103743230363e+29
-# E = 215137.19104900435
+'''
 # CO + 0.5 O2 --> CO2
-r1 = {"parameters": {"A": 7.797532186779991e+26, "E": 193399.10305342107},
+r1 = {"parameters": {"A": 7.797532186779991e+23, "E": 163399.10305342107},
           "mol_reactants": {"CO": 1, "O2": 0.5},
           "mol_products": {"CO2": 1},
           "rxn_orders": {"CO": 1, "O2": 1}
@@ -67,6 +66,22 @@ r1 = {"parameters": {"A": 7.797532186779991e+26, "E": 193399.10305342107},
 
 # CO + H2O <-- --> CO2 + H2
 r11 = {"parameters": {"A": 2.8792674874290595e+17, "E": 153399.10305342107, "dH": 14108, "dS": 170.9},
+          "mol_reactants": {"CO": 1, "H2O": 1},
+          "mol_products": {"H2": 1, "CO2": 1},
+          "rxn_orders": {"CO": 1, "H2O": 1, "CO2": 1, "H2": 1}
+        }
+'''
+
+# CO + 0.5 O2 --> CO2
+r1 = {"parameters": {"A": 1.6550871137667489e+31, "E": 235293.33281046877},
+          "mol_reactants": {"CO": 1, "O2": 0.5},
+          "mol_products": {"CO2": 1},
+          "rxn_orders": {"CO": 1, "O2": 1}
+        }
+
+# CO + H2O <-- --> CO2 + H2
+r11 = {"parameters": {"A": 1.8429782328496848e+17, "E": 136610.55181420766,
+                        "dH": 16769.16637626293, "dS": 139.10839203326302},
           "mol_reactants": {"CO": 1, "H2O": 1},
           "mol_products": {"H2": 1, "CO2": 1},
           "rxn_orders": {"CO": 1, "H2O": 1, "CO2": 1, "H2": 1}
@@ -138,6 +153,12 @@ sim.plot_vs_data("NH3", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_
 sim.plot_vs_data("N2O", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-N2O-out")
 sim.plot_vs_data("H2", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-H2-out")
 sim.plot_at_locations(["O2"], ["A0"], ["T0"], [0, 5], display_live=False, file_name="exp-"+exp_name+"-O2-out")
+
+sim.plot_at_times(["CO"], ["A0"], ["T0"], [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80],
+                display_live=False, file_name="exp-"+exp_name+"-COprofile-out")
+
+sim.plot_at_times(["O2"], ["A0"], ["T0"], [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80],
+                display_live=False, file_name="exp-"+exp_name+"-O2profile-out")
 
 sim.print_results_of_breakthrough(["CO","NO","NH3","N2O","H2","O2","H2O","CO2"],
                                 "A0", "T0", file_name=exp_name+"_lightoff"+".txt", include_temp=True)
