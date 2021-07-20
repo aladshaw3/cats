@@ -43,8 +43,8 @@ sim.set_data_values_for("NH3","A0","T0",5,data["time"],data["NH3"])
 sim.set_data_values_for("H2","A0","T0",5,data["time"],data["H2"])
 
 sim.add_reactions({
-                    # s1-CO + H2O --> CO2 + H2
-                    "r11": ReactionType.Arrhenius,
+                    # CO + H2O <-- --> CO2 + H2
+                    "r11": ReactionType.EquilibriumArrhenius,
                   })
 
 sim.set_bulk_porosity(0.3309)
@@ -53,11 +53,11 @@ sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(500)
 sim.set_cell_density(62)
 
-# CO + H2O --> CO2 + H2
-r11 = {"parameters": {"A": 2.8792674874290595e+17, "E": 153399.10305342107},
+# CO + H2O <-- --> CO2 + H2
+r11 = {"parameters": {"A": 2.8792674874290595e+17, "E": 153399.10305342107, "dH": 14108, "dS": 170.9},
           "mol_reactants": {"CO": 1, "H2O": 1},
           "mol_products": {"H2": 1, "CO2": 1},
-          "rxn_orders": {"CO": 1, "H2O": 1}
+          "rxn_orders": {"CO": 1, "H2O": 1, "CO2": 1, "H2": 1}
         }
 
 sim.set_reaction_info("r11", r11)
@@ -108,6 +108,7 @@ sim.auto_select_all_weight_factors()
 sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,110))
 sim.ignore_weight_factor("NO","A0","T0",time_window=(0,110))
 sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,110))
+sim.ignore_weight_factor("H2","A0","T0",time_window=(0,110))
 
 sim.fix_all_reactions()
 

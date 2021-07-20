@@ -15,8 +15,8 @@ NO_in = 0
 NH3_in = 0
 N2O_in = 0
 
-data = naively_read_data_file("inputfiles/"+exp_name+"_lightoff.txt",factor=2)
-temp_data = naively_read_data_file("inputfiles/"+exp_name+"_temp.txt",factor=2)
+data = naively_read_data_file("inputfiles/"+exp_name+"_lightoff.txt",factor=1)
+temp_data = naively_read_data_file("inputfiles/"+exp_name+"_temp.txt",factor=1)
 
 time_list = time_point_selector(data["time"], data)
 
@@ -46,8 +46,8 @@ sim.add_reactions({
                     # CO + 0.5 O2 --> CO2
                     "r1": ReactionType.Arrhenius,
 
-                    # CO + H2O --> CO2 + H2
-                    "r11": ReactionType.Arrhenius,
+                    # CO + H2O <-- --> CO2 + H2
+                    "r11": ReactionType.EquilibriumArrhenius,
                   })
 
 sim.set_bulk_porosity(0.3309)
@@ -56,18 +56,20 @@ sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(500)
 sim.set_cell_density(62)
 
+# A = 1.4670103743230363e+29
+# E = 215137.19104900435
 # CO + 0.5 O2 --> CO2
-r1 = {"parameters": {"A": 1e17, "E": 120000},
+r1 = {"parameters": {"A": 7.797532186779991e+26, "E": 193399.10305342107},
           "mol_reactants": {"CO": 1, "O2": 0.5},
           "mol_products": {"CO2": 1},
           "rxn_orders": {"CO": 1, "O2": 1}
         }
 
-# CO + H2O --> CO2 + H2
-r11 = {"parameters": {"A": 2.8792674874290595e+17, "E": 153399.10305342107},
+# CO + H2O <-- --> CO2 + H2
+r11 = {"parameters": {"A": 2.8792674874290595e+17, "E": 153399.10305342107, "dH": 14108, "dS": 170.9},
           "mol_reactants": {"CO": 1, "H2O": 1},
           "mol_products": {"H2": 1, "CO2": 1},
-          "rxn_orders": {"CO": 1, "H2O": 1}
+          "rxn_orders": {"CO": 1, "H2O": 1, "CO2": 1, "H2": 1}
         }
 
 sim.set_reaction_info("r1", r1)
@@ -119,11 +121,13 @@ sim.auto_select_all_weight_factors()
 sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,110))
 sim.ignore_weight_factor("NO","A0","T0",time_window=(0,110))
 sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,110))
+sim.ignore_weight_factor("H2","A0","T0",time_window=(0,110))
 
 sim.fix_reaction("r11")
+sim.fix_reaction("r1")
 
 sim.initialize_auto_scaling()
-sim.initialize_simulator()
+sim.initialize_simulator(console_out=False, restart_on_warning=True, restart_on_error=True)
 
 sim.finalize_auto_scaling()
 sim.run_solver()

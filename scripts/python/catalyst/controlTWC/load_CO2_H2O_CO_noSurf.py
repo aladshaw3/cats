@@ -6,8 +6,8 @@ from catalyst.isothermal_monolith_catalysis import *
 # Read in data
 exp_name = "CO2_H2O_CO"
 
-run = "01"
-oldrun=""
+run = "07"
+oldrun="06"
 
 readfile = 'output/'+exp_name+'_model'+oldrun+'.json'
 writefile = exp_name+"_model"+run+".json"
@@ -19,8 +19,8 @@ sim.unfix_all_reactions()
 
 # CO + 0.5 O2 --> CO2
 #r1
-sim.set_reaction_param_bounds("r1", "A", bounds=(0.5*sim.model.A["r1"].value,2*sim.model.A["r1"].value))
-sim.set_reaction_param_bounds("r1", "E", bounds=(0.5*sim.model.E["r1"].value,2*sim.model.E["r1"].value))
+sim.set_reaction_param_bounds("r1", "A", bounds=(0.95*sim.model.A["r1"].value,1.9*sim.model.A["r1"].value))
+sim.set_reaction_param_bounds("r1", "E", bounds=(0.95*sim.model.E["r1"].value,1.1*sim.model.E["r1"].value))
 
 # CO + H2O --> CO2 + H2
 #r11
