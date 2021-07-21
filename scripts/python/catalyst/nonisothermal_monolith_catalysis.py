@@ -82,7 +82,8 @@ def spec_heat_of_air(T):
 #                                   - aw*hwg*(Tw - Ta)
 #
 
-# # TODO: The velocity may need to be made into a variable now 
+# # TODO: The velocity may need to be made into a variable now
+# # TODO: Update the BC set functions to initialize the temperatures? (may not be needed as much here)
 class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     # Override of base class initialization to add new params and tracking info
     def __init__(self):

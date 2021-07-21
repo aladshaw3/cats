@@ -375,7 +375,7 @@ class TestIsothermalCatalystInputOutputOptions():
         assert hasattr(test.model, 'obj')
         assert isinstance(test.model.obj, Objective)
 
-        assert pytest.approx(3.302666761662488e-10, rel=1e-3) == value(test.model.obj)
+        assert pytest.approx(5.314131789092681e-10, rel=1e-3) == value(test.model.obj)
 
         assert len(test.model.t) == 11
         assert test.model.t[1] == 0

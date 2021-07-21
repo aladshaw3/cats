@@ -1650,7 +1650,7 @@ class Isothermal_Monolith_Simulator(object):
 
 
     # Set constant boundary conditions
-    def set_const_BC(self,spec,age,temp,value):
+    def set_const_BC(self,spec,age,temp,value, auto_init=True):
         if spec not in self.model.gas_set:
             raise Exception("Error! Cannot specify boundary value for non-gas species. "
                             +str(spec)+" given is not in model.gas_set")
@@ -1666,10 +1666,14 @@ class Isothermal_Monolith_Simulator(object):
 
         self.model.Cb[spec,age,temp,self.model.z.first(), :].set_value(value)
         self.model.Cb[spec,age,temp,self.model.z.first(), :].fix()
+        #This should improve convergence
+        if auto_init == True:
+            self.model.Cb[spec,age,temp,:, :].set_value(value)
+            self.model.C[spec,age,temp,:, :].set_value(value)
         self.isBoundarySet[spec][age][temp] = True
 
     # Set boundary condition when given ppm as units
-    def set_const_BC_in_ppm(self, spec, age, temp, ppm_val):
+    def set_const_BC_in_ppm(self, spec, age, temp, ppm_val, auto_init=True):
         if spec not in self.model.gas_set:
             raise Exception("Error! Cannot specify boundary value for non-gas species. "
                             +str(spec)+" given is not in model.gas_set")
@@ -1690,11 +1694,16 @@ class Isothermal_Monolith_Simulator(object):
                 value = 1e-20
             self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(value)
             self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
+
+            #This should improve convergence
+            if auto_init == True:
+                self.model.Cb[spec,age,temp,:, time].set_value(value)
+                self.model.C[spec,age,temp,:, time].set_value(value)
         self.isBoundarySet[spec][age][temp] = True
 
     # Set time dependent BCs using a 'time_value_pairs' list of tuples
     #       If user does not provide an initial value, it will be assumed 1e-20
-    def set_time_dependent_BC(self,spec,age,temp,time_value_pairs,initial_value=1e-20):
+    def set_time_dependent_BC(self,spec,age,temp,time_value_pairs,initial_value=1e-20, auto_init=True):
         if spec not in self.model.gas_set:
             raise Exception("Error! Cannot specify boundary value for non-gas species. "
                             +str(spec)+" given is not in model.gas_set")
@@ -1738,6 +1747,10 @@ class Isothermal_Monolith_Simulator(object):
                     pass
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(current_bc_value)
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
+                #This should improve convergence
+                if auto_init == True:
+                    self.model.Cb[spec,age,temp,:, time].set_value(current_bc_value)
+                    self.model.C[spec,age,temp,:, time].set_value(current_bc_value)
                 i+=1
                 try:
                     current_bc_time = time_value_pairs[i][0]
@@ -1746,12 +1759,16 @@ class Isothermal_Monolith_Simulator(object):
             else:
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(current_bc_value)
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
+                #This should improve convergence
+                if auto_init == True:
+                    self.model.Cb[spec,age,temp,:, time].set_value(current_bc_value)
+                    self.model.C[spec,age,temp,:, time].set_value(current_bc_value)
 
         self.isBoundarySet[spec][age][temp] = True
 
 
     # Set time dependent boundary condition when given ppm as units
-    def set_time_dependent_BC_in_ppm(self, spec, age, temp, time_value_pairs, initial_value=0):
+    def set_time_dependent_BC_in_ppm(self, spec, age, temp, time_value_pairs, initial_value=0, auto_init=True):
         if spec not in self.model.gas_set:
             raise Exception("Error! Cannot specify boundary value for non-gas species. "
                             +str(spec)+" given is not in model.gas_set")
@@ -1801,6 +1818,10 @@ class Isothermal_Monolith_Simulator(object):
                     pass
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(current_bc_value)
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
+                #This should improve convergence
+                if auto_init == True:
+                    self.model.Cb[spec,age,temp,:, time].set_value(current_bc_value)
+                    self.model.C[spec,age,temp,:, time].set_value(current_bc_value)
                 i+=1
                 try:
                     current_bc_time = time_value_pairs[i][0]
@@ -1809,16 +1830,12 @@ class Isothermal_Monolith_Simulator(object):
             else:
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(current_bc_value)
                 self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
+                #This should improve convergence
+                if auto_init == True:
+                    self.model.Cb[spec,age,temp,:, time].set_value(current_bc_value)
+                    self.model.C[spec,age,temp,:, time].set_value(current_bc_value)
 
         self.isBoundarySet[spec][age][temp] = True
-
-        '''for time in self.model.t:
-            value = ppm_val/10**6*self.model.Pref[age,temp].value/8.3145/self.model.T[age,temp,self.model.z.first(),time].value
-            if value < 1e-20:
-                value = 1e-20
-            self.model.Cb[spec,age,temp,self.model.z.first(), time].set_value(value)
-            self.model.Cb[spec,age,temp,self.model.z.first(), time].fix()
-        self.isBoundarySet[spec][age][temp] = True'''
 
     # Function to add linear temperature ramp section
     #       Starting temperature will be whatever the temperature is
