@@ -4864,6 +4864,8 @@ def time_point_selector(TimeDataList, VarDataDict, start_time=None, end_time=Non
         val = abs(maxval)
         if abs(maxval) < abs(minval):
             val = abs(minval)
+        if val < 1e-20:
+            val = 1e-20
         DerivativeVarDataDict[spec][:] = [abs(x) / val for x in DerivativeVarDataDict[spec]]
 
     # Now, selection points based on the derivatives
