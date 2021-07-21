@@ -53,13 +53,33 @@ sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(500)
 sim.set_cell_density(62)
 
+
+# ========== OG Param Set ============
 # CO + H2O <-- --> CO2 + H2
-r11 = {"parameters": {"A": 2.8792674874290595e+17, "E": 153399.10305342107, "dH": 14108, "dS": 170.9},
+r11 = {"parameters": {"A": 2.8792674874290595e+17, "E": 153399.10305342107,
+                    "dH": 14108, "dS": 170.9},
           "mol_reactants": {"CO": 1, "H2O": 1},
           "mol_products": {"H2": 1, "CO2": 1},
           "rxn_orders": {"CO": 1, "H2O": 1, "CO2": 1, "H2": 1}
         }
 
+# NOTE: OG param set only works for H2O and CO in absence of CO2 and O2
+#   When O2 (and CO2) are introduced, the optimal param set becomes what
+#   is shown below. Implication of this: O2 and/or CO2 must facilitate the
+#   WGS reaction in some capacity. This may be due to the oxidation state
+#   of the catalyst. In the absence of O2, the catalyst may be in a 'reduced'
+#   state, rather than an 'oxidized' state. Thus, the surface reactions will
+#   vary slightly. 
+
+'''
+# CO + H2O <-- --> CO2 + H2
+r11 = {"parameters": {"A": 1.8429782328496848e+17, "E": 136610.55181420766,
+                        "dH": 16769.16637626293, "dS": 139.10839203326302},
+          "mol_reactants": {"CO": 1, "H2O": 1},
+          "mol_products": {"H2": 1, "CO2": 1},
+          "rxn_orders": {"CO": 1, "H2O": 1, "CO2": 1, "H2": 1}
+        }
+'''
 sim.set_reaction_info("r11", r11)
 
 sim.build_constraints()
