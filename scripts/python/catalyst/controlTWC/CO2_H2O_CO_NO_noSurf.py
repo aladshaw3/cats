@@ -1,3 +1,7 @@
+# NOTE: This model had issues with convergence. Seems to have gotten better
+#   by switching to OrthogonalCollocation with 3 colpoints and doing a
+#   higher level of spatial discretization
+
 # This file is a demo for the 'Isothermal_Monolith_Simulator' object
 import sys
 sys.path.append('../..')
@@ -15,8 +19,8 @@ NO_in = 1070
 NH3_in = 0
 N2O_in = 0
 
-data = naively_read_data_file("inputfiles/"+exp_name+"_lightoff.txt",factor=2)
-temp_data = naively_read_data_file("inputfiles/"+exp_name+"_temp.txt",factor=2)
+data = naively_read_data_file("inputfiles/"+exp_name+"_lightoff.txt",factor=4)
+temp_data = naively_read_data_file("inputfiles/"+exp_name+"_temp.txt",factor=4)
 
 time_list = time_point_selector(data["time"], data)
 
@@ -76,7 +80,10 @@ r1 = {"parameters": {"A": 1.6550871137667489e+31, "E": 235293.33281046877},
         }
 
 # CO + NO --> CO2 (+ 0.5 N2)
-r4 = {"parameters": {"A": 2e+30, "E": 250000},
+# 1st:  {"A": 1e+28, "E": 210000} # I don't think this is right, too much WGS occurs
+#                                 # I think CO/NO rxn should have higher activation energy
+#                                  # in order to have this reaction out compete WGS and CO oxidation
+r4 = {"parameters": {"A": 1e+33, "E": 260000},
           "mol_reactants": {"CO": 1, "NO": 1},
           "mol_products": {"CO2": 1},
           "rxn_orders": {"CO": 1, "NO": 1}
@@ -119,8 +126,8 @@ sim.set_reaction_info("r2", r2)
 sim.set_reaction_info("r11", r11)
 
 sim.build_constraints()
-sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=90,elems=10,colpoints=2)
+sim.discretize_model(method=DiscretizationMethod.OrthogonalCollocation,
+                    tstep=90,elems=20,colpoints=3)
 
 # Setup temperature information from data
 sim.set_temperature_from_data("A0", "T0", temp_data, {"T_in": 0, "T_mid": 2.5, "T_out": 5})
@@ -129,13 +136,17 @@ sim.set_temperature_from_data("A0", "T0", temp_data, {"T_in": 0, "T_mid": 2.5, "
 #   These are just guesses for now (Assuming the co-reactions between CO and NO
 #       only occur on Pd/Rh zone)
 #-------------------------------------------------------------------------------
-sim.set_reaction_zone("r4", (2.51, 5))
-sim.set_reaction_zone("r5", (2.51, 5))
-sim.set_reaction_zone("r8", (2.51, 5))
+
+# Maybe I should not consider this as a 'zone'
+# NOTE: The current 'zone' method introduces a sharp discontinuity
+#       That discontinuity may be introducing some numerical instability
+sim.set_reaction_zone("r4", (2.5, 5))
+sim.set_reaction_zone("r5", (2.5, 5))
+sim.set_reaction_zone("r8", (2.5, 5))
 
 '''
-sim.set_reaction_zone("r9", (2.51, 5))
-sim.set_reaction_zone("r15", (2.51, 5))
+sim.set_reaction_zone("r9", (2.5, 5))
+sim.set_reaction_zone("r15", (2.5, 5))
 '''
 
 
@@ -150,14 +161,14 @@ sim.set_const_IC_in_ppm("H2O","A0","T0",H2O_in)
 sim.set_const_IC_in_ppm("CO2","A0","T0",CO2_in)
 
 # BCs in ppm
-sim.set_const_BC_in_ppm("CO","A0","T0",CO_in, auto_init=False)
-sim.set_const_BC_in_ppm("NO","A0","T0",NO_in, auto_init=False)
-sim.set_const_BC_in_ppm("N2O","A0","T0",N2O_in, auto_init=False)
-sim.set_const_BC_in_ppm("NH3","A0","T0",NH3_in, auto_init=False)
-sim.set_const_BC_in_ppm("H2","A0","T0",H2_in, auto_init=False)
-sim.set_const_BC_in_ppm("O2","A0","T0",O2_in, auto_init=False)
-sim.set_const_BC_in_ppm("H2O","A0","T0",H2O_in, auto_init=False)
-sim.set_const_BC_in_ppm("CO2","A0","T0",CO2_in, auto_init=False)
+sim.set_const_BC_in_ppm("CO","A0","T0",CO_in, auto_init=True)
+sim.set_const_BC_in_ppm("NO","A0","T0",NO_in, auto_init=True)
+sim.set_const_BC_in_ppm("N2O","A0","T0",N2O_in, auto_init=True)
+sim.set_const_BC_in_ppm("NH3","A0","T0",NH3_in, auto_init=True)
+sim.set_const_BC_in_ppm("H2","A0","T0",H2_in, auto_init=True)
+sim.set_const_BC_in_ppm("O2","A0","T0",O2_in, auto_init=True)
+sim.set_const_BC_in_ppm("H2O","A0","T0",H2O_in, auto_init=True)
+sim.set_const_BC_in_ppm("CO2","A0","T0",CO2_in, auto_init=True)
 
 
 sim.auto_select_all_weight_factors()
@@ -171,10 +182,10 @@ sim.fix_all_reactions()
 
 #NOTE: It is possible that the solver returns an 'ok' and 'optimal' status for a problem that was not solved...
 sim.initialize_auto_scaling()
-sim.initialize_simulator(console_out=True, restart_on_warning=True, restart_on_error=True)
+sim.initialize_simulator(console_out=False, restart_on_warning=True, restart_on_error=True)
 
-sim.finalize_auto_scaling()
-sim.run_solver()
+#sim.finalize_auto_scaling()
+#sim.run_solver()
 
 sim.plot_vs_data("CO", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-CO-out")
 sim.plot_vs_data("NO", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-NO-out")
@@ -188,6 +199,9 @@ sim.plot_at_times(["CO"], ["A0"], ["T0"], [30, 35, 40, 45, 50, 55, 60, 65, 70, 7
 
 sim.plot_at_times(["O2"], ["A0"], ["T0"], [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95],
                 display_live=False, file_name="exp-"+exp_name+"-O2profile-out")
+
+sim.plot_at_times(["NO"], ["A0"], ["T0"], [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95],
+                display_live=False, file_name="exp-"+exp_name+"-NOprofile-out")
 
 sim.print_results_of_breakthrough(["CO","NO","NH3","N2O","H2","O2","H2O","CO2"],
                                 "A0", "T0", file_name=exp_name+"_lightoff"+".txt", include_temp=True)
