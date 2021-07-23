@@ -47,11 +47,11 @@ sim.add_reactions({
                     "r11": ReactionType.EquilibriumArrhenius,
                   })
 
-sim.set_bulk_porosity(0.3309)
+sim.set_bulk_porosity(0.775)
 sim.set_washcoat_porosity(0.4)
 sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(500)
-sim.set_cell_density(62)
+sim.set_cell_density(93)
 
 
 # ========== OG Param Set ============
@@ -69,7 +69,7 @@ r11 = {"parameters": {"A": 2.8792674874290595e+17, "E": 153399.10305342107,
 #   WGS reaction in some capacity. This may be due to the oxidation state
 #   of the catalyst. In the absence of O2, the catalyst may be in a 'reduced'
 #   state, rather than an 'oxidized' state. Thus, the surface reactions will
-#   vary slightly. 
+#   vary slightly.
 
 '''
 # CO + H2O <-- --> CO2 + H2

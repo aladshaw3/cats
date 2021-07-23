@@ -19,12 +19,14 @@ NO_in = 1070
 NH3_in = 0
 N2O_in = 0
 
-data = naively_read_data_file("inputfiles/"+exp_name+"_lightoff.txt",factor=4)
-temp_data = naively_read_data_file("inputfiles/"+exp_name+"_temp.txt",factor=4)
+data = naively_read_data_file("inputfiles/"+exp_name+"_lightoff.txt",factor=2)
+temp_data = naively_read_data_file("inputfiles/"+exp_name+"_temp.txt",factor=2)
 
 time_list = time_point_selector(data["time"], data)
 
 sim = Isothermal_Monolith_Simulator()
+#z_list=[0,0.5,1,1.5,2,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3,3.5,4,4.5,5]
+sim.add_axial_dim(point_list=z_list)         #cm
 sim.add_axial_dim(0,5)         #cm
 sim.add_axial_dataset(5)
 
@@ -66,11 +68,11 @@ sim.add_reactions({
                     "r11": ReactionType.EquilibriumArrhenius,
                   })
 
-sim.set_bulk_porosity(0.3309)
+sim.set_bulk_porosity(0.775)
 sim.set_washcoat_porosity(0.4)
 sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(500)
-sim.set_cell_density(62)
+sim.set_cell_density(93)
 
 # CO + 0.5 O2 --> CO2
 r1 = {"parameters": {"A": 1.6550871137667489e+31, "E": 235293.33281046877},
@@ -83,6 +85,7 @@ r1 = {"parameters": {"A": 1.6550871137667489e+31, "E": 235293.33281046877},
 # 1st:  {"A": 1e+28, "E": 210000} # I don't think this is right, too much WGS occurs
 #                                 # I think CO/NO rxn should have higher activation energy
 #                                  # in order to have this reaction out compete WGS and CO oxidation
+# {"A": 1e+33, "E": 260000} zones
 r4 = {"parameters": {"A": 1e+33, "E": 260000},
           "mol_reactants": {"CO": 1, "NO": 1},
           "mol_products": {"CO2": 1},
@@ -127,7 +130,7 @@ sim.set_reaction_info("r11", r11)
 
 sim.build_constraints()
 sim.discretize_model(method=DiscretizationMethod.OrthogonalCollocation,
-                    tstep=90,elems=20,colpoints=3)
+                    tstep=90,elems=10,colpoints=2)
 
 # Setup temperature information from data
 sim.set_temperature_from_data("A0", "T0", temp_data, {"T_in": 0, "T_mid": 2.5, "T_out": 5})
@@ -140,9 +143,10 @@ sim.set_temperature_from_data("A0", "T0", temp_data, {"T_in": 0, "T_mid": 2.5, "
 # Maybe I should not consider this as a 'zone'
 # NOTE: The current 'zone' method introduces a sharp discontinuity
 #       That discontinuity may be introducing some numerical instability
-sim.set_reaction_zone("r4", (2.5, 5))
-sim.set_reaction_zone("r5", (2.5, 5))
-sim.set_reaction_zone("r8", (2.5, 5))
+
+#sim.set_reaction_zone("r4", (2.5, 5))
+#sim.set_reaction_zone("r5", (2.5, 5))
+#sim.set_reaction_zone("r8", (2.5, 5))
 
 '''
 sim.set_reaction_zone("r9", (2.5, 5))

@@ -53,11 +53,11 @@ sim.add_reactions({
                     "r1_ads": ReactionType.EquilibriumArrhenius,
                   })
 
-sim.set_bulk_porosity(0.3309)
+sim.set_bulk_porosity(0.775)
 sim.set_washcoat_porosity(0.4)
 sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(500)
-sim.set_cell_density(62)
+sim.set_cell_density(93)
 
 # Setting up site balances using dicts
 pd_data = {"mol_occupancy": {"Pd-CO": 1}}
