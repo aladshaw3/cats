@@ -25,8 +25,8 @@ temp_data = naively_read_data_file("inputfiles/"+exp_name+"_temp.txt",factor=2)
 time_list = time_point_selector(data["time"], data)
 
 sim = Isothermal_Monolith_Simulator()
-#z_list=[0,0.5,1,1.5,2,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3,3.5,4,4.5,5]
-sim.add_axial_dim(point_list=z_list)         #cm
+z_list=[0,0.5,1,1.5,2,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3,3.5,4,4.5,5]
+#sim.add_axial_dim(point_list=z_list)         #cm
 sim.add_axial_dim(0,5)         #cm
 sim.add_axial_dataset(5)
 
@@ -129,7 +129,7 @@ sim.set_reaction_info("r2", r2)
 sim.set_reaction_info("r11", r11)
 
 sim.build_constraints()
-sim.discretize_model(method=DiscretizationMethod.OrthogonalCollocation,
+sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
                     tstep=90,elems=10,colpoints=2)
 
 # Setup temperature information from data
