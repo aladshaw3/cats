@@ -82,18 +82,15 @@ r1 = {"parameters": {"A": 1.6550871137667489e+31, "E": 235293.33281046877},
         }
 
 # CO + NO --> CO2 (+ 0.5 N2)
-# 1st:  {"A": 1e+28, "E": 210000} # I don't think this is right, too much WGS occurs
-#                                 # I think CO/NO rxn should have higher activation energy
-#                                  # in order to have this reaction out compete WGS and CO oxidation
-# {"A": 1e+33, "E": 260000} zones
-r4 = {"parameters": {"A": 1e+33, "E": 260000},
+# {"A": 1e+32, "E": 260000} zones
+r4 = {"parameters": {"A": 1e+32, "E": 260000},
           "mol_reactants": {"CO": 1, "NO": 1},
           "mol_products": {"CO2": 1},
           "rxn_orders": {"CO": 1, "NO": 1}
         }
 
 # CO + 2 NO --> CO2 + N2O
-r5 = {"parameters": {"A": 0, "E": 235293.33281046877},
+r5 = {"parameters": {"A": 1e+18, "E": 120000},
           "mol_reactants": {"CO": 1, "NO": 2},
           "mol_products": {"CO2": 1, "N2O": 1},
           "rxn_orders": {"CO": 1, "NO": 1}
