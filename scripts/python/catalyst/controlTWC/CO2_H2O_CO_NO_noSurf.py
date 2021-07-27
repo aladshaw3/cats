@@ -82,22 +82,27 @@ r1 = {"parameters": {"A": 1.6550871137667489e+31, "E": 235293.33281046877},
         }
 
 # CO + NO --> CO2 (+ 0.5 N2)
-# {"A": 1e+32, "E": 260000} zones
-r4 = {"parameters": {"A": 1e+32, "E": 260000},
+# {"A": 1e+32, "E": 260000}
+# {"A": 9.12004888613687e+31, "E": 257516.25391484427}
+r4 = {"parameters": {"A": 3.873161231814254e+36, "E": 309019.4057761542},
           "mol_reactants": {"CO": 1, "NO": 1},
           "mol_products": {"CO2": 1},
           "rxn_orders": {"CO": 1, "NO": 1}
         }
 
 # CO + 2 NO --> CO2 + N2O
-r5 = {"parameters": {"A": 1e+18, "E": 120000},
+# {"A": 1e+18, "E": 120000}
+# {"A": 4.7276440391094636e+18, "E": 125954.68006047659}
+r5 = {"parameters": {"A": 5.672959439126917e+18, "E": 131119.8080998248},
           "mol_reactants": {"CO": 1, "NO": 2},
           "mol_products": {"CO2": 1, "N2O": 1},
           "rxn_orders": {"CO": 1, "NO": 1}
         }
 
 # 2.5 CO + NO + 1.5 H2O --> 2.5 CO2 + NH3
-r8 = {"parameters": {"A": 0, "E": 235293.33281046877},
+# {"A": 1e+25, "E": 160000}
+# {"A": 1.6466336934850497e+31, "E": 230399.97456429395}
+r8 = {"parameters": {"A": 3.3487865183751856e+35, "E": 276479.73296012945},
           "mol_reactants": {"CO": 2.5, "NO": 1, "H2O": 1.5},
           "mol_products": {"CO2": 2.5, "NH3": 1},
           "rxn_orders": {"CO": 1, "NO": 1, "H2O": 1}
@@ -127,7 +132,7 @@ sim.set_reaction_info("r11", r11)
 
 sim.build_constraints()
 sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=90,elems=10,colpoints=2)
+                    tstep=90,elems=20,colpoints=2)
 
 # Setup temperature information from data
 sim.set_temperature_from_data("A0", "T0", temp_data, {"T_in": 0, "T_mid": 2.5, "T_out": 5})
@@ -185,8 +190,8 @@ sim.fix_all_reactions()
 sim.initialize_auto_scaling()
 sim.initialize_simulator(console_out=False, restart_on_warning=True, restart_on_error=True)
 
-#sim.finalize_auto_scaling()
-#sim.run_solver()
+sim.finalize_auto_scaling()
+sim.run_solver()
 
 sim.plot_vs_data("CO", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-CO-out")
 sim.plot_vs_data("NO", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-NO-out")
