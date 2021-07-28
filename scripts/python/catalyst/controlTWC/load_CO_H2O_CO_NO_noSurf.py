@@ -41,7 +41,8 @@ sim.fix_reaction("r1")
 sim.fix_reaction("r2")
 sim.fix_reaction("r11")
 
-#sim.fix_reaction("r8")
+sim.fix_reaction("r8")
+sim.fix_reaction("r5")
 
 # Will need to rerun auto_select_all_weight_factors() to add later times back
 sim.auto_select_all_weight_factors()

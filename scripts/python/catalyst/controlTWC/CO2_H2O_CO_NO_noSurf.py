@@ -83,17 +83,17 @@ r1 = {"parameters": {"A": 1.6550871137667489e+31, "E": 235293.33281046877},
 
 # CO + NO --> CO2 (+ 0.5 N2)
 # {"A": 1e+32, "E": 260000}
-# {"A": 9.12004888613687e+31, "E": 257516.25391484427}
-r4 = {"parameters": {"A": 3.873161231814254e+36, "E": 309019.4057761542},
+#
+r4 = {"parameters": {"A": 1.1610107273784621e+36, "E": 305430.5721984569},
           "mol_reactants": {"CO": 1, "NO": 1},
           "mol_products": {"CO2": 1},
           "rxn_orders": {"CO": 1, "NO": 1}
         }
 
 # CO + 2 NO --> CO2 + N2O
-# {"A": 1e+18, "E": 120000}
-# {"A": 4.7276440391094636e+18, "E": 125954.68006047659}
-r5 = {"parameters": {"A": 5.672959439126917e+18, "E": 131119.8080998248},
+# {"A": 1e+22, "E": 160000}
+#
+r5 = {"parameters": {"A": 8.000678321245109e+21, "E": 164650.06856809044},
           "mol_reactants": {"CO": 1, "NO": 2},
           "mol_products": {"CO2": 1, "N2O": 1},
           "rxn_orders": {"CO": 1, "NO": 1}
@@ -101,8 +101,8 @@ r5 = {"parameters": {"A": 5.672959439126917e+18, "E": 131119.8080998248},
 
 # 2.5 CO + NO + 1.5 H2O --> 2.5 CO2 + NH3
 # {"A": 1e+25, "E": 160000}
-# {"A": 1.6466336934850497e+31, "E": 230399.97456429395}
-r8 = {"parameters": {"A": 3.3487865183751856e+35, "E": 276479.73296012945},
+#
+r8 = {"parameters": {"A": 4.1084528718392234e+27, "E": 191999.95655767733},
           "mol_reactants": {"CO": 2.5, "NO": 1, "H2O": 1.5},
           "mol_products": {"CO2": 2.5, "NH3": 1},
           "rxn_orders": {"CO": 1, "NO": 1, "H2O": 1}
@@ -132,7 +132,7 @@ sim.set_reaction_info("r11", r11)
 
 sim.build_constraints()
 sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=90,elems=20,colpoints=2)
+                    tstep=90,elems=10,colpoints=2)
 
 # Setup temperature information from data
 sim.set_temperature_from_data("A0", "T0", temp_data, {"T_in": 0, "T_mid": 2.5, "T_out": 5})
@@ -181,7 +181,7 @@ sim.auto_select_all_weight_factors()
 
 #sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,110))
 #sim.ignore_weight_factor("NO","A0","T0",time_window=(0,110))
-#sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,110))
+sim.ignore_weight_factor("NH3","A0","T0",time_window=(50,110))
 sim.ignore_weight_factor("H2","A0","T0",time_window=(0,110))
 
 sim.fix_all_reactions()

@@ -521,7 +521,6 @@ class Isothermal_Monolith_Simulator(object):
         self.isSurfSpecSet = True
         self.model.dq_dt = DerivativeVar(self.model.q, wrt=self.model.t, initialize=0, units=units.mol/units.L/units.min)
 
-    # # TODO: Modify model save/load to accommodate new infor
     # Add surface species for data observations and a weight factor 'wq' to be used for
     #   changing the behavior of the objective function
     def add_data_surface_species(self, surface_species):
@@ -1342,8 +1341,6 @@ class Isothermal_Monolith_Simulator(object):
         return m.eb*m.dCb_dt[gas, age, temp, z, t] + m.eb*m.v[age,temp,t]*m.dCb_dz[gas, age, temp, z, t] == -(1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t])
 
     # Washcoat mass balance constraint
-    # # TODO: Update rxn_sum_gas to automatically update u values
-    #           based on whether the reaction is surface or not
     def pore_mb_constraint(self, m, gas, age, temp, z, t):
         rxn_sum=self.reaction_sum_gas(gas, m, age, temp, z, t)
         return m.ew*(1-m.eb)*m.dC_dt[gas, age, temp, z, t] == (1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t]) + (1-m.eb)*rxn_sum
@@ -1363,7 +1360,6 @@ class Isothermal_Monolith_Simulator(object):
         return m.dCb_dz[gas, age, temp, m.z[-1], t] == (m.Cb[gas, age, temp, m.z[-1], t] - m.Cb[gas, age, temp, m.z[-2], t])/(m.z[-1]-m.z[-2])
 
     # Objective function
-    # # TODO: Can this be optimized?
     def norm_objective(self, m):
         sum = 0
         try:
@@ -1551,7 +1547,6 @@ class Isothermal_Monolith_Simulator(object):
         self.isDiscrete = True
 
         # Build the objective function (if possible)
-        # # TODO: Fix this statement for surface speceis
         anyFalse = False
         if self.isDataGasSpecSet == True or self.isDataSurfSpecSet == True:
             if self.isDataGasSpecSet == True:
@@ -2261,10 +2256,6 @@ class Isothermal_Monolith_Simulator(object):
     #       This function is not required, but in
     #       practice, should be called before running
     #       the 'initialize_simulator' function below
-    #
-    #   # TODO: Fix autoscaling issues with different concentration units
-    #           When using large concentration values (e.g., ppm instead of mol/L)
-    #           the autoscaling feature tends to fail
     def initialize_auto_scaling(self, scale_to=1):
         for spec in self.model.gas_set:
             for age in self.model.age_set:
