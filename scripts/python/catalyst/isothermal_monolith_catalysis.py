@@ -2713,6 +2713,8 @@ class Isothermal_Monolith_Simulator(object):
 
                         #Inside age_solve, temp_solve, and time_solve
                         solver = SolverFactory('ipopt')
+                        #solver = SolverFactory('multistart')
+                        #solver = SolverFactory('trustregion')
 
                         # Check user options
                         for item in options:

@@ -128,21 +128,22 @@ r11 = {"parameters": {"A": 1.8429782328496848e+17, "E": 136610.55181420766,
 
 
 # 2.5 H2 + NO --> NH3 + H2O
-r6 = {"parameters": {"A": 0, "E": 150000},
+r6 = {"parameters": {"A": 6e+16, "E": 90000},
           "mol_reactants": {"H2": 2.5, "NO": 1},
           "mol_products": {"NH3": 1, "H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}
         }
 
 # H2 + NO --> H2O (+ 0.5 N2)
-r7 = {"parameters": {"A": 1.733658868809338e+24, "E": 158891.38869742613},
+# {"A": 1.5e+13, "E": 50000}
+r7 = {"parameters": {"A": 6e+13, "E": 60000},
           "mol_reactants": {"H2": 1, "NO": 1},
           "mol_products": {"H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}
         }
 
 # H2 + 2 NO --> N2O + H2O
-r14 = {"parameters": {"A": 0, "E": 150000},
+r14 = {"parameters": {"A": 2e+11, "E": 40000},
           "mol_reactants": {"H2": 1, "NO": 2},
           "mol_products": {"N2O": 1, "H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}
@@ -210,7 +211,7 @@ sim.auto_select_all_weight_factors()
 #sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,110))
 #sim.ignore_weight_factor("NO","A0","T0",time_window=(0,110))
 #sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,110))
-#sim.ignore_weight_factor("H2","A0","T0",time_window=(0,110))
+sim.ignore_weight_factor("H2","A0","T0",time_window=(0,110))
 
 sim.fix_all_reactions()
 
@@ -218,8 +219,8 @@ sim.fix_all_reactions()
 sim.initialize_auto_scaling()
 sim.initialize_simulator(console_out=False, restart_on_warning=True, restart_on_error=True)
 
-#sim.finalize_auto_scaling()
-#sim.run_solver()
+sim.finalize_auto_scaling()
+sim.run_solver()
 
 sim.plot_vs_data("CO", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-CO-out")
 sim.plot_vs_data("NO", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-NO-out")
