@@ -2584,7 +2584,8 @@ class Isothermal_Monolith_Simulator(object):
     def _initial_guesser(self, age_solve, temp_solve, time_solve, time_ref):
         for spec in self.model.gas_set:
             for loc in self.model.z:
-                self.model.Cb[spec, age_solve, temp_solve, loc, time_solve].set_value(self.model.Cb[spec, age_solve, temp_solve, loc, time_ref].value)
+                if loc != self.model.z.first():
+                    self.model.Cb[spec, age_solve, temp_solve, loc, time_solve].set_value(self.model.Cb[spec, age_solve, temp_solve, loc, time_ref].value)
                 self.model.C[spec, age_solve, temp_solve, loc, time_solve].set_value(self.model.C[spec, age_solve, temp_solve, loc, time_ref].value)
         if self.isSurfSpecSet == True:
             for spec in self.model.surf_set:
