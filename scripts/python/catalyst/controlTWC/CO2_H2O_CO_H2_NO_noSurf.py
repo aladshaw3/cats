@@ -98,21 +98,21 @@ r2 = {"parameters": {"A": 1.733658868809338e+24, "E": 158891.38869742613},
         }
 
 # CO + NO --> CO2 (+ 0.5 N2)
-r4 = {"parameters": {"A": 1.1610107273784621e+36, "E": 305430.5721984569},
+r4 = {"parameters": {"A": 5.944712403015287e+35, "E": 288911.6551645578},
           "mol_reactants": {"CO": 1, "NO": 1},
           "mol_products": {"CO2": 1},
           "rxn_orders": {"CO": 1, "NO": 1}
         }
 
 # CO + 2 NO --> CO2 + N2O
-r5 = {"parameters": {"A": 8.000678321245109e+21, "E": 164650.06856809044},
+r5 = {"parameters": {"A": 4.531565577134861e+22, "E": 172729.35335935783},
           "mol_reactants": {"CO": 1, "NO": 2},
           "mol_products": {"CO2": 1, "N2O": 1},
           "rxn_orders": {"CO": 1, "NO": 1}
         }
 
 # 2.5 CO + NO + 1.5 H2O --> 2.5 CO2 + NH3
-r8 = {"parameters": {"A": 4.1084528718392234e+27, "E": 191999.95655767733},
+r8 = {"parameters": {"A": 5.121957620589748e+36, "E": 276479.9127631233},
           "mol_reactants": {"CO": 2.5, "NO": 1, "H2O": 1.5},
           "mol_products": {"CO2": 2.5, "NH3": 1},
           "rxn_orders": {"CO": 1, "NO": 1, "H2O": 1}
@@ -128,22 +128,21 @@ r11 = {"parameters": {"A": 1.8429782328496848e+17, "E": 136610.55181420766,
 
 
 # 2.5 H2 + NO --> NH3 + H2O
-r6 = {"parameters": {"A": 6e+16, "E": 90000},
+r6 = {"parameters": {"A": 9.95335198921378e+16, "E": 91153.14726353942},
           "mol_reactants": {"H2": 2.5, "NO": 1},
           "mol_products": {"NH3": 1, "H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}
         }
 
 # H2 + NO --> H2O (+ 0.5 N2)
-# {"A": 1.5e+13, "E": 50000}
-r7 = {"parameters": {"A": 6e+13, "E": 60000},
+r7 = {"parameters": {"A": 146174784865665.53, "E": 62475.804035616624},
           "mol_reactants": {"H2": 1, "NO": 1},
           "mol_products": {"H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}
         }
 
 # H2 + 2 NO --> N2O + H2O
-r14 = {"parameters": {"A": 2e+11, "E": 40000},
+r14 = {"parameters": {"A": 497645518401.7446, "E": 42780.25225053141},
           "mol_reactants": {"H2": 1, "NO": 2},
           "mol_products": {"N2O": 1, "H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}

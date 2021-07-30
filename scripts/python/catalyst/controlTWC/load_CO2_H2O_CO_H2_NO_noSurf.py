@@ -6,8 +6,8 @@ from catalyst.isothermal_monolith_catalysis import *
 # Read in data
 exp_name = "CO2_H2O_CO_H2_NO"
 
-run = "01"
-oldrun=""
+run = "05"
+oldrun="04"
 
 readfile = 'output/'+exp_name+'_model'+oldrun+'.json'
 writefile = exp_name+"_model"+run+".json"
@@ -46,9 +46,15 @@ sim.unfix_all_reactions()
 
 sim.fix_all_reactions()
 
+# H2/NO
 sim.unfix_reaction("r6")
 sim.unfix_reaction("r7")
 sim.unfix_reaction("r14")
+
+# CO/NO
+sim.unfix_reaction("r4")
+sim.unfix_reaction("r5")
+sim.unfix_reaction("r8")
 
 # Will need to rerun auto_select_all_weight_factors() to add later times back
 sim.auto_select_all_weight_factors()

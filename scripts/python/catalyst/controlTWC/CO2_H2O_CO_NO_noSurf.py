@@ -22,7 +22,7 @@ N2O_in = 0
 data = naively_read_data_file("inputfiles/"+exp_name+"_lightoff.txt",factor=2)
 temp_data = naively_read_data_file("inputfiles/"+exp_name+"_temp.txt",factor=2)
 
-time_list = time_point_selector(data["time"], data)
+time_list = time_point_selector(data["time"], data, end_time=60)
 
 sim = Isothermal_Monolith_Simulator()
 z_list=[0,0.5,1,1.5,2,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3,3.5,4,4.5,5]
@@ -84,29 +84,29 @@ r1 = {"parameters": {"A": 1.6550871137667489e+31, "E": 235293.33281046877},
 # CO + NO --> CO2 (+ 0.5 N2)
 # {"A": 1e+32, "E": 260000}
 #
-r4 = {"parameters": {"A": 1.1610107273784621e+36, "E": 305430.5721984569},
-          "mol_reactants": {"CO": 1, "NO": 1},
-          "mol_products": {"CO2": 1},
-          "rxn_orders": {"CO": 1, "NO": 1}
-        }
+#r4 = {"parameters": {"A": 1.1610107273784621e+36, "E": 305430.5721984569},
+#          "mol_reactants": {"CO": 1, "NO": 1},
+#          "mol_products": {"CO2": 1},
+#          "rxn_orders": {"CO": 1, "NO": 1}
+#        }
 
 # CO + 2 NO --> CO2 + N2O
 # {"A": 1e+22, "E": 160000}
 #
-r5 = {"parameters": {"A": 8.000678321245109e+21, "E": 164650.06856809044},
-          "mol_reactants": {"CO": 1, "NO": 2},
-          "mol_products": {"CO2": 1, "N2O": 1},
-          "rxn_orders": {"CO": 1, "NO": 1}
-        }
+#r5 = {"parameters": {"A": 8.000678321245109e+21, "E": 164650.06856809044},
+#          "mol_reactants": {"CO": 1, "NO": 2},
+#          "mol_products": {"CO2": 1, "N2O": 1},
+#          "rxn_orders": {"CO": 1, "NO": 1}
+#        }
 
 # 2.5 CO + NO + 1.5 H2O --> 2.5 CO2 + NH3
 # {"A": 1e+25, "E": 160000}
 #
-r8 = {"parameters": {"A": 4.1084528718392234e+27, "E": 191999.95655767733},
-          "mol_reactants": {"CO": 2.5, "NO": 1, "H2O": 1.5},
-          "mol_products": {"CO2": 2.5, "NH3": 1},
-          "rxn_orders": {"CO": 1, "NO": 1, "H2O": 1}
-        }
+#r8 = {"parameters": {"A": 4.1084528718392234e+27, "E": 191999.95655767733},
+#          "mol_reactants": {"CO": 2.5, "NO": 1, "H2O": 1.5},
+#          "mol_products": {"CO2": 2.5, "NH3": 1},
+#          "rxn_orders": {"CO": 1, "NO": 1, "H2O": 1}
+#        }
 
 # H2 + 0.5 O2 --> H2O
 r2 = {"parameters": {"A": 1.733658868809338e+24, "E": 158891.38869742613},
@@ -123,6 +123,28 @@ r11 = {"parameters": {"A": 1.8429782328496848e+17, "E": 136610.55181420766,
           "rxn_orders": {"CO": 1, "H2O": 1, "CO2": 1, "H2": 1}
         }
 
+
+# CO + NO --> CO2 (+ 0.5 N2)
+r4 = {"parameters": {"A": 5.944712403015287e+35, "E": 288911.6551645578},
+          "mol_reactants": {"CO": 1, "NO": 1},
+          "mol_products": {"CO2": 1},
+          "rxn_orders": {"CO": 1, "NO": 1}
+        }
+
+# CO + 2 NO --> CO2 + N2O
+r5 = {"parameters": {"A": 4.531565577134861e+22, "E": 172729.35335935783},
+          "mol_reactants": {"CO": 1, "NO": 2},
+          "mol_products": {"CO2": 1, "N2O": 1},
+          "rxn_orders": {"CO": 1, "NO": 1}
+        }
+
+# 2.5 CO + NO + 1.5 H2O --> 2.5 CO2 + NH3
+r8 = {"parameters": {"A": 5.121957620589748e+36, "E": 276479.9127631233},
+          "mol_reactants": {"CO": 2.5, "NO": 1, "H2O": 1.5},
+          "mol_products": {"CO2": 2.5, "NH3": 1},
+          "rxn_orders": {"CO": 1, "NO": 1, "H2O": 1}
+        }
+
 sim.set_reaction_info("r1", r1)
 sim.set_reaction_info("r4", r4)
 sim.set_reaction_info("r5", r5)
@@ -132,7 +154,7 @@ sim.set_reaction_info("r11", r11)
 
 sim.build_constraints()
 sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
-                    tstep=90,elems=10,colpoints=2)
+                    tstep=90,elems=20,colpoints=2)
 
 # Setup temperature information from data
 sim.set_temperature_from_data("A0", "T0", temp_data, {"T_in": 0, "T_mid": 2.5, "T_out": 5})
