@@ -3,8 +3,8 @@ import sys
 sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
-run = "01"
-oldrun=""
+run = "02"
+oldrun="01"
 
 readfile = 'output/all_model'+oldrun+'.json'
 writefile = "all_model"+run+".json"
@@ -47,6 +47,17 @@ for rxn in sim.model.arrhenius_rxns:
     sim.set_reaction_param_bounds(rxn, "A", factor=0.3)
     sim.set_reaction_param_bounds(rxn, "E", factor=0.1)
 
+sim.fix_all_reactions()
+# H2/NO
+sim.unfix_reaction("r6")
+sim.unfix_reaction("r7")
+sim.unfix_reaction("r14")
+
+# CO/NO
+sim.unfix_reaction("r4")
+sim.unfix_reaction("r5")
+sim.unfix_reaction("r8")
+
 # Will need to rerun auto_select_all_weight_factors() to add later times back
 sim.auto_select_all_weight_factors()
 
@@ -73,6 +84,13 @@ sim.ignore_weight_factor("H2","A3","T0",time_window=(0,110))
 #call solver
 sim.finalize_auto_scaling()
 sim.run_solver()
+
+exp_name = {}
+exp_name["A0"] = "CO2_H2O_CO_H2_NO"
+exp_name["A1"] = "CO2_H2O_CO_NO"
+exp_name["A2"] = "CO2_H2O_CO_H2"
+exp_name["A3"] = "CO2_H2O_CO"
+
 
 age="A0"
 sim.plot_vs_data("CO", age, "T0", 5, display_live=False, file_name="exp-"+exp_name[age]+"-CO-out")
