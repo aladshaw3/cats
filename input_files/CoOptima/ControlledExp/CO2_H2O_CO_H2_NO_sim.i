@@ -34,25 +34,25 @@
     [./O2]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.002330029
+        initial_condition = 1E-15
     [../]
 
     [./O2w]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.002330029
+        initial_condition = 1E-15
     [../]
 
     [./H2O]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.001174
+        initial_condition = 1E-15
     [../]
 
     [./H2Ow]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.001174
+        initial_condition = 1E-15
     [../]
 
     [./NH3]
@@ -1110,17 +1110,16 @@
 
     # ============== O2 BCs ================
     [./O2_FluxIn]
-        type = DGPoreConcFluxStepwiseBC
+        type = DGPoreConcFluxBC_ppm
         variable = O2
         boundary = 'bottom'
-        u_input = 0.002330029
         porosity = pore
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        input_vals = '4.66006E-5 0.002330029'
-        input_times = '2.0917 29.758'
-        time_spans = '0.5 0.5'
+        pressure = press
+        temperature = temp
+        inlet_ppm = 2635
     [../]
     [./O2_FluxOut]
         type = DGPoreConcFluxBC
@@ -1134,17 +1133,16 @@
 
     # ============== H2O BCs ================
     [./H2O_FluxIn]
-        type = DGPoreConcFluxStepwiseBC
+        type = DGPoreConcFluxBC_ppm
         variable = H2O
         boundary = 'bottom'
-        u_input = 0.001174
         porosity = pore
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        input_vals = '0.00115689 0.001144255    0.00113886'
-        input_times = '3.5917   31.5    203.5'
-        time_spans = '0.5  0.5  0.5'
+        pressure = press
+        temperature = temp
+        inlet_ppm = 130000
     [../]
     [./H2O_FluxOut]
         type = DGPoreConcFluxBC
@@ -1158,17 +1156,16 @@
 
     # ============== NH3 BCs ================
     [./NH3_FluxIn]
-        type = DGPoreConcFluxStepwiseBC
+        type = DGPoreConcFluxBC_ppm
         variable = NH3
         boundary = 'bottom'
-        u_input = 1E-15
         porosity = pore
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        input_vals = '6.9499E-6   1E-15   6.9499E-6  1E-15    6.9499E-6   1E-15'
-        input_times = '2.0917   40.75    56.2583    101.425    130.425    190.7583'
-        time_spans = '0.5      0.5    0.5    0.5    0.5    0.5'
+        pressure = press
+        temperature = temp
+        inlet_ppm = 1e-6
     [../]
     [./NH3_FluxOut]
         type = DGPoreConcFluxBC
@@ -1182,17 +1179,16 @@
 
     # ============== NO BCs ================
     [./NOx_FluxIn]
-        type = DGPoreConcFluxStepwiseBC
+        type = DGPoreConcFluxBC_ppm
         variable = NOx
         boundary = 'bottom'
-        u_input = 1E-15
         porosity = pore
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        input_vals = '6.9239E-6   3.44803E-6   6.9239E-6'
-        input_times = '40.75    116.925    203.7583'
-        time_spans = '0.5      0.5   0.5'
+        pressure = press
+        temperature = temp
+        inlet_ppm = 1070
     [../]
     [./NOx_FluxOut]
         type = DGPoreConcFluxBC
@@ -1206,17 +1202,16 @@
 
     # ============== N2O BCs ================
     [./N2O_FluxIn]
-        type = DGPoreConcFluxStepwiseBC
+        type = DGPoreConcFluxBC_ppm
         variable = N2O
         boundary = 'bottom'
-        u_input = 1E-15
         porosity = pore
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        input_vals = '1E-15'
-        input_times = '1'
-        time_spans = '1'
+        pressure = press
+        temperature = temp
+        inlet_ppm = 1e-6
     [../]
     [./N2O_FluxOut]
         type = DGPoreConcFluxBC
@@ -1230,17 +1225,16 @@
 
     # ============== CO BCs ================
     [./CO_FluxIn]
-        type = DGPoreConcFluxStepwiseBC
+        type = DGPoreConcFluxBC_ppm
         variable = CO
         boundary = 'bottom'
-        u_input = 1E-15
         porosity = pore
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        input_vals = '1E-15'
-        input_times = '1'
-        time_spans = '1'
+        pressure = press
+        temperature = temp
+        inlet_ppm = 5000
     [../]
     [./CO_FluxOut]
         type = DGPoreConcFluxBC
@@ -1254,17 +1248,16 @@
 
     # ============== CO2 BCs ================
     [./CO2_FluxIn]
-        type = DGPoreConcFluxStepwiseBC
+        type = DGPoreConcFluxBC_ppm
         variable = CO2
         boundary = 'bottom'
-        u_input = 1E-15
         porosity = pore
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        input_vals = '1E-15'
-        input_times = '1'
-        time_spans = '1'
+        pressure = press
+        temperature = temp
+        inlet_ppm = 130000
     [../]
     [./CO2_FluxOut]
         type = DGPoreConcFluxBC
@@ -1278,17 +1271,16 @@
 
     # ============== N2 BCs ================
     [./N2_FluxIn]
-        type = DGPoreConcFluxStepwiseBC
+        type = DGPoreConcFluxBC_ppm
         variable = N2
         boundary = 'bottom'
-        u_input = 1E-15
         porosity = pore
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        input_vals = '1E-15'
-        input_times = '1'
-        time_spans = '1'
+        pressure = press
+        temperature = temp
+        inlet_ppm = 990000
     [../]
     [./N2_FluxOut]
         type = DGPoreConcFluxBC
@@ -1302,17 +1294,16 @@
 
     # ============== H2 BCs ================
     [./H2_FluxIn]
-        type = DGPoreConcFluxStepwiseBC
+        type = DGPoreConcFluxBC_ppm
         variable = H2
         boundary = 'bottom'
-        u_input = 1E-15
         porosity = pore
         ux = vel_x
         uy = vel_y
         uz = vel_z
-        input_vals = '1E-15'
-        input_times = '1'
-        time_spans = '1'
+        pressure = press
+        temperature = temp
+        inlet_ppm = 1670
     [../]
     [./H2_FluxOut]
         type = DGPoreConcFluxBC
@@ -1505,7 +1496,7 @@
   l_tol = 1e-6
   l_max_its = 300
 
-  start_time = 0.0
+  start_time = -1.0
   end_time = 102.0
   dtmax = 0.25
 
