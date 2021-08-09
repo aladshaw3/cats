@@ -98,21 +98,21 @@ r2 = {"parameters": {"A": 1.733658868809338e+24, "E": 158891.38869742613},
         }
 
 # CO + NO --> CO2 (+ 0.5 N2)
-r4 = {"parameters": {"A": 5.944712403015287e+35, "E": 288911.6551645578},
+r4 = {"parameters": {"A": 3.473335911420499e+36, "E": 304924.98618328216},
           "mol_reactants": {"CO": 1, "NO": 1},
           "mol_products": {"CO2": 1},
           "rxn_orders": {"CO": 1, "NO": 1}
         }
 
 # CO + 2 NO --> CO2 + N2O
-r5 = {"parameters": {"A": 4.531565577134861e+22, "E": 172729.35335935783},
+r5 = {"parameters": {"A": 3.174729324826581e+22, "E": 170429.67328083533},
           "mol_reactants": {"CO": 1, "NO": 2},
           "mol_products": {"CO2": 1, "N2O": 1},
           "rxn_orders": {"CO": 1, "NO": 1}
         }
 
 # 2.5 CO + NO + 1.5 H2O --> 2.5 CO2 + NH3
-r8 = {"parameters": {"A": 5.121957620589748e+36, "E": 276479.9127631233},
+r8 = {"parameters": {"A": 1.8767305119846367e+38, "E": 304127.76066024584},
           "mol_reactants": {"CO": 2.5, "NO": 1, "H2O": 1.5},
           "mol_products": {"CO2": 2.5, "NH3": 1},
           "rxn_orders": {"CO": 1, "NO": 1, "H2O": 1}
@@ -128,21 +128,21 @@ r11 = {"parameters": {"A": 1.8429782328496848e+17, "E": 136610.55181420766,
 
 
 # 2.5 H2 + NO --> NH3 + H2O
-r6 = {"parameters": {"A": 9.95335198921378e+16, "E": 91153.14726353942},
+r6 = {"parameters": {"A": 9.075483439125227e+16, "E": 90733.41643967327},
           "mol_reactants": {"H2": 2.5, "NO": 1},
           "mol_products": {"NH3": 1, "H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}
         }
 
 # H2 + NO --> H2O (+ 0.5 N2)
-r7 = {"parameters": {"A": 146174784865665.53, "E": 62475.804035616624},
+r7 = {"parameters": {"A": 190025116968837.8, "E": 62830.56919380204},
           "mol_reactants": {"H2": 1, "NO": 1},
           "mol_products": {"H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}
         }
 
 # H2 + 2 NO --> N2O + H2O
-r14 = {"parameters": {"A": 497645518401.7446, "E": 42780.25225053141},
+r14 = {"parameters": {"A": 606598964637.8237, "E": 43487.90521352834},
           "mol_reactants": {"H2": 1, "NO": 2},
           "mol_products": {"N2O": 1, "H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}
@@ -236,6 +236,8 @@ sim.plot_at_times(["O2"], ["A0"], ["T0"], [30, 35, 40, 45, 50, 55, 60, 65, 70, 7
 
 sim.plot_at_times(["NO"], ["A0"], ["T0"], [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95],
                 display_live=False, file_name="exp-"+exp_name+"-NOprofile-out")
+
+sim.print_results_of_integral_average(["CO"], "A0", "T0", file_name="AvgCO-use-for-inhibition.txt")
 
 sim.print_results_of_breakthrough(["CO","NO","NH3","N2O","H2","O2","H2O","CO2"],
                                 "A0", "T0", file_name=exp_name+"_lightoff"+".txt", include_temp=True)
