@@ -126,21 +126,21 @@ r11 = {"parameters": {"A": 1.8429782328496848e+17, "E": 136610.55181420766,
 
 
 # 2.5 H2 + NO --> NH3 + H2O
-r6 = {"parameters": {"A": 3.717566227792697e+18, "E": 90460.72218477752},
+r6 = {"parameters": {"A": 1.73E+13, "E": 50797},
           "mol_reactants": {"H2": 2.5, "NO": 1},
           "mol_products": {"NH3": 1, "H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}
         }
 
 # H2 + NO --> H2O (+ 0.5 N2)
-r7 = {"parameters": {"A": 3.0E18, "E": 80264.52206026951},
+r7 = {"parameters": {"A": 3.62E+10, "E": 22892},
           "mol_reactants": {"H2": 1, "NO": 1},
           "mol_products": {"H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}
         }
 
 # H2 + 2 NO --> N2O + H2O
-r14 = {"parameters": {"A": 727907235882.714, "E": 34790.374837300864},
+r14 = {"parameters": {"A": 1.16E+08, "E": 3556},
           "mol_reactants": {"H2": 1, "NO": 2},
           "mol_products": {"N2O": 1, "H2O": 1},
           "rxn_orders": {"H2": 1, "NO": 1}

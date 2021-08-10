@@ -6,8 +6,8 @@ from catalyst.isothermal_monolith_catalysis import *
 # Read in data
 exp_name = "CO2_H2O_H2_NO"
 
-run = "02"
-oldrun="01"
+run = "01"
+oldrun=""
 
 readfile = 'output/'+exp_name+'_model'+oldrun+'.json'
 writefile = exp_name+"_model"+run+".json"
@@ -51,17 +51,92 @@ sim.unfix_reaction("r6")
 sim.unfix_reaction("r7")
 sim.unfix_reaction("r14")
 
+# Need to add new constraints
+def six_to_seven(m):
+    k6_this = arrhenius_rate_const(m.A["r6"], 0, m.E["r6"], 450)
+    k6_inhib = arrhenius_rate_const(9.08E+16, 0, 90733, 450)
+
+    k7_this = arrhenius_rate_const(m.A["r7"], 0, m.E["r7"], 450)
+    k7_inhib = arrhenius_rate_const(1.9E+14, 0, 62830, 450)
+
+    return (k6_this/k6_inhib) == (k7_this/k7_inhib)
+
+def six_to_14(m):
+    k6_this = arrhenius_rate_const(m.A["r6"], 0, m.E["r6"], 450)
+    k6_inhib = arrhenius_rate_const(9.08E+16, 0, 90733, 450)
+
+    k14_this = arrhenius_rate_const(m.A["r14"], 0, m.E["r14"], 450)
+    k14_inhib = arrhenius_rate_const(6.06599E+11, 0, 43487, 450)
+
+    return (k6_this/k6_inhib) == (k14_this/k14_inhib)
+
+def seven_to_14(m):
+    k7_this = arrhenius_rate_const(m.A["r7"], 0, m.E["r7"], 450)
+    k7_inhib = arrhenius_rate_const(1.9E+14, 0, 62830, 450)
+
+    k14_this = arrhenius_rate_const(m.A["r14"], 0, m.E["r14"], 450)
+    k14_inhib = arrhenius_rate_const(6.06599E+11, 0, 43487, 450)
+
+    return (k7_this/k7_inhib) == (k14_this/k14_inhib)
+
+def six_to_seven_low(m):
+    k6_this = arrhenius_rate_const(m.A["r6"], 0, m.E["r6"], 450)
+    k6_inhib = arrhenius_rate_const(9.08E+16, 0, 90733, 450)
+
+    k7_this = arrhenius_rate_const(m.A["r7"], 0, m.E["r7"], 450)
+    k7_inhib = arrhenius_rate_const(1.9E+14, 0, 62830, 450)
+
+    return (k6_this/k6_inhib) == (k7_this/k7_inhib)
+
+def six_to_14_low(m):
+    k6_this = arrhenius_rate_const(m.A["r6"], 0, m.E["r6"], 380)
+    k6_inhib = arrhenius_rate_const(9.08E+16, 0, 90733, 380)
+
+    k14_this = arrhenius_rate_const(m.A["r14"], 0, m.E["r14"], 380)
+    k14_inhib = arrhenius_rate_const(6.06599E+11, 0, 43487, 380)
+
+    return (k6_this/k6_inhib) == (k14_this/k14_inhib)
+
+def six_to_seven_high(m):
+    k6_this = arrhenius_rate_const(m.A["r6"], 0, m.E["r6"], 666)
+    k6_inhib = arrhenius_rate_const(9.08E+16, 0, 90733, 666)
+
+    k7_this = arrhenius_rate_const(m.A["r7"], 0, m.E["r7"], 666)
+    k7_inhib = arrhenius_rate_const(1.9E+14, 0, 62830, 666)
+
+    return (k6_this/k6_inhib) <= 1
+
+def six_to_14_high(m):
+    k6_this = arrhenius_rate_const(m.A["r6"], 0, m.E["r6"], 666)
+    k6_inhib = arrhenius_rate_const(9.08E+16, 0, 90733, 666)
+
+    k14_this = arrhenius_rate_const(m.A["r14"], 0, m.E["r14"], 666)
+    k14_inhib = arrhenius_rate_const(6.06599E+11, 0, 43487, 666)
+
+    return (k14_this/k14_inhib) <= 1
+
+sim.model.six27 = Constraint(rule=six_to_seven)
+sim.model.six214 = Constraint(rule=six_to_14)
+#sim.model.seven214 = Constraint(rule=seven_to_14)
+
+sim.model.six27l = Constraint(rule=six_to_seven_low)
+sim.model.six214l = Constraint(rule=six_to_14_low)
+
+sim.model.six27h = Constraint(rule=six_to_seven_high)
+sim.model.six214h = Constraint(rule=six_to_14_high)
+
 # Will need to rerun auto_select_all_weight_factors() to add later times back
 sim.auto_select_all_weight_factors()
 
-#sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,110))
-#sim.ignore_weight_factor("NO","A0","T0",time_window=(0,110))
-#sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,110))
+#sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,40))
+#sim.ignore_weight_factor("NO","A0","T0",time_window=(0,40))
+sim.ignore_weight_factor("NH3","A0","T0",time_window=(25,35))
 sim.ignore_weight_factor("H2","A0","T0",time_window=(0,110))
 
 #call solver
 sim.finalize_auto_scaling()
-sim.run_solver()
+opt = {'max_iter': 3000}
+sim.run_solver(options=opt)
 
 sim.plot_vs_data("CO", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-CO-out")
 sim.plot_vs_data("NO", "A0", "T0", 5, display_live=False, file_name="exp-"+exp_name+"-NO-out")
