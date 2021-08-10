@@ -185,6 +185,19 @@
         family = MONOMIAL
     [../]
 
+## Inhibition Variables
+  [./R_CO]
+    order = FIRST
+    family = MONOMIAL
+     [./InitialCondition]
+         type = InitialLangmuirInhibition
+         temperature = temp
+         coupled_list = 'COw'
+         pre_exponentials = '44.9'
+         activation_energies = '-28431.5'
+     [../]
+  [../]
+
 [] #END Variables
 
 [AuxVariables]
@@ -839,12 +852,18 @@
         variable = r6
     [../]
     [./r6_rx]
-      type = ArrheniusReaction
+      #type = ArrheniusReaction
+
+      type = InhibitedArrheniusReaction
       variable = r6
       this_variable = r6
 
-      forward_activation_energy = 90733.41643967327
-      forward_pre_exponential = 9.075483439125227e+16
+      #forward_activation_energy = 90733.41643967327
+      #forward_pre_exponential = 9.075483439125227e+16
+
+      forward_pre_exponential = 2.60E+14
+      forward_activation_energy = 59342.9
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -864,12 +883,18 @@
         variable = r7
     [../]
     [./r7_rx]
-      type = ArrheniusReaction
+      #type = ArrheniusReaction
+
+      type = InhibitedArrheniusReaction
       variable = r7
       this_variable = r7
 
-      forward_activation_energy = 62830.56919380204
-      forward_pre_exponential = 190025116968837.8
+      #forward_activation_energy = 62830.56919380204
+      #forward_pre_exponential = 190025116968837.8
+
+      forward_pre_exponential = 6.96E+11
+      forward_activation_energy = 32221.5
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -889,12 +914,18 @@
         variable = r14
     [../]
     [./r14_rx]
-      type = ArrheniusReaction
+      #type = ArrheniusReaction
+
+      type = InhibitedArrheniusReaction
       variable = r14
       this_variable = r14
 
-      forward_activation_energy = 43487.90521352834
-      forward_pre_exponential = 606598964637.8237
+      #forward_activation_energy = 43487.90521352834
+      #forward_pre_exponential = 606598964637.8237
+
+      forward_pre_exponential = 2.56E+09
+      forward_activation_energy = 13318.5
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -906,6 +937,21 @@
       products = ''
       product_stoich = ''
     [../]
+
+# ------------------ Start list of inhibition terms --------------------
+# ============= CO Term =============
+     [./R_CO_eq]
+       type = Reaction
+       variable = R_CO
+     [../]
+     [./R_CO_lang]
+       type = LangmuirInhibition
+       variable = R_CO
+       temperature = temp
+       coupled_list = 'COw'
+       pre_exponentials = '44.9'
+       activation_energies = '-28431.5'
+     [../]
 
 [] #END Kernels
 
@@ -1466,6 +1512,12 @@
         type = SideAverageValue
         boundary = 'top'
         variable = temp
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./R_CO]
+        type = ElementAverageValue
+        variable = R_CO
         execute_on = 'initial timestep_end'
     [../]
 
