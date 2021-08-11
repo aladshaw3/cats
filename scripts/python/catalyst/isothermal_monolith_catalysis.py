@@ -2607,7 +2607,8 @@ class Isothermal_Monolith_Simulator(object):
                                                     'obj_scaling_factor': 1,
                                                     'diverging_iterates_tol': 1e50},
                                                     restart_on_warning=False,
-                                                    restart_on_error=False):
+                                                    restart_on_error=False,
+                                                    use_old_times=False):
         for spec in self.model.gas_set:
             for age in self.model.age_set:
                 for temp in self.model.T_set:
@@ -2821,6 +2822,10 @@ class Isothermal_Monolith_Simulator(object):
                         else:
                             solver.options['nlp_scaling_method'] = 'gradient-based'
 
+                        if use_old_times == True:
+                            self._initial_guesser(age_solve, temp_solve, time_solve, time_solve_old)
+                            solver.options['nlp_scaling_method'] = 'gradient-based'
+
                         results = solver.solve(self.model, tee=console_out, load_solutions=False)
                         if results.solver.status == SolverStatus.ok:
                             self.model.solutions.load_from(results)
@@ -2836,6 +2841,11 @@ class Isothermal_Monolith_Simulator(object):
                                 self._initial_guesser(age_solve, temp_solve, time_solve, time_solve_old)
 
                                 #After initial guess, rerun solver
+                                if solver.options['nlp_scaling_method'] == 'user-scaling':
+                                    solver.options['nlp_scaling_method'] = 'gradient-based'
+                                else:
+                                    if self.model.find_component('scaling_factor'):
+                                        solver.options['nlp_scaling_method'] = 'user-scaling'
                                 results = solver.solve(self.model, tee=console_out, load_solutions=False)
 
                                 if results.solver.status == SolverStatus.ok:
@@ -2866,6 +2876,11 @@ class Isothermal_Monolith_Simulator(object):
                                 self._initial_guesser(age_solve, temp_solve, time_solve, time_solve_old)
 
                                 #After initial guess, rerun solver
+                                if solver.options['nlp_scaling_method'] == 'user-scaling':
+                                    solver.options['nlp_scaling_method'] = 'gradient-based'
+                                else:
+                                    if self.model.find_component('scaling_factor'):
+                                        solver.options['nlp_scaling_method'] = 'user-scaling'
                                 results = solver.solve(self.model, tee=console_out, load_solutions=False)
 
                                 if results.solver.status == SolverStatus.ok:

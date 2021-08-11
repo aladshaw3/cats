@@ -19,13 +19,17 @@ NH3_in = 0
 N2O_in = 0
 HC_in = 3000/x
 
+custom_zaxis = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,
+                1.2,1.4,1.6,1.8,2.0,2.2,2.4,2.6,2.8,3.0,
+                3.25, 3.5, 3.75, 4.0, 4.5, 5]
+
 data = naively_read_data_file("inputfiles/"+HC_name+"_lightoff_history.txt",factor=2)
 temp_data = naively_read_data_file("inputfiles/"+HC_name+"_temp_history.txt",factor=2)
 
-time_list = time_point_selector(data["time"], data, end_time=60)
+time_list = time_point_selector(data["time"], data, end_time=50)
 
 sim = Isothermal_Monolith_Simulator()
-sim.add_axial_dim(0,5)         #cm
+sim.add_axial_dim(point_list=custom_zaxis)
 sim.add_axial_dataset(5)
 
 sim.add_temporal_dim(point_list=time_list)
@@ -76,7 +80,19 @@ sim.add_reactions({
                     "r14": ReactionType.Arrhenius,
 
                     # NH3 + NO + 0.25 O2 --> 1.5 H2O (+ N2)
-                    "r15": ReactionType.Arrhenius
+                    "r15": ReactionType.Arrhenius,
+
+                    # HC oxidation
+                    # CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
+                    "r3": ReactionType.Arrhenius,
+
+                    # HC Steam Reforming
+                    # CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+                    "r12": ReactionType.Arrhenius,
+
+                    # HC NO reduction
+                    # CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
+                    "r10": ReactionType.Arrhenius,
                   })
 
 sim.set_bulk_porosity(0.775)
@@ -86,6 +102,7 @@ sim.set_space_velocity_all_runs(500)
 sim.set_cell_density(93)
 
 # CO + 0.5 O2 --> CO2
+#   {"A": 1.6550871137667489e+31, "E": 235293.33281046877}
 r1 = {"parameters": {"A": 1.6550871137667489e+31, "E": 235293.33281046877},
           "mol_reactants": {"CO": 1, "O2": 0.5},
           "mol_products": {"CO2": 1},
@@ -150,11 +167,40 @@ r14 = {"parameters": {"A": 606598964637.8237, "E": 43487.90521352834},
           "rxn_orders": {"H2": 1, "NO": 1}
         }
 
+# NOTE: It is believed that HCs should have HIGHER activation energies than CO
+
 # NH3 + NO + 0.25 O2 --> 1.5 H2O (+ N2)
+#   {"A": 1.0E+41, "E": 300000}
 r15 = {"parameters": {"A": 1.0E+41, "E": 300000},
           "mol_reactants": {"NH3": 1, "NO": 1, "O2": 0.25},
           "mol_products": {"H2O": 1.5},
           "rxn_orders": {"NH3": 1, "NO": 1, "O2": 1}
+        }
+
+# HC oxidation
+# CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
+r3 = {"parameters": {"A": 1.6550871137667489e+29, "E": 235293.33281046877},
+          "mol_reactants": {"HC": 1, "O2": (x + y/4 - z/2)},
+          "mol_products": {"H2O": y/2, "CO2": x},
+          "rxn_orders": {"HC": 1, "O2": 1}
+        }
+
+# HC Steam Reforming
+# CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+#   {"A": 1.8429782328496848e+16, "E": 136610.55181420766} (not optimal)
+r12 = {"parameters": {"A": 1.8429782328496848e+17, "E": 136610.55181420766},
+          "mol_reactants": {"HC": 1, "H2O": x},
+          "mol_products": {"CO": x, "H2": (x + y/2), "O2": z/2},
+          "rxn_orders": {"HC": 1, "H2O": 1}
+        }
+
+# HC NO reduction
+# CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
+#   {"A": 3.473335911420499e+36, "E": 304924.98618328216} (not optimal)
+r10 = {"parameters": {"A": 2.8429782328496848e+19, "E": 136610.55181420766},
+          "mol_reactants": {"HC": 1, "NO": (2*x + y/2 - z)},
+          "mol_products": {"H2O": y/2, "CO2": x},
+          "rxn_orders": {"HC": 1, "NO": 1}
         }
 
 sim.set_reaction_info("r1", r1)
@@ -167,6 +213,10 @@ sim.set_reaction_info("r6", r6)
 sim.set_reaction_info("r7", r7)
 sim.set_reaction_info("r14", r14)
 sim.set_reaction_info("r15", r15)
+
+sim.set_reaction_info("r3", r3)
+sim.set_reaction_info("r12", r12)
+sim.set_reaction_info("r10", r10)
 
 sim.build_constraints()
 sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
@@ -211,7 +261,10 @@ sim.ignore_weight_factor("H2","A0","T0",time_window=(0,110))
 
 
 sim.initialize_auto_scaling()
-sim.initialize_simulator(console_out=False, restart_on_warning=True, restart_on_error=True)
+sim.initialize_simulator(console_out=False,
+                            restart_on_warning=True,
+                            restart_on_error=True,
+                            use_old_times=True)
 
 sim.finalize_auto_scaling()
 sim.run_solver()
@@ -234,8 +287,23 @@ sim.plot_vs_data("N2O", "A0", "T0", 5, display_live=False, file_name=name)
 name = HC_name+"_H2"
 sim.plot_vs_data("H2", "A0", "T0", 5, display_live=False, file_name=name)
 
+sim.plot_at_times(["CO"], ["A0"], ["T0"], [30, 35, 40, 45, 50],
+                display_live=False, file_name=HC_name+"_CO-profile-out")
+
+sim.plot_at_times(["O2"], ["A0"], ["T0"], [30, 35, 40, 45, 50],
+                display_live=False, file_name=HC_name+"_O2-profile-out")
+
+sim.plot_at_times(["HC"], ["A0"], ["T0"], [30, 35, 40, 45, 50],
+                display_live=False, file_name=HC_name+"_HC-profile-out")
+
+sim.plot_at_times(["NO"], ["A0"], ["T0"], [30, 35, 40, 45, 50],
+                display_live=False, file_name=HC_name+"_NO-profile-out")
+
+sim.plot_at_locations(["O2"], ["A0"], ["T0"], [0, 5], display_live=False, file_name=HC_name+"_O2-out")
 sim.print_results_of_breakthrough(["HC","CO","NO","NH3","N2O","H2","O2","H2O"],
                                     "A0", "T0", file_name=HC_name+"_lightoff.txt", include_temp=True)
+
+sim.print_results_of_integral_average(["CO","NO","HC"], "A0", "T0", file_name=HC_name+"_avgs-used-for-inhibition.txt")
 
 sim.print_kinetic_parameter_info(file_name=HC_name+"_params.txt")
 sim.save_model_state(file_name=HC_name+"_model.json")
