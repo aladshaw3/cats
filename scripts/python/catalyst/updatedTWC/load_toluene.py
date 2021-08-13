@@ -6,8 +6,8 @@ from catalyst.isothermal_monolith_catalysis import *
 # Give x, y, z for the HC (CxHyOz)
 HC_name = "toluene"
 
-run = "02"
-oldrun="01"
+run = "01"
+oldrun=""
 
 readfile = 'output/'+HC_name+'_model'+oldrun+'.json'
 writefile = HC_name+"_model"+run+".json"

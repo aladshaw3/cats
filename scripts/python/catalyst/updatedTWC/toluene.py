@@ -102,7 +102,6 @@ sim.set_space_velocity_all_runs(500)
 sim.set_cell_density(93)
 
 # CO + 0.5 O2 --> CO2
-#   {"A": 1.6550871137667489e+31, "E": 235293.33281046877}
 r1 = {"parameters": {"A": 1.6550871137667489e+31, "E": 235293.33281046877},
           "mol_reactants": {"CO": 1, "O2": 0.5},
           "mol_products": {"CO2": 1},
@@ -187,7 +186,6 @@ r3 = {"parameters": {"A": 1.6550871137667489e+29, "E": 235293.33281046877},
 
 # HC Steam Reforming
 # CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
-#   {"A": 1.8429782328496848e+16, "E": 136610.55181420766} (not optimal)
 r12 = {"parameters": {"A": 1.8429782328496848e+17, "E": 136610.55181420766},
           "mol_reactants": {"HC": 1, "H2O": x},
           "mol_products": {"CO": x, "H2": (x + y/2), "O2": z/2},
@@ -196,7 +194,6 @@ r12 = {"parameters": {"A": 1.8429782328496848e+17, "E": 136610.55181420766},
 
 # HC NO reduction
 # CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-#   {"A": 3.473335911420499e+36, "E": 304924.98618328216} (not optimal)
 r10 = {"parameters": {"A": 2.8429782328496848e+19, "E": 136610.55181420766},
           "mol_reactants": {"HC": 1, "NO": (2*x + y/2 - z)},
           "mol_products": {"H2O": y/2, "CO2": x},
