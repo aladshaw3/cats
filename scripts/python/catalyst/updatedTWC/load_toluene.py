@@ -6,8 +6,8 @@ from catalyst.isothermal_monolith_catalysis import *
 # Give x, y, z for the HC (CxHyOz)
 HC_name = "toluene"
 
-run = "01"
-oldrun=""
+run = "02"
+oldrun="01"
 
 readfile = 'output/'+HC_name+'_model'+oldrun+'.json'
 writefile = HC_name+"_model"+run+".json"
@@ -63,25 +63,25 @@ sim.fix_all_reactions()
 
 # CO/O2 (opt this first)
 rxn = "r1"
-sim.unfix_reaction(rxn)
-sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.99, sim.model.E[rxn].value*1.2))
-sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.99, sim.model.A[rxn].value*2))
+#sim.unfix_reaction(rxn)
+#sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.99, sim.model.E[rxn].value*1.2))
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.99, sim.model.A[rxn].value*2))
 
 # CO/NO
 rxn = "r4"
-sim.unfix_reaction("r4")
-sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.99, sim.model.E[rxn].value*1.2))
-sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.99, sim.model.A[rxn].value*2))
+#sim.unfix_reaction("r4")
+#sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.99, sim.model.E[rxn].value*1.2))
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.99, sim.model.A[rxn].value*2))
 
 rxn = "r5"
-sim.unfix_reaction("r5")
-sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.99, sim.model.E[rxn].value*1.2))
-sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.99, sim.model.A[rxn].value*2))
+#sim.unfix_reaction("r5")
+#sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.99, sim.model.E[rxn].value*1.2))
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.99, sim.model.A[rxn].value*2))
 
 rxn = "r8"
-sim.unfix_reaction("r8")
-sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.99, sim.model.E[rxn].value*1.2))
-sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.99, sim.model.A[rxn].value*2))
+#sim.unfix_reaction("r8")
+#sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.99, sim.model.E[rxn].value*1.2))
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.99, sim.model.A[rxn].value*2))
 
 # H2/NO (Don't let these vary?)
 #sim.unfix_reaction("r6")
@@ -89,10 +89,16 @@ sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.99, sim
 #sim.unfix_reaction("r14")
 
 # HC reactions
+rxn = "r3"
 sim.unfix_reaction("r3")
-sim.unfix_reaction("r10")
+sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.9, sim.model.E[rxn].value*1.1))
+sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8, sim.model.A[rxn].value*1.2))
 
-sim.fix_all_reactions()
+rxn = "r10"
+sim.unfix_reaction("r10")
+sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.9, sim.model.E[rxn].value*1.1))
+sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8, sim.model.A[rxn].value*1.2))
+
 
 # ========== Selecting weight factors
 sim.auto_select_all_weight_factors()
