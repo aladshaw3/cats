@@ -6,8 +6,8 @@ from catalyst.isothermal_monolith_catalysis import *
 # Give x, y, z for the HC (CxHyOz)
 HC_name = "n-heptane"
 
-run = "01"
-oldrun=""
+run = "03"
+oldrun="02"
 
 readfile = 'output/'+HC_name+'_model'+oldrun+'.json'
 writefile = HC_name+"_model"+run+".json"
@@ -91,18 +91,18 @@ rxn = "r8"
 # HC reactions
 rxn = "r3"
 sim.unfix_reaction("r3")
-sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.9, sim.model.E[rxn].value*1.1))
-sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8, sim.model.A[rxn].value*1.2))
+#sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.9, sim.model.E[rxn].value*1.1))
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8, sim.model.A[rxn].value*1.2))
 
 rxn = "r10"
 sim.unfix_reaction("r10")
-sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.9, sim.model.E[rxn].value*1.1))
-sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8, sim.model.A[rxn].value*1.2))
+#sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.9, sim.model.E[rxn].value*1.1))
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8, sim.model.A[rxn].value*1.2))
 
 rxn = "r12"
 sim.unfix_reaction("r12")
-sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.9, sim.model.E[rxn].value*1.1))
-sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8, sim.model.A[rxn].value*1.2))
+#sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.9, sim.model.E[rxn].value*1.1))
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.8, sim.model.A[rxn].value*1.2))
 
 
 # ========== Selecting weight factors

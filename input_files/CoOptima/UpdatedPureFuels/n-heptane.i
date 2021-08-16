@@ -876,7 +876,7 @@
       product_stoich = ''
     [../]
 
-## ======= CO/NO Rxn ======
+## ======= CO/NO Rxn ====== (Pick up here - use Arrhenius and change params)
 # CO + NO --> CO2 (+ 0.5 N2)
     [./r4_val]
         type = Reaction
@@ -888,7 +888,8 @@
       this_variable = r4
 
       forward_activation_energy = 304924.98618328216
-      forward_pre_exponential = 3.473335911420499e+36
+      #forward_pre_exponential = 3.473335911420499e+36
+      forward_pre_exponential = 0
       forward_inhibition = R_HC
 
       #forward_pre_exponential = 3.473335911420499e+34
@@ -917,7 +918,8 @@
       this_variable = r5
 
       forward_activation_energy = 170429.67328083533
-      forward_pre_exponential = 3.174729324826581e+22
+      #forward_pre_exponential = 3.174729324826581e+22
+      forward_pre_exponential = 0
       forward_inhibition = R_HC
 
       #forward_pre_exponential = 3.174729324826581e+20
@@ -946,7 +948,8 @@
       this_variable = r8
 
       forward_activation_energy = 304127.76066024584
-      forward_pre_exponential = 1.8767305119846367e+38
+      #forward_pre_exponential = 1.8767305119846367e+38
+      forward_pre_exponential = 0
       forward_inhibition = R_HC
 
       #forward_pre_exponential = 1.8767305119846367e+36
@@ -1116,8 +1119,8 @@
       variable = r3
       this_variable = r3
 
-      forward_activation_energy = 254704.19832103234
-      forward_pre_exponential = 7.189916847226846e+30
+      forward_activation_energy = 324704.19832103234
+      forward_pre_exponential = 3.189916847226846e+37
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1141,8 +1144,9 @@
       variable = r10
       this_variable = r10
 
-      forward_activation_energy = 301893.1233313617
-      forward_pre_exponential = 5.8195374337544053e+32
+      forward_activation_energy = 131893.1233313617
+      #forward_pre_exponential = 1.8195374337544053e+19
+      forward_pre_exponential = 0
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
