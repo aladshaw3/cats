@@ -178,7 +178,7 @@ r15 = {"parameters": {"A": 1.0E+41, "E": 300000},
 
 # HC oxidation
 # CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
-r3 = {"parameters": {"A": 1.6550871137667489e+29, "E": 235293.33281046877},
+r3 = {"parameters": {"A": 2.189916847226846e+33, "E": 284704.19832103234},
           "mol_reactants": {"HC": 1, "O2": (x + y/4 - z/2)},
           "mol_products": {"H2O": y/2, "CO2": x},
           "rxn_orders": {"HC": 1, "O2": 1}
@@ -194,7 +194,7 @@ r12 = {"parameters": {"A": 1.8429782328496848e+17, "E": 136610.55181420766},
 
 # HC NO reduction
 # CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-r10 = {"parameters": {"A": 2.8429782328496848e+19, "E": 136610.55181420766},
+r10 = {"parameters": {"A": 1.8195374337544053e+19, "E": 131893.1233313617},
           "mol_reactants": {"HC": 1, "NO": (2*x + y/2 - z)},
           "mol_products": {"H2O": y/2, "CO2": x},
           "rxn_orders": {"HC": 1, "NO": 1}

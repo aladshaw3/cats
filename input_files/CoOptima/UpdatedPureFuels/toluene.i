@@ -1075,6 +1075,7 @@
 
       forward_pre_exponential = 1e+41
       forward_activation_energy = 300000
+      forward_beta = 0
       forward_inhibition = R_CO
 
       reverse_activation_energy = 0
