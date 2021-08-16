@@ -1116,8 +1116,8 @@
       variable = r3
       this_variable = r3
 
-      forward_activation_energy = 214704.19832103234
-      forward_pre_exponential = 0
+      forward_activation_energy = 254704.19832103234
+      forward_pre_exponential = 7.189916847226846e+30
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1141,8 +1141,8 @@
       variable = r10
       this_variable = r10
 
-      forward_activation_energy = 131893.1233313617
-      forward_pre_exponential = 0
+      forward_activation_energy = 301893.1233313617
+      forward_pre_exponential = 5.8195374337544053e+32
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1167,7 +1167,7 @@
       this_variable = r12
 
       forward_activation_energy = 136610.55181420766
-      forward_pre_exponential = 0
+      forward_pre_exponential = 1.8429782328496848e+17
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
