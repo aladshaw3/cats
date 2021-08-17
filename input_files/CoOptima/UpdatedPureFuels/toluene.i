@@ -230,6 +230,18 @@
      [../]
   [../]
 
+  [./R_HC]
+    order = FIRST
+    family = MONOMIAL
+     [./InitialCondition]
+         type = InitialLangmuirInhibition
+         temperature = temp
+         coupled_list = 'HCw'
+         pre_exponentials = '2.18E+9'
+         activation_energies = '0'
+     [../]
+  [../]
+
 [] #END Variables
 
 [AuxVariables]
@@ -871,12 +883,17 @@
         variable = r4
     [../]
     [./r4_rx]
-      type = ArrheniusReaction
+      type = InhibitedArrheniusReaction
       variable = r4
       this_variable = r4
 
       forward_activation_energy = 304924.98618328216
       forward_pre_exponential = 3.473335911420499e+36
+      #forward_pre_exponential = 0
+      forward_inhibition = R_HC
+
+      #forward_pre_exponential = 3.473335911420499e+32
+      #forward_activation_energy = 324924.98618328216
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -896,12 +913,17 @@
         variable = r5
     [../]
     [./r5_rx]
-      type = ArrheniusReaction
+      type = InhibitedArrheniusReaction
       variable = r5
       this_variable = r5
 
       forward_activation_energy = 170429.67328083533
       forward_pre_exponential = 3.174729324826581e+22
+      #forward_pre_exponential = 0
+      forward_inhibition = R_HC
+
+      #forward_pre_exponential = 3.174729324826581e+18
+      #forward_activation_energy = 190429.67328083533
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -921,12 +943,17 @@
         variable = r8
     [../]
     [./r8_rx]
-      type = ArrheniusReaction
+      type = InhibitedArrheniusReaction
       variable = r8
       this_variable = r8
 
       forward_activation_energy = 304127.76066024584
       forward_pre_exponential = 1.8767305119846367e+38
+      #forward_pre_exponential = 0
+      forward_inhibition = R_HC
+
+      #forward_pre_exponential = 1.8767305119846367e+34
+      #forward_activation_energy = 324127.76066024584
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -971,14 +998,9 @@
         variable = r6
     [../]
     [./r6_rx]
-      #type = ArrheniusReaction
-
       type = InhibitedArrheniusReaction
       variable = r6
       this_variable = r6
-
-      #forward_activation_energy = 90733.41643967327
-      #forward_pre_exponential = 9.075483439125227e+16
 
       forward_pre_exponential = 2.60E+14
       forward_activation_energy = 59342.9
@@ -1002,14 +1024,9 @@
         variable = r7
     [../]
     [./r7_rx]
-      #type = ArrheniusReaction
-
       type = InhibitedArrheniusReaction
       variable = r7
       this_variable = r7
-
-      #forward_activation_energy = 62830.56919380204
-      #forward_pre_exponential = 190025116968837.8
 
       forward_pre_exponential = 6.96E+11
       forward_activation_energy = 32221.5
@@ -1033,14 +1050,9 @@
         variable = r14
     [../]
     [./r14_rx]
-      #type = ArrheniusReaction
-
       type = InhibitedArrheniusReaction
       variable = r14
       this_variable = r14
-
-      #forward_activation_energy = 43487.90521352834
-      #forward_pre_exponential = 606598964637.8237
 
       forward_pre_exponential = 2.56E+09
       forward_activation_energy = 13318.5
@@ -1064,14 +1076,9 @@
         variable = r15
     [../]
     [./r15_rx]
-      #type = ArrheniusReaction
-
       type = InhibitedArrheniusReaction
       variable = r15
       this_variable = r15
-
-      #forward_activation_energy = 300000
-      #forward_pre_exponential = 1e+41
 
       forward_pre_exponential = 1e+41
       forward_activation_energy = 300000
@@ -1125,8 +1132,8 @@
       variable = r10
       this_variable = r10
 
-      forward_activation_energy = 131893.1233313617
-      forward_pre_exponential = 1.8195374337544053e+19
+      forward_activation_energy = 344704.19832103234
+      forward_pre_exponential = 5.189916847226846e+38
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1178,6 +1185,20 @@
        pre_exponentials = '44.9'
        activation_energies = '-28431.5'
      [../]
+
+# ============= HC Term =============
+   [./R_HC_eq]
+     type = Reaction
+     variable = R_HC
+   [../]
+   [./R_HC_lang]
+     type = LangmuirInhibition
+     variable = R_HC
+     temperature = temp
+     coupled_list = 'HCw'
+     pre_exponentials = '2.18E+9'
+     activation_energies = '0'
+   [../]
 
 [] #END Kernels
 
@@ -1798,9 +1819,9 @@
         execute_on = 'initial timestep_end'
     [../]
 
-    [./R_CO]
+    [./R_HC]
         type = ElementAverageValue
-        variable = R_CO
+        variable = R_HC
         execute_on = 'initial timestep_end'
     [../]
 

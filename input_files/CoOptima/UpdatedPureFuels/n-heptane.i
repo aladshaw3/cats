@@ -237,7 +237,7 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'HCw'
-         pre_exponentials = '0'
+         pre_exponentials = '3.27E+10'
          activation_energies = '0'
      [../]
   [../]
@@ -876,7 +876,7 @@
       product_stoich = ''
     [../]
 
-## ======= CO/NO Rxn ====== (Pick up here - use Arrhenius and change params)
+## ======= CO/NO Rxn ======
 # CO + NO --> CO2 (+ 0.5 N2)
     [./r4_val]
         type = Reaction
@@ -888,12 +888,12 @@
       this_variable = r4
 
       forward_activation_energy = 304924.98618328216
-      #forward_pre_exponential = 3.473335911420499e+36
-      forward_pre_exponential = 0
+      forward_pre_exponential = 3.473335911420499e+36
+      #forward_pre_exponential = 0
       forward_inhibition = R_HC
 
-      #forward_pre_exponential = 3.473335911420499e+34
-      #forward_activation_energy = 314924.98618328216
+      #forward_pre_exponential = 3.473335911420499e+32
+      #forward_activation_energy = 324924.98618328216
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -918,12 +918,12 @@
       this_variable = r5
 
       forward_activation_energy = 170429.67328083533
-      #forward_pre_exponential = 3.174729324826581e+22
-      forward_pre_exponential = 0
+      forward_pre_exponential = 3.174729324826581e+22
+      #forward_pre_exponential = 0
       forward_inhibition = R_HC
 
-      #forward_pre_exponential = 3.174729324826581e+20
-      #forward_activation_energy = 180429.67328083533
+      #forward_pre_exponential = 3.174729324826581e+18
+      #forward_activation_energy = 190429.67328083533
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -948,12 +948,12 @@
       this_variable = r8
 
       forward_activation_energy = 304127.76066024584
-      #forward_pre_exponential = 1.8767305119846367e+38
-      forward_pre_exponential = 0
+      forward_pre_exponential = 1.8767305119846367e+38
+      #forward_pre_exponential = 0
       forward_inhibition = R_HC
 
-      #forward_pre_exponential = 1.8767305119846367e+36
-      #forward_activation_energy = 314127.76066024584
+      #forward_pre_exponential = 1.8767305119846367e+34
+      #forward_activation_energy = 324127.76066024584
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1119,8 +1119,8 @@
       variable = r3
       this_variable = r3
 
-      forward_activation_energy = 324704.19832103234
-      forward_pre_exponential = 3.189916847226846e+37
+      forward_activation_energy = 344704.19832103234
+      forward_pre_exponential = 6.189916847226846e+38
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1144,9 +1144,8 @@
       variable = r10
       this_variable = r10
 
-      forward_activation_energy = 131893.1233313617
-      #forward_pre_exponential = 1.8195374337544053e+19
-      forward_pre_exponential = 0
+      forward_activation_energy = 344704.19832103234
+      forward_pre_exponential = 4.189916847226846e+36 
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1170,8 +1169,8 @@
       variable = r12
       this_variable = r12
 
-      forward_activation_energy = 136610.55181420766
-      forward_pre_exponential = 1.8429782328496848e+17
+      forward_activation_energy = 156610.55181420766
+      forward_pre_exponential = 9.8429782328496848e+18
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1209,7 +1208,7 @@
       variable = R_HC
       temperature = temp
       coupled_list = 'HCw'
-      pre_exponentials = '0'
+      pre_exponentials = '3.27E+10'
       activation_energies = '0'
     [../]
 
