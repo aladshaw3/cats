@@ -182,20 +182,20 @@ r3 = {"parameters": {"A": 6.259916847226846e+35, "E": 304704.19832103234},
           "rxn_orders": {"HC": 1, "O2": 1}
         }
 
-# HC Steam Reforming
-# CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
-r12 = {"parameters": {"A": 5.189916847226846e+38, "E": 344704.19832103234},
-          "mol_reactants": {"HC": 1, "H2O": x},
-          "mol_products": {"CO": x, "H2": (x + y/2), "O2": z/2},
-          "rxn_orders": {"HC": 1, "H2O": 1}
-        }
-
 # HC NO reduction
 # CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-r10 = {"parameters": {"A": 1.8195374337544053e+17, "E": 131893.1233313617},
+r10 = {"parameters": {"A": 5.189916847226846e+38, "E": 344704.19832103234},
           "mol_reactants": {"HC": 1, "NO": (2*x + y/2 - z)},
           "mol_products": {"H2O": y/2, "CO2": x},
           "rxn_orders": {"HC": 1, "NO": 1}
+        }
+
+# HC Steam Reforming
+# CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+r12 = {"parameters": {"A": 1.8195374337544053e+17, "E": 131893.1233313617},
+          "mol_reactants": {"HC": 1, "H2O": x},
+          "mol_products": {"CO": x, "H2": (x + y/2), "O2": z/2},
+          "rxn_orders": {"HC": 1, "H2O": 1}
         }
 
 sim.set_reaction_info("r1", r1)
@@ -290,6 +290,8 @@ sim.plot_at_times(["NO"], ["A0"], ["T0"], [30, 35, 40, 45, 50],
                 display_live=False, file_name=HC_name+"_NO-profile-out")
 
 sim.plot_at_locations(["O2"], ["A0"], ["T0"], [0, 5], display_live=False, file_name=HC_name+"_O2-out")
+sim.plot_at_locations(["H2"], ["A0"], ["T0"], [0, 5], display_live=False, file_name=HC_name+"_H2-out")
+
 sim.print_results_of_breakthrough(["HC","CO","NO","NH3","N2O","H2","O2","H2O"],
                                     "A0", "T0", file_name=HC_name+"_lightoff.txt", include_temp=True)
 
