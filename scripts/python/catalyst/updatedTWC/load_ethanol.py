@@ -6,8 +6,8 @@ from catalyst.isothermal_monolith_catalysis import *
 # Give x, y, z for the HC (CxHyOz)
 HC_name = "ethanol"
 
-run = "01"
-oldrun=""
+run = "03"
+oldrun="02"
 
 readfile = 'output/'+HC_name+'_model'+oldrun+'.json'
 writefile = HC_name+"_model"+run+".json"
@@ -91,18 +91,18 @@ rxn = "r8"
 # HC reactions
 rxn = "r3"
 sim.unfix_reaction("r3")
-sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.6, sim.model.E[rxn].value*1.9))
-sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.01, sim.model.A[rxn].value*10))
+#sim.set_reaction_param_bounds(rxn, "E", bounds=(200000, 350000))
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.5, sim.model.A[rxn].value*2))
 
 rxn = "r10"
 sim.unfix_reaction("r10")
-sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.6, sim.model.E[rxn].value*1.9))
-sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.01, sim.model.A[rxn].value*10))
+#sim.set_reaction_param_bounds(rxn, "E", bounds=(200000, 350000))
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.5, sim.model.A[rxn].value*2))
 
 rxn = "r12"
 sim.unfix_reaction("r12")
-sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.6, sim.model.E[rxn].value*1.9))
-sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.01, sim.model.A[rxn].value*10))
+#sim.set_reaction_param_bounds(rxn, "E", bounds=(200000, 350000))
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.5, sim.model.A[rxn].value*2))
 
 
 # ========== Selecting weight factors
@@ -111,11 +111,15 @@ sim.auto_select_all_weight_factors()
 
 sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,110))
 sim.ignore_weight_factor("CO","A0","T0",time_window=(0,110))
-#sim.ignore_weight_factor("NO","A0","T0",time_window=(0,110))
-#sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,110))
-#sim.ignore_weight_factor("HC","A0","T0",time_window=(0,110))
+sim.ignore_weight_factor("NO","A0","T0",time_window=(0,35))
+sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,35))
+sim.ignore_weight_factor("HC","A0","T0",time_window=(0,35))
 
 sim.finalize_auto_scaling()
+
+# Stop at 103 iter if needed
+#my_options={'max_iter': 103}
+#sim.run_solver(options=my_options)
 sim.run_solver()
 
 name = HC_name+"_CO"
