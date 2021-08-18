@@ -252,6 +252,12 @@
       initial_condition = 379
   [../]
 
+  [./temp_in]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 379
+  [../]
+
   [./press]
       order = FIRST
       family = MONOMIAL
@@ -1123,11 +1129,11 @@
       variable = r10
       this_variable = r10
 
-      #forward_activation_energy = 344704.19832103234
-      #forward_pre_exponential = 5.189916847226846e+38
+      forward_activation_energy = 344704.19832103234
+      forward_pre_exponential = 5.189916847226846e+38
 
-      forward_activation_energy = 0
-      forward_pre_exponential = 0
+      #forward_activation_energy = 0
+      #forward_pre_exponential = 0
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1405,12 +1411,23 @@
       function = data_fun
     [../]
 
+    [./temp_AuxK_in]
+      type = FunctionAux
+      variable = temp_in
+      function = data_fun_in
+    [../]
+
 [] #END AuxKernels
 
 [Functions]
   [./data_fun]
     type = PiecewiseMultilinear
     data_file = ethanol_temperature.txt
+  [../]
+
+  [./data_fun_in]
+    type = PiecewiseMultilinear
+    data_file = ethanol_temperature_in.txt
   [../]
 []
 
