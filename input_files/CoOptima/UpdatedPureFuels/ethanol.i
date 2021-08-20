@@ -225,7 +225,7 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'COw'
-         pre_exponentials = '44.9'
+         pre_exponentials = '30.9'
          activation_energies = '-28431.5'
      [../]
   [../]
@@ -1195,7 +1195,7 @@
        variable = R_CO
        temperature = temp
        coupled_list = 'COw'
-       pre_exponentials = '44.9'
+       pre_exponentials = '30.9'
        activation_energies = '-28431.5'
      [../]
 
