@@ -91,18 +91,18 @@ rxn = "r8"
 # HC reactions
 rxn = "r3"
 sim.unfix_reaction("r3")
-#sim.set_reaction_param_bounds(rxn, "E", bounds=(200000, 350000))
-#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.5, sim.model.A[rxn].value*2))
+sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.8, sim.model.E[rxn].value*1))
+sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.00001, sim.model.A[rxn].value*1))
 
 rxn = "r10"
 sim.unfix_reaction("r10")
-#sim.set_reaction_param_bounds(rxn, "E", bounds=(200000, 350000))
-#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.5, sim.model.A[rxn].value*2))
+sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.8, sim.model.E[rxn].value*1))
+sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.00001, sim.model.A[rxn].value*1))
 
 rxn = "r12"
 sim.unfix_reaction("r12")
-#sim.set_reaction_param_bounds(rxn, "E", bounds=(200000, 350000))
-#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.5, sim.model.A[rxn].value*2))
+sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.8, sim.model.E[rxn].value*1))
+sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.00001, sim.model.A[rxn].value*1))
 
 
 # ========== Selecting weight factors
@@ -111,9 +111,14 @@ sim.auto_select_all_weight_factors()
 
 sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,110))
 sim.ignore_weight_factor("CO","A0","T0",time_window=(0,110))
-sim.ignore_weight_factor("NO","A0","T0",time_window=(0,35))
-sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,35))
-sim.ignore_weight_factor("HC","A0","T0",time_window=(0,35))
+
+#sim.ignore_weight_factor("NO","A0","T0",time_window=(0,110))
+
+# ignore this temporarily
+#sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,110))
+
+#sim.ignore_weight_factor("HC","A0","T0",time_window=(0,30))
+#sim.ignore_weight_factor("HC","A0","T0",time_window=(50,110))
 
 sim.finalize_auto_scaling()
 

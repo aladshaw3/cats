@@ -1105,8 +1105,8 @@
       #forward_activation_energy = 329223.35414879746
       #forward_pre_exponential = 3.4756945461654603e+39
 
-      forward_activation_energy = 380909.1243388483
-      forward_pre_exponential = 4.197697451762237e+44
+      forward_activation_energy = 323387.00289367203
+      forward_pre_exponential = 9.205064261514375e+38
 
       #forward_activation_energy = 0
       #forward_pre_exponential = 0
@@ -1136,8 +1136,8 @@
       #forward_activation_energy = 320432.58372574014
       #forward_pre_exponential = 2.595596030401172e+37
 
-      forward_activation_energy = 354378.8102324855
-      forward_pre_exponential = 1.4243262097129248e+41
+      forward_activation_energy = 347389.0477870172
+      forward_pre_exponential = 3.592041872822223e+39
 
       #forward_activation_energy = 0
       #forward_pre_exponential = 0
@@ -1167,8 +1167,8 @@
       #forward_activation_energy = 275007.3243266179
       #forward_pre_exponential = 5.0578127220787834e+25  #e17
 
-      forward_activation_energy = 178568.1576069942
-      forward_pre_exponential = 7.886770721060877e+19
+      forward_activation_energy = 163929.9664558934
+      forward_pre_exponential = 1.4751544182389037e+17
 
       #forward_activation_energy = 0
       #forward_pre_exponential = 0
