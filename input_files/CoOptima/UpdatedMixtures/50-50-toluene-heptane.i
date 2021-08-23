@@ -270,7 +270,7 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'HCw_heptane HCw_toluene'
-         pre_exponentials = '3.27E+10 2.18E+9'
+         pre_exponentials = '3.27E+10 0'
          activation_energies = '0 0'
      [../]
   [../]
@@ -1211,8 +1211,8 @@
       variable = r3_heptane
       this_variable = r3_heptane
 
-      forward_activation_energy = 344704.19832103234
-      forward_pre_exponential = 6.189916847226846e+38
+      forward_activation_energy = 144704.19832103234
+      forward_pre_exponential = 8.689916847226846e+20
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1237,7 +1237,7 @@
       this_variable = r10_heptane
 
       forward_activation_energy = 344704.19832103234
-      forward_pre_exponential = 4.189916847226846e+36
+      forward_pre_exponential = 2.189916847226846e+37
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1314,7 +1314,7 @@
       this_variable = r10_toluene
 
       forward_activation_energy = 344704.19832103234
-      forward_pre_exponential = 5.189916847226846e+38
+      forward_pre_exponential = 4.489916847226846e+39
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1379,7 +1379,7 @@
       variable = R_HC
       temperature = temp
       coupled_list = 'HCw_heptane HCw_toluene'
-      pre_exponentials = '3.27E+10 2.18E+9'
+      pre_exponentials = '3.27E+10 0'
       activation_energies = '0 0'
     [../]
 

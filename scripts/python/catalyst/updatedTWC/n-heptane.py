@@ -27,7 +27,7 @@ data = naively_read_data_file("inputfiles/"+HC_name+"_lightoff_history.txt",fact
 temp_data = naively_read_data_file("inputfiles/"+HC_name+"_temp_history.txt",factor=2)
 
 # Can make it to 70 without issue
-time_list = time_point_selector(data["time"], data, end_time=80)
+time_list = time_point_selector(data["time"], data, end_time=70)
 
 sim = Isothermal_Monolith_Simulator()
 sim.add_axial_dim(point_list=custom_zaxis)
@@ -184,20 +184,20 @@ r3 = {"parameters": {"A": 6.189916847226846e+38, "E": 344704.19832103234},
           "rxn_orders": {"HC": 1, "O2": 1}
         }
 
-# HC Steam Reforming
-# CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
-r12 = {"parameters": {"A": 9.8429782328496848e+18, "E": 156610.55181420766},
-          "mol_reactants": {"HC": 1, "H2O": x},
-          "mol_products": {"CO": x, "H2": (x + y/2), "O2": z/2},
-          "rxn_orders": {"HC": 1, "H2O": 1}
-        }
-
 # HC NO reduction
 # CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
 r10 = {"parameters": {"A": 4.189916847226846e+36, "E": 344704.19832103234},
           "mol_reactants": {"HC": 1, "NO": (2*x + y/2 - z)},
           "mol_products": {"H2O": y/2, "CO2": x},
           "rxn_orders": {"HC": 1, "NO": 1}
+        }
+
+# HC Steam Reforming
+# CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
+r12 = {"parameters": {"A": 9.8429782328496848e+18, "E": 156610.55181420766},
+          "mol_reactants": {"HC": 1, "H2O": x - z},
+          "mol_products": {"CO": x, "H2": (x + y/2 - z)},
+          "rxn_orders": {"HC": 1, "H2O": 1}
         }
 
 sim.set_reaction_info("r1", r1)
