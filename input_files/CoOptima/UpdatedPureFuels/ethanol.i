@@ -360,14 +360,14 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # ethanol ==> x = 2, y = 6, z = 1
     [./O2w_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = O2w
-        coupled_list = 'r1 r2 r15 r3 r12'
-        weights = '-0.5 -0.5 -0.25 -3 0.5'
+        coupled_list = 'r1 r2 r15 r3'
+        weights = '-0.5 -0.5 -0.25 -3'
         scale = non_pore
     [../]
 
@@ -412,14 +412,14 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # ethanol ==> x = 2, y = 6, z = 1
     [./H2Ow_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = H2Ow
         coupled_list = 'r2 r8 r11 r6 r7 r14 r15 r3 r10 r12'
-        weights = '1 -1.5 -1 1 1 1 1.5 3 3 -2'
+        weights = '1 -1.5 -1 1 1 1 1.5 3 3 -1'
         scale = non_pore
     [../]
 
@@ -511,7 +511,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # ethanol ==> x = 2, y = 6, z = 1
     [./NOxw_rxns]
@@ -610,7 +610,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # ethanol ==> x = 2, y = 6, z = 1
     [./COw_rxns]
@@ -662,7 +662,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # ethanol ==> x = 2, y = 6, z = 1
     [./CO2w_rxns]
@@ -714,7 +714,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # ethanol ==> x = 2, y = 6, z = 1
     [./N2w_rxns]
@@ -766,14 +766,14 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # ethanol ==> x = 2, y = 6, z = 1
     [./H2w_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = H2w
         coupled_list = 'r2 r11 r6 r7 r14 r12'
-        weights = '-1 1 -2.5 -1 -1 5'
+        weights = '-1 1 -2.5 -1 -1 4'
         scale = non_pore
     [../]
 
@@ -818,7 +818,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # ethanol ==> x = 2, y = 6, z = 1
     [./HCw_rxns]
@@ -1101,12 +1101,8 @@
       variable = r3
       this_variable = r3
 
-      # --- TOO MUCH ---
-      #forward_activation_energy = 329223.35414879746
-      #forward_pre_exponential = 3.4756945461654603e+39
-
-      forward_activation_energy = 323387.00289367203
-      forward_pre_exponential = 9.205064261514375e+38
+      forward_activation_energy = 138372.7014092472
+      forward_pre_exponential = 7.552072387087877e+20
 
       #forward_activation_energy = 0
       #forward_pre_exponential = 0
@@ -1133,11 +1129,8 @@
       variable = r10
       this_variable = r10
 
-      #forward_activation_energy = 320432.58372574014
-      #forward_pre_exponential = 2.595596030401172e+37
-
-      forward_activation_energy = 347389.0477870172
-      forward_pre_exponential = 3.592041872822223e+39
+      forward_activation_energy = 221566.45460992216
+      forward_pre_exponential = 8.592122512925783e+27
 
       #forward_activation_energy = 0
       #forward_pre_exponential = 0
@@ -1154,7 +1147,7 @@
     [../]
 
 ## ======= HC Steam Reforming Rxn ======
-# CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+# CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     [./r12_val]
         type = Reaction
         variable = r12
@@ -1164,11 +1157,8 @@
       variable = r12
       this_variable = r12
 
-      #forward_activation_energy = 275007.3243266179
-      #forward_pre_exponential = 5.0578127220787834e+25  #e17
-
-      forward_activation_energy = 163929.9664558934
-      forward_pre_exponential = 1.4751544182389037e+17
+      forward_activation_energy = 145210.01500049492
+      forward_pre_exponential = 4.8431702008771064e+18
 
       #forward_activation_energy = 0
       #forward_pre_exponential = 0

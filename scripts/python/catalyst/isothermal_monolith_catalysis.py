@@ -1119,6 +1119,20 @@ class Isothermal_Monolith_Simulator(object):
             if spec in self.model.data_surface_set:
                 self.model.wq[spec,age,temp,:].set_value(value)
 
+    # Function to set provide a multiplier to a weight factor
+    def set_weight_factor_multiplier(self, spec, age, temp, mult):
+        if self.isDataGasSpecSet == False and self.isDataSurfSpecSet == False:
+            raise Exception("Error! Cannot specify weight factors prior to setting up the data")
+
+        if self.isDataGasSpecSet == True:
+            if spec in self.model.data_gas_set:
+                for time in self.model.t_data_full:
+                    self.model.w[spec,age,temp,time].set_value(self.model.w[spec,age,temp,time].value*mult)
+        if self.isDataSurfSpecSet == True:
+            if spec in self.model.data_surface_set:
+                for time in self.model.t_data_full:
+                    self.model.wq[spec,age,temp,time].set_value(self.model.wq[spec,age,temp,time].value*mult)
+
     # Function to automatically select weight factors based on data
     def auto_select_weight_factor(self, spec, age, temp):
         maxval = 1e-20

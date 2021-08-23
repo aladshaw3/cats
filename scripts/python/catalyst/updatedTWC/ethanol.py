@@ -176,7 +176,7 @@ r15 = {"parameters": {"A": 1.0E+41, "E": 300000},
 
 # HC oxidation
 # CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
-r3 = {"parameters": {"A": 2.189916847226846e+33, "E": 284704.19832103234},
+r3 = {"parameters": {"A": 7.552072387087877e+20, "E": 138372.7014092472},
           "mol_reactants": {"HC": 1, "O2": (x + y/4 - z/2)},
           "mol_products": {"H2O": y/2, "CO2": x},
           "rxn_orders": {"HC": 1, "O2": 1}
@@ -184,7 +184,7 @@ r3 = {"parameters": {"A": 2.189916847226846e+33, "E": 284704.19832103234},
 
 # HC NO reduction
 # CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-r10 = {"parameters": {"A": 4.489916847226846e+39, "E": 344704.19832103234},
+r10 = {"parameters": {"A": 8.592122512925783e+27, "E": 221566.45460992216},
           "mol_reactants": {"HC": 1, "NO": (2*x + y/2 - z)},
           "mol_products": {"H2O": y/2, "CO2": x},
           "rxn_orders": {"HC": 1, "NO": 1}
@@ -192,9 +192,11 @@ r10 = {"parameters": {"A": 4.489916847226846e+39, "E": 344704.19832103234},
 
 # HC Steam Reforming
 # CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
-r12 = {"parameters": {"A": 1.8429782328496848e+17, "E": 136610.55181420766},
-          "mol_reactants": {"HC": 1, "H2O": x},
-          "mol_products": {"CO": x, "H2": (x + y/2), "O2": z/2},
+
+# NEW:  CxHyOz + (x-z) H2O --> x CO + (x + (y/2) - z) H2
+r12 = {"parameters": {"A": 4.8431702008771064e+18, "E": 145210.01500049492},
+          "mol_reactants": {"HC": 1, "H2O": x - z},
+          "mol_products": {"CO": x, "H2": (x + y/2 - z)},
           "rxn_orders": {"HC": 1, "H2O": 1}
         }
 

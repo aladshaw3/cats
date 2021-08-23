@@ -6,8 +6,8 @@ from catalyst.isothermal_monolith_catalysis import *
 # Give x, y, z for the HC (CxHyOz)
 HC_name = "ethanol"
 
-run = "03"
-oldrun="02"
+run = "02"
+oldrun="01"
 
 readfile = 'output/'+HC_name+'_model'+oldrun+'.json'
 writefile = HC_name+"_model"+run+".json"
@@ -75,7 +75,7 @@ rxn = "r4"
 
 rxn = "r5"
 #sim.unfix_reaction("r5")
-#sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.99, sim.model.E[rxn].value*1.2))
+#sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[multrxn].value*0.99, sim.model.E[rxn].value*1.2))
 #sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.99, sim.model.A[rxn].value*2))
 
 rxn = "r8"
@@ -91,18 +91,18 @@ rxn = "r8"
 # HC reactions
 rxn = "r3"
 sim.unfix_reaction("r3")
-sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.8, sim.model.E[rxn].value*1))
-sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.00001, sim.model.A[rxn].value*1))
+sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.9, sim.model.E[rxn].value*1.1))
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.5, sim.model.A[rxn].value*2))
 
 rxn = "r10"
 sim.unfix_reaction("r10")
-sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.8, sim.model.E[rxn].value*1))
-sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.00001, sim.model.A[rxn].value*1))
+sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.9, sim.model.E[rxn].value*1.1))
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.5, sim.model.A[rxn].value*2))
 
 rxn = "r12"
 sim.unfix_reaction("r12")
-sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.8, sim.model.E[rxn].value*1))
-sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.00001, sim.model.A[rxn].value*1))
+sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.9, sim.model.E[rxn].value*1.1))
+#sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.5, sim.model.A[rxn].value*2))
 
 
 # ========== Selecting weight factors
@@ -116,14 +116,15 @@ sim.ignore_weight_factor("CO","A0","T0",time_window=(0,110))
 
 # ignore this temporarily
 #sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,110))
+sim.set_weight_factor_multiplier("NH3", "A0", "T0", 0.5)
 
 #sim.ignore_weight_factor("HC","A0","T0",time_window=(0,30))
 #sim.ignore_weight_factor("HC","A0","T0",time_window=(50,110))
 
 sim.finalize_auto_scaling()
 
-# Stop at 103 iter if needed
-#my_options={'max_iter': 103}
+# Stop at 39 iter if needed
+#my_options={'max_iter': 39}
 #sim.run_solver(options=my_options)
 sim.run_solver()
 
