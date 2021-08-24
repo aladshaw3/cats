@@ -4,12 +4,12 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 # Give x, y, z for the HC (CxHyOz)
-HC_name = "ethanol"
-x = 2
-y = 6
-z = 1
+HC_name = "iso-octane"
+x = 8
+y = 18
+z = 0
 
-O2_in = 7100
+O2_in = 7300
 CO2_in = 130000
 H2O_in = 130000
 CO_in = 5000    #5070
@@ -176,7 +176,7 @@ r15 = {"parameters": {"A": 1.0E+41, "E": 300000},
 
 # HC oxidation
 # CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
-r3 = {"parameters": {"A": 7.552072387087877e+20, "E": 138372.7014092472},
+r3 = {"parameters": {"A": 1.689916847226846e+18, "E": 124704.19832103234},
           "mol_reactants": {"HC": 1, "O2": (x + y/4 - z/2)},
           "mol_products": {"H2O": y/2, "CO2": x},
           "rxn_orders": {"HC": 1, "O2": 1}
@@ -184,7 +184,7 @@ r3 = {"parameters": {"A": 7.552072387087877e+20, "E": 138372.7014092472},
 
 # HC NO reduction
 # CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-r10 = {"parameters": {"A": 8.592122512925783e+27, "E": 221566.45460992216},
+r10 = {"parameters": {"A": 8.592122512925783e+24, "E": 251566.45460992216},
           "mol_reactants": {"HC": 1, "NO": (2*x + y/2 - z)},
           "mol_products": {"H2O": y/2, "CO2": x},
           "rxn_orders": {"HC": 1, "NO": 1}
@@ -192,7 +192,7 @@ r10 = {"parameters": {"A": 8.592122512925783e+27, "E": 221566.45460992216},
 
 # HC Steam Reforming
 # CxHyOz + (x-z) H2O --> x CO + (x + (y/2) - z) H2
-r12 = {"parameters": {"A": 4.8431702008771064e+18, "E": 145210.01500049492},
+r12 = {"parameters": {"A": 4.8431702008771064e+15, "E": 125210.01500049492},
           "mol_reactants": {"HC": 1, "H2O": x - z},
           "mol_products": {"CO": x, "H2": (x + y/2 - z)},
           "rxn_orders": {"HC": 1, "H2O": 1}
@@ -249,7 +249,8 @@ sim.fix_all_reactions()
 sim.auto_select_all_weight_factors()
 
 
-#sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,110))
+sim.ignore_weight_factor("N2O","A0","T0",time_window=(0,110))
+sim.ignore_weight_factor("CO","A0","T0",time_window=(0,110))
 #sim.ignore_weight_factor("NO","A0","T0",time_window=(0,110))
 #sim.ignore_weight_factor("NH3","A0","T0",time_window=(0,110))
 
