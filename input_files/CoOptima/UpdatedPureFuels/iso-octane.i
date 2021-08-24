@@ -1158,7 +1158,7 @@
       this_variable = r12
 
       forward_activation_energy = 169734.3143765249
-      forward_pre_exponential = 2.8117e+19
+      forward_pre_exponential = 6.8117e+19
 
       #forward_activation_energy = 0
       #forward_pre_exponential = 0
