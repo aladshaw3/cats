@@ -237,7 +237,7 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'HCw'
-         pre_exponentials = '0'
+         pre_exponentials = '6.56E+10'
          activation_energies = '0'
      [../]
   [../]
@@ -1101,8 +1101,8 @@
       variable = r3
       this_variable = r3
 
-      forward_activation_energy = 124704.19832103234
-      forward_pre_exponential = 1.689916847226846e+18
+      forward_activation_energy = 123778.07841100253
+      forward_pre_exponential = 2.0278118615710487e+18
 
       #forward_activation_energy = 0
       #forward_pre_exponential = 0
@@ -1129,8 +1129,8 @@
       variable = r10
       this_variable = r10
 
-      forward_activation_energy = 251566.45460992216
-      forward_pre_exponential = 8.592122512925783e+24
+      forward_activation_energy = 276722.9558304948
+      forward_pre_exponential = 1.3543644057580242e+29
 
       #forward_activation_energy = 0
       #forward_pre_exponential = 0
@@ -1157,8 +1157,8 @@
       variable = r12
       this_variable = r12
 
-      forward_activation_energy = 125210.01500049492
-      forward_pre_exponential = 4.8431702008771064e+15
+      forward_activation_energy = 169734.3143765249
+      forward_pre_exponential = 2.8117e+19
 
       #forward_activation_energy = 0
       #forward_pre_exponential = 0
@@ -1199,7 +1199,7 @@
      variable = R_HC
      temperature = temp
      coupled_list = 'HCw'
-     pre_exponentials = '0'
+     pre_exponentials = '6.56E+10'
      activation_energies = '0'
    [../]
 
@@ -1411,12 +1411,23 @@
       function = data_fun
     [../]
 
+    [./temp_AuxK_in]
+      type = FunctionAux
+      variable = temp_in
+      function = data_fun_in
+    [../]
+
 [] #END AuxKernels
 
 [Functions]
   [./data_fun]
     type = PiecewiseMultilinear
     data_file = iso-octane_temperature.txt
+  [../]
+
+  [./data_fun_in]
+    type = PiecewiseMultilinear
+    data_file = ethanol_temperature_in.txt
   [../]
 
 []

@@ -23,10 +23,10 @@ custom_zaxis = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,
                 1.2,1.4,1.6,1.8,2.0,2.2,2.4,2.6,2.8,3.0,
                 3.25, 3.5, 3.75, 4.0, 4.5, 5]
 
-data = naively_read_data_file("inputfiles/"+HC_name+"_lightoff_history.txt",factor=3)
-temp_data = naively_read_data_file("inputfiles/"+HC_name+"_temp_history.txt",factor=3)
+data = naively_read_data_file("inputfiles/"+HC_name+"_lightoff_history.txt",factor=2)
+temp_data = naively_read_data_file("inputfiles/"+HC_name+"_temp_history.txt",factor=2)
 
-time_list = time_point_selector(data["time"], data, end_time=60)
+time_list = time_point_selector(data["time"], data, end_time=54)
 
 sim = Isothermal_Monolith_Simulator()
 sim.add_axial_dim(point_list=custom_zaxis)
