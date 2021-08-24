@@ -1955,7 +1955,7 @@
         uz = vel_z
         pressure = press
         temperature = temp
-        inlet_ppm = 5300
+        inlet_ppm = 5100
     [../]
     [./CO_FluxOut]
         type = DGPoreConcFluxBC
