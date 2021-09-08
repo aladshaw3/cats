@@ -1,7 +1,7 @@
 [GlobalParams]
   dg_scheme = nipg
   sigma = 10
-  transfer_rate = 5757.541  #min^-1
+  transfer_rate = 7712  #min^-1 (Ga*km) Ga = 1928, km = 4
 [] #END GlobalParams
 
 [Problem]
@@ -164,10 +164,10 @@
 # ew =~ 1/5
 # total_pore = ew* (1 - pore)
 # micro_pore_vol = 0.18 cm^3/g
-# assume ew = 0.2
+# assume ew = 0.4
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.13382
+      initial_condition = 0.26764
   [../]
 
   [./vel_x]

@@ -1527,7 +1527,7 @@ class Isothermal_Monolith_Simulator(object):
             for age in self.model.age_set:
                 for temp in self.model.T_set:
                     T = self.model.T[age,temp,self.model.z.first(),self.model.t.first()].value
-                    val = self.model.Sh[spec,age,temp,self.model.t.first()].value*self.model.ew.value* \
+                    val = self.model.Sh[spec,age,temp,self.model.t.first()].value*self.model.ew.value**1.4* \
                             (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))*60 / self.model.dh.value
                     self.model.km[spec,age,temp,:,:].set_value(val)
 
@@ -2165,7 +2165,7 @@ class Isothermal_Monolith_Simulator(object):
                 for temp in self.model.T_set:
                     for time in self.model.t:
                         T = self.model.T[age,temp,self.model.z.first(),time].value
-                        val = self.model.Sh[spec,age,temp,time].value*self.model.ew.value* \
+                        val = self.model.Sh[spec,age,temp,time].value*self.model.ew.value**1.4* \
                             (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))*60 / self.model.dh.value
                         ## TODO: Add unit conversions for time
                         ## TODO: Add unit conversions for space

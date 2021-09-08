@@ -5,7 +5,7 @@
   sigma = 10
   # 'transfer_rate' is a lumped parameter for mass-trasfer coefficient (km)
   #     and the ratio of exposed area to catalyst volume (Ga).
-  #       transfer_rate = km*Ga*(1-eb)
+  #       transfer_rate = km*Ga
   transfer_rate = 9539  #min^-1
 [] #END GlobalParams
 

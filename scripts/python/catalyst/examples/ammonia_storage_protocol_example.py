@@ -31,6 +31,15 @@ test.set_reactor_radius(1)
 test.set_space_velocity_all_runs(500)       #volumes / min
 test.set_cell_density(62)                   # 62 cells per cm^2 (~400 cpsi)
 
+'''
+# These below are Dhruba's material
+test.set_bulk_porosity(0.6)
+test.set_washcoat_porosity(0.5)
+test.set_reactor_radius(0.41)
+# # TODO: Fix the reference temperature and the space velocity calculations
+test.set_space_velocity_all_runs(667, Tref=298.15)       #volumes / min
+test.set_cell_density(46.5)
+'''
 # Setting up site balances using dicts
 s1_data = {"mol_occupancy": {"q1": 1, "q4a": 1}}
 s2_data = {"mol_occupancy": {"q2a": 1, "q2b": 1, "q4b": 1}}
@@ -147,7 +156,9 @@ test.initialize_simulator(console_out=False)
 test.finalize_auto_scaling()
 test.run_solver()
 
-test.print_results_of_breakthrough(["NH3"], "Unaged", "150C", file_name="")
+test.print_results_of_breakthrough(["NH3"], "Unaged", "150C", file_name="new-D.txt")
 test.print_results_of_integral_average(["q1","q2a","q2b","q3a","q3b","q3c"],
                                         "Unaged", "150C", file_name="")
-test.plot_at_locations(["NH3"], ["Unaged"], ["150C"], [5], display_live=True)
+test.plot_at_locations(["NH3"], ["Unaged"], ["150C"], [5], display_live=False)
+
+test.model.km.pprint()

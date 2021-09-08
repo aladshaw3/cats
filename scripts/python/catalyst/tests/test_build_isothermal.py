@@ -609,7 +609,7 @@ class TestBasicIsothermalCatalystBuild():
                 obj_with_lists.model.t.first()]), rel=1e-3) == \
             value(obj.model.Sh["NH3","Unaged","250C",obj.model.t.first()])
 
-        assert pytest.approx(1238.1257177123603, rel=1e-3) == \
+        assert pytest.approx(858.2004564100874, rel=1e-3) == \
             value(obj.model.km["NH3","Unaged","250C",obj.model.z.first(),obj.model.t.first()])
 
         assert pytest.approx(value(obj_with_lists.model.km["NH3","Unaged","250C",
