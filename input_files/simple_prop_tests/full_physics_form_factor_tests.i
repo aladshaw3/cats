@@ -128,7 +128,7 @@
       family = MONOMIAL
   [../]
 
-  [./conv_test]
+  [./km]
       order = FIRST
       family = MONOMIAL
   [../]
@@ -188,7 +188,7 @@
         coupled = O2w
 
         av_ratio = Ga
-        rate_variable = 120
+        rate_variable = km
         volume_frac = non_pore
     [../]
 
@@ -204,7 +204,7 @@
         coupled = O2
 
         av_ratio = Ga
-        rate_variable = 120
+        rate_variable = km
         volume_frac = non_pore
     [../]
     [./O2w_rxns]
@@ -243,7 +243,7 @@
         coupled = COw
 
         av_ratio = Ga
-        rate_variable = 120
+        rate_variable = km
         volume_frac = non_pore
     [../]
 
@@ -259,7 +259,7 @@
         coupled = CO
 
         av_ratio = Ga
-        rate_variable = 120
+        rate_variable = km
         volume_frac = non_pore
     [../]
     [./COw_rxns]
@@ -298,7 +298,7 @@
         coupled = CO2w
 
         av_ratio = Ga
-        rate_variable = 120
+        rate_variable = km
         volume_frac = non_pore
     [../]
 
@@ -314,7 +314,7 @@
         coupled = CO2
 
         av_ratio = Ga
-        rate_variable = 120
+        rate_variable = km
         volume_frac = non_pore
     [../]
     [./CO2w_rxns]
@@ -461,9 +461,9 @@
         execute_on = 'initial timestep_end'
     [../]
 
-    [./conv_test_calc]
-        type = SimpleGasPropertiesBase
-        variable = conv_test
+    [./km_calc]
+        type = SimpleGasMonolithMassTransCoef
+        variable = km
 
         pressure = press
         temperature = temp
@@ -476,10 +476,13 @@
         vel_length_unit = "cm"
         vel_time_unit = "min"
 
-        ref_diffusivity = 0.2
+        ref_diffusivity = 0.561
         diff_length_unit = "cm"
         diff_time_unit = "s"
-        ref_diff_temp = 298
+        ref_diff_temp = 473
+
+        output_length_unit = "cm"
+        output_time_unit = "min"
 
         execute_on = 'initial timestep_end'
     [../]
@@ -671,9 +674,9 @@
         execute_on = 'initial timestep_end'
     [../]
 
-    [./conv_test]
+    [./km]
         type = ElementAverageValue
-        variable = conv_test
+        variable = km
         execute_on = 'initial timestep_end'
     [../]
 
