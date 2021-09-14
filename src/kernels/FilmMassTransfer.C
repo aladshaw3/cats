@@ -44,14 +44,15 @@ registerMooseObject("catsApp", FilmMassTransfer);
 InputParameters FilmMassTransfer::validParams()
 {
     InputParameters params = ConstMassTransfer::validParams();
-    params.addParam< Real >("av_ratio",1.0,"Area to volume ratio at which mass transfer occurs");
+    params.addCoupledVar("av_ratio",1.0,"Area to volume ratio at which mass transfer occurs");
     params.addRequiredCoupledVar("rate_variable","Name of the coupled rate variable");
     return params;
 }
 
 FilmMassTransfer::FilmMassTransfer(const InputParameters & parameters)
 : ConstMassTransfer(parameters),
-_area_to_volume(getParam< Real >("av_ratio")),
+_area_to_volume(coupledValue("av_ratio")),
+_area_to_volume_var(coupled("av_ratio")),
 _coupled_rate(coupledValue("rate_variable")),
 _coupled_rate_var(coupled("rate_variable"))
 {
@@ -60,22 +61,26 @@ _coupled_rate_var(coupled("rate_variable"))
 
 Real FilmMassTransfer::computeQpResidual()
 {
-    _trans_rate = _area_to_volume * _coupled_rate[_qp];
+    _trans_rate = _area_to_volume[_qp] * _coupled_rate[_qp];
     return ConstMassTransfer::computeQpResidual();
 }
 
 Real FilmMassTransfer::computeQpJacobian()
 {
-    _trans_rate = _area_to_volume * _coupled_rate[_qp];
+    _trans_rate = _area_to_volume[_qp] * _coupled_rate[_qp];
     return ConstMassTransfer::computeQpJacobian();
 }
 
 Real FilmMassTransfer::computeQpOffDiagJacobian(unsigned int jvar)
 {
-    _trans_rate = _area_to_volume * _coupled_rate[_qp];
+    _trans_rate = _area_to_volume[_qp] * _coupled_rate[_qp];
     if (jvar == _coupled_rate_var)
     {
-        return -_test[_i][_qp] * _area_to_volume * _phi[_j][_qp] * (_u[_qp] - _coupled[_qp]);
+        return -_test[_i][_qp] * _area_to_volume[_qp] * _phi[_j][_qp] * (_u[_qp] - _coupled[_qp]);
+    }
+    else if (jvar == _area_to_volume_var)
+    {
+        return -_test[_i][_qp] * _phi[_j][_qp] * _coupled_rate[_qp] * (_u[_qp] - _coupled[_qp]);
     }
     else
     {

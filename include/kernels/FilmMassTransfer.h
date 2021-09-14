@@ -72,7 +72,8 @@ protected:
      cross coupling of the variables. */
     virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-    Real _area_to_volume;                            ///< Area to volume ratio (L^-1)
+    const VariableValue & _area_to_volume;           ///< Area to volume ratio (L^-1)
+    const unsigned int _area_to_volume_var;          ///< Variable identification for couled area to vol ratio 
     const VariableValue & _coupled_rate;             ///< Coupled rate variable (L/T)
     const unsigned int _coupled_rate_var;            ///< Variable identification for the coupled rate variable
 
