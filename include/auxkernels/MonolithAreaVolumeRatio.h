@@ -59,7 +59,7 @@ protected:
 
 private:
     Real _cell_density;        ///< Cell density of the monolith (cells per total face area)
-    Real _bulk_porosity;       ///< Ratio of channel volume to total volume
-    bool _PerSolidsVolume;     ///< Boolean to determine if ratio to be calculated is per solid volume or per total volume 
+    const VariableValue & _bulk_porosity;       ///< Ratio of channel volume to total volume
+    bool _PerSolidsVolume;     ///< Boolean to determine if ratio to be calculated is per solid volume or per total volume
 
 };
