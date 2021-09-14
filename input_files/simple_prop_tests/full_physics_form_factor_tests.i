@@ -3,12 +3,6 @@
   # 'dg_scheme' and 'sigma' are parameters for the DG kernels
   dg_scheme = nipg
   sigma = 10
-  # 'transfer_rate' is a lumped parameter for mass-trasfer coefficient (km)
-  #     and the ratio of exposed area to catalyst volume (Ga).
-  #       transfer_rate = km*Ga*(1-eb)
-  #           km = 120 - 240 cm/min
-  #           Ga = 160.6 cm^-1
-  #           eb = 0.775
 [] #END GlobalParams
 
 [Problem]
@@ -108,12 +102,17 @@
       initial_condition = 0.225
   [../]
 
+  # ew value
+  [./micro_pore]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.4
+  [../]
+
   # total_pore = ew* (1 - pore)
-  # assume ew = 0.4
   [./total_pore]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.09
   [../]
 
   # area to volume ratio for monolith
@@ -435,6 +434,14 @@
         execute_on = 'initial timestep_end'
     [../]
 
+    [./total_pore_calc]
+        type = MicroscalePoreVolumePerTotalVolume
+        variable = total_pore
+        porosity = pore
+        microscale_porosity = micro_pore
+        execute_on = 'initial timestep_end'
+    [../]
+
     [./temp_AuxK]
       type = FunctionAux
       variable = temp
@@ -607,6 +614,12 @@
     [./non_pore]
         type = ElementAverageValue
         variable = non_pore
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./total_pore]
+        type = ElementAverageValue
+        variable = total_pore
         execute_on = 'initial timestep_end'
     [../]
 
