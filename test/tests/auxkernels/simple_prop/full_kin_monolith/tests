@@ -1,0 +1,8 @@
+[Tests]
+  [./full_kinetics_for_monolith]
+    type = 'Exodiff'
+    input = 'full_physics_form_factor_tests.i'
+    exodiff = 'full_physics_form_factor_tests_out.e'
+    rel_err = 1e-5
+  [../]
+[]
