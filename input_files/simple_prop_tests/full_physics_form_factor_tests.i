@@ -128,6 +128,11 @@
       family = MONOMIAL
   [../]
 
+  [./conv_test]
+      order = FIRST
+      family = MONOMIAL
+  [../]
+
   [./vel_x]
       order = FIRST
       family = MONOMIAL
@@ -456,6 +461,29 @@
         execute_on = 'initial timestep_end'
     [../]
 
+    [./conv_test_calc]
+        type = SimpleGasPropertiesBase
+        variable = conv_test
+
+        pressure = press
+        temperature = temp
+        micro_porosity = micro_pore
+        macro_porosity = pore
+        characteristic_length = dh
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        ref_diffusivity = 0.2
+        diff_length_unit = "cm"
+        diff_time_unit = "s"
+        ref_diff_temp = 298
+
+        execute_on = 'initial timestep_end'
+    [../]
+
     [./temp_AuxK]
       type = FunctionAux
       variable = temp
@@ -640,6 +668,12 @@
     [./total_pore]
         type = ElementAverageValue
         variable = total_pore
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./conv_test]
+        type = ElementAverageValue
+        variable = conv_test
         execute_on = 'initial timestep_end'
     [../]
 
