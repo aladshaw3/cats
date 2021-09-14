@@ -95,7 +95,7 @@
       initial_condition = 0.775
   [../]
 
-  # non_pore = (1 - pore)
+  # non_pore = (1 - pore)  # auto calc
   [./non_pore]
       order = FIRST
       family = MONOMIAL
@@ -109,17 +109,23 @@
       initial_condition = 0.4
   [../]
 
-  # total_pore = ew* (1 - pore)
+  # total_pore = ew* (1 - pore) # auto calc
   [./total_pore]
       order = FIRST
       family = MONOMIAL
   [../]
 
-  # area to volume ratio for monolith
+  # area to volume ratio for monolith # auto calc
   [./Ga]
       order = FIRST
       family = MONOMIAL
       initial_condition = 160
+  [../]
+
+  # hydraulic diameter for monolith # auto calc
+  [./dh]
+      order = FIRST
+      family = MONOMIAL
   [../]
 
   [./vel_x]
@@ -128,10 +134,10 @@
       initial_condition = 0
   [../]
 
-  [./vel_y]
+  [./vel_y] # auto calc
       order = FIRST
       family = MONOMIAL
-      initial_condition = 15110 #cm/min
+      initial_condition = 1011 #cm/min
   [../]
 
   [./vel_z]
@@ -427,6 +433,14 @@
         execute_on = 'initial timestep_end'
     [../]
 
+    [./dh_calc]
+        type = MonolithHydraulicDiameter
+        variable = dh
+        cell_density = 93   #cells/cm^2
+        channel_vol_ratio = pore
+        execute_on = 'initial timestep_end'
+    [../]
+
     [./non_pore_calc]
         type = SolidsVolumeFraction
         variable = non_pore
@@ -608,6 +622,12 @@
     [./Ga]
         type = ElementAverageValue
         variable = Ga
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./dh]
+        type = ElementAverageValue
+        variable = dh
         execute_on = 'initial timestep_end'
     [../]
 
