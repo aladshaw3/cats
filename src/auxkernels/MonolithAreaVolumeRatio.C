@@ -50,7 +50,7 @@ MonolithAreaVolumeRatio::MonolithAreaVolumeRatio(const InputParameters & paramet
 AuxKernel(parameters),
 _cell_density(getParam<Real>("cell_density")),
 _bulk_porosity(coupledValue("channel_vol_ratio")),
-_PerSolidsVolume(getParam<Real>("per_solids_volume"))
+_PerSolidsVolume(getParam<bool>("per_solids_volume"))
 {
 
 }
