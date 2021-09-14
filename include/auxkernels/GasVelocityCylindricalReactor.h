@@ -73,7 +73,7 @@ private:
     const VariableValue & _space_velocity;           ///< Variable for space-velocity (reactor volumes / time)
     Real _radius;                                   ///< Value for the radius of the cylindrical reactor
     Real _length;                                   ///< Value for reactor length
-    Real _porosity;                                 ///< Value for the porosity
+    const VariableValue &  _porosity;               ///< Variable for the porosity
     const VariableValue & _temperature_in;          ///< Variable for inlet temperature (in K)
     const VariableValue & _pressure_in;             ///< Variable for inlet pressure (in kPa)
     Real _temperature_ref;                          ///< Value of the reference temperature (in K)

@@ -1802,7 +1802,7 @@
         # NOTE: velocity must use same shape function type as temperature and space-velocity
         type = GasVelocityCylindricalReactor
         variable = vel_y
-        porosity = 0.775
+        porosity = pore
         space_velocity = 500   #volumes per min
         inlet_temperature = temp
         ref_pressure = 101.35
