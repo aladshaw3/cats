@@ -113,6 +113,7 @@ void MicroscaleDiffusionOuterBC::calculateFluxes()
     Real _avg_upper_diff = 0.5*(_upper_diff + _current_diff);
     Real _avg_lower_diff = 0.5*(_lower_diff + _current_diff);
     _flux_upper = (_rd_lp1*2.0*_trans_const)/_dr;
+    //_flux_upper = (_rd_lp1*_trans_const)/_dr;
     _flux_lower = ((_rd_lm1*_avg_lower_diff)/_dr/_dr) + ((_rd_lp1*_avg_upper_diff)/_dr/_dr);
 }
 
