@@ -57,5 +57,7 @@ protected:
 
 private:
     Real _particle_diameter;        ///< Diameter of the particle for which the ratio is calculated (L)
+    const VariableValue & _bulk_porosity;       ///< Ratio of channel volume to total volume
+    bool _PerSolidsVolume;     ///< Boolean to determine if ratio to be calculated is per solid volume or per total volume
 
 };

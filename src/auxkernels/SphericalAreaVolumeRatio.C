@@ -40,17 +40,24 @@ InputParameters SphericalAreaVolumeRatio::validParams()
 {
     InputParameters params = AuxKernel::validParams();
     params.addParam<Real>("particle_diameter",1,"Diameter of the particles for ratio calculation");
+    params.addCoupledVar("porosity",0.5,"Ratio of bulk voids volume to total volume (e.g., bulk porosity)");
+    params.addParam<bool>("per_solids_volume",true,"If true, then ratio is in units of solid area per solid volume. If false, then ratio is in solids volume per total volume ");
     return params;
 }
 
 SphericalAreaVolumeRatio::SphericalAreaVolumeRatio(const InputParameters & parameters) :
 AuxKernel(parameters),
-_particle_diameter(getParam<Real>("particle_diameter"))
+_particle_diameter(getParam<Real>("particle_diameter")),
+_bulk_porosity(coupledValue("porosity")),
+_PerSolidsVolume(getParam<bool>("per_solids_volume"))
 {
 
 }
 
 Real SphericalAreaVolumeRatio::computeValue()
 {
+  if (_PerSolidsVolume == true)
     return 6.0/_particle_diameter;
+  else
+    return (6.0/_particle_diameter)*(1.0-_bulk_porosity[_qp]);
 }
