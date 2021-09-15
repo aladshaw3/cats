@@ -83,7 +83,7 @@
       initial_condition = 101.35
   [../]
 
-  [./D]
+  [./Disp]
     order = FIRST
     family = MONOMIAL
     initial_condition = 2400.0  #Approximate dispersion
@@ -189,9 +189,9 @@
         type = GVarPoreDiffusion
         variable = O2
         porosity = pore
-        Dx = D
-        Dy = D
-        Dz = D
+        Dx = Disp
+        Dy = Disp
+        Dz = Disp
     [../]
     [./O2w_trans]
         type = FilmMassTransfer
@@ -244,9 +244,9 @@
         type = GVarPoreDiffusion
         variable = CO
         porosity = pore
-        Dx = D
-        Dy = D
-        Dz = D
+        Dx = Disp
+        Dy = Disp
+        Dz = Disp
     [../]
     [./COw_trans]
         type = FilmMassTransfer
@@ -299,9 +299,9 @@
         type = GVarPoreDiffusion
         variable = CO2
         porosity = pore
-        Dx = D
-        Dy = D
-        Dz = D
+        Dx = Disp
+        Dy = Disp
+        Dz = Disp
     [../]
     [./CO2w_trans]
         type = FilmMassTransfer
@@ -381,9 +381,9 @@
         type = DGVarPoreDiffusion
         variable = O2
         porosity = pore
-        Dx = D
-        Dy = D
-        Dz = D
+        Dx = Disp
+        Dy = Disp
+        Dz = Disp
     [../]
 
     # =========== CO DG kernels ===========
@@ -399,9 +399,9 @@
         type = DGVarPoreDiffusion
         variable = CO
         porosity = pore
-        Dx = D
-        Dy = D
-        Dz = D
+        Dx = Disp
+        Dy = Disp
+        Dz = Disp
     [../]
 
     # =========== CO2 DG kernels ===========
@@ -417,9 +417,9 @@
         type = DGVarPoreDiffusion
         variable = CO2
         porosity = pore
-        Dx = D
-        Dy = D
-        Dz = D
+        Dx = Disp
+        Dy = Disp
+        Dz = Disp
     [../]
 
 [] #END DGKernels
@@ -533,6 +533,35 @@
         micro_porosity = micro_pore
         macro_porosity = pore
         characteristic_length = dh
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        ref_diffusivity = 0.561
+        diff_length_unit = "cm"
+        diff_time_unit = "s"
+        ref_diff_temp = 473
+
+        output_length_unit = "cm"
+        output_time_unit = "min"
+        per_solids_volume = false
+
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./Disp_calc]
+        type = SimpleGasDispersion
+        variable = Disp
+
+        pressure = press
+        temperature = temp
+        micro_porosity = micro_pore
+        macro_porosity = pore
+
+        # NOTE: For this calculation, use bed diameter as char_length
+        characteristic_length = 2
         char_length_unit = "cm"
 
         velocity = vel_y
@@ -753,6 +782,12 @@
     [./Deff]
         type = ElementAverageValue
         variable = Deff
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./Disp]
+        type = ElementAverageValue
+        variable = Disp
         execute_on = 'initial timestep_end'
     [../]
 
