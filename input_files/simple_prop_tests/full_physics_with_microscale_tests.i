@@ -6,7 +6,17 @@
   # Washcoat thickness ~= 0.1 mm [0.01 cm] (at the thickest part)
 
   # Providing the microscale parameters below
-  micro_length = 0.01 #cm thick
+  # Here we double the thickness because the
+  # microscale balance was based on total solids.
+  # Total solids is corderite + washcoat
+  # Each has similar thickness in this case.
+  # If balance was on only washcoat solids, then
+  # the length would be different.
+  # In otherwords, because of how the balance was developed,
+  # the rate term inherently have include volume of washcoat
+  # AND volume of corderite in their estimates. Thus, we must
+  # include both volumes in the microscale to make units work.
+  micro_length = 0.02 #cm thick
   num_nodes = 5
   coord_id = 0  #0 ==> washcoat (1=cylindrical particles, 2=spherical particles)
 [] #END GlobalParams
