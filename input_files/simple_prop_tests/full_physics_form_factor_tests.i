@@ -134,6 +134,11 @@
       family = MONOMIAL
   [../]
 
+  [./Dp]
+      order = FIRST
+      family = MONOMIAL
+  [../]
+
   [./Deff]
       order = FIRST
       family = MONOMIAL
@@ -493,8 +498,34 @@
         execute_on = 'initial timestep_end'
     [../]
 
-    [./Deff_calc]
+    [./Dp_calc]
         type = SimpleGasPoreDiffusivity
+        variable = Dp
+
+        pressure = press
+        temperature = temp
+        micro_porosity = micro_pore
+        macro_porosity = pore
+        characteristic_length = dh
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        ref_diffusivity = 0.561
+        diff_length_unit = "cm"
+        diff_time_unit = "s"
+        ref_diff_temp = 473
+
+        output_length_unit = "cm"
+        output_time_unit = "min"
+
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./Deff_calc]
+        type = SimpleGasEffectivePoreDiffusivity
         variable = Deff
 
         pressure = press
@@ -515,6 +546,7 @@
 
         output_length_unit = "cm"
         output_time_unit = "min"
+        per_solids_volume = false
 
         execute_on = 'initial timestep_end'
     [../]
@@ -709,6 +741,12 @@
     [./km]
         type = ElementAverageValue
         variable = km
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./Dp]
+        type = ElementAverageValue
+        variable = Dp
         execute_on = 'initial timestep_end'
     [../]
 
