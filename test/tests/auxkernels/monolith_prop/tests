@@ -1,0 +1,7 @@
+[Tests]
+  [./monolith_prop_calc]
+    type = 'Exodiff'
+    input = 'monolith_prop_tests.i'
+    exodiff = 'monolith_prop_tests_out.e'
+  [../]
+[]
