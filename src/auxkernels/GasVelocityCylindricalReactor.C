@@ -53,7 +53,7 @@ registerMooseObject("catsApp", GasVelocityCylindricalReactor);
 InputParameters GasVelocityCylindricalReactor::validParams()
 {
     InputParameters params = AuxKernel::validParams();
-    params.addCoupledVar("porosity",0.0,"Value of bulk porosity");
+    params.addCoupledVar("porosity",0.5,"Value of bulk porosity");
     params.addRequiredCoupledVar("space_velocity","Name of the space-velocity variable (reactor volumes/time)");
     params.addRequiredCoupledVar("inlet_temperature","Name of the inlet temperature variable (in K)");
     params.addCoupledVar("inlet_pressure",101.35,"Name of the inlet pressure variable (in kPa)");
