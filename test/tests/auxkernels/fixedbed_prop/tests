@@ -1,0 +1,7 @@
+[Tests]
+  [./fixedbed_prop_calc]
+    type = 'Exodiff'
+    input = 'fixedbed_prop_tests.i'
+    exodiff = 'fixedbed_prop_tests_out.e'
+  [../]
+[]
