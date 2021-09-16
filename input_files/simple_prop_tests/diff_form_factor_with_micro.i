@@ -4,7 +4,13 @@
   dg_scheme = nipg
   sigma = 10
 
-  # Max wall thickness
+  # Maximum effective wall thickness for diffusion
+  #   This value is calculated in the MonolithMicroscaleTotalThickness kernel,
+  #   but cannot be automatically linked here due to the implementation standards
+  #   of the Microscale kernel base. Thus, users should calculate this value
+  #   first in an input file using the MonolithMicroscaleTotalThickness kernel.
+  #   Then, place that value here to use the Microscale kernels to simulate
+  #   mass-transfer and intralayer diffusion for monolith domains.
   micro_length = 0.1 #cm thick
   num_nodes = 5
   coord_id = 0  #0 ==> washcoat (1=cylindrical particles, 2=spherical particles)
@@ -208,6 +214,12 @@
 
   # hydraulic diameter for monolith # auto calc
   [./dh]
+      order = FIRST
+      family = MONOMIAL
+  [../]
+
+  # effective thickness of microscale
+  [./wt]
       order = FIRST
       family = MONOMIAL
   [../]
@@ -959,6 +971,14 @@
         execute_on = 'initial timestep_end'
     [../]
 
+    [./wt_calc]
+        type = MonolithMicroscaleTotalThickness
+        variable = wt
+        cell_density = 62   #cells/cm^2
+        channel_vol_ratio = pore
+        execute_on = 'initial timestep_end'
+    [../]
+
     [./non_pore_calc]
         type = SolidsVolumeFraction
         variable = non_pore
@@ -1254,6 +1274,12 @@
     [./dh]
         type = ElementAverageValue
         variable = dh
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./wt]
+        type = ElementAverageValue
+        variable = wt
         execute_on = 'initial timestep_end'
     [../]
 

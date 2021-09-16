@@ -1347,13 +1347,13 @@
   l_tol = 1e-6
   l_max_its = 300
 
-  start_time = -1.0
-  end_time = 102.0
-  dtmax = 0.25
+  start_time = 0
+  end_time = 60.0
+  dtmax = 10
 
   [./TimeStepper]
      type = ConstantDT
-     dt = 0.25
+     dt = 10
   [../]
 [] #END Executioner
 

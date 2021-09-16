@@ -1,0 +1,8 @@
+[Tests]
+  [./full_kinetics_with_microscale_for_monolith]
+    type = 'Exodiff'
+    input = 'full_physics_with_microscale_tests.i'
+    exodiff = 'full_physics_with_microscale_tests_out.e'
+    rel_err = 1e-5
+  [../]
+[]
