@@ -1,0 +1,8 @@
+[Tests]
+  [./all_simple_gas_prop]
+    type = 'Exodiff'
+    input = 'test_all_simple_gas_prop.i'
+    exodiff = 'test_all_simple_gas_prop_out.e'
+    rel_err = 1e-5
+  [../]
+[]
