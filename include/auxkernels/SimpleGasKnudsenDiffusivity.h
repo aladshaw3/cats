@@ -1,16 +1,20 @@
 /*!
- *  \file SimpleGasPoreDiffusivity.h
- *    \brief AuxKernel kernel to calculate pore diffusion coefficients in microscale
+ *  \file SimpleGasKnudsenDiffusivity.h
+ *    \brief AuxKernel kernel to calculate Knudsen diffusion coefficients in microscale
  *    \details This file is responsible for calculating the pore diffusivity
  *              for the microscale given some simple properties. Calculation is based
  *              diffusivities that are corrected via an Arrhenius like
  *              expression from a reference diffusivity and reference temperature.
  *              User provides input units for specific parameters and provides
- *              desired unit basis of the calculation of diffusivity.
+ *              desired unit basis of the calculation of diffusivity. This calculation
+ *              also includes an average pore size variable and the molecular weight
+ *              of the species of interest. Molecular weight must be given in g/mol.
+ *              The pore radius must be given as the characteristic_length in this
+ *              kernel. This convention reduces the need for any additional variables.
  *
  *
  *  \author Austin Ladshaw
- *  \date 09/14/2021
+ *  \date 09/16/2021
  *  \copyright This kernel was designed and built at Oak Ridge National
  *              Laboratory by Austin Ladshaw for research in catalyst
  *              performance for new vehicle technologies.
@@ -35,39 +39,32 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "SimpleGasPoreDiffusivity.h"
+#pragma once
 
-registerMooseObject("catsApp", SimpleGasPoreDiffusivity);
+#include "SimpleGasPropertiesBase.h"
 
-InputParameters SimpleGasPoreDiffusivity::validParams()
+/// SimpleGasKnudsenDiffusivity class object inherits from SimpleGasPropertiesBase object
+/** This class object inherits from the SimpleGasPropertiesBase object in the CATS framework.
+    All public and protected members of this class are required function overrides. */
+class SimpleGasKnudsenDiffusivity : public SimpleGasPropertiesBase
 {
-    InputParameters params = SimpleGasPropertiesBase::validParams();
-    params.addParam< std::string >("output_length_unit","m","Length units for mass transfer on output");
-    params.addParam< std::string >("output_time_unit","s","Time units for mass transfer on output");
+public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
 
-    return params;
-}
+    /// Required constructor for objects in MOOSE
+    SimpleGasKnudsenDiffusivity(const InputParameters & parameters);
 
-SimpleGasPoreDiffusivity::SimpleGasPoreDiffusivity(const InputParameters & parameters) :
-SimpleGasPropertiesBase(parameters),
-_output_length_unit(getParam<std::string >("output_length_unit")),
-_output_time_unit(getParam<std::string >("output_time_unit"))
-{
+protected:
+    /// Required MOOSE function override
+    /** This is the function that is called by the MOOSE framework when a calculation of the total
+        system pressure is needed. You are required to override this function for any inherited
+        AuxKernel. */
+    virtual Real computeValue() override;
 
-}
+private:
+    std::string _output_length_unit;                ///< Units of the length term in transfer coef (m, cm, mm)
+    std::string _output_time_unit;                  ///< Units of the time term in transfer coef (hr, min, s)
+    Real _molar_weight;                             ///< Molecular weight of gas-species of interest (g/mol)
 
-Real SimpleGasPoreDiffusivity::computeValue()
-{
-    // Put diffusivity into cm^2/s
-    Real Dm = _ref_diffusivity*exp(-887.5*((1/_temperature[_qp])-(1/_ref_diff_temp)));
-    Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
-    Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
-    Dm = 1/SimpleGasPropertiesBase::time_conversion(1/Dm, _diff_time_unit, "s");
-
-    Real Deff = pow(_micro_pore[_qp],1.4)*Dm;
-    // ends up in cm^2/s
-    Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
-    Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
-    Deff = 1/SimpleGasPropertiesBase::time_conversion(1/Deff, "s", _output_time_unit);
-    return Deff;
-}
+};

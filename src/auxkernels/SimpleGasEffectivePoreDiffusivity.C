@@ -65,23 +65,12 @@ _PerSolidsVolume(getParam<bool>("per_solids_volume"))
 
 Real SimpleGasEffectivePoreDiffusivity::computeValue()
 {
-    // rho [g/cm^3]
-    Real rho = _pressure[_qp]*1000/287.058/_temperature[_qp]*1000;
-    rho = rho/100/100/100;
-    // mu [g/cm/s]
-    Real mu = 0.1458*pow(_temperature[_qp],1.5)/(110.4+_temperature[_qp]);
-    // Put velocity into cm/s and char length into cm
-    Real v = SimpleGasPropertiesBase::length_conversion(_velocity[_qp], _velocity_length_unit, "cm");
-    v = 1/SimpleGasPropertiesBase::time_conversion(1/v, _velocity_time_unit, "s");
-    Real dh = SimpleGasPropertiesBase::length_conversion(_char_len[_qp], _char_len_unit, "cm");
-    Real Re = rho*v*dh/mu;
     // Put diffusivity into cm^2/s
     Real Dm = _ref_diffusivity*exp(-887.5*((1/_temperature[_qp])-(1/_ref_diff_temp)));
     Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
     Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
     Dm = 1/SimpleGasPropertiesBase::time_conversion(1/Dm, _diff_time_unit, "s");
-    Real Sc = mu/rho/Dm;
-    Real Sh = (2+(0.4*sqrt(Re)+0.06*pow(Re,0.67))*pow(Sc,0.4));
+
     Real Deff = pow(_micro_pore[_qp],1.4)*Dm;
     // ends up in cm^2/s
     Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
