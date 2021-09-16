@@ -3,30 +3,6 @@
   # 'dg_scheme' and 'sigma' are parameters for the DG kernels
   dg_scheme = nipg
   sigma = 10
-  # Washcoat thickness ~= 0.1 mm [0.01 cm] (at the thickest part)
-  #   However, the rates are based on total solids volume, thus
-  #   we do not use this as the thickness and instead use an average
-  #   total solids thickness calculated as sqrt(A1c - dh^2), where
-  #   A1c is the area of a single channel.
-
-  # Providing the microscale parameters below
-  # Here we double the thickness because the
-  # microscale balance was based on total solids.
-  # Total solids is corderite + washcoat
-  # Each has similar thickness in this case.
-  # If balance was on only washcoat solids, then
-  # the length would be different.
-  # In otherwords, because of how the balance was developed,
-  # the rate term inherently have include volume of washcoat
-  # AND volume of corderite in their estimates. Thus, we must
-  # include both volumes in the microscale to make units work.
-
-  # This thickness below is correct for reaction terms on a solids volume basis
-  #   (in any case, this doesn't really matter since we are not in a diffusion
-  #   limited regime...)
-  micro_length = 0.0363 #cm thick
-  num_nodes = 5
-  coord_id = 0  #0 ==> washcoat (1=cylindrical particles, 2=spherical particles)
 [] #END GlobalParams
 
 [Problem]
@@ -54,28 +30,7 @@
         initial_condition = 1E-15
     [../]
 
-    # 5 interior nodes inside the washcoat
-    [./O2w_0]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 1E-15
-    [../]
-    [./O2w_1]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 1E-15
-    [../]
-    [./O2w_2]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 1E-15
-    [../]
-    [./O2w_3]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 1E-15
-    [../]
-    [./O2w_4]
+    [./O2w]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1E-15
@@ -87,28 +42,7 @@
         initial_condition = 1E-15
     [../]
 
-    # 5 interior nodes inside the washcoat
-    [./COw_0]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 1E-15
-    [../]
-    [./COw_1]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 1E-15
-    [../]
-    [./COw_2]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 1E-15
-    [../]
-    [./COw_3]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 1E-15
-    [../]
-    [./COw_4]
+    [./COw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1E-15
@@ -120,52 +54,14 @@
         initial_condition = 1E-15
     [../]
 
-    # 5 interior nodes inside the washcoat
-    [./CO2w_0]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 1E-15
-    [../]
-    [./CO2w_1]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 1E-15
-    [../]
-    [./CO2w_2]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 1E-15
-    [../]
-    [./CO2w_3]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 1E-15
-    [../]
-    [./CO2w_4]
+    [./CO2w]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1E-15
     [../]
 
 ## Reaction variable list
-    # 5 interior nodes inside the washcoat
-    [./r1_0]
-        order = FIRST
-        family = MONOMIAL
-    [../]
-    [./r1_1]
-        order = FIRST
-        family = MONOMIAL
-    [../]
-    [./r1_2]
-        order = FIRST
-        family = MONOMIAL
-    [../]
-    [./r1_3]
-        order = FIRST
-        family = MONOMIAL
-    [../]
-    [./r1_4]
+    [./r1]
         order = FIRST
         family = MONOMIAL
     [../]
@@ -196,14 +92,14 @@
   [./pore]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.775
+      initial_condition = 0.3309
   [../]
 
   # non_pore = (1 - pore)  # auto calc
   [./non_pore]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.225
+      initial_condition = 0.6691
   [../]
 
   # ew value
@@ -223,7 +119,6 @@
   [./Ga]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 160
   [../]
 
   # hydraulic diameter for monolith # auto calc
@@ -256,7 +151,6 @@
   [./vel_y] # auto calc
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1011 #cm/min
   [../]
 
   [./vel_z]
@@ -299,7 +193,7 @@
     [./O2w_trans]
         type = FilmMassTransfer
         variable = O2
-        coupled = O2w_4   # couples at outer most node of microscale
+        coupled = O2w
 
         av_ratio = Ga
         rate_variable = km
@@ -307,132 +201,24 @@
     [../]
 
     # =============== Washcoat phase O2 ===============
-    # Exterior node
-    [./O2w_4_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = O2w_4
-        nodal_time_var = total_pore
-        node_id = 4
+    [./O2w_dot]
+        type = VariableCoefTimeDerivative
+        variable = O2w
+        coupled_coef = total_pore
     [../]
-    # NOTE: not completely sure about the form of this BC
-    #   The diff coef may be something else (or km may need unit conv)
-    [./O2w_4_diff_outer]
-        type = MicroscaleVariableDiffusionOuterBC
-        variable = O2w_4
-        node_id = 4
-        macro_variable = O2     #Couple with the macroscale variable here
-        lower_neighbor = O2w_3
+    [./O2_trans]
+        type = FilmMassTransfer
+        variable = O2w
+        coupled = O2
+
+        av_ratio = Ga
         rate_variable = km
-        current_diff = Deff
-        lower_diff = Deff
+        volume_frac = non_pore
     [../]
-    [./O2w_4_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = O2w_4
-        node_id = 4
-        coupled_list = 'r1_4'
-        weights = '-0.5'
-        scale = non_pore
-    [../]
-
-    # Interior node 3
-    [./O2w_3_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = O2w_3
-        nodal_time_var = total_pore
-        node_id = 3
-    [../]
-    [./O2w_3_diff]
-        type = MicroscaleVariableDiffusion
-        variable = O2w_3
-        node_id = 3
-        upper_neighbor = O2w_4
-        lower_neighbor = O2w_2
-        current_diff = Deff
-        lower_diff = Deff
-        upper_diff = Deff
-    [../]
-    [./O2w_3_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = O2w_3
-        node_id = 3
-        coupled_list = 'r1_3'
-        weights = '-0.5'
-        scale = non_pore
-    [../]
-
-    # Interior node 2
-    [./O2w_2_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = O2w_2
-        nodal_time_var = total_pore
-        node_id = 2
-    [../]
-    [./O2w_2_diff]
-        type = MicroscaleVariableDiffusion
-        variable = O2w_2
-        node_id = 2
-        upper_neighbor = O2w_3
-        lower_neighbor = O2w_1
-        current_diff = Deff
-        lower_diff = Deff
-        upper_diff = Deff
-    [../]
-    [./O2w_2_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = O2w_2
-        node_id = 2
-        coupled_list = 'r1_2'
-        weights = '-0.5'
-        scale = non_pore
-    [../]
-
-    # Interior node 1
-    [./O2w_1_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = O2w_1
-        nodal_time_var = total_pore
-        node_id = 1
-    [../]
-    [./O2w_1_diff]
-        type = MicroscaleVariableDiffusion
-        variable = O2w_1
-        node_id = 1
-        upper_neighbor = O2w_2
-        lower_neighbor = O2w_0
-        current_diff = Deff
-        lower_diff = Deff
-        upper_diff = Deff
-    [../]
-    [./O2w_1_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = O2w_1
-        node_id = 1
-        coupled_list = 'r1_1'
-        weights = '-0.5'
-        scale = non_pore
-    [../]
-
-    # Interior node 0 : BC
-    [./O2w_0_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = O2w_0
-        nodal_time_var = total_pore
-        node_id = 0
-    [../]
-    [./O2w_0_diff]
-        type = MicroscaleVariableDiffusionInnerBC
-        variable = O2w_0
-        node_id = 0
-        upper_neighbor = O2w_1
-        current_diff = Deff
-        upper_diff = Deff
-    [../]
-    [./O2w_0_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = O2w_0
-        node_id = 0
-        coupled_list = 'r1_0'
+    [./O2w_rxns]
+        type = ScaledWeightedCoupledSumFunction
+        variable = O2w
+        coupled_list = 'r1'
         weights = '-0.5'
         scale = non_pore
     [../]
@@ -462,7 +248,7 @@
     [./COw_trans]
         type = FilmMassTransfer
         variable = CO
-        coupled = COw_4   # couples at outer most node of microscale
+        coupled = COw
 
         av_ratio = Ga
         rate_variable = km
@@ -470,132 +256,24 @@
     [../]
 
     # =============== Washcoat phase CO ===============
-    # Exterior node
-    [./COw_4_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = COw_4
-        nodal_time_var = total_pore
-        node_id = 4
+    [./COw_dot]
+        type = VariableCoefTimeDerivative
+        variable = COw
+        coupled_coef = total_pore
     [../]
-    # NOTE: not completely sure about the form of this BC
-    #   The diff coef may be something else (or km may need unit conv)
-    [./COw_4_diff_outer]
-        type = MicroscaleVariableDiffusionOuterBC
-        variable = COw_4
-        node_id = 4
-        macro_variable = CO     #Couple with the macroscale variable here
-        lower_neighbor = COw_3
+    [./CO_trans]
+        type = FilmMassTransfer
+        variable = COw
+        coupled = CO
+
+        av_ratio = Ga
         rate_variable = km
-        current_diff = Deff
-        lower_diff = Deff
+        volume_frac = non_pore
     [../]
-    [./COw_4_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = COw_4
-        coupled_list = 'r1_4'
-        weights = '-1'
-        node_id = 4
-        scale = non_pore
-    [../]
-
-    # Interior node 3
-    [./COw_3_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = COw_3
-        nodal_time_var = total_pore
-        node_id = 3
-    [../]
-    [./COw_3_diff]
-        type = MicroscaleVariableDiffusion
-        variable = COw_3
-        node_id = 3
-        upper_neighbor = COw_4
-        lower_neighbor = COw_2
-        current_diff = Deff
-        lower_diff = Deff
-        upper_diff = Deff
-    [../]
-    [./COw_3_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = COw_3
-        node_id = 3
-        coupled_list = 'r1_3'
-        weights = '-1'
-        scale = non_pore
-    [../]
-
-    # Interior node 2
-    [./COw_2_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = COw_2
-        nodal_time_var = total_pore
-        node_id = 2
-    [../]
-    [./COw_2_diff]
-        type = MicroscaleVariableDiffusion
-        variable = COw_2
-        node_id = 2
-        upper_neighbor = COw_3
-        lower_neighbor = COw_1
-        current_diff = Deff
-        lower_diff = Deff
-        upper_diff = Deff
-    [../]
-    [./COw_2_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = COw_2
-        node_id = 2
-        coupled_list = 'r1_2'
-        weights = '-1'
-        scale = non_pore
-    [../]
-
-    # Interior node 1
-    [./COw_1_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = COw_1
-        nodal_time_var = total_pore
-        node_id = 1
-    [../]
-    [./COw_1_diff]
-        type = MicroscaleVariableDiffusion
-        variable = COw_1
-        node_id = 1
-        upper_neighbor = COw_2
-        lower_neighbor = COw_0
-        current_diff = Deff
-        lower_diff = Deff
-        upper_diff = Deff
-    [../]
-    [./COw_1_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = COw_1
-        node_id = 1
-        coupled_list = 'r1_1'
-        weights = '-1'
-        scale = non_pore
-    [../]
-
-    # Interior node 0 : BC
-    [./COw_0_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = COw_0
-        nodal_time_var = total_pore
-        node_id = 0
-    [../]
-    [./COw_0_diff]
-        type = MicroscaleVariableDiffusionInnerBC
-        variable = COw_0
-        node_id = 0
-        upper_neighbor = COw_1
-        current_diff = Deff
-        upper_diff = Deff
-    [../]
-    [./COw_0_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = COw_0
-        node_id = 0
-        coupled_list = 'r1_0'
+    [./COw_rxns]
+        type = ScaledWeightedCoupledSumFunction
+        variable = COw
+        coupled_list = 'r1'
         weights = '-1'
         scale = non_pore
     [../]
@@ -625,7 +303,7 @@
     [./CO2w_trans]
         type = FilmMassTransfer
         variable = CO2
-        coupled = CO2w_4    # couples at outer most node of microscale
+        coupled = CO2w
 
         av_ratio = Ga
         rate_variable = km
@@ -633,132 +311,24 @@
     [../]
 
     # =============== Washcoat phase CO2 ===============
-    # Exterior node
-    [./CO2w_4_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = CO2w_4
-        nodal_time_var = total_pore
-        node_id = 4
+    [./CO2w_dot]
+        type = VariableCoefTimeDerivative
+        variable = CO2w
+        coupled_coef = total_pore
     [../]
-    # NOTE: not completely sure about the form of this BC
-    #   The diff coef may be something else (or km may need unit conv)
-    [./CO2w_4_diff_outer]
-        type = MicroscaleVariableDiffusionOuterBC
-        variable = CO2w_4
-        node_id = 4
-        macro_variable = CO2     #Couple with the macroscale variable here
-        lower_neighbor = CO2w_3
+    [./CO2_trans]
+        type = FilmMassTransfer
+        variable = CO2w
+        coupled = CO2
+
+        av_ratio = Ga
         rate_variable = km
-        current_diff = Deff
-        lower_diff = Deff
+        volume_frac = non_pore
     [../]
-    [./CO2w_4_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = CO2w_4
-        coupled_list = 'r1_4'
-        weights = '1'
-        node_id = 4
-        scale = non_pore
-    [../]
-
-    # Interior node 3
-    [./CO2w_3_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = CO2w_3
-        nodal_time_var = total_pore
-        node_id = 3
-    [../]
-    [./CO2w_3_diff]
-        type = MicroscaleVariableDiffusion
-        variable = CO2w_3
-        node_id = 3
-        upper_neighbor = CO2w_4
-        lower_neighbor = CO2w_2
-        current_diff = Deff
-        lower_diff = Deff
-        upper_diff = Deff
-    [../]
-    [./CO2w_3_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = CO2w_3
-        node_id = 3
-        coupled_list = 'r1_3'
-        weights = '1'
-        scale = non_pore
-    [../]
-
-    # Interior node 2
-    [./CO2w_2_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = CO2w_2
-        nodal_time_var = total_pore
-        node_id = 2
-    [../]
-    [./CO2w_2_diff]
-        type = MicroscaleVariableDiffusion
-        variable = CO2w_2
-        node_id = 2
-        upper_neighbor = CO2w_3
-        lower_neighbor = CO2w_1
-        current_diff = Deff
-        lower_diff = Deff
-        upper_diff = Deff
-    [../]
-    [./CO2w_2_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = CO2w_2
-        node_id = 2
-        coupled_list = 'r1_2'
-        weights = '1'
-        scale = non_pore
-    [../]
-
-    # Interior node 1
-    [./CO2w_1_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = CO2w_1
-        nodal_time_var = total_pore
-        node_id = 1
-    [../]
-    [./CO2w_1_diff]
-        type = MicroscaleVariableDiffusion
-        variable = CO2w_1
-        node_id = 1
-        upper_neighbor = CO2w_2
-        lower_neighbor = CO2w_0
-        current_diff = Deff
-        lower_diff = Deff
-        upper_diff = Deff
-    [../]
-    [./CO2w_1_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = CO2w_1
-        node_id = 1
-        coupled_list = 'r1_1'
-        weights = '1'
-        scale = non_pore
-    [../]
-
-    # Interior node 0 : BC
-    [./CO2w_0_dot]
-        type = MicroscaleVariableCoefTimeDerivative
-        variable = CO2w_0
-        nodal_time_var = total_pore
-        node_id = 0
-    [../]
-    [./CO2w_0_diff]
-        type = MicroscaleVariableDiffusionInnerBC
-        variable = CO2w_0
-        node_id = 0
-        upper_neighbor = CO2w_1
-        current_diff = Deff
-        upper_diff = Deff
-    [../]
-    [./CO2w_0_rxns]
-        type = MicroscaleScaledWeightedCoupledSumFunction
-        variable = CO2w_0
-        node_id = 0
-        coupled_list = 'r1_0'
+    [./CO2w_rxns]
+        type = ScaledWeightedCoupledSumFunction
+        variable = CO2w
+        coupled_list = 'r1'
         weights = '1'
         scale = non_pore
     [../]
@@ -767,15 +337,15 @@
 # -------------------------------------------------------------
 
 ## ======= CO Oxidation ======
-# CO + 0.5 O2 --> CO2   @ node 4
-    [./r1_4_val]
+# CO + 0.5 O2 --> CO2
+    [./r1_val]
         type = Reaction
-        variable = r1_4
+        variable = r1
     [../]
-    [./r1_4_rx]
+    [./r1_rx]
       type = ArrheniusReaction
-      variable = r1_4
-      this_variable = r1_4
+      variable = r1
+      this_variable = r1
 
       forward_activation_energy = 235293.33281046877
       forward_pre_exponential = 1.6550871137667489e+31
@@ -785,103 +355,7 @@
 
       temperature = temp
       scale = 1.0
-      reactants = 'COw_4 O2w_4'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-# CO + 0.5 O2 --> CO2   @ node 3
-    [./r1_3_val]
-        type = Reaction
-        variable = r1_3
-    [../]
-    [./r1_3_rx]
-      type = ArrheniusReaction
-      variable = r1_3
-      this_variable = r1_3
-
-      forward_activation_energy = 235293.33281046877
-      forward_pre_exponential = 1.6550871137667489e+31
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'COw_3 O2w_3'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-# CO + 0.5 O2 --> CO2   @ node 2
-    [./r1_2_val]
-        type = Reaction
-        variable = r1_2
-    [../]
-    [./r1_2_rx]
-      type = ArrheniusReaction
-      variable = r1_2
-      this_variable = r1_2
-
-      forward_activation_energy = 235293.33281046877
-      forward_pre_exponential = 1.6550871137667489e+31
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'COw_2 O2w_2'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-# CO + 0.5 O2 --> CO2   @ node 1
-    [./r1_1_val]
-        type = Reaction
-        variable = r1_1
-    [../]
-    [./r1_1_rx]
-      type = ArrheniusReaction
-      variable = r1_1
-      this_variable = r1_1
-
-      forward_activation_energy = 235293.33281046877
-      forward_pre_exponential = 1.6550871137667489e+31
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'COw_1 O2w_1'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-# CO + 0.5 O2 --> CO2   @ node 0
-    [./r1_0_val]
-        type = Reaction
-        variable = r1_0
-    [../]
-    [./r1_0_rx]
-      type = ArrheniusReaction
-      variable = r1_0
-      this_variable = r1_0
-
-      forward_activation_energy = 235293.33281046877
-      forward_pre_exponential = 1.6550871137667489e+31
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'COw_0 O2w_0'
+      reactants = 'COw O2w'
       reactant_stoich = '1 1'
       products = ''
       product_stoich = ''
@@ -966,7 +440,7 @@
     [./Ga_calc]
         type = MonolithAreaVolumeRatio
         variable = Ga
-        cell_density = 93   #cells/cm^2
+        cell_density = 62   #cells/cm^2
         channel_vol_ratio = pore
         per_solids_volume = true
         execute_on = 'initial timestep_end'
@@ -975,7 +449,7 @@
     [./dh_calc]
         type = MonolithHydraulicDiameter
         variable = dh
-        cell_density = 93   #cells/cm^2
+        cell_density = 62   #cells/cm^2
         channel_vol_ratio = pore
         execute_on = 'initial timestep_end'
     [../]

@@ -3,7 +3,6 @@
   # 'dg_scheme' and 'sigma' are parameters for the DG kernels
   dg_scheme = nipg
   sigma = 10
-  # Washcoat thickness ~= 0.1 mm (at the thickest part)
 [] #END GlobalParams
 
 [Problem]

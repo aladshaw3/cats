@@ -3,28 +3,9 @@
   # 'dg_scheme' and 'sigma' are parameters for the DG kernels
   dg_scheme = nipg
   sigma = 10
-  # Washcoat thickness ~= 0.1 mm [0.01 cm] (at the thickest part)
-  #   However, the rates are based on total solids volume, thus
-  #   we do not use this as the thickness and instead use an average
-  #   total solids thickness calculated as sqrt(A1c - dh^2), where
-  #   A1c is the area of a single channel.
 
-  # Providing the microscale parameters below
-  # Here we double the thickness because the
-  # microscale balance was based on total solids.
-  # Total solids is corderite + washcoat
-  # Each has similar thickness in this case.
-  # If balance was on only washcoat solids, then
-  # the length would be different.
-  # In otherwords, because of how the balance was developed,
-  # the rate term inherently have include volume of washcoat
-  # AND volume of corderite in their estimates. Thus, we must
-  # include both volumes in the microscale to make units work.
-
-  # This thickness below is correct for reaction terms on a solids volume basis
-  #   (in any case, this doesn't really matter since we are not in a diffusion
-  #   limited regime...)
-  micro_length = 0.0363 #cm thick
+  # Max wall thickness
+  micro_length = 0.1 #cm thick
   num_nodes = 5
   coord_id = 0  #0 ==> washcoat (1=cylindrical particles, 2=spherical particles)
 [] #END GlobalParams
@@ -196,14 +177,14 @@
   [./pore]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.775
+      initial_condition = 0.3309
   [../]
 
   # non_pore = (1 - pore)  # auto calc
   [./non_pore]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.225
+      initial_condition = 0.6691
   [../]
 
   # ew value
@@ -223,7 +204,6 @@
   [./Ga]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 160
   [../]
 
   # hydraulic diameter for monolith # auto calc
@@ -256,7 +236,6 @@
   [./vel_y] # auto calc
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1011 #cm/min
   [../]
 
   [./vel_z]
@@ -966,7 +945,7 @@
     [./Ga_calc]
         type = MonolithAreaVolumeRatio
         variable = Ga
-        cell_density = 93   #cells/cm^2
+        cell_density = 62   #cells/cm^2
         channel_vol_ratio = pore
         per_solids_volume = true
         execute_on = 'initial timestep_end'
@@ -975,7 +954,7 @@
     [./dh_calc]
         type = MonolithHydraulicDiameter
         variable = dh
-        cell_density = 93   #cells/cm^2
+        cell_density = 62   #cells/cm^2
         channel_vol_ratio = pore
         execute_on = 'initial timestep_end'
     [../]
