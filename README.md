@@ -28,8 +28,11 @@ For example (assuming MOOSE is located in '(HOME)/projects/moose'), do the follo
 
 <code> git clone https://github.com/aladshaw3/cats.git </code>
 
-Then, you can build CATS using the 'make' commands in the '(HOME)/projects/cats' folder created. NOTE: you can
+Then, you can build CATS using the 'make' commands in the '(HOME)/projects/cats' folder created. You can
 pass the '-j4' argument to run make with multiple processors (in this case, using 4 processors).
+
+NOTE: MOOSE now builds using 'conda' environments. Your 'moose' conda environment MUST be active before
+attempting to build the source code. See https://mooseframework.inl.gov/getting_started/installation/conda.html. 
 
 <code> make -j4 </code>
 
