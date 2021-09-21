@@ -3,13 +3,7 @@
   # 'dg_scheme' and 'sigma' are parameters for the DG kernels
   dg_scheme = nipg
   sigma = 10
-  # 'transfer_rate' is a lumped parameter for mass-trasfer coefficient (km)
-  #     and the ratio of exposed area to catalyst volume (Ga).
-  #       transfer_rate = km*Ga*(1-eb)
-  #           km = 120 - 240 cm/min
-  #           Ga = 160.6 cm^-1
-  #           eb = 0.775
-  transfer_rate = 6504.3  #min^-1
+
 [] #END GlobalParams
 
 [Problem]
@@ -261,7 +255,6 @@
   [./D]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 2400.0  #Approximate dispersion
   [../]
 
   # e_b
@@ -275,7 +268,13 @@
   [./non_pore]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.225
+  [../]
+
+  # ew value
+  [./micro_pore]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.4
   [../]
 
   # total_pore = ew* (1 - pore)
@@ -283,7 +282,30 @@
   [./total_pore]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.09
+  [../]
+
+  # area to volume ratio for monolith - auto calculated in properties
+  [./Ga]
+      order = FIRST
+      family = MONOMIAL
+  [../]
+
+  # hydraulic diameter for monolith - auto calculated in properties
+  [./dh]
+      order = FIRST
+      family = MONOMIAL
+  [../]
+
+  # effective thickness of microscale
+  [./wt]
+      order = FIRST
+      family = MONOMIAL
+  [../]
+
+  # Mass transfer coefficient - auto calculated in properties
+  [./km]
+      order = FIRST
+      family = MONOMIAL
   [../]
 
   [./vel_x]
@@ -295,7 +317,6 @@
   [./vel_y]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 15110 #cm/min
   [../]
 
   [./vel_z]
@@ -336,9 +357,13 @@
         Dz = D
     [../]
     [./O2w_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = O2
         coupled = O2w
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase O2 ===============
@@ -348,9 +373,13 @@
         coupled_coef = total_pore
     [../]
     [./O2_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = O2w
         coupled = O2
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
@@ -388,9 +417,13 @@
         Dz = D
     [../]
     [./H2Ow_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = H2O
         coupled = H2Ow
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase H2O ===============
@@ -400,9 +433,13 @@
         coupled_coef = total_pore
     [../]
     [./H2O_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = H2Ow
         coupled = H2O
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
@@ -440,9 +477,13 @@
         Dz = D
     [../]
     [./NH3w_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = NH3
         coupled = NH3w
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase NH3 ===============
@@ -452,9 +493,13 @@
         coupled_coef = total_pore
     [../]
     [./NH3_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = NH3w
         coupled = NH3
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     [./NH3w_rxns]
         type = ScaledWeightedCoupledSumFunction
@@ -487,9 +532,13 @@
         Dz = D
     [../]
     [./NOxw_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = NOx
         coupled = NOxw
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase NO ===============
@@ -499,9 +548,13 @@
         coupled_coef = total_pore
     [../]
     [./NOx_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = NOxw
         coupled = NOx
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
@@ -539,9 +592,13 @@
         Dz = D
     [../]
     [./N2Ow_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = N2O
         coupled = N2Ow
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase N2O ===============
@@ -551,9 +608,13 @@
         coupled_coef = total_pore
     [../]
     [./N2O_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = N2Ow
         coupled = N2O
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     [./N2Ow_rxns]
         type = ScaledWeightedCoupledSumFunction
@@ -586,9 +647,13 @@
         Dz = D
     [../]
     [./COw_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = CO
         coupled = COw
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase CO ===============
@@ -598,9 +663,13 @@
         coupled_coef = total_pore
     [../]
     [./CO_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = COw
         coupled = CO
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
@@ -638,9 +707,13 @@
         Dz = D
     [../]
     [./CO2w_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = CO2
         coupled = CO2w
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase CO2 ===============
@@ -650,9 +723,13 @@
         coupled_coef = total_pore
     [../]
     [./CO2_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = CO2w
         coupled = CO2
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
@@ -690,9 +767,13 @@
         Dz = D
     [../]
     [./N2w_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = N2
         coupled = N2w
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase N2 ===============
@@ -702,9 +783,13 @@
         coupled_coef = total_pore
     [../]
     [./N2_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = N2w
         coupled = N2
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
@@ -742,9 +827,13 @@
         Dz = D
     [../]
     [./H2w_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = H2
         coupled = H2w
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase H2 ===============
@@ -754,9 +843,13 @@
         coupled_coef = total_pore
     [../]
     [./H2_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = H2w
         coupled = H2
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
@@ -794,9 +887,13 @@
         Dz = D
     [../]
     [./HCw_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = HC
         coupled = HCw
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase HC ===============
@@ -806,9 +903,13 @@
         coupled_coef = total_pore
     [../]
     [./HC_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = HCw
         coupled = HC
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
@@ -1415,6 +1516,100 @@
       type = FunctionAux
       variable = temp
       function = data_fun
+    [../]
+
+    [./Ga_calc]
+        type = MonolithAreaVolumeRatio
+        variable = Ga
+        cell_density = 93   #cells/cm^2
+        channel_vol_ratio = pore
+        per_solids_volume = true
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./dh_calc]
+        type = MonolithHydraulicDiameter
+        variable = dh
+        cell_density = 93   #cells/cm^2
+        channel_vol_ratio = pore
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./wt_calc]
+        type = MonolithMicroscaleTotalThickness
+        variable = wt
+        cell_density = 93   #cells/cm^2
+        channel_vol_ratio = pore
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./non_pore_calc]
+        type = SolidsVolumeFraction
+        variable = non_pore
+        porosity = pore
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./total_pore_calc]
+        type = MicroscalePoreVolumePerTotalVolume
+        variable = total_pore
+        porosity = pore
+        microscale_porosity = micro_pore
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./km_calc]
+        type = SimpleGasMonolithMassTransCoef
+        variable = km
+
+        pressure = press
+        temperature = temp
+        micro_porosity = micro_pore
+        macro_porosity = pore
+        characteristic_length = dh
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        ref_diffusivity = 0.561
+        diff_length_unit = "cm"
+        diff_time_unit = "s"
+        ref_diff_temp = 473
+
+        output_length_unit = "cm"
+        output_time_unit = "min"
+
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./Disp_calc]
+        type = SimpleGasDispersion
+        variable = D
+
+        pressure = press
+        temperature = temp
+        micro_porosity = micro_pore
+        macro_porosity = pore
+
+        # NOTE: For this calculation, use bed diameter as char_length
+        characteristic_length = 2
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        ref_diffusivity = 0.561
+        diff_length_unit = "cm"
+        diff_time_unit = "s"
+        ref_diff_temp = 473
+
+        output_length_unit = "cm"
+        output_time_unit = "min"
+
+        execute_on = 'initial timestep_end'
     [../]
 
 [] #END AuxKernels
