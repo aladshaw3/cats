@@ -231,7 +231,7 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'HCw'
-         pre_exponentials = '6.56E+10'
+         pre_exponentials = '0'
          activation_energies = '0'
      [../]
   [../]
@@ -385,12 +385,12 @@
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
     # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # iso-octane ==> x = 8, y = 18, z = 0
+    # 1-propanol ==> x = 3, y = 8, z = 1
     [./O2w_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = O2w
         coupled_list = 'r1 r2 r15 r3'
-        weights = '-0.5 -0.5 -0.25 -12.5'
+        weights = '-0.5 -0.5 -0.25 -4.5'
         scale = non_pore
     [../]
 
@@ -445,12 +445,12 @@
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
     # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # iso-octane ==> x = 8, y = 18, z = 0
+    # 1-propanol ==> x = 3, y = 8, z = 1
     [./H2Ow_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = H2Ow
         coupled_list = 'r2 r8 r11 r6 r7 r14 r15 r3 r10 r12'
-        weights = '1 -1.5 -1 1 1 1 1.5 9 9 -8'
+        weights = '1 -1.5 -1 1 1 1 1.5 4 4 -2'
         scale = non_pore
     [../]
 
@@ -560,12 +560,12 @@
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
     # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # iso-octane ==> x = 8, y = 18, z = 0
+    # 1-propanol ==> x = 3, y = 8, z = 1
     [./NOxw_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = NOxw
         coupled_list = 'r4 r5 r8 r6 r7 r14 r15 r10'
-        weights = '-1 -2 -1 -1 -1 -2 -1 -25'
+        weights = '-1 -2 -1 -1 -1 -2 -1 -9'
         scale = non_pore
     [../]
 
@@ -675,12 +675,12 @@
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
     # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # iso-octane ==> x = 8, y = 18, z = 0
+    # 1-propanol ==> x = 3, y = 8, z = 1
     [./COw_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = COw
         coupled_list = 'r1 r4 r5 r8 r11 r12'
-        weights = '-1 -1 -1 -2.5 -1 8'
+        weights = '-1 -1 -1 -2.5 -1 3'
         scale = non_pore
     [../]
 
@@ -735,12 +735,12 @@
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
     # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # iso-octane ==> x = 8, y = 18, z = 0
+    # 1-propanol ==> x = 3, y = 8, z = 1
     [./CO2w_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = CO2w
         coupled_list = 'r1 r4 r5 r8 r11 r3 r10'
-        weights = '1 1 1 2.5 1 8 8'
+        weights = '1 1 1 2.5 1 3 3'
         scale = non_pore
     [../]
 
@@ -795,12 +795,12 @@
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
     # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # iso-octane ==> x = 8, y = 18, z = 0
+    # 1-propanol ==> x = 3, y = 8, z = 1
     [./N2w_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = N2w
         coupled_list = 'r4 r7 r15 r10'
-        weights = '0.5 0.5 1 12.5'
+        weights = '0.5 0.5 1 4.5'
         scale = non_pore
     [../]
 
@@ -855,12 +855,12 @@
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
     # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # iso-octane ==> x = 8, y = 18, z = 0
+    # 1-propanol ==> x = 3, y = 8, z = 1
     [./H2w_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = H2w
         coupled_list = 'r2 r11 r6 r7 r14 r12'
-        weights = '-1 1 -2.5 -1 -1 17'
+        weights = '-1 1 -2.5 -1 -1 6'
         scale = non_pore
     [../]
 
@@ -915,7 +915,7 @@
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
     # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # iso-octane ==> x = 8, y = 18, z = 0
+    # 1-propanol ==> x = 3, y = 8, z = 1
     [./HCw_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = HCw
@@ -1196,8 +1196,8 @@
       variable = r3
       this_variable = r3
 
-      forward_activation_energy = 123778.07841100253
-      forward_pre_exponential = 2.0278118615710487e+18
+      forward_activation_energy = 118372.7014092472
+      forward_pre_exponential = 3.552072387087877e+18
 
       #forward_activation_energy = 0
       #forward_pre_exponential = 0
@@ -1224,8 +1224,8 @@
       variable = r10
       this_variable = r10
 
-      forward_activation_energy = 276722.9558304948
-      forward_pre_exponential = 1.3543644057580242e+29
+      forward_activation_energy = 221566.45460992216
+      forward_pre_exponential = 4.592122512925783e+28
 
       #forward_activation_energy = 0
       #forward_pre_exponential = 0
@@ -1252,8 +1252,8 @@
       variable = r12
       this_variable = r12
 
-      forward_activation_energy = 169734.3143765249
-      forward_pre_exponential = 6.8117e+19
+      forward_activation_energy = 105210.01500049492
+      forward_pre_exponential = 8.8431702008771064e+14
 
       #forward_activation_energy = 0
       #forward_pre_exponential = 0
@@ -1294,7 +1294,7 @@
      variable = R_HC
      temperature = temp
      coupled_list = 'HCw'
-     pre_exponentials = '6.56E+10'
+     pre_exponentials = '0'
      activation_energies = '0'
    [../]
 
@@ -1605,7 +1605,7 @@
 [Functions]
   [./data_fun]
     type = PiecewiseMultilinear
-    data_file = iso-octane_temperature.txt
+    data_file = 1-propanol_temperature.txt
   [../]
 
 []
@@ -1623,7 +1623,7 @@
         uz = vel_z
         pressure = press
         temperature = temp
-        inlet_ppm = 7300
+        inlet_ppm = 7100
     [../]
     [./O2_FluxOut]
         type = DGPoreConcFluxBC
@@ -1820,7 +1820,7 @@
     [../]
 
     # ============== HC BCs ================
-    # iso-octane ==> x = 8, y = 18, z = 0
+    # 1-propanol ==> x = 3, y = 8, z = 1
     #   inlet_ppm = 3000 / x
     [./HC_FluxIn]
         type = DGPoreConcFluxBC_ppm
@@ -1832,7 +1832,7 @@
         uz = vel_z
         pressure = press
         temperature = temp
-        inlet_ppm = 375
+        inlet_ppm = 1000
     [../]
     [./HC_FluxOut]
         type = DGPoreConcFluxBC

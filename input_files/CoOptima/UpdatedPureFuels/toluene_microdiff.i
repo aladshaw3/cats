@@ -733,8 +733,8 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'COw_n0'
-         pre_exponentials = '30.9'
-         activation_energies = '-28431.5'
+         pre_exponentials = '2.59'
+         activation_energies = '-36284.4'
      [../]
   [../]
 
@@ -745,8 +745,8 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'COw_n1'
-         pre_exponentials = '30.9'
-         activation_energies = '-28431.5'
+         pre_exponentials = '2.59'
+         activation_energies = '-36284.4'
      [../]
   [../]
 
@@ -757,8 +757,8 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'COw_n2'
-         pre_exponentials = '30.9'
-         activation_energies = '-28431.5'
+         pre_exponentials = '2.59'
+         activation_energies = '-36284.4'
      [../]
   [../]
 
@@ -769,8 +769,8 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'COw_n3'
-         pre_exponentials = '30.9'
-         activation_energies = '-28431.5'
+         pre_exponentials = '2.59'
+         activation_energies = '-36284.4'
      [../]
   [../]
 
@@ -781,8 +781,8 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'COw_n4'
-         pre_exponentials = '30.9'
-         activation_energies = '-28431.5'
+         pre_exponentials = '2.59'
+         activation_energies = '-36284.4'
      [../]
   [../]
 
@@ -4396,8 +4396,8 @@
        variable = R_CO_n0
        temperature = temp
        coupled_list = 'COw_n0'
-       pre_exponentials = '30.9'
-       activation_energies = '-28431.5'
+       pre_exponentials = '2.59'
+       activation_energies = '-36284.4'
      [../]
 
      [./R_CO_n1_eq]
@@ -4409,8 +4409,8 @@
        variable = R_CO_n1
        temperature = temp
        coupled_list = 'COw_n1'
-       pre_exponentials = '30.9'
-       activation_energies = '-28431.5'
+       pre_exponentials = '2.59'
+       activation_energies = '-36284.4'
      [../]
 
      [./R_CO_n2_eq]
@@ -4422,8 +4422,8 @@
        variable = R_CO_n2
        temperature = temp
        coupled_list = 'COw_n2'
-       pre_exponentials = '30.9'
-       activation_energies = '-28431.5'
+       pre_exponentials = '2.59'
+       activation_energies = '-36284.4'
      [../]
 
      [./R_CO_n3_eq]
@@ -4435,8 +4435,8 @@
        variable = R_CO_n3
        temperature = temp
        coupled_list = 'COw_n3'
-       pre_exponentials = '30.9'
-       activation_energies = '-28431.5'
+       pre_exponentials = '2.59'
+       activation_energies = '-36284.4'
      [../]
 
      [./R_CO_n4_eq]
@@ -4448,8 +4448,8 @@
        variable = R_CO_n4
        temperature = temp
        coupled_list = 'COw_n4'
-       pre_exponentials = '30.9'
-       activation_energies = '-28431.5'
+       pre_exponentials = '2.59'
+       activation_energies = '-36284.4'
      [../]
 
 # ============= HC Term =============
