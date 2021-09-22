@@ -383,14 +383,14 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # toluene ==> x = 7, y = 8, z = 0
+    # 1-hexene ==> x = 6, y = 12, z = 0
     [./O2w_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = O2w
-        coupled_list = 'r1 r2 r15 r3 r12'
-        weights = '-0.5 -0.5 -0.25 -9 0'
+        coupled_list = 'r1 r2 r15 r3'
+        weights = '-0.5 -0.5 -0.25 -9'
         scale = non_pore
     [../]
 
@@ -443,14 +443,14 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # toluene ==> x = 7, y = 8, z = 0
+    # 1-hexene ==> x = 6, y = 12, z = 0
     [./H2Ow_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = H2Ow
         coupled_list = 'r2 r8 r11 r6 r7 r14 r15 r3 r10 r12'
-        weights = '1 -1.5 -1 1 1 1 1.5 4 4 -7'
+        weights = '1 -1.5 -1 1 1 1 1.5 6 6 -6'
         scale = non_pore
     [../]
 
@@ -558,9 +558,9 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # toluene ==> x = 7, y = 8, z = 0
+    # 1-hexene ==> x = 6, y = 12, z = 0
     [./NOxw_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = NOxw
@@ -673,14 +673,14 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # toluene ==> x = 7, y = 8, z = 0
+    # 1-hexene ==> x = 6, y = 12, z = 0
     [./COw_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = COw
         coupled_list = 'r1 r4 r5 r8 r11 r12'
-        weights = '-1 -1 -1 -2.5 -1 7'
+        weights = '-1 -1 -1 -2.5 -1 6'
         scale = non_pore
     [../]
 
@@ -733,14 +733,14 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # toluene ==> x = 7, y = 8, z = 0
+    # 1-hexene ==> x = 6, y = 12, z = 0
     [./CO2w_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = CO2w
         coupled_list = 'r1 r4 r5 r8 r11 r3 r10'
-        weights = '1 1 1 2.5 1 7 7'
+        weights = '1 1 1 2.5 1 6 6'
         scale = non_pore
     [../]
 
@@ -793,9 +793,9 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # toluene ==> x = 7, y = 8, z = 0
+    # 1-hexene ==> x = 6, y = 12, z = 0
     [./N2w_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = N2w
@@ -853,14 +853,14 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # toluene ==> x = 7, y = 8, z = 0
+    # 1-hexene ==> x = 6, y = 12, z = 0
     [./H2w_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = H2w
         coupled_list = 'r2 r11 r6 r7 r14 r12'
-        weights = '-1 1 -2.5 -1 -1 11'
+        weights = '-1 1 -2.5 -1 -1 12'
         scale = non_pore
     [../]
 
@@ -913,9 +913,9 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
-    # toluene ==> x = 7, y = 8, z = 0
+    # 1-hexene ==> x = 6, y = 12, z = 0
     [./HCw_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = HCw
@@ -1236,7 +1236,7 @@
     [../]
 
 ## ======= HC Steam Reforming Rxn ======
-# CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+# CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     [./r12_val]
         type = Reaction
         variable = r12
@@ -1596,8 +1596,9 @@
 [Functions]
   [./data_fun]
     type = PiecewiseMultilinear
-    data_file = toluene_temperature.txt
+    data_file = 1-hexene_temperature.txt
   [../]
+
 []
 
 [BCs]
@@ -1613,7 +1614,7 @@
         uz = vel_z
         pressure = press
         temperature = temp
-        inlet_ppm = 6500
+        inlet_ppm = 7100
     [../]
     [./O2_FluxOut]
         type = DGPoreConcFluxBC
@@ -1810,7 +1811,7 @@
     [../]
 
     # ============== HC BCs ================
-    # toluene ==> x = 7, y = 8, z = 0
+    # 1-hexene ==> x = 6, y = 12, z = 0
     #   inlet_ppm = 3000 / x
     [./HC_FluxIn]
         type = DGPoreConcFluxBC_ppm
@@ -1822,7 +1823,7 @@
         uz = vel_z
         pressure = press
         temperature = temp
-        inlet_ppm = 428.571
+        inlet_ppm = 500
     [../]
     [./HC_FluxOut]
         type = DGPoreConcFluxBC
