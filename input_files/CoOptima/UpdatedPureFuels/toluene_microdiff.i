@@ -1002,7 +1002,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./O2w_4_rxns]
@@ -1033,7 +1033,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./O2w_3_rxns]
@@ -1064,7 +1064,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./O2w_2_rxns]
@@ -1095,7 +1095,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./O2w_1_rxns]
@@ -1124,7 +1124,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./O2w_0_rxns]
@@ -1189,7 +1189,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./H2Ow_4_rxns]
@@ -1220,7 +1220,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./H2Ow_3_rxns]
@@ -1251,7 +1251,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./H2Ow_2_rxns]
@@ -1282,7 +1282,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./H2Ow_1_rxns]
@@ -1311,7 +1311,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./H2Ow_0_rxns]
@@ -1536,7 +1536,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./NOxw_4_rxns]
@@ -1567,7 +1567,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./NOxw_3_rxns]
@@ -1598,7 +1598,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./NOxw_2_rxns]
@@ -1629,7 +1629,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./NOxw_1_rxns]
@@ -1658,7 +1658,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./NOxw_0_rxns]
@@ -1883,7 +1883,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./COw_4_rxns]
@@ -1914,7 +1914,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./COw_3_rxns]
@@ -1945,7 +1945,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./COw_2_rxns]
@@ -1976,7 +1976,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./COw_1_rxns]
@@ -2005,7 +2005,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./COw_0_rxns]
@@ -2069,7 +2069,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./CO2w_4_rxns]
@@ -2100,7 +2100,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./CO2w_3_rxns]
@@ -2131,7 +2131,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./CO2w_2_rxns]
@@ -2162,7 +2162,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./CO2w_1_rxns]
@@ -2191,7 +2191,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./CO2w_0_rxns]
@@ -2255,7 +2255,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./N2w_4_rxns]
@@ -2286,7 +2286,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./N2w_3_rxns]
@@ -2317,7 +2317,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./N2w_2_rxns]
@@ -2348,7 +2348,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./N2w_1_rxns]
@@ -2377,7 +2377,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./N2w_0_rxns]
@@ -2441,7 +2441,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./H2w_4_rxns]
@@ -2472,7 +2472,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./H2w_3_rxns]
@@ -2503,7 +2503,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./H2w_2_rxns]
@@ -2534,7 +2534,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./H2w_1_rxns]
@@ -2563,7 +2563,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./H2w_0_rxns]
@@ -2627,7 +2627,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./HCw_4_rxns]
@@ -2658,7 +2658,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./HCw_3_rxns]
@@ -2689,7 +2689,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./HCw_2_rxns]
@@ -2720,7 +2720,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./HCw_1_rxns]
@@ -2749,7 +2749,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./HCw_0_rxns]
