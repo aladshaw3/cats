@@ -1263,18 +1263,23 @@ class Isothermal_Monolith_Simulator(object):
         elif nearest_time_index == len(self.model.t):
             next_nearest_time_index = len(self.model.t)-1
         else:
-            if self.model.t[nearest_time_index] >= time:
+            #if self.model.t[nearest_time_index] >= time:
+            if self.model.t.at(nearest_time_index) >= time:
                 next_nearest_time_index = nearest_time_index - 1
             else:
                 next_nearest_time_index = nearest_time_index + 1
 
-        z_dist = (self.model.z[nearest_loc_index] - loc)
-        t_dist = (self.model.t[nearest_time_index] - time)
-        z_slope = -(var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[nearest_time_index]] - var[spec,age,temp,self.model.z[next_nearest_loc_index],self.model.t[nearest_time_index]])/(self.model.z[nearest_loc_index] - (self.model.z[next_nearest_loc_index] + eps) )
-        t_slope = -(var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[nearest_time_index]] - var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[next_nearest_time_index]])/(self.model.t[nearest_time_index] - (self.model.t[next_nearest_time_index] + eps) )
+        #z_dist = (self.model.z[nearest_loc_index] - loc)
+        z_dist = (self.model.z.at(nearest_loc_index) - loc)
+        #t_dist = (self.model.t[nearest_time_index] - time)
+        t_dist = (self.model.t.at(nearest_time_index) - time)
+        #z_slope = -(var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[nearest_time_index]] - var[spec,age,temp,self.model.z[next_nearest_loc_index],self.model.t[nearest_time_index]])/(self.model.z[nearest_loc_index] - (self.model.z[next_nearest_loc_index] + eps) )
+        z_slope = -(var[spec,age,temp,self.model.z.at(nearest_loc_index),self.model.t.at(nearest_time_index)] - var[spec,age,temp,self.model.z.at(next_nearest_loc_index),self.model.t.at(nearest_time_index)])/(self.model.z.at(nearest_loc_index) - (self.model.z.at(next_nearest_loc_index) + eps) )
+        #t_slope = -(var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[nearest_time_index]] - var[spec,age,temp,self.model.z[nearest_loc_index],self.model.t[next_nearest_time_index]])/(self.model.t[nearest_time_index] - (self.model.t[next_nearest_time_index] + eps) )
+        t_slope = -(var[spec,age,temp,self.model.z.at(nearest_loc_index),self.model.t.at(nearest_time_index)] - var[spec,age,temp,self.model.z.at(nearest_loc_index),self.model.t.at(next_nearest_time_index)])/(self.model.t.at(nearest_time_index) - (self.model.t.at(next_nearest_time_index) + eps) )
 
-        loc_val = self.model.z[nearest_loc_index]
-        time_val = self.model.t[nearest_time_index]
+        loc_val = self.model.z.at(nearest_loc_index)
+        time_val = self.model.t.at(nearest_time_index)
 
         return (var[spec,age,temp,loc_val,time_val] + z_slope*z_dist + t_slope*t_dist)
 
@@ -1371,7 +1376,8 @@ class Isothermal_Monolith_Simulator(object):
 
     # Edge constraint for central differencing
     def bulk_edge_constraint(self, m, gas, age, temp, t):
-        return m.dCb_dz[gas, age, temp, m.z[-1], t] == (m.Cb[gas, age, temp, m.z[-1], t] - m.Cb[gas, age, temp, m.z[-2], t])/(m.z[-1]-m.z[-2])
+        #return m.dCb_dz[gas, age, temp, m.z[-1], t] == (m.Cb[gas, age, temp, m.z[-1], t] - m.Cb[gas, age, temp, m.z[-2], t])/(m.z[-1]-m.z[-2])
+        return m.dCb_dz[gas, age, temp, m.z.at(-1), t] == (m.Cb[gas, age, temp, m.z.at(-1), t] - m.Cb[gas, age, temp, m.z.at(-2), t])/(m.z.at(-1)-m.z.at(-2))
 
     # Objective function
     def norm_objective(self, m):
@@ -4580,8 +4586,10 @@ class Isothermal_Monolith_Simulator(object):
             if time not in self.model.t:
                 print("WARNING: Given time is not a point in the simulation. Updating to nearest time")
                 nearest_time_index = self.model.t.find_nearest_index(time)
-                if self.model.t[nearest_time_index] not in true_time_list:
-                    true_time_list.append(self.model.t[nearest_time_index])
+                #if self.model.t[nearest_time_index] not in true_time_list:
+                #    true_time_list.append(self.model.t[nearest_time_index])
+                if self.model.t.at(nearest_time_index) not in true_time_list:
+                    true_time_list.append(self.model.t.at(nearest_time_index))
             else:
                 if time not in true_time_list:
                     true_time_list.append(time)

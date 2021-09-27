@@ -312,7 +312,8 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
     # Edge constraint for central differencing
     def temp_edge_constraint(self, m, age, temp, t):
-        return m.dT_dz[age, temp, m.z[-1], t] == (m.T[age, temp, m.z[-1], t] - m.T[age, temp, m.z[-2], t])/(m.z[-1]-m.z[-2])
+        #return m.dT_dz[age, temp, m.z[-1], t] == (m.T[age, temp, m.z[-1], t] - m.T[age, temp, m.z[-2], t])/(m.z[-1]-m.z[-2])
+        return m.dT_dz[age, temp, m.z.at(-1), t] == (m.T[age, temp, m.z.at(-1), t] - m.T[age, temp, m.z.at(-2), t])/(m.z.at(-1)-m.z.at(-2))
 
     # Edge constraint for catalyst temperature at boundaries
     def temp_cat_edge_back(self, m, age, temp, t):
@@ -1690,8 +1691,10 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             if time not in self.model.t:
                 print("WARNING: Given time is not a point in the simulation. Updating to nearest time")
                 nearest_time_index = self.model.t.find_nearest_index(time)
-                if self.model.t[nearest_time_index] not in true_time_list:
-                    true_time_list.append(self.model.t[nearest_time_index])
+                #if self.model.t[nearest_time_index] not in true_time_list:
+                #    true_time_list.append(self.model.t[nearest_time_index])
+                if self.model.t.at(nearest_time_index) not in true_time_list:
+                    true_time_list.append(self.model.t.at(nearest_time_index))
             else:
                 if time not in true_time_list:
                     true_time_list.append(time)
