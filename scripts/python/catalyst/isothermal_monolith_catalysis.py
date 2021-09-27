@@ -1253,7 +1253,8 @@ class Isothermal_Monolith_Simulator(object):
         elif nearest_loc_index == len(self.model.z):
             next_nearest_loc_index = len(self.model.z)-1
         else:
-            if self.model.z[nearest_loc_index] >= loc:
+            #if self.model.z[nearest_loc_index] >= loc:
+            if self.model.z.at(nearest_loc_index) >= loc:
                 next_nearest_loc_index = nearest_loc_index - 1
             else:
                 next_nearest_loc_index = nearest_loc_index + 1
@@ -4482,8 +4483,10 @@ class Isothermal_Monolith_Simulator(object):
             if loc not in self.model.z:
                 print("WARNING: Given location is not a node in the mesh. Updating to nearest node")
                 nearest_loc_index = self.model.z.find_nearest_index(loc)
-                if self.model.z[nearest_loc_index] not in true_loc_list:
-                    true_loc_list.append(self.model.z[nearest_loc_index])
+                #if self.model.z[nearest_loc_index] not in true_loc_list:
+                #    true_loc_list.append(self.model.z[nearest_loc_index])
+                if self.model.z.at(nearest_loc_index) not in true_loc_list:
+                    true_loc_list.append(self.model.z.at(nearest_loc_index))
             else:
                 if loc not in true_loc_list:
                     true_loc_list.append(loc)
@@ -4709,7 +4712,8 @@ class Isothermal_Monolith_Simulator(object):
         if loc not in self.model.z:
             print("WARNING: Given location is not a node in the mesh. Updating to nearest node")
             nearest_loc_index = self.model.z.find_nearest_index(loc)
-            true_loc = self.model.z[nearest_loc_index]
+            #true_loc = self.model.z[nearest_loc_index]
+            true_loc = self.model.z.at(nearest_loc_index)
 
         #Check file name and type
         if file_name == "":

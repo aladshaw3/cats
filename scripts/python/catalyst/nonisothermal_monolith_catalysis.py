@@ -1601,8 +1601,10 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
             if loc not in self.model.z:
                 print("WARNING: Given location is not a node in the mesh. Updating to nearest node")
                 nearest_loc_index = self.model.z.find_nearest_index(loc)
-                if self.model.z[nearest_loc_index] not in true_loc_list:
-                    true_loc_list.append(self.model.z[nearest_loc_index])
+                #if self.model.z[nearest_loc_index] not in true_loc_list:
+                #    true_loc_list.append(self.model.z[nearest_loc_index])
+                if self.model.z.at(nearest_loc_index) not in true_loc_list:
+                    true_loc_list.append(self.model.z.at(nearest_loc_index))
             else:
                 if loc not in true_loc_list:
                     true_loc_list.append(loc)
