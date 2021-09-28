@@ -938,8 +938,14 @@
       variable = r1
       this_variable = r1
 
+      #forward_activation_energy = 235293.33281046877
+      #forward_pre_exponential = 1.6550871137667489e+31
+
+      #forward_activation_energy = 105293.33281046877
+      #forward_pre_exponential = 3.6550871137667489e+17
+
       forward_activation_energy = 235293.33281046877
-      forward_pre_exponential = 1.6550871137667489e+31
+      forward_pre_exponential = 1.6550871137667489e+29
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1729,7 +1735,7 @@
         uz = vel_z
         pressure = press
         temperature = temp
-        inlet_ppm = 5000
+        inlet_ppm = 5200
     [../]
     [./CO_FluxOut]
         type = DGPoreConcFluxBC
