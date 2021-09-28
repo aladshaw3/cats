@@ -231,7 +231,7 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'HCw'
-         pre_exponentials = '3.27E+10'
+         pre_exponentials = '6.56E+10'
          activation_energies = '0'
      [../]
   [../]
@@ -1220,8 +1220,8 @@
       variable = r3
       this_variable = r3
 
-      forward_activation_energy = 204704.19832103234
-      forward_pre_exponential = 4.689916847226846e+26
+      forward_activation_energy = 153778.07841100253
+      forward_pre_exponential = 8.2278118615710487e+21
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1245,8 +1245,8 @@
       variable = r10
       this_variable = r10
 
-      forward_activation_energy = 344704.19832103234
-      forward_pre_exponential = 2.189916847226846e+37
+      forward_activation_energy = 360722.9558304948
+      forward_pre_exponential = 2.3543644057580242e+39
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1270,8 +1270,8 @@
       variable = r12
       this_variable = r12
 
-      forward_activation_energy = 156610.55181420766
-      forward_pre_exponential = 9.8429782328496848e+18
+      forward_activation_energy = 199734.3143765249
+      forward_pre_exponential = 6.8117e+22
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1309,8 +1309,11 @@
       variable = R_HC
       temperature = temp
       coupled_list = 'HCw'
-      pre_exponentials = '3.27E+10'
-      activation_energies = '0'
+      #pre_exponentials = '6.56E+10'
+      #activation_energies = '0'
+
+      pre_exponentials = '1.21E-1'
+      activation_energies = '-83981'
     [../]
 
 [] #END Kernels
