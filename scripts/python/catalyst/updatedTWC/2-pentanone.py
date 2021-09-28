@@ -4,17 +4,17 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 # Give x, y, z for the HC (CxHyOz)
-HC_name = "2-butanone"
-x = 4
-y = 8
+HC_name = "2-pentanone"
+x = 5
+y = 10
 z = 1
 
 O2_in = 6800
 CO2_in = 130000
 H2O_in = 130000
-CO_in = 5000    #5070
+CO_in = 5200    #5200
 H2_in = 1670
-NO_in = 1070    #1040
+NO_in = 1070
 NH3_in = 0
 N2O_in = 0
 HC_in = 3000/x
@@ -26,7 +26,7 @@ custom_zaxis = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,
 data = naively_read_data_file("inputfiles/"+HC_name+"_lightoff_history.txt",factor=3)
 temp_data = naively_read_data_file("inputfiles/"+HC_name+"_temp_history.txt",factor=3)
 
-time_list = time_point_selector(data["time"], data, end_time=50)
+time_list = time_point_selector(data["time"], data, end_time=65)
 
 sim = Isothermal_Monolith_Simulator()
 sim.add_axial_dim(point_list=custom_zaxis)
@@ -176,7 +176,7 @@ r15 = {"parameters": {"A": 1.0E+41, "E": 300000},
 
 # HC oxidation
 # CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
-r3 = {"parameters": {"A": 9.552072387087877e+18, "E": 118372.7014092472},
+r3 = {"parameters": {"A": 8.289972387087877e+19, "E": 130209.7737},
           "mol_reactants": {"HC": 1, "O2": (x + y/4 - z/2)},
           "mol_products": {"H2O": y/2, "CO2": x},
           "rxn_orders": {"HC": 1, "O2": 1}
@@ -184,7 +184,7 @@ r3 = {"parameters": {"A": 9.552072387087877e+18, "E": 118372.7014092472},
 
 # HC NO reduction
 # CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-r10 = {"parameters": {"A": 1.592122512925783e+28, "E": 221566.45460992216},
+r10 = {"parameters": {"A": 3.273822512925783e+28, "E": 230582.46},
           "mol_reactants": {"HC": 1, "NO": (2*x + y/2 - z)},
           "mol_products": {"H2O": y/2, "CO2": x},
           "rxn_orders": {"HC": 1, "NO": 1}
@@ -192,7 +192,7 @@ r10 = {"parameters": {"A": 1.592122512925783e+28, "E": 221566.45460992216},
 
 # HC Steam Reforming
 # CxHyOz + (x-z) H2O --> x CO + (x + (y/2) - z) H2
-r12 = {"parameters": {"A": 8.8431e+14, "E": 105210},
+r12 = {"parameters": {"A": 1061117785054690.6, "E": 108372.82},
           "mol_reactants": {"HC": 1, "H2O": x - z},
           "mol_products": {"CO": x, "H2": (x + y/2 - z)},
           "rxn_orders": {"HC": 1, "H2O": 1}
