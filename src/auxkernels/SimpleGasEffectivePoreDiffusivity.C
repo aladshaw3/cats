@@ -71,7 +71,7 @@ Real SimpleGasEffectivePoreDiffusivity::computeValue()
     Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
     Dm = 1/SimpleGasPropertiesBase::time_conversion(1/Dm, _diff_time_unit, "s");
 
-    Real Deff = pow(_micro_pore[_qp],1.4)*Dm;
+    Real Deff = pow(_micro_pore[_qp],_eff_diff_factor)*Dm;
     // ends up in cm^2/s
     Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
     Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);

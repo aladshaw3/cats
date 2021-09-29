@@ -76,7 +76,7 @@ Real SimpleGasSphericalMassTransCoef::computeValue()
     Dm = 1/SimpleGasPropertiesBase::time_conversion(1/Dm, _diff_time_unit, "s");
     Real Sc = mu/rho/Dm;
     Real Sh = (2+(0.4*sqrt(Re)+0.06*pow(Re,0.67))*pow(Sc,0.4));
-    Real Deff = pow(_micro_pore[_qp],1.4)*Dm;
+    Real Deff = pow(_micro_pore[_qp],_eff_diff_factor)*Dm;
 
     // ends up in cm/s
     Real km = Sh*Deff/dh;

@@ -58,6 +58,8 @@ InputParameters SimpleGasPropertiesBase::validParams()
     params.addParam< std::string >("diff_time_unit","s","Time units for diffusivity");
     params.addParam< Real >("ref_diff_temp",273.0,"Reference temperature value for diffusivity (K)");
 
+    params.addParam< Real >("effective_diffusivity_factor",1.4,"Factor applied to pore diffusivity to estimate effective diffusion: Range (1,2)");
+
     return params;
 }
 
@@ -75,9 +77,13 @@ _velocity_time_unit(getParam<std::string >("vel_time_unit")),
 _ref_diffusivity(getParam< Real >("ref_diffusivity")),
 _diff_length_unit(getParam<std::string >("diff_length_unit")),
 _diff_time_unit(getParam<std::string >("diff_time_unit")),
-_ref_diff_temp(getParam< Real >("ref_diff_temp"))
+_ref_diff_temp(getParam< Real >("ref_diff_temp")),
+_eff_diff_factor(getParam< Real >("effective_diffusivity_factor"))
 {
-
+    if (_eff_diff_factor < 1.0)
+      _eff_diff_factor = 1.0;
+    if (_eff_diff_factor > 2.0)
+      _eff_diff_factor = 2.0;
 }
 
 void SimpleGasPropertiesBase::unsupported_conversion(std::string from, std::string to)
@@ -149,7 +155,7 @@ Real SimpleGasPropertiesBase::computeValue()
     //    Conversions are done unit-by-unit. After each conversion
     //      you use the updated value. For inversion conversions,
     //      pass the inverse of the value, then take the inverse
-    //      of the returned value. 
+    //      of the returned value.
     /*
     Real temp = length_conversion(_ref_diffusivity, _diff_length_unit, "cm");
     temp = length_conversion(temp, _diff_length_unit, "cm");

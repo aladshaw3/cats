@@ -76,7 +76,7 @@ Real SimpleGasEffectiveKnudsenDiffusivity::computeValue()
     Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
     Dm = 1/SimpleGasPropertiesBase::time_conversion(1/Dm, _diff_time_unit, "s");
 
-    Real Dp = pow(_micro_pore[_qp],1.4)*Dm;
+    Real Dp = pow(_micro_pore[_qp],_eff_diff_factor)*Dm;
     // ends up in cm^2/s
 
     //Take given char_length and convert to cm to get Dk in cm^2/s

@@ -80,6 +80,7 @@ protected:
     std::string _diff_length_unit;                    ///< Units of the length term in reference diffusivity (m, cm, mm)
     std::string _diff_time_unit;                      ///< Units of the time term in reference diffusivity (hr, min, s)
     Real _ref_diff_temp;                              ///< Value of reference temperature for diffusivity (K)
+    Real _eff_diff_factor;                            ///< Factor for porosity to calculate effective diffusivity (default=1.4) [1,2]
 
 private:
 

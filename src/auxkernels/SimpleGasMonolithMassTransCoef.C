@@ -76,7 +76,7 @@ Real SimpleGasMonolithMassTransCoef::computeValue()
     Dm = 1/SimpleGasPropertiesBase::time_conversion(1/Dm, _diff_time_unit, "s");
     Real Sc = mu/rho/Dm;
     Real Sh = (0.3+(0.62*sqrt(Re)*pow(Sc,0.33)*pow(1+pow(0.4/Sc,0.67),-0.25))*pow(1+pow(Re/282000,5.0/8.0),4.0/5.0));
-    Real Deff = pow(_micro_pore[_qp],1.4)*Dm;
+    Real Deff = pow(_micro_pore[_qp],_eff_diff_factor)*Dm;
 
     // ends up in cm/s
     Real km = Sh*Deff/dh;
