@@ -143,18 +143,6 @@ test.set_temperature_ramp("A0", "T0", 2, 86, 813.15)
 
 # Initial conditions and Boundary Conditions should be set AFTER discretization
 #       Units of concentration here are in ppm
-'''test.set_const_IC("CO","A0","T0",5084)
-test.set_const_IC("O2","A0","T0",7080)
-test.set_const_IC("NO","A0","T0",1055)
-test.set_const_IC("N2","A0","T0",0)
-test.set_const_IC("CO2","A0","T0",0)
-
-test.set_const_BC("CO","A0","T0",5084)
-test.set_const_BC("O2","A0","T0",7080)
-test.set_const_BC("NO","A0","T0",1055)
-test.set_const_BC("N2","A0","T0",0)
-test.set_const_BC("CO2","A0","T0",0)
-'''
 test.set_const_IC_in_ppm("CO","A0","T0",5084)
 test.set_const_IC_in_ppm("O2","A0","T0",7080)
 test.set_const_IC_in_ppm("NO","A0","T0",1055)
@@ -167,17 +155,16 @@ test.set_const_BC_in_ppm("NO","A0","T0",1055)
 test.set_const_BC_in_ppm("N2","A0","T0",0)
 test.set_const_BC_in_ppm("CO2","A0","T0",0)
 
-test.recalculate_linear_velocities() #Manually called here for testing
-test.model.Cb.pprint()
-test.model.v.pprint()
-exit()
+test.auto_select_all_weight_factors()
+
+test.fix_all_reactions()
 
 # Fix the kinetics to only run a simulation (leave unfixed for optimization)
-#test.initialize_auto_scaling()     #NOTE: Autoscaling does not work well with ppm units
+test.initialize_auto_scaling()     #NOTE: Autoscaling does not work well with ppm units
 status = test.initialize_simulator(console_out=False)
 print(status)
 
-#test.finalize_auto_scaling()       #NOTE: Autoscaling does not work well with ppm units
+test.finalize_auto_scaling()       #NOTE: Autoscaling does not work well with ppm units
 final_status = test.run_solver()
 print(final_status)
 

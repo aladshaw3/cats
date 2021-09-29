@@ -160,6 +160,7 @@ class Isothermal_Monolith_Simulator(object):
         self.model.Ga = Param(within=NonNegativeReals, initialize=57.57541, mutable=True, units=units.cm**-1)
         self.model.cell_density = Param(within=NonNegativeReals, initialize=62, mutable=True, units=units.cm**-2)
         self.model.dh = Param(within=NonNegativeReals, initialize=0.078, mutable=True, units=units.cm)
+        self.model.diff_factor = Param(within=NonNegativeReals, initialize=1.4, mutable=True, units=None)
 
         # Add some tracking boolean statements
         self.isBoundsSet = False
@@ -324,7 +325,7 @@ class Isothermal_Monolith_Simulator(object):
         #               Different experimental runs may have different space velocities
         self.model.space_velocity = Var(self.model.age_set, self.model.T_set, self.model.t,
                                     domain=NonNegativeReals, initialize=1000, units=units.min**-1)
-        self.model.v = Var(self.model.age_set, self.model.T_set, self.model.t,
+        self.model.v = Var(self.model.age_set, self.model.T_set, self.model.z, self.model.t,
                                     domain=NonNegativeReals, initialize=15110, units=units.cm/units.min)
         # Adding pressure variable (to track pressure drop) and reference temperature and pressure
         #       params to modify the flow rate / velocity as temperature and pressure change
@@ -337,11 +338,11 @@ class Isothermal_Monolith_Simulator(object):
                                 initialize=273.15, mutable=True, units=units.K)
         self.model.Pref = Param(self.model.age_set, self.model.T_set, within=NonNegativeReals,
                                 initialize=101.35, mutable=True, units=units.kPa)
-        self.model.rho = Var(self.model.age_set, self.model.T_set, self.model.t,
+        self.model.rho = Var(self.model.age_set, self.model.T_set, self.model.z, self.model.t,
                                     domain=NonNegativeReals, initialize=0.0012, units=units.g/units.cm**3)
-        self.model.mu = Var(self.model.age_set, self.model.T_set, self.model.t,
+        self.model.mu = Var(self.model.age_set, self.model.T_set, self.model.z, self.model.t,
                                     domain=NonNegativeReals, initialize=0.000185, units=units.g/units.cm/units.s)
-        self.model.Re = Var(self.model.age_set, self.model.T_set, self.model.t,
+        self.model.Re = Var(self.model.age_set, self.model.T_set, self.model.z, self.model.t,
                                     domain=NonNegativeReals, initialize=7500, units=None)
         self.isTempSet = True
 
@@ -431,9 +432,9 @@ class Isothermal_Monolith_Simulator(object):
                         self.model.z, self.model.t,
                         domain=NonNegativeReals, initialize=112, units=units.cm/units.min)
         self.model.Dm = Param(self.model.gas_set, within=NonNegativeReals, initialize=0.4, mutable=True, units=units.cm**2/units.s)
-        self.model.Sc = Var(self.model.gas_set, self.model.age_set, self.model.T_set, self.model.t,
+        self.model.Sc = Var(self.model.gas_set, self.model.age_set, self.model.T_set, self.model.z, self.model.t,
                                     domain=NonNegativeReals, initialize=0.0065, units=None)
-        self.model.Sh = Var(self.model.gas_set, self.model.age_set, self.model.T_set, self.model.t,
+        self.model.Sh = Var(self.model.gas_set, self.model.age_set, self.model.T_set, self.model.z, self.model.t,
                                     domain=NonNegativeReals, initialize=5.75, units=None)
 
         for spec in self.model.gas_set:
@@ -735,6 +736,13 @@ class Isothermal_Monolith_Simulator(object):
 
     def set_reactor_radius(self,rad):
         self.model.r.set_value(rad)
+
+    def set_effective_diffusivity_factor(self,f):
+        if f < 1.0:
+            f = 1.0
+        if f > 2.0:
+            f = 2.0
+        self.model.diff_factor.set_value(f)
 
     def set_reactor_length(self,len):
         if len <= 0:
@@ -1358,7 +1366,7 @@ class Isothermal_Monolith_Simulator(object):
 
     # Bulk mass balance constraint
     def bulk_mb_constraint(self, m, gas, age, temp, z, t):
-        return m.eb*m.dCb_dt[gas, age, temp, z, t] + m.eb*m.v[age,temp,t]*m.dCb_dz[gas, age, temp, z, t] == -(1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t])
+        return m.eb*m.dCb_dt[gas, age, temp, z, t] + m.eb*m.v[age,temp,z,t]*m.dCb_dz[gas, age, temp, z, t] == -(1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t])
 
     # Washcoat mass balance constraint
     def pore_mb_constraint(self, m, gas, age, temp, z, t):
@@ -1470,7 +1478,7 @@ class Isothermal_Monolith_Simulator(object):
 
         #       Initialize space_velocity, linear velocity, and pressure
         self.model.space_velocity[:,:,:].fix()
-        self.model.v[:,:,:].fix()
+        self.model.v[:,:,:,:].fix()
         self.model.P[:,:,:,:].fix()
         volume = self.full_length*3.14159*value(self.model.r)**2*(1-self.model.eb.value)
         for age in self.model.age_set:
@@ -1482,18 +1490,18 @@ class Isothermal_Monolith_Simulator(object):
                 val = value(self.model.space_velocity[age,temp,self.model.t.first()])
                 self.model.space_velocity[age,temp, :].set_value(val)
                 flow_rate_true = flow_rate_ref*(value(self.model.Pref[age,temp])/press)*(temperature/value(self.model.Tref[age,temp]))
-                self.model.v[age,temp, :].set_value(flow_rate_true/volume/value(self.model.eb)*(self.model.z.last()-self.model.z.first()))
+                self.model.v[age,temp, :, :].set_value(flow_rate_true/volume/value(self.model.eb)*(self.model.z.last()-self.model.z.first()))
 
         #       Initialize gas density and viscosity
-        self.model.rho[:,:,:].fix()
-        self.model.mu[:,:,:].fix()
+        self.model.rho[:,:,:,:].fix()
+        self.model.mu[:,:,:,:].fix()
         for age in self.model.age_set:
             for temp in self.model.T_set:
                 T = self.model.T[age,temp,self.model.z.first(),self.model.t.first()].value
                 val = self.model.P[age,temp,self.model.z.first(),self.model.t.first()].value*1000/287.058/T*1000
-                self.model.rho[age,temp,:].set_value(val/100**3)
+                self.model.rho[age,temp,:,:].set_value(val/100**3)
                 val = 0.1458*T**1.5/(110.4+T)
-                self.model.mu[age,temp,:].set_value(val/10000)
+                self.model.mu[age,temp,:,:].set_value(val/10000)
 
         #       Initialize pressure drop across monolith
         self.calculate_pressure_drop()
@@ -1504,29 +1512,29 @@ class Isothermal_Monolith_Simulator(object):
         #                   Thus, we should calculate km in cm/min
         #                   (users won't input Diffusivities, so we will use cm**2/s
         #                   and just note when the units need converting)
-        self.model.Re[:,:,:].fix()
-        self.model.Sc[:,:,:,:].fix()
-        self.model.Sh[:,:,:,:].fix()
+        self.model.Re[:,:,:,:].fix()
+        self.model.Sc[:,:,:,:,:].fix()
+        self.model.Sh[:,:,:,:,:].fix()
         for age in self.model.age_set:
             for temp in self.model.T_set:
-                Re = self.model.rho[age,temp,self.model.t.first()].value* \
-                    self.model.v[age,temp, self.model.t.first()].value/60* \
-                        self.model.dh.value/self.model.mu[age,temp,self.model.t.first()].value
-                self.model.Re[age,temp,:].set_value(Re)
+                Re = self.model.rho[age,temp,self.model.z.first(),self.model.t.first()].value* \
+                    self.model.v[age,temp, self.model.z.first(), self.model.t.first()].value/60* \
+                        self.model.dh.value/self.model.mu[age,temp,self.model.z.first(),self.model.t.first()].value
+                self.model.Re[age,temp,:,:].set_value(Re)
                 T = self.model.T[age,temp,self.model.z.first(),self.model.t.first()].value
 
                 for spec in self.model.gas_set:
-                    Sc = self.model.mu[age,temp,self.model.t.first()].value/ \
-                    self.model.rho[age,temp,self.model.t.first()].value/ \
+                    Sc = self.model.mu[age,temp,self.model.z.first(),self.model.t.first()].value/ \
+                    self.model.rho[age,temp,self.model.z.first(),self.model.t.first()].value/ \
                     (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))
 
-                    self.model.Sc[spec,age,temp,:].set_value(Sc)
+                    self.model.Sc[spec,age,temp,:,:].set_value(Sc)
 
                     if self.isMonolith == True:
                         Sh = (0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5))
                     else:
                         Sh = (2+(0.4*Re**0.5+0.06*Re**0.67)*Sc**0.4)
-                    self.model.Sh[spec,age,temp,:].set_value(Sh)
+                    self.model.Sh[spec,age,temp,:,:].set_value(Sh)
 
         #       Initialize mass transfer rates
         self.model.km[:,:,:,:,:].fix()
@@ -1534,7 +1542,7 @@ class Isothermal_Monolith_Simulator(object):
             for age in self.model.age_set:
                 for temp in self.model.T_set:
                     T = self.model.T[age,temp,self.model.z.first(),self.model.t.first()].value
-                    val = self.model.Sh[spec,age,temp,self.model.t.first()].value*self.model.ew.value**1.4* \
+                    val = self.model.Sh[spec,age,temp,self.model.z.first(),self.model.t.first()].value*self.model.ew.value**self.model.diff_factor.value* \
                             (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))*60 / self.model.dh.value
                     self.model.km[spec,age,temp,:,:].set_value(val)
 
@@ -2135,44 +2143,44 @@ class Isothermal_Monolith_Simulator(object):
                     P = value(self.model.P[age,temp,self.model.z.last(),time])
                     T = value(self.model.T[age,temp,self.model.z.first(),time])
                     Q_real = Q_ref*(value(self.model.Pref[age,temp])/P)*(T/value(self.model.Tref[age,temp]))
-                    self.model.v[age,temp,time].set_value(Q_real/open_area)
+                    self.model.v[age,temp,:,time].set_value(Q_real/open_area)
 
         for age in self.model.age_set:
             for temp in self.model.T_set:
                 for time in self.model.t:
                     T = self.model.T[age,temp,self.model.z.first(),time].value
                     val = self.model.P[age,temp,self.model.z.first(),time].value*1000/287.058/T*1000
-                    self.model.rho[age,temp,time].set_value(val/100**3)
+                    self.model.rho[age,temp,:,time].set_value(val/100**3)
                     val = 0.1458*T**1.5/(110.4+T)
-                    self.model.mu[age,temp,time].set_value(val/10000)
+                    self.model.mu[age,temp,:,time].set_value(val/10000)
 
         for age in self.model.age_set:
             for temp in self.model.T_set:
                 for time in self.model.t:
-                    Re = self.model.rho[age,temp,time].value* \
-                        self.model.v[age,temp,time].value/60* \
-                            self.model.dh.value/self.model.mu[age,temp,time].value
-                    self.model.Re[age,temp,time].set_value(Re)
+                    Re = self.model.rho[age,temp,self.model.z.first(),time].value* \
+                        self.model.v[age,temp,self.model.z.first(),time].value/60* \
+                            self.model.dh.value/self.model.mu[age,temp,self.model.z.first(),time].value
+                    self.model.Re[age,temp,:,time].set_value(Re)
                     T = self.model.T[age,temp,self.model.z.first(),time].value
 
                     for spec in self.model.gas_set:
-                        Sc = self.model.mu[age,temp,time].value/ \
-                        self.model.rho[age,temp,time].value/ \
+                        Sc = self.model.mu[age,temp,self.model.z.first(),time].value/ \
+                        self.model.rho[age,temp,self.model.z.first(),time].value/ \
                         (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))
 
-                        self.model.Sc[spec,age,temp,time].set_value(Sc)
+                        self.model.Sc[spec,age,temp,:,time].set_value(Sc)
                         if isMonolith == True:
                             Sh = (0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5))
                         else:
                             Sh = (2+(0.4*Re**0.5+0.06*Re**0.67)*Sc**0.4)
-                        self.model.Sh[spec,age,temp,time].set_value(Sh)
+                        self.model.Sh[spec,age,temp,:,time].set_value(Sh)
 
         for spec in self.model.gas_set:
             for age in self.model.age_set:
                 for temp in self.model.T_set:
                     for time in self.model.t:
                         T = self.model.T[age,temp,self.model.z.first(),time].value
-                        val = self.model.Sh[spec,age,temp,time].value*self.model.ew.value**1.4* \
+                        val = self.model.Sh[spec,age,temp,self.model.z.first(),time].value*self.model.ew.value**self.model.diff_factor.value* \
                             (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))*60 / self.model.dh.value
                         ## TODO: Add unit conversions for time
                         ## TODO: Add unit conversions for space
@@ -2189,9 +2197,9 @@ class Isothermal_Monolith_Simulator(object):
             for temp in self.model.T_set:
                 for time in self.model.t:
                     # # TODO: Check units for conversions
-                    mu = self.model.mu[age,temp,time].value * 100.0 / 1000.0
-                    rho = self.model.rho[age,temp,time].value * 100.0**3 / 1000.0
-                    v = self.model.v[age,temp,time].value / 60.0 / 100.0
+                    mu = self.model.mu[age,temp,self.model.z.first(),time].value * 100.0 / 1000.0
+                    rho = self.model.rho[age,temp,self.model.z.first(),time].value * 100.0**3 / 1000.0
+                    v = self.model.v[age,temp,self.model.z.first(),time].value / 60.0 / 100.0
                     dh = self.model.dh.value / 100.0
                     eps = self.model.eb.value
                     dP_dz = ergun_pressure_drop(mu, rho, v, dh, eps)
@@ -3542,6 +3550,7 @@ class Isothermal_Monolith_Simulator(object):
                             model.Ga            scalar      Param
                             model.cell_density  scalar      Param
                             model.dh            scalar      Param
+                            model.diff_factor   scalar      Param
                             model.z             list        ContinuousSet
                             model.z_data        list        Set
                             model.t             list        ContinuousSet
@@ -3552,13 +3561,13 @@ class Isothermal_Monolith_Simulator(object):
                             model.T_set         list        Set
                             model.T             dict        Var(age_set,T_set,t)
                             model.space_velocity dict       Var(age_set,T_set,t)
-                            model.v             dict        Var(age_set,T_set,t)
+                            model.v             dict        Var(age_set,T_set,z,t)
                             model.P             dict        Var(age_set,T_set,z,t)
                             model.Tref          dict        Param(age_set,T_set)
                             model.Pref          dict        Param(age_set,T_set)
-                            model.rho           dict        Var(age_set,T_set,t)
-                            model.mu            dict        Var(age_set,T_set,t)
-                            model.Re            dict        Var(age_set,T_set,t)
+                            model.rho           dict        Var(age_set,T_set,z,t)
+                            model.mu            dict        Var(age_set,T_set,z,t)
+                            model.Re            dict        Var(age_set,T_set,z,t)
                             model.data_T_set    list        Set
                             model.gas_set       list        Set
                             model.Cb            dict        Var(gas_set,age_set,T_set,z,t)
@@ -3568,8 +3577,8 @@ class Isothermal_Monolith_Simulator(object):
                             model.dC_dt         dict        DerivativeVar(gas_set,age_set,T_set,z,t)
                             model.km            dict        Var(gas_set,age_set,T_set,z,t)
                             model.Dm            dict        Param(gas_set)
-                            model.Sc            dict        Var(gas_set,age_set,T_set,t)
-                            model.Sh            dict        Var(gas_set,age_set,T_set,t)
+                            model.Sc            dict        Var(gas_set,age_set,T_set,z,t)
+                            model.Sh            dict        Var(gas_set,age_set,T_set,z,t)
                             model.data_gas_set  list        Set
                             model.Cb_data       dict        Param(data_gas_set,data_age_set,data_T_set,z_data,t_data)
                             model.Cb_data_full  dict        Param(data_gas_set,data_age_set,data_T_set,z_data,t_data_full)
@@ -3609,6 +3618,7 @@ class Isothermal_Monolith_Simulator(object):
                     obj['model']['Ga'] = self.model.Ga.value
                     obj['model']['cell_density'] = self.model.cell_density.value
                     obj['model']['dh'] = self.model.dh.value
+                    obj['model']['diff_factor'] = self.model.diff_factor.value
                     obj['model']['z'] = self.model.z.get_finite_elements()
                     if self.isDataBoundsSet == True:
                         obj['model']['z_data'] = []
@@ -3773,7 +3783,8 @@ class Isothermal_Monolith_Simulator(object):
         # Dig into the obj dictionary and setup the model
         self.set_bulk_porosity(obj['model']['eb'])
         self.set_washcoat_porosity(obj['model']['ew'])
-        self.set_reactor_radius(obj['model']['ew'])
+        self.set_reactor_radius(obj['model']['r'])
+        self.set_effective_diffusivity_factor(obj['model']['diff_factor'])
         self.set_cell_density(obj['model']['cell_density'])
         try:
             self.add_axial_dim(point_list=obj['model']['z'])
@@ -4137,7 +4148,8 @@ class Isothermal_Monolith_Simulator(object):
         # Dig into the obj dictionary and setup the model
         self.set_bulk_porosity(obj['model']['eb'])
         self.set_washcoat_porosity(obj['model']['ew'])
-        self.set_reactor_radius(obj['model']['ew'])
+        self.set_reactor_radius(obj['model']['r'])
+        self.set_effective_diffusivity_factor(obj['model']['diff_factor'])
         self.set_cell_density(obj['model']['cell_density'])
         try:
             self.add_axial_dim(point_list=obj['model']['z'])

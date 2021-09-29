@@ -273,7 +273,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
     # Bulk mass balance constraint
     def bulk_mb_constraint(self, m, gas, age, temp, z, t):
-        return m.eb*m.dCb_dt[gas, age, temp, z, t] + m.eb*m.v[age,temp,t]*m.dCb_dz[gas, age, temp, z, t] == -(1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t])
+        return m.eb*m.dCb_dt[gas, age, temp, z, t] + m.eb*m.v[age,temp,z,t]*m.dCb_dz[gas, age, temp, z, t] == -(1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t])
 
     # Washcoat mass balance constraint
     def pore_mb_constraint(self, m, gas, age, temp, z, t):
@@ -292,7 +292,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
     # Energy balance in gas phase
     def gas_eb_constraint(self, m, age, temp, z, t):
-        return m.eb*m.rho[age,temp,t]*m.cpg[age,temp,t]*m.dT_dt[age,temp,z,t] + m.eb*m.rho[age,temp,t]*m.cpg[age,temp,t]*m.v[age,temp,t]*m.dT_dz[age,temp,z,t] \
+        return m.eb*m.rho[age,temp,z,t]*m.cpg[age,temp,t]*m.dT_dt[age,temp,z,t] + m.eb*m.rho[age,temp,z,t]*m.cpg[age,temp,t]*m.v[age,temp,z,t]*m.dT_dz[age,temp,z,t] \
                 == -(1-m.eb)*m.Ga*m.hc*(m.T[age,temp,z,t]-m.Tc[age,temp,z,t]) - m.eb*m.a*m.hwg*(m.T[age,temp,z,t]-m.Tw[age,temp,z,t])
 
     # Energy balance in solid phase

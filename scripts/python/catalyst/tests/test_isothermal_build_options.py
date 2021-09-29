@@ -352,10 +352,10 @@ class TestIsothermalCatalystBuildOptions():
             value(test.model.Cb["NO","A0","T0", test.model.z.first(), test.model.t.last()])
 
         assert pytest.approx(7261.619365381414, rel=1e-3) == \
-            value(test.model.v["A0","T0", test.model.t.first()])
+            value(test.model.v["A0","T0", test.model.z.first(), test.model.t.first()])
 
         assert pytest.approx(14649.76065026649, rel=1e-3) == \
-            value(test.model.v["A0","T0", test.model.t.last()])
+            value(test.model.v["A0","T0", test.model.z.first(), test.model.t.last()])
 
 
         # NOTE: When doing a temperature ramp at a constant inlet ppm, the values of
@@ -363,14 +363,14 @@ class TestIsothermalCatalystBuildOptions():
         #       according to ideal gas law. However, the product of these two values
         #       should be approximately equal to ensure the total mass flow does not
         #       change during the temperature ramp.
-        assert pytest.approx(value(test.model.v["A0","T0", test.model.t.first()]) * \
+        assert pytest.approx(value(test.model.v["A0","T0", test.model.z.first(), test.model.t.first()]) * \
             value(test.model.Cb["NO","A0","T0", test.model.z.first(), test.model.t.first()]), rel=1e-3) == \
-            value(test.model.v["A0","T0", test.model.t.last()]) * \
+            value(test.model.v["A0","T0", test.model.z.first(),test.model.t.last()]) * \
             value(test.model.Cb["NO","A0","T0", test.model.z.first(), test.model.t.last()])
 
-        assert pytest.approx(value(test.model.v["A0","T0", test.model.t.first()]) * \
+        assert pytest.approx(value(test.model.v["A0","T0", test.model.z.first(),test.model.t.first()]) * \
             value(test.model.Cb["CO","A0","T0", test.model.z.first(), test.model.t.first()]), rel=1e-3) == \
-            value(test.model.v["A0","T0", test.model.t.last()]) * \
+            value(test.model.v["A0","T0", test.model.z.first(),test.model.t.last()]) * \
             value(test.model.Cb["CO","A0","T0", test.model.z.first(), test.model.t.last()])
 
     @pytest.mark.unit
@@ -589,7 +589,7 @@ class TestIsothermalCatalystBuildOptions():
                             tstep=10,elems=5,colpoints=2)
 
         assert pytest.approx(5.261349377462189, rel=1e-3) == \
-            value(test.model.Sh["NH3","Unaged","150C",test.model.t.first()])
+            value(test.model.Sh["NH3","Unaged","150C",test.model.z.first(),test.model.t.first()])
 
         assert pytest.approx(343.4568642296482, rel=1e-3) == \
             value(test.model.km["NH3","Unaged","150C",test.model.z.first(),test.model.t.first()])

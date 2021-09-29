@@ -104,7 +104,7 @@ sim.unfix_reaction("r12")
 sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*0.9, sim.model.E[rxn].value*1.1))
 #sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*0.5, sim.model.A[rxn].value*2))
 
-
+sim.fix_all_reactions()
 # ========== Selecting weight factors
 sim.auto_select_all_weight_factors()
 

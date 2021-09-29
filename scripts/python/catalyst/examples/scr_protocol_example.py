@@ -662,3 +662,8 @@ test.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"], "Un
 test.print_results_of_integral_average(["q1","q2a","q2b","q3a","q3b","q3c"],
                                         "Unaged", "250C", file_name="")
 test.print_kinetic_parameter_info(file_name="scr_full_example_params.txt")
+
+test.plot_vs_data("NH3", "Unaged", "250C", 5, display_live=True)
+test.plot_vs_data("NO", "Unaged", "250C", 5, display_live=True)
+test.plot_vs_data("NO2", "Unaged", "250C", 5, display_live=True)
+test.plot_vs_data("N2O", "Unaged", "250C", 5, display_live=True)
