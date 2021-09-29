@@ -505,6 +505,11 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
 
         self.model.T[age,temp,self.model.z.first(), :].set_value(value)
         self.model.T[age,temp,self.model.z.first(), :].fix()
+
+        # initialize the temperature profile
+        for time in self.model.t:
+            if time != self.model.t.first():
+                self.model.T[age,temp,:,time].set_value(value)
         self.isBoundaryTempSet[age][temp] = True
         self.isVelocityRecalculated = False
 

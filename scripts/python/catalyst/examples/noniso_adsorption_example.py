@@ -143,12 +143,20 @@ test.fix_all_heats()
 
 #test.isObjectiveSet = False
 #test.model.del_component(test.model.obj)
+#test.model.v.pprint()
+#test.model.T.pprint()
 
 test.initialize_auto_scaling()
 test.initialize_simulator(console_out=False)
+
+#test.model.v.pprint()
+#test.model.T.pprint()
 #test.model.cpg.pprint()
 test.finalize_auto_scaling()
 test.run_solver()
+
+#test.model.v.pprint()
+#test.model.T.pprint()
 
 test.print_results_of_breakthrough(["NH3"], "Unaged", "250C", file_name="noniso_ads.txt", include_temp=True)
 
