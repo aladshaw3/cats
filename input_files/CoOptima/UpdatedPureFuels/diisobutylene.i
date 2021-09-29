@@ -236,6 +236,18 @@
      [../]
   [../]
 
+  [./R_HC_co]
+    order = FIRST
+    family = MONOMIAL
+     [./InitialCondition]
+         type = InitialLangmuirInhibition
+         temperature = temp
+         coupled_list = 'HCw'
+         pre_exponentials = '14.93'
+         activation_energies = '-54899'
+     [../]
+  [../]
+
 [] #END Variables
 
 [AuxVariables]
@@ -934,12 +946,14 @@
         variable = r1
     [../]
     [./r1_rx]
-      type = ArrheniusReaction
+      type = InhibitedArrheniusReaction
       variable = r1
       this_variable = r1
 
       forward_activation_energy = 235293.33281046877
       forward_pre_exponential = 1.6550871137667489e+31
+
+      forward_inhibition = R_HC_co
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1197,7 +1211,7 @@
       this_variable = r3
 
       forward_activation_energy = 284704.19832103234
-      forward_pre_exponential = 2.189916847226846e+33
+      forward_pre_exponential = 2.189916847226846e+32
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1246,8 +1260,8 @@
       variable = r12
       this_variable = r12
 
-      forward_activation_energy = 136610.55181420766
-      forward_pre_exponential = 1.8429782328496848e+17
+      forward_activation_energy = 156610.55181420766
+      forward_pre_exponential = 2.2429782328496848e+19
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1288,6 +1302,20 @@
      pre_exponentials = '0'
      activation_energies = '0'
    [../]
+
+# ============= HC CO Term =============
+  [./R_HC_co_eq]
+    type = Reaction
+    variable = R_HC_co
+  [../]
+  [./R_HC_co_lang]
+    type = LangmuirInhibition
+    variable = R_HC_co
+    temperature = temp
+    coupled_list = 'HCw'
+    pre_exponentials = '1.93'
+    activation_energies = '-54899'
+  [../]
 
 [] #END Kernels
 

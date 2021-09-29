@@ -1313,7 +1313,7 @@
      variable = R_HC_co
      temperature = temp
      coupled_list = 'HCw'
-     pre_exponentials = '14.93'
+     pre_exponentials = '1.93'
      activation_energies = '-54899'
    [../]
 
