@@ -652,7 +652,7 @@ test.fix_all_reactions()
 
 
 test.initialize_auto_scaling()
-test.initialize_simulator(console_out=True)
+test.initialize_simulator(console_out=False)
 test.finalize_auto_scaling()
 test.run_solver()
 
