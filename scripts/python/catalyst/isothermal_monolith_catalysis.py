@@ -2149,7 +2149,7 @@ class Isothermal_Monolith_Simulator(object):
             for temp in self.model.T_set:
                 for time in self.model.t:
                     T = self.model.T[age,temp,self.model.z.first(),time].value
-                    val = self.model.P[age,temp,self.model.z.first(),time].value*1000/287.058/T*1000
+                    val = self.model.P[age,temp,self.model.z.last(),time].value*1000/287.058/T*1000
                     self.model.rho[age,temp,:,time].set_value(val/100**3)
                     val = 0.1458*T**1.5/(110.4+T)
                     self.model.mu[age,temp,:,time].set_value(val/10000)
@@ -2197,9 +2197,9 @@ class Isothermal_Monolith_Simulator(object):
             for temp in self.model.T_set:
                 for time in self.model.t:
                     # # TODO: Check units for conversions
-                    mu = self.model.mu[age,temp,self.model.z.first(),time].value * 100.0 / 1000.0
-                    rho = self.model.rho[age,temp,self.model.z.first(),time].value * 100.0**3 / 1000.0
-                    v = self.model.v[age,temp,self.model.z.first(),time].value / 60.0 / 100.0
+                    mu = self.model.mu[age,temp,self.model.z.last(),time].value * 100.0 / 1000.0
+                    rho = self.model.rho[age,temp,self.model.z.last(),time].value * 100.0**3 / 1000.0
+                    v = self.model.v[age,temp,self.model.z.last(),time].value / 60.0 / 100.0
                     dh = self.model.dh.value / 100.0
                     eps = self.model.eb.value
                     dP_dz = ergun_pressure_drop(mu, rho, v, dh, eps)
