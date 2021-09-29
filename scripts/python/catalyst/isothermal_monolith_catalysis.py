@@ -2139,53 +2139,57 @@ class Isothermal_Monolith_Simulator(object):
         for age in self.model.age_set:
             for temp in self.model.T_set:
                 for time in self.model.t:
-                    Q_ref = volume*value(self.model.space_velocity[age,temp,time])
-                    P = value(self.model.P[age,temp,self.model.z.last(),time])
-                    T = value(self.model.T[age,temp,self.model.z.first(),time])
-                    Q_real = Q_ref*(value(self.model.Pref[age,temp])/P)*(T/value(self.model.Tref[age,temp]))
-                    self.model.v[age,temp,:,time].set_value(Q_real/open_area)
+                    for loc in self.model.z:
+                        Q_ref = volume*value(self.model.space_velocity[age,temp,time])
+                        P = value(self.model.P[age,temp,self.model.z.last(),time])
+                        T = value(self.model.T[age,temp,self.model.z.first(),time])
+                        Q_real = Q_ref*(value(self.model.Pref[age,temp])/P)*(T/value(self.model.Tref[age,temp]))
+                        self.model.v[age,temp,loc,time].set_value(Q_real/open_area)
 
         for age in self.model.age_set:
             for temp in self.model.T_set:
                 for time in self.model.t:
-                    T = self.model.T[age,temp,self.model.z.first(),time].value
-                    val = self.model.P[age,temp,self.model.z.last(),time].value*1000/287.058/T*1000
-                    self.model.rho[age,temp,:,time].set_value(val/100**3)
-                    val = 0.1458*T**1.5/(110.4+T)
-                    self.model.mu[age,temp,:,time].set_value(val/10000)
+                    for loc in self.model.z:
+                        T = self.model.T[age,temp,self.model.z.first(),time].value
+                        val = self.model.P[age,temp,self.model.z.last(),time].value*1000/287.058/T*1000
+                        self.model.rho[age,temp,loc,time].set_value(val/100**3)
+                        val = 0.1458*T**1.5/(110.4+T)
+                        self.model.mu[age,temp,loc,time].set_value(val/10000)
 
         for age in self.model.age_set:
             for temp in self.model.T_set:
                 for time in self.model.t:
-                    Re = self.model.rho[age,temp,self.model.z.first(),time].value* \
-                        self.model.v[age,temp,self.model.z.first(),time].value/60* \
-                            self.model.dh.value/self.model.mu[age,temp,self.model.z.first(),time].value
-                    self.model.Re[age,temp,:,time].set_value(Re)
-                    T = self.model.T[age,temp,self.model.z.first(),time].value
+                    for loc in self.model.z:
+                        Re = self.model.rho[age,temp,loc,time].value* \
+                            self.model.v[age,temp,loc,time].value/60* \
+                                self.model.dh.value/self.model.mu[age,temp,loc,time].value
+                        self.model.Re[age,temp,loc,time].set_value(Re)
+                        T = self.model.T[age,temp,self.model.z.first(),time].value
 
-                    for spec in self.model.gas_set:
-                        Sc = self.model.mu[age,temp,self.model.z.first(),time].value/ \
-                        self.model.rho[age,temp,self.model.z.first(),time].value/ \
-                        (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))
+                        for spec in self.model.gas_set:
+                            Sc = self.model.mu[age,temp,loc,time].value/ \
+                            self.model.rho[age,temp,loc,time].value/ \
+                            (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))
 
-                        self.model.Sc[spec,age,temp,:,time].set_value(Sc)
-                        if isMonolith == True:
-                            Sh = (0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5))
-                        else:
-                            Sh = (2+(0.4*Re**0.5+0.06*Re**0.67)*Sc**0.4)
-                        self.model.Sh[spec,age,temp,:,time].set_value(Sh)
+                            self.model.Sc[spec,age,temp,loc,time].set_value(Sc)
+                            if isMonolith == True:
+                                Sh = (0.3+(0.62*Re**0.5*Sc**0.33*(1+(0.4/Sc)**0.67)**-0.25)*(1+(Re/282000)**(5/8))**(4/5))
+                            else:
+                                Sh = (2+(0.4*Re**0.5+0.06*Re**0.67)*Sc**0.4)
+                            self.model.Sh[spec,age,temp,loc,time].set_value(Sh)
 
         for spec in self.model.gas_set:
             for age in self.model.age_set:
                 for temp in self.model.T_set:
                     for time in self.model.t:
-                        T = self.model.T[age,temp,self.model.z.first(),time].value
-                        val = self.model.Sh[spec,age,temp,self.model.z.first(),time].value*self.model.ew.value**self.model.diff_factor.value* \
-                            (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))*60 / self.model.dh.value
-                        ## TODO: Add unit conversions for time
-                        ## TODO: Add unit conversions for space
-                        #   val = cm/min
-                        self.model.km[spec,age,temp,:,time].set_value(val)
+                        for loc in self.model.z:
+                            T = self.model.T[age,temp,self.model.z.first(),time].value
+                            val = self.model.Sh[spec,age,temp,loc,time].value*self.model.ew.value**self.model.diff_factor.value* \
+                                (self.model.Dm[spec].value*exp(-887.5*((1.0/T)-(1.0/473.15))))*60 / self.model.dh.value
+                            ## TODO: Add unit conversions for time
+                            ## TODO: Add unit conversions for space
+                            #   val = cm/min
+                            self.model.km[spec,age,temp,loc,time].set_value(val)
 
         self.calculate_pressure_drop()
         if interally_called == True:

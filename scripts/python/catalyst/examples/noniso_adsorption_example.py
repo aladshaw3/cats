@@ -87,10 +87,21 @@ test.set_site_balance("S1",s1_data)
 
 # Reaction specification information (must correspond to correct reaction type)
 
+"""
+Optimal params
+--------------
+r1 (moles / volume catalyst / time) = kf_r1 * NH3^(1) * S1^(1) - kr_r1 * q1^(1)
+	kf_r1 = Af * exp[-Ef/R/T]
+	kr_r1 = Af * exp[-dS/R] * exp[-(Ef - dH)/R/T]
+	  Af (varies)  =	169679.94775934407
+	  Ef (J/mol)   =	0.0
+	  dH (J/mol)   =	-45349.29885878753
+	  dS (J/K/mol) =	41.892835908489346
+"""
+
 #   EquilibriumArrhenius
 #       NOTE: You can provide parameter bounds here, or later
 r1_equ = {"parameters": {"A": 25000, "E": 0,
-                        #"A_lb": 2500, "A_ub": 2500000000,
                         "dH": -54000, "dS": 30},
           "mol_reactants": {"S1": 1, "NH3": 1},
           "mol_products": {"q1": 1},
@@ -128,6 +139,7 @@ test.model.dHrxn["r1"].set_value(-54000)
 #test.model.dHrxn["r1"].set_value(0)
 
 test.fix_all_heats()
+#test.fix_all_reactions()
 
 #test.isObjectiveSet = False
 #test.model.del_component(test.model.obj)
