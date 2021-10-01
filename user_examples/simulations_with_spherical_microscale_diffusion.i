@@ -1059,92 +1059,113 @@
         execute_on = 'initial timestep_end'
     [../]
 
-    [./q_0]
-        type = ElementAverageValue
+    # Outputs below are to view the interior pellet concentrations
+    #   for surface species, sites, and water vapor at specific
+    #   nodal locations of the microscale. These outs are integral
+    #   averages at the 'bottom' of the macroscale mesh, thus,
+    #   would represent interior particle concentrations for the
+    #   pellets located at the bed inlet.
+    [./q_0_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = q_0
         execute_on = 'initial timestep_end'
     [../]
 
-    [./q_1]
-        type = ElementAverageValue
+    [./q_1_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = q_1
         execute_on = 'initial timestep_end'
     [../]
 
-    [./q_2]
-        type = ElementAverageValue
+    [./q_2_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = q_2
         execute_on = 'initial timestep_end'
     [../]
 
-    [./q_3]
-        type = ElementAverageValue
+    [./q_3_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = q_3
         execute_on = 'initial timestep_end'
     [../]
 
-    [./q_4]
-        type = ElementAverageValue
+    [./q_4_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = q_4
         execute_on = 'initial timestep_end'
     [../]
 
-    [./S_0]
-        type = ElementAverageValue
+    [./S_0_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = S_0
         execute_on = 'initial timestep_end'
     [../]
 
-    [./S_1]
-        type = ElementAverageValue
+    [./S_1_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = S_1
         execute_on = 'initial timestep_end'
     [../]
 
-    [./S_2]
-        type = ElementAverageValue
+    [./S_2_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = S_2
         execute_on = 'initial timestep_end'
     [../]
 
-    [./S_3]
-        type = ElementAverageValue
+    [./S_3_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = S_3
         execute_on = 'initial timestep_end'
     [../]
 
-    [./S_4]
-        type = ElementAverageValue
+    [./S_4_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = S_4
         execute_on = 'initial timestep_end'
     [../]
 
-    [./H2Op_0]
-        type = ElementAverageValue
+    [./H2Op_0_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = H2Op_0
         execute_on = 'initial timestep_end'
     [../]
 
-    [./H2Op_1]
-        type = ElementAverageValue
+    [./H2Op_1_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = H2Op_1
         execute_on = 'initial timestep_end'
     [../]
 
-    [./H2Op_2]
-        type = ElementAverageValue
+    [./H2Op_2_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = H2Op_2
         execute_on = 'initial timestep_end'
     [../]
 
-    [./H2Op_3]
-        type = ElementAverageValue
+    [./H2Op_3_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = H2Op_3
         execute_on = 'initial timestep_end'
     [../]
 
-    [./H2Op_4]
-        type = ElementAverageValue
+    [./H2Op_4_bed_inlet]
+        type = SideAverageValue
+        boundary = 'bottom'
         variable = H2Op_4
         execute_on = 'initial timestep_end'
     [../]
@@ -1220,7 +1241,7 @@
   scheme = implicit-euler
   petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
+  petsc_options_value = 'gmres asm ilu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = bt
