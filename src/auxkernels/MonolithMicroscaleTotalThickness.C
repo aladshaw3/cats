@@ -59,15 +59,18 @@ InputParameters MonolithMicroscaleTotalThickness::validParams()
     InputParameters params = AuxKernel::validParams();
     params.addParam<Real>("cell_density",50,"Cell density of the monolith (# of cells per face area)");
     params.addRequiredCoupledVar("channel_vol_ratio","Ratio of channel volume to total volume ");
+    params.addParam<Real>("wall_factor",1.0,"Factor applied to thickness to represent how many walls you want to divide the thickness into. NOTE: Default = 1 (total thickness). If you give actual number of walls, then this represents a single wall thickness");
     return params;
 }
 
 MonolithMicroscaleTotalThickness::MonolithMicroscaleTotalThickness(const InputParameters & parameters) :
 AuxKernel(parameters),
 _cell_density(getParam<Real>("cell_density")),
-_bulk_porosity(coupledValue("channel_vol_ratio"))
+_bulk_porosity(coupledValue("channel_vol_ratio")),
+_wall_factor(getParam<Real>("wall_factor"))
 {
-
+    if (_wall_factor < 1.0)
+      _wall_factor = 1.0;
 }
 
 Real MonolithMicroscaleTotalThickness::computeValue()
@@ -78,5 +81,5 @@ Real MonolithMicroscaleTotalThickness::computeValue()
     Real dh = 0.5*(dc+ds);
     Real A1c = 1.0/_cell_density;
     Real wt = sqrt(A1c - dh*dh);
-    return wt;
+    return wt/_wall_factor;
 }

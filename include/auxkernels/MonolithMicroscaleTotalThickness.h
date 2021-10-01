@@ -21,7 +21,7 @@
  *        to use the Microscale kernels for a monolith domain should first
  *        calculate this value in a separate input file, then use that calculated
  *        value as the 'micro_length' Param in [GlobalParams] for evaluation of
- *        Microscale kinetics for monoliths. 
+ *        Microscale kinetics for monoliths.
  *
  *
  *  \author Austin Ladshaw
@@ -76,5 +76,6 @@ protected:
 private:
     Real _cell_density;        ///< Cell density of the monolith (cells per total face area)
     const VariableValue & _bulk_porosity;       ///< Ratio of channel volume to total volume
+    Real _wall_factor;        ///< Multiplicity factor for the number of walls (default = 1)
 
 };
