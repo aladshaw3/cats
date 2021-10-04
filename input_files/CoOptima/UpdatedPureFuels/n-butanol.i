@@ -231,8 +231,8 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'HCw'
-         pre_exponentials = '3.27E+10'
-         activation_energies = '0'
+         pre_exponentials = '1.07E-6'
+         activation_energies = '-119751'
      [../]
   [../]
 
@@ -1245,8 +1245,8 @@
       variable = r10
       this_variable = r10
 
-      forward_activation_energy = 344704.19832103234
-      forward_pre_exponential = 2.189916847226846e+37
+      forward_activation_energy = 304704.19832103234
+      forward_pre_exponential = 1.189916847226846e+34
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1270,8 +1270,8 @@
       variable = r12
       this_variable = r12
 
-      forward_activation_energy = 156610.55181420766
-      forward_pre_exponential = 9.8429782328496848e+18
+      forward_activation_energy = 196610.55181420766
+      forward_pre_exponential = 1.5429782328496848e+23
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1309,8 +1309,8 @@
       variable = R_HC
       temperature = temp
       coupled_list = 'HCw'
-      pre_exponentials = '3.27E+10'
-      activation_energies = '0'
+      pre_exponentials = '1.07E-6'
+      activation_energies = '-119751'
     [../]
 
 [] #END Kernels
@@ -2047,7 +2047,7 @@
   scheme = implicit-euler
   petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
+  petsc_options_value = 'gmres asm ilu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = bt
