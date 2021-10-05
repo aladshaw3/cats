@@ -864,7 +864,7 @@
       # OG #forward_pre_exponential = 3.473335911420499e+36
 
       forward_activation_energy = 225293.33281046877
-      forward_pre_exponential = 3.073335911420499e+29
+      forward_pre_exponential = 1.573335911420499e+29
 
       forward_inhibition = R_CO
 
