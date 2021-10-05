@@ -945,7 +945,7 @@
       #   If OG is 1 order mag higher, then CO fit is much better
       #     BUT, CO fit for all other HCs gets much worse
 
-      forward_pre_exponential = 2.6550871137667489e+31
+      forward_pre_exponential = 3.2550871137667489e+31
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -998,7 +998,7 @@
       # OG #forward_pre_exponential = 3.473335911420499e+36
 
       forward_activation_energy = 225293.33281046877
-      forward_pre_exponential = 1.473335911420499e+29
+      forward_pre_exponential = 3.073335911420499e+29
 
       forward_inhibition = R_CO
 
@@ -1024,8 +1024,11 @@
       variable = r5
       this_variable = r5
 
-      forward_activation_energy = 170429.67328083533
-      forward_pre_exponential = 3.174729324826581e+22
+      # OG #forward_activation_energy = 170429.67328083533
+      # OG #forward_pre_exponential = 3.174729324826581e+22
+
+      forward_activation_energy = 220429.67328083533
+      forward_pre_exponential = 6.174729324826581e+25
 
       forward_inhibition = R_CO
 
@@ -1055,7 +1058,7 @@
       # OG #forward_pre_exponential = 1.8767305119846367e+38
 
       forward_activation_energy = 225293.33281046877
-      forward_pre_exponential = 8.8767305119846367e+30
+      forward_pre_exponential = 2.6767305119846367e+31
 
       forward_inhibition = R_CO
 
@@ -1196,9 +1199,8 @@
       #forward_activation_energy = 300000
       #forward_pre_exponential = 1e+41
 
-      forward_pre_exponential = 1e+41
-      forward_activation_energy = 300000
-      forward_beta = 0
+      forward_pre_exponential = 1.65e+44
+      forward_activation_energy = 324000
       forward_inhibition = R_CO
 
       reverse_activation_energy = 0

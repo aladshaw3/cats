@@ -198,8 +198,8 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'COw'
-         pre_exponentials = '30.9'
-         activation_energies = '-28431.5'
+         pre_exponentials = '2.59'
+         activation_energies = '-36284.4'
      [../]
   [../]
 
@@ -207,63 +207,90 @@
 
 [AuxVariables]
 
-  [./temp]
+    [./temp]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 379
+    [../]
+
+    [./press]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 101.35
+    [../]
+
+    [./D]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 379
-  [../]
+    [../]
 
-  [./press]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 101.35
-  [../]
+    # e_b
+    [./pore]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.775
+    [../]
 
-  [./D]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 2400.0  #Approximate dispersion
-  [../]
+    # non_pore = (1 - pore)
+    [./non_pore]
+        order = FIRST
+        family = MONOMIAL
+    [../]
 
-  # e_b
-  [./pore]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 0.775
-  [../]
+    # ew value
+    [./micro_pore]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.4
+    [../]
 
-  # non_pore = (1 - pore)
-  [./non_pore]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 0.225
-  [../]
+    # total_pore = ew* (1 - pore)
+    # assume ew = 0.4
+    [./total_pore]
+        order = FIRST
+        family = MONOMIAL
+    [../]
 
-  # total_pore = ew* (1 - pore)
-  # assume ew = 0.4
-  [./total_pore]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 0.09
-  [../]
+    # area to volume ratio for monolith - auto calculated in properties
+    [./Ga]
+        order = FIRST
+        family = MONOMIAL
+    [../]
 
-  [./vel_x]
-      order = FIRST
-      family = LAGRANGE
-      initial_condition = 0
-  [../]
+    # hydraulic diameter for monolith - auto calculated in properties
+    [./dh]
+        order = FIRST
+        family = MONOMIAL
+    [../]
 
-  [./vel_y]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 15110 #cm/min
-  [../]
+    # effective thickness of microscale
+    [./wt]
+        order = FIRST
+        family = MONOMIAL
+    [../]
 
-  [./vel_z]
-      order = FIRST
-      family = LAGRANGE
-      initial_condition = 0
-  [../]
+    # Mass transfer coefficient - auto calculated in properties
+    [./km]
+        order = FIRST
+        family = MONOMIAL
+    [../]
+
+    [./vel_x]
+        order = FIRST
+        family = LAGRANGE
+        initial_condition = 0
+    [../]
+
+    [./vel_y]
+        order = FIRST
+        family = MONOMIAL
+    [../]
+
+    [./vel_z]
+        order = FIRST
+        family = LAGRANGE
+        initial_condition = 0
+    [../]
 
 [] #END AuxVariables
 
@@ -297,9 +324,13 @@
         Dz = D
     [../]
     [./O2w_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = O2
         coupled = O2w
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase O2 ===============
@@ -309,9 +340,13 @@
         coupled_coef = total_pore
     [../]
     [./O2_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = O2w
         coupled = O2
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     [./O2w_rxns]
         type = ScaledWeightedCoupledSumFunction
@@ -344,9 +379,13 @@
         Dz = D
     [../]
     [./H2Ow_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = H2O
         coupled = H2Ow
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase H2O ===============
@@ -356,9 +395,13 @@
         coupled_coef = total_pore
     [../]
     [./H2O_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = H2Ow
         coupled = H2O
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     [./H2Ow_rxns]
         type = ScaledWeightedCoupledSumFunction
@@ -391,9 +434,13 @@
         Dz = D
     [../]
     [./NH3w_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = NH3
         coupled = NH3w
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase NH3 ===============
@@ -403,9 +450,13 @@
         coupled_coef = total_pore
     [../]
     [./NH3_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = NH3w
         coupled = NH3
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     [./NH3w_rxns]
         type = ScaledWeightedCoupledSumFunction
@@ -438,9 +489,13 @@
         Dz = D
     [../]
     [./NOxw_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = NOx
         coupled = NOxw
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase NO ===============
@@ -450,9 +505,13 @@
         coupled_coef = total_pore
     [../]
     [./NOx_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = NOxw
         coupled = NOx
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     [./NOxw_rxns]
         type = ScaledWeightedCoupledSumFunction
@@ -485,9 +544,13 @@
         Dz = D
     [../]
     [./N2Ow_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = N2O
         coupled = N2Ow
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase N2O ===============
@@ -497,9 +560,13 @@
         coupled_coef = total_pore
     [../]
     [./N2O_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = N2Ow
         coupled = N2O
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     [./N2Ow_rxns]
         type = ScaledWeightedCoupledSumFunction
@@ -532,9 +599,13 @@
         Dz = D
     [../]
     [./COw_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = CO
         coupled = COw
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase CO ===============
@@ -544,9 +615,13 @@
         coupled_coef = total_pore
     [../]
     [./CO_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = COw
         coupled = CO
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     [./COw_rxns]
         type = ScaledWeightedCoupledSumFunction
@@ -579,9 +654,13 @@
         Dz = D
     [../]
     [./CO2w_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = CO2
         coupled = CO2w
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase CO2 ===============
@@ -591,9 +670,13 @@
         coupled_coef = total_pore
     [../]
     [./CO2_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = CO2w
         coupled = CO2
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     [./CO2w_rxns]
         type = ScaledWeightedCoupledSumFunction
@@ -626,9 +709,13 @@
         Dz = D
     [../]
     [./N2w_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = N2
         coupled = N2w
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase N2 ===============
@@ -638,9 +725,13 @@
         coupled_coef = total_pore
     [../]
     [./N2_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = N2w
         coupled = N2
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     [./N2w_rxns]
         type = ScaledWeightedCoupledSumFunction
@@ -673,9 +764,13 @@
         Dz = D
     [../]
     [./H2w_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = H2
         coupled = H2w
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
 
     # =============== Washcoat phase H2 ===============
@@ -685,9 +780,13 @@
         coupled_coef = total_pore
     [../]
     [./H2_trans]
-        type = ConstMassTransfer
+        type = FilmMassTransfer
         variable = H2w
         coupled = H2
+
+        av_ratio = Ga
+        rate_variable = km
+        volume_frac = non_pore
     [../]
     [./H2w_rxns]
         type = ScaledWeightedCoupledSumFunction
@@ -712,7 +811,7 @@
       this_variable = r1
 
       forward_activation_energy = 235293.33281046877
-      forward_pre_exponential = 1.6550871137667489e+31
+      forward_pre_exponential = 3.2550871137667489e+31
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -757,12 +856,17 @@
         variable = r4
     [../]
     [./r4_rx]
-      type = ArrheniusReaction
+      type = InhibitedArrheniusReaction
       variable = r4
       this_variable = r4
 
-      forward_activation_energy = 304924.98618328216
-      forward_pre_exponential = 3.473335911420499e+36
+      # OG #forward_activation_energy = 304924.98618328216
+      # OG #forward_pre_exponential = 3.473335911420499e+36
+
+      forward_activation_energy = 225293.33281046877
+      forward_pre_exponential = 3.073335911420499e+29
+
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -782,12 +886,17 @@
         variable = r5
     [../]
     [./r5_rx]
-      type = ArrheniusReaction
+      type = InhibitedArrheniusReaction
       variable = r5
       this_variable = r5
 
-      forward_activation_energy = 170429.67328083533
-      forward_pre_exponential = 3.174729324826581e+22
+      # OG #forward_activation_energy = 170429.67328083533
+      # OG #forward_pre_exponential = 3.174729324826581e+22
+
+      forward_activation_energy = 220429.67328083533
+      forward_pre_exponential = 6.174729324826581e+25
+
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -807,12 +916,17 @@
         variable = r8
     [../]
     [./r8_rx]
-      type = ArrheniusReaction
+      type = InhibitedArrheniusReaction
       variable = r8
       this_variable = r8
 
-      forward_activation_energy = 304127.76066024584
-      forward_pre_exponential = 1.8767305119846367e+38
+      # OG #forward_activation_energy = 304127.76066024584
+      # OG #forward_pre_exponential = 1.8767305119846367e+38
+
+      forward_activation_energy = 225293.33281046877
+      forward_pre_exponential = 2.6767305119846367e+31
+
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -959,8 +1073,8 @@
       #forward_activation_energy = 300000
       #forward_pre_exponential = 1e+41
 
-      forward_pre_exponential = 1e+41
-      forward_activation_energy = 300000
+      forward_pre_exponential = 1.65e+44
+      forward_activation_energy = 324000
       forward_inhibition = R_CO
 
       reverse_activation_energy = 0
@@ -985,8 +1099,8 @@
        variable = R_CO
        temperature = temp
        coupled_list = 'COw'
-       pre_exponentials = '30.9'
-       activation_energies = '-28431.5'
+       pre_exponentials = '2.59'
+       activation_energies = '-36284.4'
      [../]
 
 [] #END Kernels
@@ -1177,6 +1291,100 @@
       type = FunctionAux
       variable = temp
       function = data_fun
+    [../]
+
+    [./Ga_calc]
+        type = MonolithAreaVolumeRatio
+        variable = Ga
+        cell_density = 93   #cells/cm^2
+        channel_vol_ratio = pore
+        per_solids_volume = true
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./dh_calc]
+        type = MonolithHydraulicDiameter
+        variable = dh
+        cell_density = 93   #cells/cm^2
+        channel_vol_ratio = pore
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./wt_calc]
+        type = MonolithMicroscaleTotalThickness
+        variable = wt
+        cell_density = 93   #cells/cm^2
+        channel_vol_ratio = pore
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./non_pore_calc]
+        type = SolidsVolumeFraction
+        variable = non_pore
+        porosity = pore
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./total_pore_calc]
+        type = MicroscalePoreVolumePerTotalVolume
+        variable = total_pore
+        porosity = pore
+        microscale_porosity = micro_pore
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./km_calc]
+        type = SimpleGasMonolithMassTransCoef
+        variable = km
+
+        pressure = press
+        temperature = temp
+        micro_porosity = micro_pore
+        macro_porosity = pore
+        characteristic_length = dh
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        ref_diffusivity = 0.561
+        diff_length_unit = "cm"
+        diff_time_unit = "s"
+        ref_diff_temp = 473
+
+        output_length_unit = "cm"
+        output_time_unit = "min"
+
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./Disp_calc]
+        type = SimpleGasDispersion
+        variable = D
+
+        pressure = press
+        temperature = temp
+        micro_porosity = micro_pore
+        macro_porosity = pore
+
+        # NOTE: For this calculation, use bed diameter as char_length
+        characteristic_length = 2
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        ref_diffusivity = 0.561
+        diff_length_unit = "cm"
+        diff_time_unit = "s"
+        ref_diff_temp = 473
+
+        output_length_unit = "cm"
+        output_time_unit = "min"
+
+        execute_on = 'initial timestep_end'
     [../]
 
 [] #END AuxKernels
