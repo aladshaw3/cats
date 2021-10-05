@@ -939,7 +939,12 @@
       this_variable = r1
 
       forward_activation_energy = 235293.33281046877
-      forward_pre_exponential = 1.6550871137667489e+32
+
+      # This has been edited...
+      #OG#forward_pre_exponential = 1.6550871137667489e+31
+      #   If OG is 1 order mag higher, then CO fit is much better
+      #     BUT, CO fit for all other HCs gets much worse
+      forward_pre_exponential = 1.6550871137667489e+31
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -990,10 +995,12 @@
 
       forward_activation_energy = 304924.98618328216
       forward_pre_exponential = 3.473335911420499e+36
-      forward_inhibition = R_HC
 
-      #forward_pre_exponential = 3.473335911420499e+34
-      #forward_activation_energy = 314924.98618328216
+      # Reduce order mag
+      #forward_activation_energy = 304924.98618328216
+      #forward_pre_exponential = 3.473335911420499e+35
+
+      forward_inhibition = R_HC
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1021,9 +1028,6 @@
       forward_pre_exponential = 3.174729324826581e+22
       forward_inhibition = R_HC
 
-      #forward_pre_exponential = 3.174729324826581e+20
-      #forward_activation_energy = 180429.67328083533
-
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
 
@@ -1048,10 +1052,13 @@
 
       forward_activation_energy = 304127.76066024584
       forward_pre_exponential = 1.8767305119846367e+38
-      forward_inhibition = R_HC
 
-      #forward_pre_exponential = 1.8767305119846367e+36
-      #forward_activation_energy = 314127.76066024584
+      # Reduce order mag
+      #forward_activation_energy = 304127.76066024584
+      #forward_pre_exponential = 1.8767305119846367e+37
+
+
+      forward_inhibition = R_HC
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1218,7 +1225,7 @@
       this_variable = r3
 
       forward_activation_energy = 214704.19832103234
-      forward_pre_exponential = 8.189916847226846e+21
+      forward_pre_exponential = 1.589916847226846e+22
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1306,7 +1313,7 @@
       variable = R_HC
       temperature = temp
       coupled_list = 'HCw'
-      pre_exponentials = '0'
+      pre_exponentials = '64000000'
       activation_energies = '0'
     [../]
 
@@ -2044,10 +2051,10 @@
   scheme = implicit-euler
   petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
+  petsc_options_value = 'gmres asm ilu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = bt
+  line_search = none
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-4
   nl_rel_step_tol = 1e-10
