@@ -944,7 +944,8 @@
       #OG#forward_pre_exponential = 1.6550871137667489e+31
       #   If OG is 1 order mag higher, then CO fit is much better
       #     BUT, CO fit for all other HCs gets much worse
-      forward_pre_exponential = 1.6550871137667489e+31
+
+      forward_pre_exponential = 2.6550871137667489e+31
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -993,14 +994,13 @@
       variable = r4
       this_variable = r4
 
-      forward_activation_energy = 304924.98618328216
-      forward_pre_exponential = 3.473335911420499e+36
+      # OG #forward_activation_energy = 304924.98618328216
+      # OG #forward_pre_exponential = 3.473335911420499e+36
 
-      # Reduce order mag
-      #forward_activation_energy = 304924.98618328216
-      #forward_pre_exponential = 3.473335911420499e+35
+      forward_activation_energy = 225293.33281046877
+      forward_pre_exponential = 1.473335911420499e+29
 
-      forward_inhibition = R_HC
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1026,7 +1026,8 @@
 
       forward_activation_energy = 170429.67328083533
       forward_pre_exponential = 3.174729324826581e+22
-      forward_inhibition = R_HC
+
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1050,15 +1051,13 @@
       variable = r8
       this_variable = r8
 
-      forward_activation_energy = 304127.76066024584
-      forward_pre_exponential = 1.8767305119846367e+38
+      # OG #forward_activation_energy = 304127.76066024584
+      # OG #forward_pre_exponential = 1.8767305119846367e+38
 
-      # Reduce order mag
-      #forward_activation_energy = 304127.76066024584
-      #forward_pre_exponential = 1.8767305119846367e+37
+      forward_activation_energy = 225293.33281046877
+      forward_pre_exponential = 8.8767305119846367e+30
 
-
-      forward_inhibition = R_HC
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1225,7 +1224,7 @@
       this_variable = r3
 
       forward_activation_energy = 214704.19832103234
-      forward_pre_exponential = 1.589916847226846e+22
+      forward_pre_exponential = 0 #1.589916847226846e+22
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1313,7 +1312,7 @@
       variable = R_HC
       temperature = temp
       coupled_list = 'HCw'
-      pre_exponentials = '64000000'
+      pre_exponentials = '0'
       activation_energies = '0'
     [../]
 
