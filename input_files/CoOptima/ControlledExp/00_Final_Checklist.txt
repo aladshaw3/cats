@@ -1,0 +1,6 @@
+
+Files with finalized kinetics
+-----------------------------
+CO2_H2O_CO_H2_NO_withSCR.i
+CO2_H2O_CO_NO_withSCR.i
+CO2_H2O_CO_H2_withInhibition.i

@@ -3,13 +3,7 @@
   # 'dg_scheme' and 'sigma' are parameters for the DG kernels
   dg_scheme = nipg
   sigma = 10
-  # 'transfer_rate' is a lumped parameter for mass-trasfer coefficient (km)
-  #     and the ratio of exposed area to catalyst volume (Ga).
-  #       transfer_rate = km*Ga*(1-eb)
-  #           km = 120 - 240 cm/min
-  #           Ga = 160.6 cm^-1
-  #           eb = 0.775
-  transfer_rate = 6504.3  #min^-1
+
 [] #END GlobalParams
 
 [Problem]
