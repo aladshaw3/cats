@@ -939,12 +939,6 @@
       this_variable = r1
 
       forward_activation_energy = 235293.33281046877
-
-      # This has been edited...
-      #OG#forward_pre_exponential = 1.6550871137667489e+31
-      #   If OG is 1 order mag higher, then CO fit is much better
-      #     BUT, CO fit for all other HCs gets much worse
-
       forward_pre_exponential = 3.2550871137667489e+31
 
       reverse_activation_energy = 0
@@ -1226,7 +1220,7 @@
       this_variable = r3
 
       forward_activation_energy = 214704.19832103234
-      forward_pre_exponential = 0 #1.589916847226846e+22
+      forward_pre_exponential = 9.589916847226846e+21
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1250,8 +1244,8 @@
       variable = r10
       this_variable = r10
 
-      forward_activation_energy = 131893.1233313617
-      forward_pre_exponential = 0 #1.8195374337544053e+12
+      forward_activation_energy = 301893.1233313617
+      forward_pre_exponential = 1.8195374337544053e+24
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1276,7 +1270,7 @@
       this_variable = r12
 
       forward_activation_energy = 136610.55181420766
-      forward_pre_exponential = 0 #1.8429782328496848e+10
+      forward_pre_exponential = 1.8429782328496848e+13
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
