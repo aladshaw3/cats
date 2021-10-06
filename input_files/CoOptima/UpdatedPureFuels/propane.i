@@ -231,7 +231,7 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'HCw'
-         pre_exponentials = '12662154'
+         pre_exponentials = '0'
          activation_energies = '0'
      [../]
   [../]
@@ -939,7 +939,7 @@
       this_variable = r1
 
       forward_activation_energy = 235293.33281046877
-      forward_pre_exponential = 1.6550871137667489e+31
+      forward_pre_exponential = 3.2550871137667489e+31
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -988,12 +988,13 @@
       variable = r4
       this_variable = r4
 
-      forward_activation_energy = 304924.98618328216
-      forward_pre_exponential = 3.473335911420499e+36
-      forward_inhibition = R_HC
+      # OG #forward_activation_energy = 304924.98618328216
+      # OG #forward_pre_exponential = 3.473335911420499e+36
 
-      #forward_pre_exponential = 3.473335911420499e+34
-      #forward_activation_energy = 314924.98618328216
+      forward_activation_energy = 225293.33281046877
+      forward_pre_exponential = 1.573335911420499e+29
+
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1017,12 +1018,13 @@
       variable = r5
       this_variable = r5
 
-      forward_activation_energy = 170429.67328083533
-      forward_pre_exponential = 3.174729324826581e+22
-      forward_inhibition = R_HC
+      # OG #forward_activation_energy = 170429.67328083533
+      # OG #forward_pre_exponential = 3.174729324826581e+22
 
-      #forward_pre_exponential = 3.174729324826581e+20
-      #forward_activation_energy = 180429.67328083533
+      forward_activation_energy = 220429.67328083533
+      forward_pre_exponential = 6.174729324826581e+25
+
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1046,12 +1048,13 @@
       variable = r8
       this_variable = r8
 
-      forward_activation_energy = 304127.76066024584
-      forward_pre_exponential = 1.8767305119846367e+38
-      forward_inhibition = R_HC
+      # OG #forward_activation_energy = 304127.76066024584
+      # OG #forward_pre_exponential = 1.8767305119846367e+38
 
-      #forward_pre_exponential = 1.8767305119846367e+36
-      #forward_activation_energy = 314127.76066024584
+      forward_activation_energy = 225293.33281046877
+      forward_pre_exponential = 2.6767305119846367e+31
+
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1187,12 +1190,8 @@
       variable = r15
       this_variable = r15
 
-      #forward_activation_energy = 300000
-      #forward_pre_exponential = 1e+41
-
-      forward_pre_exponential = 1e+41
-      forward_activation_energy = 300000
-      forward_beta = 0
+      forward_pre_exponential = 1.65e+44
+      forward_activation_energy = 324000
       forward_inhibition = R_CO
 
       reverse_activation_energy = 0
@@ -1218,7 +1217,7 @@
       this_variable = r3
 
       forward_activation_energy = 214704.19832103234
-      forward_pre_exponential = 8.189916847226846e+21
+      forward_pre_exponential = 1.589916847226846e+24
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1242,8 +1241,8 @@
       variable = r10
       this_variable = r10
 
-      forward_activation_energy = 131893.1233313617
-      forward_pre_exponential = 1.8195374337544053e+12
+      forward_activation_energy = 281893.1233313617
+      forward_pre_exponential = 5.8195374337544053e+23
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1267,8 +1266,8 @@
       variable = r12
       this_variable = r12
 
-      forward_activation_energy = 136610.55181420766
-      forward_pre_exponential = 1.8429782328496848e+10
+      forward_activation_energy = 166610.55181420766
+      forward_pre_exponential = 8.8429782328496848e+17
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1306,7 +1305,7 @@
       variable = R_HC
       temperature = temp
       coupled_list = 'HCw'
-      pre_exponentials = '12662154'
+      pre_exponentials = '0'
       activation_energies = '0'
     [../]
 
@@ -2044,7 +2043,7 @@
   scheme = implicit-euler
   petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
+  petsc_options_value = 'gmres asm ilu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = bt
