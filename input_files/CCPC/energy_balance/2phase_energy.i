@@ -1,14 +1,14 @@
 [GlobalParams]
     dg_scheme = nipg
     sigma = 10
-  
+
 [] #END GlobalParams
 
 [Problem]
     #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
     coord_type = RZ
 [] #END Problem
- 
+
 [Mesh]
     type = GeneratedMesh
     dim = 2
@@ -33,7 +33,7 @@
             temperature = Tf
         [../]
     [../]
- 
+
     [./Es]
         order = FIRST
         family = MONOMIAL
@@ -46,19 +46,19 @@
             temperature = Ts
         [../]
     [../]
- 
+
     [./Tf]
         order = FIRST
         family = MONOMIAL
         initial_condition = 298  #K
     [../]
- 
+
     [./Ts]
         order = FIRST
         family = MONOMIAL
         initial_condition = 298  #K
     [../]
- 
+
     # Bulk gas concentration for O2
     [./O2]
         order = FIRST
@@ -66,7 +66,7 @@
         initial_condition = 1e-9    #mol/m^3
     [../]
 []
- 
+
 [AuxVariables]
     [./vel_x]
         order = FIRST
@@ -85,79 +85,79 @@
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./Kg]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.1          #W/m/K
     [../]
- 
+
     [./Ks]
         order = FIRST
         family = MONOMIAL
         initial_condition = 11.9       #W/m/K
     [../]
- 
+
     [./eps]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.4371          #W/m/K
     [../]
- 
+
     [./s_frac]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.5629          #W/m/K
     [../]
- 
+
     [./rho]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1       #kg/m^3
     [../]
- 
+
     [./rho_s]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1599       #kg/m^3
     [../]
- 
+
     [./cpg]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1000       #J/kg/K
     [../]
- 
+
     [./cps]
         order = FIRST
         family = MONOMIAL
         initial_condition = 680       #J/kg/K
     [../]
- 
+
     [./hw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 50       #W/m^2/K
     [../]
- 
+
     [./Tw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 298  #K
     [../]
- 
+
     [./hs]
         order = FIRST
         family = MONOMIAL
         initial_condition = 25       #W/m^2/K
     [../]
- 
+
     [./Ao]
         order = FIRST
         family = MONOMIAL
         initial_condition = 11797       #m^-1
     [../]
- 
+
 []
 
 [Kernels]
@@ -192,7 +192,7 @@
          specific_area = Ao
          volume_frac = s_frac
      [../]
- 
+
     [./Es_dot]
         type = VariableCoefTimeDerivative
         variable = Es
@@ -216,7 +216,7 @@
         specific_area = Ao
         volume_frac = s_frac
     [../]
- 
+
     [./Tf_calc]
         type = PhaseTemperature
         variable = Tf
@@ -225,7 +225,7 @@
         volume_frac = eps
         density = rho
     [../]
- 
+
     [./Ts_calc]
         type = PhaseTemperature
         variable = Ts
@@ -234,7 +234,7 @@
         volume_frac = s_frac
         density = rho_s
     [../]
- 
+
     [./O2_dot]
         type = VariableCoefTimeDerivative
         variable = O2
@@ -257,9 +257,9 @@
         Dz = 0.01
     [../]
 []
- 
+
 [DGKernels]
-    [./Ef_dgadv] 
+    [./Ef_dgadv]
         type = DGPoreConcAdvection
         variable = Ef
         porosity = eps
@@ -276,7 +276,7 @@
         Dy = Kg
         Dz = Kg
     [../]
- 
+
     [./Es_dgdiff]
         type = DGPhaseThermalConductivity
         variable = Es
@@ -286,7 +286,7 @@
         Dy = Ks
         Dz = Ks
     [../]
- 
+
     [./O2_dgadv]
         type = DGPoreConcAdvection
         variable = O2
@@ -318,7 +318,7 @@
         uy = vel_y
         uz = vel_z
     [../]
- 
+
     [./Ef_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Ef
@@ -328,7 +328,7 @@
         temperature = Tf
         area_frac = eps
     [../]
- 
+
     [./Es_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Es
@@ -338,7 +338,7 @@
         temperature = Ts
         area_frac = s_frac
     [../]
- 
+
     [./O2_FluxIn]
         type = DGPoreConcFluxBC
         variable = O2
@@ -368,63 +368,63 @@
         variable = Ef
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Ef_in]
         type = SideAverageValue
         boundary = 'bottom'
         variable = Ef
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Es_out]
         type = SideAverageValue
         boundary = 'top'
         variable = Es
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Es_in]
         type = SideAverageValue
         boundary = 'bottom'
         variable = Es
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./T_out]
         type = SideAverageValue
         boundary = 'top'
         variable = Tf
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./T_in]
         type = SideAverageValue
         boundary = 'bottom'
         variable = Tf
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Ts_out]
         type = SideAverageValue
         boundary = 'top'
         variable = Ts
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Ts_in]
         type = SideAverageValue
         boundary = 'bottom'
         variable = Ts
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./O2_out]
         type = SideAverageValue
         boundary = 'top'
         variable = O2
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./O2_in]
         type = SideAverageValue
         boundary = 'bottom'
@@ -446,12 +446,12 @@
   scheme = implicit-euler
   petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
+  petsc_options_value = 'gmres asm lu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
-  nl_rel_tol = 1e-6
-  nl_abs_tol = 1e-4
+  nl_rel_tol = 1e-8
+  nl_abs_tol = 1e-6
   nl_rel_step_tol = 1e-10
   nl_abs_step_tol = 1e-10
   nl_max_its = 10
@@ -473,4 +473,3 @@
   exodus = true
   csv = true
 [] #END Outputs
-
