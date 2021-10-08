@@ -1,3 +1,8 @@
+# Same model as '2phase_energy.i', but using a different
+#   unit basis. Change time to min and length to cm.
+#   Change energy density to J/cm^3
+#       Tests demonstrate that you can in fact do this other unit basis 
+
 [GlobalParams]
     dg_scheme = nipg
     sigma = 10
@@ -15,18 +20,18 @@
     nx = 5
     ny = 10
     xmin = 0.0
-    xmax = 0.0725    # m radius
+    xmax = 7.25    # cm radius
     ymin = 0.0
-    ymax = 0.1346    # m length
+    ymax = 13.46   # cm length
 []
 
 [Variables]
     [./Ef]
         order = FIRST
         family = MONOMIAL
-        # Ef = rho*cp*Tf     (1 kg/m^3) * (1000 J/kg/K) * (298 K)
+        # Ef = rho*cp*Tf     (1e-6 kg/cm^3) * (1000 J/kg/K) * (298 K)
 
-        # Change density to kg/cm^3 and cp to kJ/kg/K
+        # Change density to kg/cm^3
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = cpg
@@ -38,7 +43,7 @@
     [./Es]
         order = FIRST
         family = MONOMIAL
-        # Es = rho_s*cp_s*Ts     (1599 kg/m^3) * (680 J/kg/K) * (298 K)
+        # Es = rho_s*cp_s*Ts     (0.001599 kg/cm^3) * (680 J/kg/K) * (298 K)
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = cps
@@ -63,7 +68,7 @@
     [./O2]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 1e-9    #mol/m^3
+        initial_condition = 1e-12    #mol/L
     [../]
 []
 
@@ -77,7 +82,7 @@
     [./vel_y]
         order = FIRST
         family = LAGRANGE
-        initial_condition = 2.5769 #m/s  - superficial velocity
+        initial_condition = 15461.4 #cm/min  - avg linear velocity
     [../]
 
     [./vel_z]
@@ -89,37 +94,37 @@
     [./Kg]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.1          #W/m/K
+        initial_condition = 0.06          #W/m/K ==> J/min/cm/K
     [../]
 
     [./Ks]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 11.9       #W/m/K
+        initial_condition = 7.14       #W/m/K ==> J/min/cm/K
     [../]
 
     [./eps]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.4371          #W/m/K
+        initial_condition = 0.4371          # vol air / total volume
     [../]
 
     [./s_frac]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.5629          #W/m/K
+        initial_condition = 0.5629          # vol solid / total volume
     [../]
 
     [./rho]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 1       #kg/m^3
+        initial_condition = 1e-6       #kg/cm^3
     [../]
 
     [./rho_s]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 1599       #kg/m^3
+        initial_condition = 0.001599       #kg/cm^3
     [../]
 
     [./cpg]
@@ -137,7 +142,7 @@
     [./hw]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 50       #W/m^2/K
+        initial_condition = 0.3       #W/m^2/K ==> J/min/cm^2/K
     [../]
 
     [./Tw]
@@ -149,13 +154,13 @@
     [./hs]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 25       #W/m^2/K
+        initial_condition = 0.15       #W/m^2/K ==> J/min/cm^2/K
     [../]
 
     [./Ao]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 11797       #m^-1
+        initial_condition = 117.97       #cm^-1
     [../]
 
 []
@@ -341,7 +346,7 @@
         type = DGPoreConcFluxBC
         variable = O2
         boundary = 'bottom'
-        u_input = 1e-6
+        u_input = 1e-9
         porosity = eps
         ux = vel_x
         uy = vel_y
@@ -457,12 +462,12 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 300
-  dtmax = 30
+  end_time = 5
+  dtmax = 0.5
 
   [./TimeStepper]
      type = ConstantDT
-     dt = 30
+     dt = 0.5
   [../]
 [] #END Executioner
 

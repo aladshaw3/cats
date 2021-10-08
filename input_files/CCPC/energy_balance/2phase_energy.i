@@ -75,7 +75,7 @@
     [./vel_y]
         order = FIRST
         family = LAGRANGE
-        initial_condition = 2.5769 #m/s  - superficial velocity
+        initial_condition = 2.5769 #m/s  - avg linear velocity
     [../]
 
     [./vel_z]
