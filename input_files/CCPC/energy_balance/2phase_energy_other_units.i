@@ -1,7 +1,7 @@
 # Same model as '2phase_energy.i', but using a different
 #   unit basis. Change time to min and length to cm.
 #   Change energy density to J/cm^3
-#       Tests demonstrate that you can in fact do this other unit basis 
+#       Tests demonstrate that you can in fact do this other unit basis
 
 [GlobalParams]
     dg_scheme = nipg

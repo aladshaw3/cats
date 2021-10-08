@@ -60,6 +60,12 @@ protected:
     /// Helper function to formulate a conversion
     Real time_conversion(Real value, std::string from, std::string to);
 
+    /// Helper function to formulate a conversion
+    Real mass_conversion(Real value, std::string from, std::string to);
+
+    /// Helper function to formulate a conversion
+    Real energy_conversion(Real value, std::string from, std::string to);
+
     /// Required MOOSE function override
     /** This is the function that is called by the MOOSE framework when a calculation of the total
         system pressure is needed. You are required to override this function for any inherited

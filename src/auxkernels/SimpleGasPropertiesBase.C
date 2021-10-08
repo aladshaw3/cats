@@ -149,6 +149,52 @@ Real SimpleGasPropertiesBase::time_conversion(Real value, std::string from, std:
   return new_value;
 }
 
+Real SimpleGasPropertiesBase::mass_conversion(Real value, std::string from, std::string to)
+{
+  Real new_value = 0;
+
+  if (from == "kg" && to == "kg")
+    new_value = value;
+  else if (from == "kg" && to == "g")
+    new_value = 1000*value;
+  else if (from == "kg" && to == "mg")
+    new_value = 1000*1000*value;
+  else if (from == "g" && to == "kg")
+    new_value = value/1000;
+  else if (from == "g" && to == "g")
+    new_value = value;
+  else if (from == "g" && to == "mg")
+    new_value = value*1000;
+  else if (from == "mg" && to == "kg")
+    new_value = value/1000/1000;
+  else if (from == "mg" && to == "g")
+    new_value = value/1000;
+  else if (from == "mg" && to == "mg")
+    new_value = value;
+  else
+    unsupported_conversion(from,to);
+
+  return new_value;
+}
+
+Real SimpleGasPropertiesBase::energy_conversion(Real value, std::string from, std::string to)
+{
+  Real new_value = 0;
+
+  if (from == "kJ" && to == "kJ")
+    new_value = value;
+  else if (from == "kJ" && to == "J")
+    new_value = 1000*value;
+  else if (from == "J" && to == "kJ")
+    new_value = value/1000;
+  else if (from == "J" && to == "J")
+    new_value = value;
+  else
+    unsupported_conversion(from,to);
+
+  return new_value;
+}
+
 Real SimpleGasPropertiesBase::computeValue()
 {
     //Below is a sample usage for conversions of complex units
