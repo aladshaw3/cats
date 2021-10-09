@@ -341,13 +341,34 @@
     #       'weights' = -dH_i
     #           Thus, if dH_i is positive (the weight is negative)
     #                 if dH_i is negative (the weight is positive)
+    #
+    #   NOTE: We NEED to also be cautious of the units on solid volume.
+    #         In our kinetic model, volume units in the reaction variable
+    #         use liters (L), but for the energy balance, we use cm^3.
+    #         THUS, the 'dH' values (i.e., weights) or the 'scale' need
+    #         to account for this additional unit conversion.
     [./Es_rxns_heat]
         type = ScaledWeightedCoupledSumFunction
         variable = Es
         coupled_list = 'r1'
 
-        # Here, our dH for r1 is -2.5 kJ/mol, so weight is 2,500 J/mol
-        weights = '1500'
+        # Here, our dH for r1 is -283 kJ/mol (-283,000 J/mol)
+        #   HOWEVER, since r1 has units of mol/L/min, we need
+        #   dH to have units of J/mol*(L/cm^3), thus we divide
+        #   by 1000 (or provide in kJ/mol)
+        #
+        #         dH = -283 kJ/mol ==> weight = 283 J/mol*(L/cm^3)
+        #
+        # For this reaction, 283 kJ/mol might be too low based
+        #   on experiments. That value was taken from a paper,
+        #   but the temperature profile does not match. This
+        #   could also be because we don't know what the wall
+        #   temperature and energy transfer coefficients should
+        #   actually be (or that we aren't tracking density
+        #   changes yet.)
+
+        #weights = '283'   #og value
+        weights = '1283'   #edited value
         scale = s_frac
     [../]
 
@@ -1060,15 +1081,15 @@
                          10
                          NONZERO
                          10
-                         1E-6
-                         1E-8'
+                         1E-8
+                         1E-10'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = bt
-  nl_rel_tol = 1e-8
-  nl_abs_tol = 1e-6
-  nl_rel_step_tol = 1e-8
-  nl_abs_step_tol = 1e-6
+  nl_rel_tol = 1e-10
+  nl_abs_tol = 1e-8
+  nl_rel_step_tol = 1e-10
+  nl_abs_step_tol = 1e-8
   nl_max_its = 10
   l_tol = 1e-6
   l_max_its = 30
