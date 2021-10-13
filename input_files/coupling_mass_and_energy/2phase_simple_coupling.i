@@ -213,10 +213,11 @@
         initial_condition = 1100       #J/kg/K
     [../]
 
+    # NOW being calculated in aux kernel
     [./hw]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 2.22       #W/m^2/K ==> J/min/cm^2/K
+        initial_condition = 0.222       #W/m^2/K ==> J/min/cm^2/K
     [../]
 
     # Wall temperature set via aux kernel
@@ -237,7 +238,7 @@
     [./hs]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 2.22      #W/m^2/K ==> J/min/cm^2/K
+        initial_condition = 0.222      #W/m^2/K ==> J/min/cm^2/K
     [../]
 
     # Calculated via aux kernel
@@ -865,6 +866,30 @@
 
         execute_on = 'initial timestep_end'
     [../]
+
+    [./hw_calc]
+        type = SimpleGasCylinderWallHeatTransCoef
+        variable = hw
+
+        pressure = 101.35
+        temperature = Tf
+        micro_porosity = eps_w
+        macro_porosity = eps
+
+        # NOTE: characteristic_length for this kernels is cylinder diameter
+        characteristic_length = 2
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        output_length_unit = "cm"
+        output_time_unit = "min"
+        output_energy_unit = "J"
+
+        execute_on = 'initial timestep_end'
+    [../]
 []
 
 [BCs]
@@ -1119,16 +1144,16 @@
         execute_on = 'initial timestep_end'
     [../]
 
-    [./hs_in]
+    [./hw_in]
         type = SideAverageValue
         boundary = 'bottom'
-        variable = hs
+        variable = hw
         execute_on = 'initial timestep_end'
     [../]
-    [./hs_out]
+    [./hw_out]
         type = SideAverageValue
         boundary = 'top'
-        variable = hs
+        variable = hw
         execute_on = 'initial timestep_end'
     [../]
 []
