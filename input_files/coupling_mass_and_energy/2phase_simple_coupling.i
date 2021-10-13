@@ -233,6 +233,7 @@
         initial_condition = 378       #K
     [../]
 
+    # NOW being calculated in aux kernel
     [./hs]
         order = FIRST
         family = MONOMIAL
@@ -842,7 +843,7 @@
     [../]
 
     [./hs_calc]
-        type = SimpleGasSphericalHeatTransCoef
+        type = SimpleGasMonolithHeatTransCoef
         variable = hs
 
         pressure = 101.35
