@@ -1207,8 +1207,8 @@
       variable = r3
       this_variable = r3
 
-      forward_activation_energy = 284704.19832103234
-      forward_pre_exponential = 2.189916847226846e+33
+      forward_activation_energy = 154704.19832103234
+      forward_pre_exponential = 2.189916847226846e+21
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1233,7 +1233,7 @@
       this_variable = r10
 
       forward_activation_energy = 344704.19832103234
-      forward_pre_exponential = 4.489916847226846e+39
+      forward_pre_exponential = 4.489916847226846e+38
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1247,7 +1247,7 @@
     [../]
 
 ## ======= HC Steam Reforming Rxn ======
-# CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+# CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     [./r12_val]
         type = Reaction
         variable = r12
@@ -1257,8 +1257,8 @@
       variable = r12
       this_variable = r12
 
-      forward_activation_energy = 136610.55181420766
-      forward_pre_exponential = 1.8429782328496848e+17
+      forward_activation_energy = 246610.55181420766
+      forward_pre_exponential = 1.8429782328496848e+27
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -2033,13 +2033,30 @@
   type = Transient
   scheme = implicit-euler
   petsc_options = '-snes_converged_reason'
-  petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
+
+  petsc_options_iname ='-ksp_type
+                        -pc_type
+                        -sub_pc_type
+                        -snes_max_it
+                        -sub_pc_factor_shift_type
+                        -pc_asm_overlap
+                        -snes_atol
+                        -snes_rtol'
+
+  # snes_max_it = maximum non-linear steps
+  petsc_options_value = 'gmres
+                         asm
+                         ilu
+                         10
+                         NONZERO
+                         10
+                         1E-8
+                         1E-10'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = bt
   nl_rel_tol = 1e-6
-  nl_abs_tol = 1e-4
+  nl_abs_tol = 1e-8
   nl_rel_step_tol = 1e-10
   nl_abs_step_tol = 1e-10
   nl_max_its = 10
