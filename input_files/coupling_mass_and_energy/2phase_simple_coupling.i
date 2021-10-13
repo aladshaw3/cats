@@ -181,6 +181,7 @@
                                             # vol micropore / total volume
     [../]
 
+    # NOW being calculated in aux kernel
     [./rho]
         order = FIRST
         family = MONOMIAL
@@ -195,6 +196,7 @@
         initial_condition = 0.001599       #kg/cm^3
     [../]
 
+    # NOW being calculated in aux kernel
     [./cpg]
         order = FIRST
         family = MONOMIAL
@@ -367,8 +369,8 @@
         #   actually be (or that we aren't tracking density
         #   changes yet.)
 
-        #weights = '283'   #og value
-        weights = '1283'   #edited value
+        weights = '283'   #og value
+        #weights = '1283'   #edited value
         scale = s_frac
     [../]
 
@@ -797,6 +799,32 @@
 
         execute_on = 'initial timestep_end'
     [../]
+
+    [./dens_calc]
+        type = SimpleGasDensity
+        variable = rho
+
+        pressure = 101.35
+        temperature = Tf
+
+        output_length_unit = "cm"
+        output_mass_unit = "kg"
+
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./cpg_calc]
+        type = SimpleGasIsobaricHeatCapacity
+        variable = cpg
+
+        pressure = 101.35
+        temperature = Tf
+
+        output_energy_unit = "J"
+        output_mass_unit = "kg"
+
+        execute_on = 'initial timestep_end'
+    [../]
 []
 
 [BCs]
@@ -1050,6 +1078,19 @@
         variable = CO2
         execute_on = 'initial timestep_end'
     [../]
+
+    [./cpg_in]
+        type = SideAverageValue
+        boundary = 'bottom'
+        variable = cpg
+        execute_on = 'initial timestep_end'
+    [../]
+    [./cpg_out]
+        type = SideAverageValue
+        boundary = 'top'
+        variable = cpg
+        execute_on = 'initial timestep_end'
+    [../]
 []
 
 [Preconditioning]
@@ -1092,7 +1133,7 @@
   nl_abs_step_tol = 1e-8
   nl_max_its = 10
   l_tol = 1e-6
-  l_max_its = 30
+  l_max_its = 100
 
   start_time = -1
   end_time = 102
