@@ -63,7 +63,7 @@ Real SimpleGasMonolithMassTransCoef::computeValue()
     Real rho = _pressure[_qp]*1000/287.058/_temperature[_qp]*1000;
     rho = rho/100/100/100;
     // mu [g/cm/s]
-    Real mu = 0.1458*pow(_temperature[_qp],1.5)/(110.4+_temperature[_qp]);
+    Real mu = 0.1458*pow(_temperature[_qp],1.5)/(110.4+_temperature[_qp])/10000;
     // Put velocity into cm/s and char length into cm
     Real v = SimpleGasPropertiesBase::length_conversion(_velocity[_qp], _velocity_length_unit, "cm");
     v = 1/SimpleGasPropertiesBase::time_conversion(1/v, _velocity_time_unit, "s");
@@ -82,5 +82,6 @@ Real SimpleGasMonolithMassTransCoef::computeValue()
     Real km = Sh*Deff/dh;
     km = SimpleGasPropertiesBase::length_conversion(km, "cm", _output_length_unit);
     km = 1/SimpleGasPropertiesBase::time_conversion(1/km, "s", _output_time_unit);
+
     return km;
 }

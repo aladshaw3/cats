@@ -840,6 +840,30 @@
 
         execute_on = 'initial timestep_end'
     [../]
+
+    [./hs_calc]
+        type = SimpleGasSphericalHeatTransCoef
+        variable = hs
+
+        pressure = 101.35
+        temperature = Tf
+        micro_porosity = eps_w
+        macro_porosity = eps
+
+        # NOTE: characteristic_length for this kernels is hydraulic diameter
+        characteristic_length = dh
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        output_length_unit = "cm"
+        output_time_unit = "min"
+        output_energy_unit = "J"
+
+        execute_on = 'initial timestep_end'
+    [../]
 []
 
 [BCs]
@@ -1094,16 +1118,16 @@
         execute_on = 'initial timestep_end'
     [../]
 
-    [./kg_in]
+    [./hs_in]
         type = SideAverageValue
         boundary = 'bottom'
-        variable = Kg
+        variable = hs
         execute_on = 'initial timestep_end'
     [../]
-    [./kg_out]
+    [./hs_out]
         type = SideAverageValue
         boundary = 'top'
-        variable = Kg
+        variable = hs
         execute_on = 'initial timestep_end'
     [../]
 []
