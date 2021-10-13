@@ -1,17 +1,14 @@
 /*!
- *  \file SimpleGasIsobaricHeatCapacity.h
- *    \brief AuxKernel kernel to calculate heat capacity (at constant pressure) of air
- *    \details This file is responsible for calculating the isobaric heat capacity
- *            of air assuming that the air is an ideal gas composed primarily of
- *            N2 and O2. An emperical formula is used to calculate this heat
- *            capacity as a function of gas temperature. This estimate is good
- *            between 1 to 20 bar of pressure (up to ~ 20 atm) and between
- *            -50 and 1600 oC for standard air.
+ *  \file SimpleGasThermalConductivity.h
+ *    \brief AuxKernel kernel to calculate thermal conductivity of air
+ *    \details This file is responsible for calculating the thermal conductivity
+ *            of air assuming an ideal gas made up of primarily O2 and N2. This
+ *            kernel uses an emperical formula for thermal conductivity for
+ *            standard air that is accurate between -50 and 1600 oC.
  *
- *            Ref: Engineering ToolBox, (2004). Air - Specific Heat vs. Temperature
- *                    and Constant Pressure. [online] Available at: https://www.
- *                    engineeringtoolbox.com/air-specific-heat-capacity-d_705.html
- *                    [Accessed 13 Oct. 2021].
+ *            Ref: K. Ramanathan, C.S. Sharma, "Kinetic parameters estimation
+ *                    for three way catalyst modeling," Ind. Eng. Chem. Res.
+ *                    50 (2011) 9960-9979.
  *
  *
  *  \author Austin Ladshaw
@@ -44,17 +41,17 @@
 
 #include "SimpleGasPropertiesBase.h"
 
-/// SimpleGasIsobaricHeatCapacity class object inherits from GasPropertiesBase object
+/// SimpleGasThermalConductivity class object inherits from GasPropertiesBase object
 /** This class object inherits from the SimpleGasPropertiesBase object in the CATS framework.
     All public and protected members of this class are required function overrides. */
-class SimpleGasIsobaricHeatCapacity : public SimpleGasPropertiesBase
+class SimpleGasThermalConductivity : public SimpleGasPropertiesBase
 {
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
 
     /// Required constructor for objects in MOOSE
-    SimpleGasIsobaricHeatCapacity(const InputParameters & parameters);
+    SimpleGasThermalConductivity(const InputParameters & parameters);
 
 protected:
     /// Required MOOSE function override
@@ -64,7 +61,8 @@ protected:
     virtual Real computeValue() override;
 
 private:
-    std::string _output_energy_unit;                ///< Units of the energy term in heat capacity (kJ, J)
-    std::string _output_mass_unit;                  ///< Units of the mass term in heat capacity (kg, g, mg)
+    std::string _output_energy_unit;                ///< Units of the energy term in thermal conductivity (kJ, J)
+    std::string _output_length_unit;                ///< Units of the length term in thermal conductivity (m, cm, mm)
+    std::string _output_time_unit;                  ///< Units of the time term in thermal conductivity (hr, min, s)
 
 };

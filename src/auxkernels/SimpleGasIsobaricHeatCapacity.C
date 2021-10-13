@@ -8,6 +8,11 @@
  *            between 1 to 20 bar of pressure (up to ~ 20 atm) and between
  *            -50 and 1600 oC for standard air.
  *
+ *            Ref: Engineering ToolBox, (2004). Air - Specific Heat vs. Temperature
+ *                    and Constant Pressure. [online] Available at: https://www.
+ *                    engineeringtoolbox.com/air-specific-heat-capacity-d_705.html
+ *                    [Accessed 13 Oct. 2021].
+ *
  *
  *  \author Austin Ladshaw
  *  \date 10/13/2021
@@ -20,6 +25,7 @@
  *               the kernels themselves. The MOOSE framework copyright is held
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
+
 
 /****************************************************************/
 /*               DO NOT MODIFY THIS HEADER                      */

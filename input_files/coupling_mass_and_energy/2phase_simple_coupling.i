@@ -143,6 +143,7 @@
         initial_condition = 0
     [../]
 
+    # NOW being calculated in aux kernel
     [./Kg]
         order = FIRST
         family = MONOMIAL
@@ -825,6 +826,20 @@
 
         execute_on = 'initial timestep_end'
     [../]
+
+    [./Kg_calc]
+        type = SimpleGasThermalConductivity
+        variable = Kg
+
+        pressure = 101.35
+        temperature = Tf
+
+        output_energy_unit = "J"
+        output_length_unit = "cm"
+        output_time_unit = "min"
+
+        execute_on = 'initial timestep_end'
+    [../]
 []
 
 [BCs]
@@ -1079,16 +1094,16 @@
         execute_on = 'initial timestep_end'
     [../]
 
-    [./cpg_in]
+    [./kg_in]
         type = SideAverageValue
         boundary = 'bottom'
-        variable = cpg
+        variable = Kg
         execute_on = 'initial timestep_end'
     [../]
-    [./cpg_out]
+    [./kg_out]
         type = SideAverageValue
         boundary = 'top'
-        variable = cpg
+        variable = Kg
         execute_on = 'initial timestep_end'
     [../]
 []
