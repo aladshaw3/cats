@@ -103,6 +103,34 @@
         initial_condition = 1e-15    #mol/L
     [../]
 
+    # Bulk gas concentration for H2O
+    [./H2O]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-15    #mol/L
+    [../]
+
+    # Micro-pore gas concentration for H2O
+    [./H2Ow]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-15    #mol/L
+    [../]
+
+    # Bulk gas concentration for H2
+    [./H2]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-15    #mol/L
+    [../]
+
+    # Micro-pore gas concentration for H2
+    [./H2w]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-15    #mol/L
+    [../]
+
     # Reaction variables
     #     Units of these variables depend on
     #         (1) Units of the pre_exponential term
@@ -117,6 +145,16 @@
     #   Also, because the reactions occur on the solids, they
     #       directly impact the solid phase energy balance.
     [./r1]
+        order = FIRST
+        family = MONOMIAL
+                                  # moles / (vol solid) / min
+    [../]
+    [./r2]
+        order = FIRST
+        family = MONOMIAL
+                                  # moles / (vol solid) / min
+    [../]
+    [./r11]
         order = FIRST
         family = MONOMIAL
                                   # moles / (vol solid) / min
@@ -355,7 +393,7 @@
     [./Es_rxns_heat]
         type = ScaledWeightedCoupledSumFunction
         variable = Es
-        coupled_list = 'r1'
+        coupled_list = 'r1 r2 r11'
 
         # Here, our dH for r1 is -283 kJ/mol (-283,000 J/mol)
         #   HOWEVER, since r1 has units of mol/L/min, we need
@@ -371,9 +409,7 @@
         #   temperature and energy transfer coefficients should
         #   actually be (or that we aren't tracking density
         #   changes yet.)
-
-        weights = '283'   #og value
-        #weights = '1283'   #edited value
+        weights = '283 242 41.2'   #og value
         scale = s_frac
     [../]
 
@@ -447,8 +483,8 @@
     [./COw_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = COw
-        coupled_list = 'r1'
-        weights = '-1'
+        coupled_list = 'r1 r11'
+        weights = '-1 -1'
         scale = s_frac
     [../]
 
@@ -504,8 +540,8 @@
     [./O2w_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = O2w
-        coupled_list = 'r1'
-        weights = '-0.5'
+        coupled_list = 'r1 r2'
+        weights = '-0.5 -0.5'
         scale = s_frac
     [../]
 
@@ -561,8 +597,122 @@
     [./CO2w_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = CO2w
-        coupled_list = 'r1'
-        weights = '1'
+        coupled_list = 'r1 r11'
+        weights = '1 1'
+        scale = s_frac
+    [../]
+
+    # ================ Bulk fluid mass balance ===============
+    # -------------------------- H2 --------------------------
+    [./H2_dot]
+        type = VariableCoefTimeDerivative
+        variable = H2
+        coupled_coef = eps
+    [../]
+    [./H2_gadv]
+        type = GPoreConcAdvection
+        variable = H2
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./H2_gdiff]
+        type = GVarPoreDiffusion
+        variable = H2
+        porosity = eps
+        Dx = Disp
+        Dy = Disp
+        Dz = Disp
+    [../]
+    [./H2w_trans]
+        type = FilmMassTransfer
+        variable = H2
+        coupled = H2w
+
+        av_ratio = Ao
+        rate_variable = km
+        volume_frac = s_frac
+    [../]
+
+    # ================ Micropore fluid mass balance ===============
+    # ----------------------------- H2 ----------------------------
+    [./H2w_dot]
+        type = VariableCoefTimeDerivative
+        variable = H2w
+        coupled_coef = total_pore
+    [../]
+    [./H2_trans]
+        type = FilmMassTransfer
+        variable = H2w
+        coupled = H2
+
+        av_ratio = Ao
+        rate_variable = km
+        volume_frac = s_frac
+    [../]
+    [./H2w_rxns]
+        type = ScaledWeightedCoupledSumFunction
+        variable = H2w
+        coupled_list = 'r2 r11'
+        weights = '-1 1'
+        scale = s_frac
+    [../]
+
+    # ================ Bulk fluid mass balance ===============
+    # -------------------------- H2O --------------------------
+    [./H2O_dot]
+        type = VariableCoefTimeDerivative
+        variable = H2O
+        coupled_coef = eps
+    [../]
+    [./H2O_gadv]
+        type = GPoreConcAdvection
+        variable = H2O
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./H2O_gdiff]
+        type = GVarPoreDiffusion
+        variable = H2O
+        porosity = eps
+        Dx = Disp
+        Dy = Disp
+        Dz = Disp
+    [../]
+    [./H2Ow_trans]
+        type = FilmMassTransfer
+        variable = H2O
+        coupled = H2Ow
+
+        av_ratio = Ao
+        rate_variable = km
+        volume_frac = s_frac
+    [../]
+
+    # ================ Micropore fluid mass balance ===============
+    # ----------------------------- H2O ----------------------------
+    [./H2Ow_dot]
+        type = VariableCoefTimeDerivative
+        variable = H2Ow
+        coupled_coef = total_pore
+    [../]
+    [./H2O_trans]
+        type = FilmMassTransfer
+        variable = H2Ow
+        coupled = H2O
+
+        av_ratio = Ao
+        rate_variable = km
+        volume_frac = s_frac
+    [../]
+    [./H2Ow_rxns]
+        type = ScaledWeightedCoupledSumFunction
+        variable = H2Ow
+        coupled_list = 'r2 r11'
+        weights = '1 -1'
         scale = s_frac
     [../]
 
@@ -590,6 +740,56 @@
       reactant_stoich = '1 1'
       products = ''
       product_stoich = ''
+    [../]
+
+    ## ======= H2 Oxidation ======
+    # H2 + 0.5 O2 --> H2O
+    [./r2_val]
+        type = Reaction
+        variable = r2
+    [../]
+    [./r2_rx]
+      type = ArrheniusReaction
+      variable = r2
+      this_variable = r2
+
+      forward_activation_energy = 158891.38869742613
+      forward_pre_exponential = 1.733658868809338e+24
+
+      reverse_activation_energy = 0
+      reverse_pre_exponential = 0
+
+      temperature = Ts
+      scale = 1.0
+      reactants = 'H2w O2w'
+      reactant_stoich = '1 1'
+      products = ''
+      product_stoich = ''
+    [../]
+
+    ## ======= WGS ======
+    # CO + H2O <---> CO2 + H2
+    [./r11_val]
+        type = Reaction
+        variable = r11
+    [../]
+    [./r11_rx]
+        type = ArrheniusEquilibriumReaction
+        variable = r11
+        this_variable = r11
+
+        forward_activation_energy = 136610.55181420766
+        forward_pre_exponential = 1.8429782328496848e+17
+
+        enthalpy = 16769.16637626293
+        entropy = 139.10839203326302
+
+        temperature = Ts
+        scale = 1.0
+        reactants = 'COw H2Ow'
+        reactant_stoich = '1 1'
+        products = 'CO2w H2w'
+        product_stoich = '1 1'
     [../]
 []
 
@@ -675,6 +875,44 @@
     [./CO2_dgdiff]
         type = DGVarPoreDiffusion
         variable = CO2
+        porosity = eps
+        Dx = Disp
+        Dy = Disp
+        Dz = Disp
+    [../]
+
+    # ========== Fluid Mass DG Kernels ==========
+    # ------------------- H2O --------------------
+    [./H2O_dgadv]
+        type = DGPoreConcAdvection
+        variable = H2O
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./H2O_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = H2O
+        porosity = eps
+        Dx = Disp
+        Dy = Disp
+        Dz = Disp
+    [../]
+
+    # ========== Fluid Mass DG Kernels ==========
+    # ------------------- H2 --------------------
+    [./H2_dgadv]
+        type = DGPoreConcAdvection
+        variable = H2
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./H2_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = H2
         porosity = eps
         Dx = Disp
         Dy = Disp
@@ -965,7 +1203,7 @@
         uz = vel_z
         pressure = 101.35
         temperature = Tin
-        inlet_ppm = 2500
+        inlet_ppm = 3135
     [../]
     [./O2_FluxOut]
         type = DGPoreConcFluxBC
@@ -994,6 +1232,54 @@
     [./CO2_FluxOut]
         type = DGPoreConcFluxBC
         variable = CO2
+        boundary = 'top'
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+
+    # =============== Fluid Mass Open Bounds ============
+    # ----------------------- H2O ------------------------
+    [./H2O_FluxIn]
+        type = DGPoreConcFluxBC_ppm
+        variable = H2O
+        boundary = 'bottom'
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        pressure = 101.35
+        temperature = Tin
+        inlet_ppm = 130000
+    [../]
+    [./H2O_FluxOut]
+        type = DGPoreConcFluxBC
+        variable = H2O
+        boundary = 'top'
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+
+    # =============== Fluid Mass Open Bounds ============
+    # ----------------------- H2 ------------------------
+    [./H2_FluxIn]
+        type = DGPoreConcFluxBC_ppm
+        variable = H2
+        boundary = 'bottom'
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+        pressure = 101.35
+        temperature = Tin
+        inlet_ppm = 1670
+    [../]
+    [./H2_FluxOut]
+        type = DGPoreConcFluxBC
+        variable = H2
         boundary = 'top'
         porosity = eps
         ux = vel_x
@@ -1144,16 +1430,31 @@
         execute_on = 'initial timestep_end'
     [../]
 
-    [./hw_in]
-        type = SideAverageValue
-        boundary = 'bottom'
-        variable = hw
-        execute_on = 'initial timestep_end'
-    [../]
-    [./hw_out]
+    [./H2O_out]
         type = SideAverageValue
         boundary = 'top'
-        variable = hw
+        variable = H2O
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./H2O_in]
+        type = SideAverageValue
+        boundary = 'bottom'
+        variable = H2O
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./H2_out]
+        type = SideAverageValue
+        boundary = 'top'
+        variable = H2
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./H2_in]
+        type = SideAverageValue
+        boundary = 'bottom'
+        variable = H2
         execute_on = 'initial timestep_end'
     [../]
 []

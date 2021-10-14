@@ -1125,7 +1125,7 @@
     # Changed the nodal interior pellet values to be reported
     #   at the inlet of the bed (instead of on an average basis).
     #   This would be interpreted as the interior concentrations
-    #   for pellets located at the bed entrance. 
+    #   for pellets located at the bed entrance.
     [./AgI0_bed_inlet]
         type = SideAverageValue
         boundary = 'bottom'
