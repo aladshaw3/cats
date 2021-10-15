@@ -1,4 +1,35 @@
 # Example is for coupled mass and energy in a monolith system
+#
+#   In this example, we demonstrate how to couple mass and energy
+#   balances using the new 'SimpleGas' properties system, which allows
+#   the user to get parameters in a more flexible set of units. This
+#   is very convenient for simulations on domains that have a wide
+#   range of space-time scales.
+#
+#   For instance, in this example, our reactor is only 2 cm by 5 cm, but
+#   out time scale is in 100s of minutes. To simulate this using the
+#   full 'Gas' properties kernels forces you to use meters for length
+#   and seconds for time. This can cause scaling issues. Future iterations
+#   of the full 'Gas' properties kernels may include unit conversions, but
+#   for now, this set of 'SimpleGas' properties are more convenient for
+#   the average user (and does not significantly sacrifice accuracy).
+#
+#   For this example, we also show an alternative way of coupling together
+#   multiple reactions both in the mass balances and energy balances. This
+#   format is significantly more convenient for complex chemical systems
+#   involving many reactions.
+#
+#   Additionally, we demonstrate under the 'Postprocessors' how to query
+#   the mesh variables for calculating an average variable value at a
+#   specific location in the mesh. This can be particularly important
+#   when studying some effects that vary spatially (especially effects
+#   internal to the mesh).
+#
+#   We have also added some notes on some additional solver options, including
+#   how to implement a recursive 'GMRES' solver that is preconditioned by
+#   another call to 'GMRES' with a terminal preconditioner applied to that
+#   final Krylov solver. This can be very helpful for these tightly coupled
+#   physics to get good convergence and scales well with multiple processors. 
 
 [GlobalParams]
     dg_scheme = nipg
