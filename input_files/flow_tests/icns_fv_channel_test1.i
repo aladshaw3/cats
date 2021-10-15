@@ -150,9 +150,26 @@ velocity_interp_method='rc'
   []
 []
 
+[Postprocessors]
+    [./u_out]
+        type = SideAverageValue
+        boundary = 'right'
+        variable = u
+        execute_on = 'initial timestep_end'
+    [../]
+[]
+
+[Preconditioning]
+  [./SMP_PJFNK]
+    type = SMP
+    full = true
+    solve_type = pjfnk   #default to newton, but use pjfnk if newton too slow
+  [../]
+[] #END Preconditioning
+
 [Executioner]
   type = Transient
-  solve_type = 'NEWTON'
+  #solve_type = 'NEWTON'
   petsc_options_iname = '-pc_type -ksp_gmres_restart -sub_pc_type -sub_pc_factor_shift_type'
   petsc_options_value = 'asm      200                lu           NONZERO'
   line_search = 'none'
