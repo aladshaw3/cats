@@ -33,7 +33,7 @@ velocity_interp_method='rc'
 []
 
 [Problem]
-  fv_bcs_integrity_check = true
+  fv_bcs_integrity_check = false
 []
 
 [Variables]
@@ -51,24 +51,110 @@ velocity_interp_method='rc'
     type = INSFVPressureVariable
     block = '2'
   []
-  [dummy]
+  [CO2]
     order = FIRST
     family = MONOMIAL
-    initial_condition = 1
+    initial_condition = 0
     block = '1 2'
   []
 []
 
+[AuxVariables]
+    [./vel_in]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0
+    [../]
+[]
+
 # Here is where the regular kernels go
 [Kernels]
-  [./dummy_dot]
-      type = TimeDerivative
-      variable = dummy
+    [./CO2_dot]
+        type = VariableCoefTimeDerivative
+        variable = CO2
+        coupled_coef = 1
+        block = '1 2'
+    [../]
+    [./CO2_gadv]
+        type = GPoreConcAdvection
+        variable = CO2
+        porosity = 1
+        ux = 1
+        uy = 0
+        uz = 0
+        block = '2'
+    [../]
+    [./CO2_gdiff]
+        type = GVarPoreDiffusion
+        variable = CO2
+        porosity = 1
+        Dx = 1
+        Dy = 1
+        Dz = 1
+        block = '1 2'
+    [../]
+[]
+
+# MAJOR PROBLEM:  Cannot use DG kernels with FV flow???
+#       We cannot use FV kernels with anything we do...
+[DGKernels]
+#  [./CO2_dgadv]
+#      type = DGPoreConcAdvection
+#      variable = CO2
+#      porosity = 1
+#      ux = 0
+#      uy = 0
+#      uz = 0
+#      block = '2'
+#  [../]
+#  [./CO2_dgdiff]
+#      type = DGVarPoreDiffusion
+#      variable = CO2
+#      porosity = 1
+#      Dx = 1
+#      Dy = 1
+#      Dz = 1
+#      block = '1 2'
+#  [../]
+[]
+
+[BCs]
+  [./CO2_FluxIn]
+      type = DGPoreConcFluxBC_ppm
+      variable = CO2
+      boundary = 'inlet'
+      porosity = 1
+      ux = 1
+      uy = 0
+      uz = 0
+      pressure = 101.35
+      temperature = 273
+      inlet_ppm = 130000
   [../]
-  [./dummy_r]
-      type = Reaction
-      variable = dummy
+  [./CO2_FluxOut]
+      type = DGPoreConcFluxBC
+      variable = CO2
+      boundary = 'outlet'
+      porosity = 1
+      ux = 1
+      uy = 0
+      uz = 0
   [../]
+[]
+
+[AuxKernels]
+    # NOTE: YOU MUST setup up calculation on
+    #     'initial timestep_begin timestep_end'
+    #     in order to have the coupling aligned
+    #     correctly in time.
+    [./vel_in_increase]
+        type = LinearChangeInTime
+        variable = vel_in
+        start_time = 0
+        end_time = 5
+        end_value = 5
+        execute_on = 'initial timestep_begin timestep_end'
+    [../]
 []
 
 # Make it such that these kernels only act on
@@ -165,10 +251,21 @@ velocity_interp_method='rc'
 #   may need own BC kernel
 [FVBCs]
   [inlet-u]
-    type = INSFVInletVelocityBC
+    # This BC is specific to NS modules
+    #type = INSFVInletVelocityBC
+    #function = '1*t'
+
     boundary = 'inlet'
     variable = u
-    function = '1*t'
+
+    # Can just use basic FV BCs from MOOSE framework
+    #type = FVDirichletBC
+    #value = 1
+
+    # HERE, we can use the postprocessor BC
+    #   to loosely couple with an aux variable
+    type = FVPostprocessorDirichletBC
+    postprocessor = vel_in
   []
   [inlet-v]
     type = INSFVInletVelocityBC
@@ -217,18 +314,35 @@ velocity_interp_method='rc'
   #     of CATS INSFluid material and provide dummy args.
   [dummy_mat]
     type = INSFluid
-    density = dummy
-    viscosity = dummy
+    density = CO2
+    viscosity = CO2
     block = '1 2'
   []
 []
 
 [Postprocessors]
+    [./u_in]
+        type = SideAverageValue
+        boundary = 'inlet'
+        variable = u
+        execute_on = 'initial timestep_end'
+    [../]
     [./u_out]
         type = SideAverageValue
         boundary = 'outlet'
         variable = u
         execute_on = 'initial timestep_end'
+    [../]
+
+    # NOTE: YOU MUST setup up calculation on
+    #     'initial timestep_begin timestep_end'
+    #     in order to have the coupling aligned
+    #     correctly in time.
+    [./vel_in]
+        type = SideAverageValue
+        boundary = 'inlet'
+        variable = vel_in
+        execute_on = 'initial timestep_begin timestep_end'
     [../]
 []
 
