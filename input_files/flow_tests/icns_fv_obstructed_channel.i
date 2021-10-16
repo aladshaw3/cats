@@ -344,6 +344,13 @@ velocity_interp_method='rc'
         variable = vel_in
         execute_on = 'initial timestep_begin timestep_end'
     [../]
+
+    [./P_in]
+        type = SideAverageValue
+        boundary = 'inlet'
+        variable = pressure
+        execute_on = 'initial timestep_end'
+    [../]
 []
 
 [Preconditioning]

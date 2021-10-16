@@ -232,6 +232,13 @@
     variable = vel_x
     boundary = 'inlet'
   [../]
+  [./p_out]
+    type = DirichletBC
+    variable = p
+    boundary = 'outlet'
+    # Should always set outlet p to zero
+    value = 0.0
+  [../]
 
   [./CO2_FluxIn]
       type = DGPoreConcFluxBC_ppm
@@ -325,6 +332,13 @@
         type = SideAverageValue
         boundary = 'outlet'
         variable = CO2
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./P_in]
+        type = SideAverageValue
+        boundary = 'inlet'
+        variable = p
         execute_on = 'initial timestep_end'
     [../]
 
