@@ -1,8 +1,9 @@
-# NOTE: This will only work when flow is incompressible
-#       and when density is constant.
+# NOTE: As viscosity gets smaller, the velocity distribution
+#       becomes more uniform.
 
-mu=1.1
-rho=1.1
+# NOTE: The free slip BC makes no sense... 
+mu=1.81E-1   # kPa*s (incorrect value, but needed for stability)
+rho=1.225    # kg/m^3
 advected_interp_method='average'
 velocity_interp_method='rc'
 
@@ -11,16 +12,17 @@ velocity_interp_method='rc'
     type = GeneratedMeshGenerator
     dim = 2
     xmin = 0
-    xmax = 10
-    ymin = -1
-    ymax = 1
-    nx = 50
-    ny = 10
+    xmax = 2
+    ymin = 0
+    ymax = 10
+    nx = 10
+    ny = 50
   []
 []
 
 [Problem]
   fv_bcs_integrity_check = true
+  coord_type = 'RZ'
 []
 
 [Variables]
@@ -102,41 +104,57 @@ velocity_interp_method='rc'
   []
 []
 
-# I may be able to make this work
-# if I override the BCs to set an
-# inlet velocity value...
-#   Can input a function with time
-#   may need own BC kernel
 [FVBCs]
   [inlet-u]
     type = INSFVInletVelocityBC
-    boundary = 'left'
+    boundary = 'bottom'
     variable = u
-    function = '1*t'
+    function = 0
   []
   [inlet-v]
     type = INSFVInletVelocityBC
+    boundary = 'bottom'
+    variable = v
+    function = '1*t'
+  []
+  [free-slip-wall-u]
+    type = INSFVNaturalFreeSlipBC
+    boundary = 'right'
+    variable = u
+  []
+  [free-slip-wall-v]
+    type = INSFVNaturalFreeSlipBC
+    boundary = 'right'
+    variable = v
+  []
+  [outlet-p]
+    type = INSFVOutletPressureBC
+    boundary = 'top'
+    variable = pressure
+    function = 100
+  []
+  [axis-u]
+    type = INSFVSymmetryVelocityBC
+    boundary = 'left'
+    variable = u
+    u = u
+    v = v
+    mu = ${mu}
+    momentum_component = x
+  []
+  [axis-v]
+    type = INSFVSymmetryVelocityBC
     boundary = 'left'
     variable = v
-    function = '0'
+    u = u
+    v = v
+    mu = ${mu}
+    momentum_component = y
   []
-  [walls-u]
-    type = INSFVNoSlipWallBC
-    boundary = 'top bottom'
-    variable = u
-    function = 0
-  []
-  [walls-v]
-    type = INSFVNoSlipWallBC
-    boundary = 'top bottom'
-    variable = v
-    function = 0
-  []
-  [outlet_p]
-    type = INSFVOutletPressureBC
-    boundary = 'right'
+  [axis-p]
+    type = INSFVSymmetryPressureBC
+    boundary = 'left'
     variable = pressure
-    function = '0'
   []
 []
 
@@ -151,12 +169,27 @@ velocity_interp_method='rc'
 []
 
 [Postprocessors]
-    [./u_out]
-        type = SideAverageValue
-        boundary = 'right'
-        variable = u
-        execute_on = 'initial timestep_end'
-    [../]
+  [Vin]
+    type = SideAverageValue
+    variable = v
+    boundary = 'bottom'
+  []
+  [Vout]
+    type = SideAverageValue
+    variable = v
+    boundary = 'top'
+  []
+
+  [Pin]
+    type = SideAverageValue
+    variable = pressure
+    boundary = 'bottom'
+  []
+  [Pout]
+    type = SideAverageValue
+    variable = pressure
+    boundary = 'top'
+  []
 []
 
 [Preconditioning]
@@ -170,10 +203,11 @@ velocity_interp_method='rc'
 [Executioner]
   type = Transient
   petsc_options_iname = '-pc_type -ksp_gmres_restart -sub_pc_type -sub_pc_factor_shift_type'
-  petsc_options_value = 'asm      200                lu           NONZERO'
+  petsc_options_value = 'asm      100                lu           NONZERO'
   line_search = 'none'
   nl_rel_tol = 1e-12
   nl_abs_tol = 1e-8
+  l_tol = 1e-6
 
   end_time = 5
 []

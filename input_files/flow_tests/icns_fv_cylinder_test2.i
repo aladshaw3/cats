@@ -1,39 +1,62 @@
-# NOTE: This will only work when flow is incompressible
-#       and when density is constant.
+# NOTE: As viscosity gets smaller, the velocity distribution
+#       becomes more uniform.
 
-mu=1.1
-rho=1.1
+# NOTE: If you put outlet pressure as 0, then what gets solved
+#       for is the approximate pressure differential (dP)
+
+# NOTE: Cannot solve immediately for very high velocity when
+#       starting from 0 initial condition. You should properly
+#       initialize velocity before trying to put a massive
+#       flow into the system
+
+#mu=1.81E-2   # kPa*s    (units here dictate pressure rise)
+#rho=1.225    # kg/m^3
+
+#mu=1.81E-7   # kg/cm/s
+#rho=1.225E-6 # kg/cm^3
+
+#mu=1.81E-4   # kPa*(m/cm)*s
+#rho=1.225E-6 # kg/cm^3
+
+#mu=1.81E-4   # g/cm/s
+#rho=1.225E-3 # g/cm^3
+
+mu=108.6E-4   # g/cm/min
+rho=1.225E-3 # g/cm^3
+
 advected_interp_method='average'
-velocity_interp_method='rc'
+velocity_interp_method='average'
 
 [Mesh]
   [gen]
     type = GeneratedMeshGenerator
     dim = 2
     xmin = 0
-    xmax = 10
-    ymin = -1
-    ymax = 1
-    nx = 50
-    ny = 10
+    xmax = 1
+    ymin = 0
+    ymax = 4
+    nx = 10
+    ny = 40
   []
 []
 
 [Problem]
   fv_bcs_integrity_check = true
+  coord_type = 'RZ'
 []
 
 [Variables]
   [u]
     type = INSFVVelocityVariable
-    initial_condition = 1
+    initial_condition = 0
   []
   [v]
     type = INSFVVelocityVariable
-    initial_condition = 1
+    initial_condition = 100
   []
   [pressure]
     type = INSFVPressureVariable
+    initial_condition = 0
   []
 []
 
@@ -51,6 +74,11 @@ velocity_interp_method='rc'
     rho = ${rho}
   []
 
+  [u_time]
+    type = INSFVMomentumTimeDerivative
+    variable = 'u'
+    rho = ${rho}
+  []
   [u_advection]
     type = INSFVMomentumAdvection
     variable = u
@@ -76,6 +104,11 @@ velocity_interp_method='rc'
     pressure = pressure
   []
 
+  [v_time]
+    type = INSFVMomentumTimeDerivative
+    variable = 'v'
+    rho = ${rho}
+  []
   [v_advection]
     type = INSFVMomentumAdvection
     variable = v
@@ -102,41 +135,59 @@ velocity_interp_method='rc'
   []
 []
 
-# I may be able to make this work
-# if I override the BCs to set an
-# inlet velocity value...
-#   Can input a function with time
-#   may need own BC kernel
 [FVBCs]
   [inlet-u]
     type = INSFVInletVelocityBC
-    boundary = 'left'
+    boundary = 'bottom'
     variable = u
-    function = '1*t'
+    function = 0
   []
   [inlet-v]
     type = INSFVInletVelocityBC
-    boundary = 'left'
+    boundary = 'bottom'
     variable = v
-    function = '0'
+    function = '100*t'
   []
-  [walls-u]
+  [no-slip-wall-u]
     type = INSFVNoSlipWallBC
-    boundary = 'top bottom'
+    boundary = 'right'
     variable = u
     function = 0
   []
-  [walls-v]
+  [no-slip-wall-v]
     type = INSFVNoSlipWallBC
-    boundary = 'top bottom'
+    boundary = 'right'
     variable = v
     function = 0
   []
-  [outlet_p]
+  [outlet-p]
     type = INSFVOutletPressureBC
-    boundary = 'right'
+    boundary = 'top'
     variable = pressure
-    function = '0'
+    function = 0
+  []
+  [axis-u]
+    type = INSFVSymmetryVelocityBC
+    boundary = 'left'
+    variable = u
+    u = u
+    v = v
+    mu = ${mu}
+    momentum_component = x
+  []
+  [axis-v]
+    type = INSFVSymmetryVelocityBC
+    boundary = 'left'
+    variable = v
+    u = u
+    v = v
+    mu = ${mu}
+    momentum_component = y
+  []
+  [axis-p]
+    type = INSFVSymmetryPressureBC
+    boundary = 'left'
+    variable = pressure
   []
 []
 
@@ -151,12 +202,27 @@ velocity_interp_method='rc'
 []
 
 [Postprocessors]
-    [./u_out]
-        type = SideAverageValue
-        boundary = 'right'
-        variable = u
-        execute_on = 'initial timestep_end'
-    [../]
+  [Vin]
+    type = SideAverageValue
+    variable = v
+    boundary = 'bottom'
+  []
+  [Vout]
+    type = SideAverageValue
+    variable = v
+    boundary = 'top'
+  []
+
+  [Pin]
+    type = SideAverageValue
+    variable = pressure
+    boundary = 'bottom'
+  []
+  [Pout]
+    type = SideAverageValue
+    variable = pressure
+    boundary = 'top'
+  []
 []
 
 [Preconditioning]
@@ -170,8 +236,8 @@ velocity_interp_method='rc'
 [Executioner]
   type = Transient
   petsc_options_iname = '-pc_type -ksp_gmres_restart -sub_pc_type -sub_pc_factor_shift_type'
-  petsc_options_value = 'asm      200                lu           NONZERO'
-  line_search = 'none'
+  petsc_options_value = 'asm      100                lu           NONZERO'
+  line_search = 'bt'
   nl_rel_tol = 1e-12
   nl_abs_tol = 1e-8
 
