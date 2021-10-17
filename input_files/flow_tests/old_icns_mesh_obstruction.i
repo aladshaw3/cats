@@ -28,7 +28,7 @@
   integrate_p_by_parts = true	#how to include the pressure gradient term (not sure what it does, but solves when true)
   supg = true 					#activates SUPG stabilization (excellent stability, always necessary)
   pspg = true					#activates PSPG stabilization for pressure term (excellent stability, lower accuracy)
-  alpha = 0.1 					#stabilization multiplicative correction factor (0.1 < alpha <= 1) [lower value improves accuracy]
+  alpha = 1 					#stabilization multiplicative correction factor (0.1 < alpha <= 1) [lower value improves accuracy]
   laplace = true				#whether or not viscous term is in laplace form
   convective_term = true		#whether or not to include advective/convective term
   transient_term = true			#whether or not to include time derivative in supg correction (sometimes needed)
@@ -49,7 +49,7 @@
   [./vel_x]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0
+    initial_condition = 10000
     block = 'conduit'
   [../]
   [./vel_y]
@@ -84,7 +84,7 @@
     [./vel_in]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0
+        initial_condition = 10000
     [../]
 []
 
@@ -123,9 +123,9 @@
       type = GVarPoreDiffusion
       variable = CO2
       porosity = 1
-      Dx = 1
-      Dy = 1
-      Dz = 1
+      Dx = 2400
+      Dy = 2400
+      Dz = 2400
       block = 'conduit'
   [../]
 
@@ -186,9 +186,9 @@
       type = DGVarPoreDiffusion
       variable = CO2
       porosity = 1
-      Dx = 1
-      Dy = 1
-      Dz = 1
+      Dx = 2400
+      Dy = 2400
+      Dz = 2400
       block = 'conduit'
   [../]
 []
@@ -203,7 +203,7 @@
         variable = vel_in
         start_time = 0
         end_time = 5
-        end_value = 5
+        end_value = 50000
         execute_on = 'initial timestep_begin timestep_end'
     [../]
 []
@@ -212,9 +212,28 @@
   [./x_no_slip]
     type = DirichletBC
     variable = vel_x
-    boundary = 'top bottom object'
+
+    # For all walls 
+    #boundary = 'top bottom object'
+
+    # If we want to allow free slip, then remove
+    #   the DirichletBC at the walls, only put
+    #   at the obstruction.
+    boundary = 'object'
     value = 0.0
+
   [../]
+  # Less strict no slip condition
+  #   Good for walls, maybe less so
+  #   for obstructions
+  [./x_alt_penalty_wall]
+      type = PenaltyDirichletBC
+      boundary = 'top bottom'
+      variable = vel_x
+      value = 0
+      penalty = 100
+  [../]
+
   [./y_no_slip]
     type = DirichletBC
     variable = vel_y
@@ -269,7 +288,10 @@
     block = 'conduit obstruction'
     prop_names = 'rho mu'
     #              g/cm^3  g/cm/min
-    prop_values = '1.225e-3  108.6E-4'   #VALUES FOR AIR
+    #prop_values = '1.225e-3  108.6E-4'   #VALUES FOR AIR
+
+    # NOTE: Adding 'artifical' viscosity can aid in stabilization
+    prop_values = '1.225e-3  108.6E-1'   #VALUES FOR AIR (artifical vis)
   [../]
 []
 
@@ -289,7 +311,7 @@
   petsc_options_value = 'gmres asm lu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = none
+  line_search = bt
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-4
   nl_rel_step_tol = 1e-10
