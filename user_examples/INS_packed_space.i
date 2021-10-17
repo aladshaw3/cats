@@ -29,7 +29,7 @@
  []
 
 [Problem]
-    
+
 [] #END Problem
 
 [Mesh]
@@ -44,12 +44,12 @@
      [./ins_material]
          type = INSFluid
          density = 1.13
-         viscosity = 2.25E-5
+         viscosity = 2.25E-2
      [../]
  []
- 
+
 [Variables]
- 
+
     [./vel_x]
         order = FIRST
         family = LAGRANGE
@@ -61,7 +61,7 @@
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./p]
         order = FIRST
         family = LAGRANGE
@@ -71,7 +71,7 @@
 [] #END Variables
 
 [AuxVariables]
-    
+
     [./vel_z]
         order = FIRST
         family = LAGRANGE
@@ -171,7 +171,7 @@
         value = 0.0
         penalty = 1000
      [../]
-    
+
 [] #END BCs
 
 
@@ -193,7 +193,7 @@
         vel_z = vel_z
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./vy_exit]
         type = SideAverageValue
         boundary = 'outlet'
@@ -240,7 +240,7 @@
         type = SolutionTimeAdaptiveDT
         dt = 0.02
     [../]
- 
+
 [] #END Executioner
 
 [Outputs]

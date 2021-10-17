@@ -213,26 +213,28 @@
     type = DirichletBC
     variable = vel_x
 
-    # For all walls 
-    #boundary = 'top bottom object'
+    # For all walls
+    boundary = 'top bottom object'
 
     # If we want to allow free slip, then remove
     #   the DirichletBC at the walls, only put
     #   at the obstruction.
-    boundary = 'object'
+    #boundary = 'object'
+
     value = 0.0
 
   [../]
+
   # Less strict no slip condition
   #   Good for walls, maybe less so
   #   for obstructions
-  [./x_alt_penalty_wall]
-      type = PenaltyDirichletBC
-      boundary = 'top bottom'
-      variable = vel_x
-      value = 0
-      penalty = 100
-  [../]
+  #[./x_alt_penalty_wall]
+  #    type = PenaltyDirichletBC
+  #    boundary = 'top bottom'
+  #    variable = vel_x
+  #    value = 0
+  #    penalty = 100
+  #[../]
 
   [./y_no_slip]
     type = DirichletBC
@@ -251,13 +253,15 @@
     variable = vel_x
     boundary = 'inlet'
   [../]
-  [./p_out]
-    type = DirichletBC
-    variable = p
-    boundary = 'outlet'
-    # Should always set outlet p to zero
-    value = 0.0
-  [../]
+
+  # Is this needed?  NO!!! DO NOT SET
+  #[./p_out]
+  #  type = DirichletBC
+  #  variable = p
+  #  boundary = 'outlet'
+  #  # Should always set outlet p to zero
+  #  value = 0.0
+  #[../]
 
   [./CO2_FluxIn]
       type = DGPoreConcFluxBC_ppm
@@ -291,6 +295,8 @@
     #prop_values = '1.225e-3  108.6E-4'   #VALUES FOR AIR
 
     # NOTE: Adding 'artifical' viscosity can aid in stabilization
+    #     Addition of artificial viscosity should be a function
+    #     of the inlet flowrate (or inlet velocity)
     prop_values = '1.225e-3  108.6E-1'   #VALUES FOR AIR (artifical vis)
   [../]
 []
