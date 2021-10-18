@@ -148,7 +148,7 @@
     variable = p
     u = vel_x
     v = vel_y
-    p = p
+    pressure = p
     block = 'conduit'
   [../]
 
@@ -163,7 +163,7 @@
     variable = vel_x
     u = vel_x
     v = vel_y
-    p = p
+    pressure = p
     component = 0
     block = 'conduit'
   [../]
@@ -179,7 +179,7 @@
     variable = vel_y
     u = vel_x
     v = vel_y
-    p = p
+    pressure = p
     component = 1
     block = 'conduit'
   [../]
@@ -227,7 +227,7 @@
 
   [./conc_FluxIn]
     #type = DGConcentrationFluxLimitedBC   #Emulated Dirichlet BC with coupled velocities
-    type = DGFluxLimitedBC                 #Emulated Dirichlet BC without any velocity 
+    type = DGFluxLimitedBC                 #Emulated Dirichlet BC without any velocity
     variable = conc
     boundary = 'inlet'
 		u_input = 1.0

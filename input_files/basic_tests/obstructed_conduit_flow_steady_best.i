@@ -21,7 +21,7 @@
 # Parameters given below provide the best tested compromise of stability and accuracy
 
 # NOTE: If you want an approximate steady-state flow profile, use MAXIMUM STABILITY options (alpha = 1.0 and all set to true)
-#       and simulate for many time steps. 
+#       and simulate for many time steps.
 
 [GlobalParams]
   gravity = '0 0 0'				#gravity accel for body force
@@ -65,7 +65,7 @@
     variable = p
     u = vel_x
     v = vel_y
-    p = p
+    pressure = p
   [../]
 
   #Conservation of momentum equ in x (with time derivative)
@@ -74,7 +74,7 @@
     variable = vel_x
     u = vel_x
     v = vel_y
-    p = p
+    pressure = p
     component = 0
   [../]
 
@@ -84,7 +84,7 @@
     variable = vel_y
     u = vel_x
     v = vel_y
-    p = p
+    pressure = p
     component = 1
   [../]
 []
@@ -124,7 +124,7 @@
   [./SMP_PJFNK]
     type = SMP
     full = true
-    solve_type = newton   #newton solver works faster when using very good preconditioner 
+    solve_type = newton   #newton solver works faster when using very good preconditioner
   [../]
 []
 

@@ -92,7 +92,7 @@
 [Preconditioning]
 # The 'active' option is used to denote which preconditioner is actually used
     active = SMP_PJFNK
- 
+
 # SMP is the most efficient option to use
     [./SMP_PJFNK]
         type = SMP
@@ -108,12 +108,12 @@
 
 [Executioner]
     type = Transient
- 
+
 # scheme options:   implicit-euler  bdf2
 # ---------------
 #   Use implicit-euler for stability and bdf2 for accuracy
     scheme = bdf2
- 
+
 # solve_type options:   pjfnk   newton
 # ------------------
 #   pjfnk = Precondition Jacobian-Free Newton-Krylov
@@ -122,7 +122,7 @@
 #   Use pjfnk for most simulation cases. It scales better on multiple cores.
 #   For running on a personal computer, newtom may work faster.
     solve_type = pjfnk
- 
+
 # Below are sets of PETSc linear solver options:
 # ----------------------------------------------
 #
@@ -165,7 +165,7 @@
 #
 #       NOTE: Not sure what the other options are.
     line_search = none
- 
+
 # Below is a list of solver tolerances and maximum iterations that work
 # well for most all simulation cases. The 'l_max_its' may need to be
 # larger if you simulation domain or degrees of freedom are very large.
@@ -200,4 +200,3 @@
         dt = 0.1
     [../]
 []
-

@@ -37,7 +37,7 @@
 #   that the flow field is resolved using MOOSE incompressible Navier-Stokes flow
 #   module for Continuous Galerkin Finite Element methods. Thus, similar to
 #   example 'coupling_INS_mass_energy', we now are simulating a full column
-#   with realistic physics balancing all conservative quantities. 
+#   with realistic physics balancing all conservative quantities.
 
 [GlobalParams]
     # DG Kernel options
@@ -58,21 +58,6 @@
 
 # Required for INS
 [Materials]
-  active = 'ins_material'
-
-  # Can use constant properties
-  [./const]
-    type = GenericConstantMaterial
-    prop_names = 'rho mu'
-    #              g/cm^3  g/cm/min
-    #prop_values = '1.225e-3  108.6E-4'   #VALUES FOR AIR
-
-    # NOTE: Adding 'artifical' viscosity can aid in stabilization
-    #     Addition of artificial viscosity should be a function
-    #     of the inlet flowrate (or inlet velocity)
-    prop_values = '1.225e-3  108.6E-1'   #VALUES FOR AIR (artifical vis)
-  [../]
-
   # Can couple properties with aux kernels
   [./ins_material]
       type = INSFluid

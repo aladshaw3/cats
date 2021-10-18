@@ -63,9 +63,9 @@
   #block_name = 'washcoat channel'
 
 # The above mesh has a bumb going into the channel and a gap inside the channel
- 
+
 []
- 
+
 # Approximate parabolic velocity at inlet
  [Functions]
    [./inlet_func]
@@ -95,7 +95,7 @@
         initial_condition = 0.0
         block = 'washcoat'
     [../]
- 
+
     [./q]
         order = FIRST
         family = MONOMIAL
@@ -141,21 +141,21 @@
         initial_condition = 0
         block = 'channel'
     [../]
- 
+
     [./Diff]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.25
         block = 'channel'
     [../]
- 
+
     [./Dw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.01
         block = 'washcoat'
     [../]
- 
+
     [./ew]
         order = FIRST
         family = MONOMIAL
@@ -181,7 +181,7 @@
         initial_condition = 1.81E-11   #Units are choosen to maintain correct rho/mu ratio (unrealistic)
 #block = 'washcoat channel'
     [../]
- 
+
     [./S_max]
       order = FIRST
       family = MONOMIAL
@@ -218,7 +218,7 @@
         Dz = Diff
         block = 'channel'
     [../]
- 
+
     #Mass conservation in washcoat kernels
       [./Cw_dot]
           type = VariableCoefTimeDerivative
@@ -242,7 +242,7 @@
           porosity = 0      #replace porosity with 0 because q is measured as mass per volume washcoat already
           block = 'washcoat'
       [../]
- 
+
     # Adsorption in the washcoat
        [./q_dot]
            type = TimeDerivative
@@ -262,7 +262,7 @@
            product_stoich = '1'
            block = 'washcoat'
        [../]
-    
+
        [./mat_bal]
            type = MaterialBalance
            variable = S
@@ -281,7 +281,7 @@
       u = vel_x
       v = vel_y
       w = vel_z
-      p = p
+      pressure = p
       block = 'channel'
     [../]
 
@@ -297,7 +297,7 @@
       u = vel_x
       v = vel_y
       w = vel_z
-      p = p
+      pressure = p
       component = 2
       block = 'channel'
     [../]
@@ -314,7 +314,7 @@
       u = vel_x
       v = vel_y
       w = vel_z
-      p = p
+      pressure = p
       component = 1
       block = 'channel'
     [../]
@@ -322,7 +322,7 @@
 []
 
 [DGKernels]
- 
+
     [./C_dgadv]
         type = DGPoreConcAdvection
         variable = C
@@ -341,7 +341,7 @@
         Dz = Diff
         block = 'channel'
     [../]
- 
+
     [./Cw_dgdiff]
         type = DGVarPoreDiffusion
         variable = Cw
@@ -408,7 +408,7 @@
     [../]
 
 []
- 
+
  [InterfaceKernels]
 #This kernel is never getting invoked
     [./interface_kernel]
@@ -419,7 +419,7 @@
         transfer_rate = 2
     [../]
  [] #END InterfaceKernels
- 
+
 [Postprocessors]
 
    [./Q_enter]
@@ -439,14 +439,14 @@
        vel_z = vel_z
        execute_on = 'initial timestep_end'
    [../]
- 
+
     [./vy_enter]
         type = SideAverageValue
         boundary = 'inlet'
         variable = vel_y
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./vy_exit]
         type = SideAverageValue
         boundary = 'outlet'
@@ -460,54 +460,54 @@
         variable = C
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./C_avg]
         type = ElementAverageValue
         variable = C
         block = 'channel'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Cw_avg]
         type = ElementAverageValue
         variable = Cw
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./q_avg]
         type = ElementAverageValue
         variable = q
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./S_avg]
         type = ElementAverageValue
         variable = S
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./ew_avg]
         type = ElementAverageValue
         variable = ew
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./volume_washcoat]
         type = VolumePostprocessor
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./volume_channel]
         type = VolumePostprocessor
         block = 'channel'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./xsec_area_channel]
         type = AreaPostprocessor
         boundary = 'outlet'
@@ -589,4 +589,3 @@ end_time = 1.0
   exodus = true
   csv = true
 []
-

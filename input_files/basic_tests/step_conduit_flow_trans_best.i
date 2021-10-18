@@ -21,14 +21,19 @@
 # Parameters given below provide the best tested compromise of stability and accuracy
 
 # NOTE: If you want an approximate steady-state flow profile, use MAXIMUM STABILITY options (alpha = 1.0 and all set to true)
-#       and simulate for many time steps. 
+#       and simulate for many time steps.
 
 [GlobalParams]
-  gravity = '0 0 0'				#gravity accel for body force (cm/s^2) [Gravity has negative accel]
+  # DG Kernel options
+  dg_scheme = nipg
+  sigma = 10
+
+  # INS options
+  gravity = '-0.098 0 0'				#gravity accel for body force (cm/s^2) [Gravity has negative accel]
   integrate_p_by_parts = true	#how to include the pressure gradient term (not sure what it does, but solves when true)
   supg = true 					#activates SUPG stabilization (excellent stability, always necessary)
   pspg = true					#activates PSPG stabilization for pressure term (excellent stability, lower accuracy)
-  alpha = 0.5 					#stabilization multiplicative correction factor (0.1 < alpha <= 1) [lower value improves accuracy]
+  alpha = 1 					#stabilization multiplicative correction factor (0.1 < alpha <= 1) [lower value improves accuracy]
   laplace = true				#whether or not viscous term is in laplace form
   convective_term = true		#whether or not to include advective/convective term
   transient_term = true			#whether or not to include time derivative in supg correction (sometimes needed)
@@ -38,15 +43,6 @@
   file = 2D-Flow-Step-Converted.unv
   boundary_name = 'inlet outlet wall'
 []
-
-#[MeshModifiers]
-#  [./corner_node]
-#    # Pin is on the top left corner of the domain
-#    type = AddExtraNodeset
-#    new_boundary = pinned_node
-#    coord = '-2 2'
-#   [../]
-#[]
 
 
 [Variables]
@@ -65,6 +61,12 @@
     family = LAGRANGE
     initial_condition = 0
   [../]
+
+  [./tracer]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
 []
 
 [Kernels]
@@ -74,7 +76,7 @@
     variable = p
     u = vel_x
     v = vel_y
-    p = p
+    pressure = p
   [../]
 
   #Conservation of momentum equ in x (with time derivative)
@@ -87,7 +89,7 @@
     variable = vel_x
     u = vel_x
     v = vel_y
-    p = p
+    pressure = p
     component = 0
   [../]
 
@@ -101,8 +103,59 @@
     variable = vel_y
     u = vel_x
     v = vel_y
-    p = p
+    pressure = p
     component = 1
+  [../]
+
+  [./tracer_dot]
+      type = VariableCoefTimeDerivative
+      variable = tracer
+      coupled_coef = 1
+  [../]
+  [./tracer_gadv]
+      type = GPoreConcAdvection
+      variable = tracer
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = 0
+  [../]
+  [./tracer_gdiff]
+      type = GVarPoreDiffusion
+      variable = tracer
+      porosity = 1
+
+      #Dispersion with mechanical mixing is needed
+      #   Helps to clear out material from the wall due
+      #   to using the no-slip condition (which causes
+      #   a lot of accumulation at the wall)
+      Dx = 1
+      Dy = 1
+      Dz = 1
+  [../]
+[]
+
+[DGKernels]
+  [./tracer_dgadv]
+      type = DGPoreConcAdvection
+      variable = tracer
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = 0
+  [../]
+  [./tracer_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = tracer
+      porosity = 1
+
+      #Dispersion with mechanical mixing is needed
+      #   Helps to clear out material from the wall due
+      #   to using the no-slip condition (which causes
+      #   a lot of accumulation at the wall)
+      Dx = 1
+      Dy = 1
+      Dz = 1
   [../]
 []
 
@@ -126,15 +179,27 @@
     function = 'inlet_func'
   [../]
 
-#  [./p_corner]
-#    # Since the pressure is not integrated by parts in this example,
-#    # it is only specified up to a constant by the natural outflow BC.
-#    # Therefore, we need to pin its value at a single location.
-#    type = DirichletBC
-#    boundary = pinned_node
-#    value = 0
-#    variable = p
-#  [../]
+  [./tracer_FluxIn]
+      type = DGPoreConcFluxBC
+      variable = tracer
+      boundary = 'inlet'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = 0
+      u_input = 1
+
+  [../]
+  [./tracer_FluxOut]
+      type = DGPoreConcFluxBC
+      variable = tracer
+      boundary = 'outlet'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = 0
+  [../]
+
 []
 
 [Materials]
@@ -151,21 +216,59 @@
   [./SMP_PJFNK]
     type = SMP
     full = true
-    solve_type = newton   #newton solver works faster when using very good preconditioner 
+    solve_type = newton   #newton solver works faster when using very good preconditioner
   [../]
 []
 
 [Executioner]
   type = Transient
   scheme = implicit-euler
-  petsc_options = '-snes_converged_reason'
-  petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres asm lu 100 NONZERO 2 1E-14 1E-12'
+  petsc_options = '-snes_converged_reason
+
+                    -ksp_gmres_modifiedgramschmidt'
+
+  # NOTE: The sub_pc_type arg not used if pc_type is ksp,
+  #       Instead, set the ksp_ksp_type to the pc method
+  #       you want. Then, also set the ksp_pc_type to be
+  #       the terminal preconditioner.
+  #
+  # Good terminal precon options: lu, ilu, asm, gasm, pbjacobi
+  #                               bjacobi, redundant, telescope
+  petsc_options_iname ='-ksp_type
+                        -pc_type
+
+                        -sub_pc_type
+
+                        -snes_max_it
+
+                        -sub_pc_factor_shift_type
+                        -pc_asm_overlap
+
+                        -snes_atol
+                        -snes_rtol
+
+                        -ksp_ksp_type
+                        -ksp_pc_type'
+
+  # snes_max_it = maximum non-linear steps
+  petsc_options_value = 'fgmres
+                         ksp
+
+                         lu
+
+                         10
+                         NONZERO
+                         20
+                         1E-8
+                         1E-10
+
+                         fgmres
+                         lu'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = basic
+  line_search = none
   nl_rel_tol = 1e-6
-  nl_abs_tol = 1e-4
+  nl_abs_tol = 1e-6
   nl_rel_step_tol = 1e-10
   nl_abs_step_tol = 1e-10
   nl_max_its = 10
@@ -173,13 +276,12 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 200.0
+  end_time = 10.0
   dtmax = 0.5
 
   [./TimeStepper]
-	type = SolutionTimeAdaptiveDT
-#    type = ConstantDT
-    dt = 0.01
+    type = ConstantDT
+    dt = 0.5
   [../]
 []
 
@@ -193,7 +295,35 @@
     type = ParsedFunction
     #Parabola that has velocity of zero at y=top and=bot, with maximum at y=middle
     #value = a*y^2 + b*y + c	solve for a, b, and c
-    value = '(-0.25 * y^2 + 1)*10'
+    value = '10.0*(1-exp(-1*t))'   #in cm/s
     # Velocities in cm/s
   [../]
+[]
+
+[Postprocessors]
+    [./vel_x_in]
+        type = SideAverageValue
+        boundary = 'inlet'
+        variable = vel_x
+        execute_on = 'initial timestep_end'
+    [../]
+    [./vel_x_out]
+        type = SideAverageValue
+        boundary = 'outlet'
+        variable = vel_x
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./tracer_in]
+        type = SideAverageValue
+        boundary = 'inlet'
+        variable = tracer
+        execute_on = 'initial timestep_end'
+    [../]
+    [./tracer_out]
+        type = SideAverageValue
+        boundary = 'outlet'
+        variable = tracer
+        execute_on = 'initial timestep_end'
+    [../]
 []
