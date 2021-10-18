@@ -26,7 +26,7 @@
         initial_condition = 0.0
         block = 'washcoat'
     [../]
- 
+
     [./q]
         order = FIRST
         family = MONOMIAL
@@ -51,7 +51,7 @@
         initial_condition = 0
         block = 'channel'
     [../]
- 
+
     [./vel_y]
         order = FIRST
         family = LAGRANGE
@@ -72,21 +72,21 @@
         initial_condition = 2.5e-5
         block = 'channel'
     [../]
- 
+
     [./Dw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1e-6
         block = 'washcoat'
     [../]
- 
+
     [./ew]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.20
         block = 'washcoat'
     [../]
- 
+
     [./S_max]
       order = FIRST
       family = MONOMIAL
@@ -120,7 +120,7 @@
         Dz = D
         block = 'channel'
     [../]
- 
+
     #Mass conservation in washcoat kernels
       [./Cw_dot]
           type = VariableCoefTimeDerivative
@@ -143,7 +143,7 @@
           coupled = q
           block = 'washcoat'
       [../]
- 
+
     # Adsorption in the washcoat
        [./q_dot]
            type = TimeDerivative
@@ -163,7 +163,7 @@
            product_stoich = '1'
            block = 'washcoat'
        [../]
-    
+
        [./mat_bal]
            type = MaterialBalance
            variable = S
@@ -177,7 +177,7 @@
 []
 
 [DGKernels]
- 
+
     [./C_dgadv]
         type = DGConcentrationAdvection
         variable = C
@@ -194,7 +194,7 @@
         Dz = D
         block = 'channel'
     [../]
- 
+
     [./Cw_dgdiff]
         type = DGVarPoreDiffusion
         variable = Cw
@@ -229,7 +229,7 @@
     [../]
 
 []
- 
+
  [InterfaceKernels]
     [./interface_kernel]
         type = InterfaceMassTransfer
@@ -239,7 +239,7 @@
         transfer_rate = 2
     [../]
  [] #END InterfaceKernels
- 
+
 [Postprocessors]
 
     [./C_exit]
@@ -248,41 +248,41 @@
         variable = C
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./C_avg]
         type = ElementAverageValue
         variable = C
         block = 'channel'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Cw_avg]
         type = ElementAverageValue
         variable = Cw
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./q_avg]
         type = ElementAverageValue
         variable = q
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./S_avg]
         type = ElementAverageValue
         variable = S
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./volume_washcoat]
         type = VolumePostprocessor
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./volume_channel]
         type = VolumePostprocessor
         block = 'channel'
@@ -301,10 +301,49 @@
 [Executioner]
   type = Transient
   scheme = implicit-euler
-  solve_type = newton
-  petsc_options = '-snes_converged_reason'
-  petsc_options_iname ='-ksp_type -pc_type -sub_pc_type'
-  petsc_options_value = 'gmres bjacobi lu'
+  solve_type = pjfnk
+  # NOTE: Add arg -ksp_view to get info on methods used at linear steps
+  petsc_options = '-snes_converged_reason
+
+                    -ksp_gmres_modifiedgramschmidt'
+
+  # NOTE: The sub_pc_type arg not used if pc_type is ksp,
+  #       Instead, set the ksp_ksp_type to the pc method
+  #       you want. Then, also set the ksp_pc_type to be
+  #       the terminal preconditioner.
+  #
+  # Good terminal precon options: lu, ilu, asm, gasm, pbjacobi
+  #                               bjacobi, redundant, telescope
+  petsc_options_iname ='-ksp_type
+                        -pc_type
+
+                        -sub_pc_type
+
+                        -snes_max_it
+
+                        -sub_pc_factor_shift_type
+                        -pc_asm_overlap
+
+                        -snes_atol
+                        -snes_rtol
+
+                        -ksp_ksp_type
+                        -ksp_pc_type'
+
+  # snes_max_it = maximum non-linear steps
+  petsc_options_value = 'fgmres
+                         ksp
+
+                         lu
+
+                         20
+                         NONZERO
+                         10
+                         1E-8
+                         1E-10
+
+                         gmres
+                         lu'
 
   line_search = none
   nl_rel_tol = 1e-10
@@ -332,4 +371,3 @@
   csv = true
   interval = 10
 []
-
