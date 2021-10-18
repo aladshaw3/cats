@@ -29,7 +29,7 @@
 #   how to implement a recursive 'GMRES' solver that is preconditioned by
 #   another call to 'GMRES' with a terminal preconditioner applied to that
 #   final Krylov solver. This can be very helpful for these tightly coupled
-#   physics to get good convergence and scales well with multiple processors. 
+#   physics to get good convergence and scales well with multiple processors.
 
 [GlobalParams]
     dg_scheme = nipg
@@ -1204,14 +1204,26 @@
 
 [BCs]
     # =============== Fluid Energy Open Bounds ============
-    [./Ef_Flux_OpenBounds]
+    [./Ef_Flux_Inlet]
         type = DGFlowEnergyFluxBC
         variable = Ef
-        boundary = 'bottom top'
+        boundary = 'bottom'
         porosity = eps
         specific_heat = cpg_inlet
         density = rho_inlet
         inlet_temp = Tin
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./Ef_Flux_Outlet]
+        type = DGFlowEnergyFluxBC
+        variable = Ef
+        boundary = 'top'
+        porosity = eps
+        specific_heat = cpg
+        density = rho
+        inlet_temp = Tf
         ux = vel_x
         uy = vel_y
         uz = vel_z

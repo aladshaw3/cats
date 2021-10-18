@@ -3,7 +3,7 @@
  *    \brief Boundary Condition kernel for usage with INS module to specify the flow normal to the boundary
  *    \details This file creates a boundary condition kernel to produce residuals and jacobians for a flow
  *              that is normal to a given boundary. Can be used for outflow or inflow. User must given this
- *              condition for all velocity components that apply at that boundary. 
+ *              condition for all velocity components that apply at that boundary.
  *    \author Austin Ladshaw
  *    \date 06/01/2020
  *    \copyright This kernel was designed and built at the Georgia Institute
@@ -45,7 +45,7 @@ registerMooseObject("catsApp", INSNormalFlowBC);
 InputParameters INSNormalFlowBC::validParams()
 {
     InputParameters params = IntegratedBC::validParams();
-    params.addParam<Real>("u_dot_n", 1.0, "Value of the dot product of velocity and normals at boundary");
+    params.addParam<Real>("u_dot_n", 0.0, "Value of the dot product of velocity and normals at boundary");
     params.addParam<Real>("penalty", 1000.0, "Value of the penalty term at the boundary");
     params.addParam<unsigned int>("direction", 0, "Directional index (0 = x, 1 = y, 2 = z)");
     params.addRequiredCoupledVar("ux","Variable for velocity in x-direction");

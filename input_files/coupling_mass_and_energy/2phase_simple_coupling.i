@@ -1173,14 +1173,26 @@
 
 [BCs]
     # =============== Fluid Energy Open Bounds ============
-    [./Ef_Flux_OpenBounds]
+    [./Ef_Flux_Inlet]
         type = DGFlowEnergyFluxBC
         variable = Ef
-        boundary = 'bottom top'
+        boundary = 'bottom'
         porosity = eps
         specific_heat = cpg_inlet
         density = rho_inlet
         inlet_temp = Tin
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./Ef_Flux_Outlet]
+        type = DGFlowEnergyFluxBC
+        variable = Ef
+        boundary = 'top'
+        porosity = eps
+        specific_heat = cpg
+        density = rho
+        inlet_temp = Tf
         ux = vel_x
         uy = vel_y
         uz = vel_z

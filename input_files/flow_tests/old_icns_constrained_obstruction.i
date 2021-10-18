@@ -212,25 +212,8 @@
   [./x_no_slip_obj]
     type = DirichletBC
     variable = vel_x
-    boundary = 'object'
+    boundary = 'object top bottom'
     value = 0.0
-  [../]
-
-  # NOTE: This is an alternative way to deal with
-  #       boundaries. This BC can impose a NO FLUX
-  #       condition (when u_dot_u == 0). This allows
-  #       slip to occur at the boundary, but does not
-  #       allow momentum to cross the boundary.
-  [./x_no_penetration_walls]
-    type = INSNormalFlowBC
-    boundary = 'top bottom'
-    variable = vel_x
-    u_dot_n = 0
-    direction = 0
-    penalty = 1e4
-    ux = vel_x
-    uy = vel_y
-    uz = 0
   [../]
 
   [./y_no_slip]

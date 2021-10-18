@@ -10,7 +10,7 @@
     integrate_p_by_parts = true	#how to include the pressure gradient term (not sure what it does, but solves when true)
     supg = true 					#activates SUPG stabilization (excellent stability, always necessary)
     pspg = true					#activates PSPG stabilization for pressure term (excellent stability, lower accuracy)
-    alpha = 1 					#stabilization multiplicative correction factor (0.1 < alpha <= 1) [lower value improves accuracy]
+    alpha = 0.1 					#stabilization multiplicative correction factor (0.1 < alpha <= 1) [lower value improves accuracy]
     laplace = true				#whether or not viscous term is in laplace form
     convective_term = true		#whether or not to include advective/convective term
     transient_term = true			#whether or not to include time derivative in supg correction (sometimes needed)
@@ -19,6 +19,9 @@
 
 # Required for INS
 [Materials]
+  active = 'ins_material'
+
+  # Can use constant properties
   [./const]
     type = GenericConstantMaterial
     prop_names = 'rho mu'
@@ -29,6 +32,13 @@
     #     Addition of artificial viscosity should be a function
     #     of the inlet flowrate (or inlet velocity)
     prop_values = '1.225e-3  108.6E-1'   #VALUES FOR AIR (artifical vis)
+  [../]
+
+  # Can couple properties with aux kernels
+  [./ins_material]
+      type = INSFluid
+      density = rho   #kg/cm^3
+      viscosity = mu  #kg/cm/min
   [../]
 []
 
@@ -260,6 +270,13 @@
         order = FIRST
         family = MONOMIAL
         initial_condition = 1e-6       #kg/cm^3
+    [../]
+
+    # NOW being calculated in aux kernel
+    [./mu]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1.5e-5       #kg/cm/min
     [../]
 
     # NOW being calculated in aux kernel
@@ -1017,7 +1034,9 @@
         start_time = 16   # time at which we start ramping (in min)
         end_time = 92    # time at which we reach 825 K (in min)
         end_value = 825   # final temp in K
-        execute_on = 'initial timestep_end'
+
+          # NOTE: You are now required to put at timestep_begin
+        execute_on = 'initial timestep_begin timestep_end'
     [../]
 
     # Here, we assume that the temperature of the wall is same as inlet
@@ -1027,7 +1046,9 @@
         start_time = 16   # time at which we start ramping (in min)
         end_time = 92    # time at which we reach 825 K (in min)
         end_value = 825   # final temp in K
-        execute_on = 'initial timestep_end'
+
+          # NOTE: You are now required to put at timestep_begin
+        execute_on = 'initial timestep_begin timestep_end'
     [../]
 
     [./velocity]
@@ -1146,6 +1167,20 @@
         execute_on = 'initial timestep_end'
     [../]
 
+    [./visc_calc]
+        type = SimpleGasViscosity
+        variable = mu
+
+        pressure = 101.35
+        temperature = Tf
+
+        output_length_unit = "cm"
+        output_mass_unit = "kg"
+        output_time_unit = "min"
+
+        execute_on = 'initial timestep_end'
+    [../]
+
     [./dens_in_calc]
         type = SimpleGasDensity
         variable = rho_inlet
@@ -1250,14 +1285,26 @@
 
 [BCs]
     # =============== Fluid Energy Open Bounds ============
-    [./Ef_Flux_OpenBounds]
+    [./Ef_Flux_Inlet]
         type = DGFlowEnergyFluxBC
         variable = Ef
-        boundary = 'bottom top'
+        boundary = 'bottom'
         porosity = eps
         specific_heat = cpg_inlet
         density = rho_inlet
         inlet_temp = Tin
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./Ef_Flux_Outlet]
+        type = DGFlowEnergyFluxBC
+        variable = Ef
+        boundary = 'top'
+        porosity = eps
+        specific_heat = cpg
+        density = rho
+        inlet_temp = Tf
         ux = vel_x
         uy = vel_y
         uz = vel_z
@@ -1414,17 +1461,22 @@
         boundary = 'left right'
         value = 0.0
      [../]
-    # Partial/weak no slip in y direction applies to only the wall boundary
-    #    (i.e., right). We need to impose this BC more weakly BECAUSE we
-    #    are in cylindrical coordinates and the integrated inlet BC would
-    #    be violated without additional care here. For cartesian coordinates,
-    #    or full 3D simulations, we are better off with stricter no slip.
-     [./y_no_slip]
-        type = PenaltyDirichletBC
-        variable = vel_y
-        boundary = 'right'
-        value = 0.0
-        penalty = 1000
+
+    # In our columns, we want to allow slip at the boundary, but do NOT want
+    #   to allow momentum to go across the boundary. For the vel_x, we can
+    #   impose a simple no slip condition. But for vel_y, the main direction,
+    #   we want to allow slip at the wall. This INSNormalFlowBC allows slip,
+    #   but prevents flow across the normal of the boundary.
+     [./y_no_penetration]
+         type = INSNormalFlowBC
+         boundary = 'right'
+         variable = vel_y
+         u_dot_n = 0
+         direction = 1
+         penalty = 1e4
+         ux = vel_x
+         uy = vel_y
+         uz = 0
      [../]
 
      # inlet velocity
@@ -1449,7 +1501,7 @@
         variable = vel_in
         execute_on = 'initial timestep_begin timestep_end'
     [../]
-    
+
     [./vel_y_in]
         type = SideAverageValue
         boundary = 'bottom'
