@@ -1,5 +1,8 @@
 # This input file tests various options for the incompressible NS equations in a channel.
 
+# NOTE: This file also demonstrates mass transfer into the obstruction subdomain
+#       using the InterfaceKernels system. 
+
 # CONVERGES WELL
 
 # NOTES
@@ -66,7 +69,7 @@
   [../]
 
   [./inner]
-    order = CONSTANT
+    order = FIRST
     family = MONOMIAL
     initial_condition = 0
     block = 'obstruction'
@@ -89,18 +92,22 @@
 []
 
 [Kernels]
-#Place holder variable and kernel needed to satisfy moose
+# Mass is transfered into the obstruction and undergoes diffusion
+#   This is coupled to CO2 via the InterfaceKernels below.
   [./inner_dot]
     type = CoefTimeDerivative
     variable = inner
     Coefficient = 1.0
     block = 'obstruction'
   [../]
-  [./body_force]
-    type = BodyForce
-    variable = inner
-    block = 'obstruction'
-    value = 1
+  [./inner_gdiff]
+      type = GVarPoreDiffusion
+      variable = inner
+      porosity = 1
+      Dx = 2400
+      Dy = 2400
+      Dz = 2400
+      block = 'obstruction'
   [../]
 
   # Transport of conc
@@ -191,6 +198,16 @@
       Dz = 2400
       block = 'conduit'
   [../]
+
+  [./inner_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = inner
+      porosity = 1
+      Dx = 2400
+      Dy = 2400
+      Dz = 2400
+      block = 'obstruction'
+  [../]
 []
 
 [AuxKernels]
@@ -253,6 +270,16 @@
       uz = 0
   [../]
 []
+
+[InterfaceKernels]
+   [./interface_kernel]
+       type = InterfaceMassTransfer
+       variable = CO2
+       neighbor_var = inner
+       boundary = 'object'
+       transfer_rate = 2000
+   [../]
+[] #END InterfaceKernels
 
 [Materials]
   [./const]

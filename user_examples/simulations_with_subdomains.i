@@ -212,10 +212,10 @@
         type = DGConcentrationFluxBC
         variable = C
         boundary = 'inlet'
-		u_input = 1.0
-		ux = vel_x
-		uy = vel_y
-		uz = vel_z
+    		u_input = 1.0
+    		ux = vel_x
+    		uy = vel_y
+    		uz = vel_z
     [../]
 
     [./C_FluxOut]

@@ -3,7 +3,7 @@
     # These are stability options for the DG kernels
     dg_scheme = nipg
     sigma = 10
- 
+
     # Since there is only one reaction, we will put reaction kernel parameters as global
     forward_activation_energy = 5.0E4   #J/mol
     forward_pre_exponential = 25        #m^3/mol/s
@@ -19,7 +19,7 @@
     spec_heat = '1.04 0.919 0.846'
     execute_on = 'initial timestep_end'
     is_ideal_gas = false
- 
+
     # Other Constants (used in kernels, but not declared globally - for book keeping)
     #   dH = -3.95E5 J/mol
     #   As = 8.6346E7   m^-1
@@ -30,7 +30,7 @@
     micro_length = 2.545E-4        #Radius of pellet (in m)
     num_nodes = 10
     coord_id = 2
-    
+
     #Average intraparticle diffusion values
     # Dknudsen = 5.5E-6  m^2/s
     # Dpore = 1.3E-4  m^2/s
@@ -43,7 +43,7 @@
     #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
     coord_type = RZ
 [] #END Problem
- 
+
 [Mesh]
     type = GeneratedMesh
     dim = 2
@@ -74,7 +74,7 @@
             temperature = Tf
         [../]
     [../]
- 
+
     [./Es]
         order = FIRST
         family = MONOMIAL
@@ -85,19 +85,19 @@
             temperature = Ts
         [../]
     [../]
- 
+
     [./Tf]
         order = FIRST
         family = MONOMIAL
         initial_condition = 723.15  #K
     [../]
- 
+
     [./Ts]
         order = FIRST
         family = MONOMIAL
         initial_condition = 723.15  #K
     [../]
- 
+
     # Bulk gas concentration for O2
     [./O2]
     # We use a CONSTANT order here for maximum stability on a coarse mesh
@@ -105,7 +105,7 @@
         family = MONOMIAL
         initial_condition = 1e-9    #mol/m^3
     [../]
- 
+
     # Bulk gas concentration for CO2
     [./CO2]
     # We use a CONSTANT order here for maximum stability on a coarse mesh
@@ -113,7 +113,7 @@
         family = MONOMIAL
         initial_condition = 1e-9    #mol/m^3
     [../]
- 
+
      # Surface Carbon (mol/m^2)
      [./qc0]
          order = FIRST
@@ -123,14 +123,14 @@
              function = qc_ic
          [../]
      [../]
- 
+
     # O2 in pore-spaces (mol/m^3)
     [./O2p0]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1e-9    #mol/m^3
     [../]
- 
+
     # CO2 in pore-spaces (mol/m^3)
     [./CO2p0]
         order = FIRST
@@ -354,7 +354,7 @@
        initial_condition = 1e-9    #mol/m^3
    [../]
 []
- 
+
 [AuxVariables]
 # Below are the variables for integral averages inside particles
     # Surface Carbon (mol/m^2)
@@ -387,14 +387,14 @@
         family = MONOMIAL
         initial_condition = 7.7E-5    #m^2/s  Pore diffusion (with out Knudsen correction)
     [../]
-    
+
  #Reverved for Temporary AuxVariables
     [./N2p]
         order = FIRST
         family = MONOMIAL
         initial_condition = 16.497    #mol/m^3
     [../]
- 
+
     [./N2]
         order = FIRST
         family = MONOMIAL
@@ -419,7 +419,7 @@
       family = LAGRANGE        #Must be LAGRANGE if vel_y is also LAGRANGE
       initial_condition = 0.016513   #m^2
    [../]
- 
+
     [./vel_x]
         order = FIRST
         family = LAGRANGE
@@ -437,26 +437,26 @@
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./Kg]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.07          #W/m/K
     [../]
- 
+
     [./Ks]
         order = FIRST
         family = MONOMIAL
         initial_condition = 4.9       #W/m/K   (  should be 4.9 = eps_s*0.07 + (1-eps_s)*11.9  )
     [../]
- 
+
     # MUST BE LAGRANGE IF USED TO CALCULATE vel_y (which is also LAGRANGE)
     [./eps]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0.4371          #volume bulk voids / total volumes
     [../]
- 
+
     [./s_frac]
         order = FIRST
         family = MONOMIAL
@@ -486,43 +486,43 @@
         family = MONOMIAL
         initial_condition = 0.45       #kg/m^3
     [../]
- 
+
     [./rho_s]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1599       #kg/m^3
     [../]
- 
+
     [./cpg]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1100       #J/kg/K
     [../]
- 
+
     [./cps]
         order = FIRST
         family = MONOMIAL
         initial_condition = 928       #J/kg/K    (  should be 928 = eps_s*1100 + (1-eps_s)*680  )
     [../]
- 
+
     [./hw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 50       #W/m^2/K
     [../]
- 
+
     [./Tw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 573.15  #K
     [../]
- 
+
     [./hs]
         order = FIRST
         family = MONOMIAL
         initial_condition = 288       #W/m^2/K
     [../]
- 
+
     [./Ao]
         order = FIRST
         family = MONOMIAL
@@ -577,7 +577,7 @@
         order = FIRST
         family = MONOMIAL
     [../]
-    
+
    [./De_O2]
        order = FIRST
        family = MONOMIAL
@@ -597,7 +597,7 @@
         order = FIRST
         family = MONOMIAL
     [../]
- 
+
 []
 
 [Kernels]
@@ -632,7 +632,7 @@
          specific_area = Ao
          volume_frac = s_frac
      [../]
- 
+
     [./Es_dot]
         type = VariableCoefTimeDerivative
         variable = Es
@@ -787,7 +787,7 @@
         products = 'CO2p9'
         product_stoich = '1'
     [../]
- 
+
     [./Tf_calc]
         type = PhaseTemperature
         variable = Tf
@@ -795,7 +795,7 @@
         specific_heat = cpg
         density = rho
     [../]
- 
+
     [./Ts_calc]
         type = PhaseTemperature
         variable = Ts
@@ -803,7 +803,7 @@
         specific_heat = cps
         density = rho_s
     [../]
- 
+
 # MACROSCALE for O2
     [./O2_dot]
         type = VariableCoefTimeDerivative
@@ -835,7 +835,7 @@
     [../]
 
 
- 
+
     # Kernels for surface reaction @ node 0
     [./qc0_dot]
         type = TimeDerivative
@@ -996,7 +996,7 @@
         products = 'CO2p9'
         product_stoich = '1'
     [../]
- 
+
 
 # MICROSCALE for O2
     # Interior node needs InnerBC
@@ -1237,7 +1237,7 @@
         nodal_time_var = -8.6346E7      #As
         node_id = 9
     [../]
- 
+
 # MACROSCALE for CO2
     [./CO2_dot]
         type = VariableCoefTimeDerivative
@@ -1267,7 +1267,7 @@
         rate_variable = km_CO2
         av_ratio = 6640.5       #   Ao*(1-eps) = 6640.5
     [../]
- 
+
 
 # MICROSCALE for CO2
     # Inner most node needs InnerBC here
@@ -1510,9 +1510,9 @@
     [../]
 
 []
- 
+
 [DGKernels]
-    [./Ef_dgadv] 
+    [./Ef_dgadv]
         type = DGPoreConcAdvection
         variable = Ef
         porosity = eps
@@ -1529,7 +1529,7 @@
          Dy = Kg
          Dz = Kg
     [../]
- 
+
     [./Es_dgdiff]
         type = DGPhaseThermalConductivity
         variable = Es
@@ -1539,7 +1539,7 @@
         Dy = Ks
         Dz = Ks
     [../]
- 
+
     [./O2_dgadv]
         type = DGPoreConcAdvection
         variable = O2
@@ -1556,7 +1556,7 @@
         Dy = De_O2
         Dz = De_O2
     [../]
- 
+
     [./CO2_dgadv]
         type = DGPoreConcAdvection
         variable = CO2
@@ -1573,7 +1573,7 @@
         Dy = De_CO2
         Dz = De_CO2
     [../]
- 
+
 []
 
 
@@ -1607,7 +1607,7 @@
        micro_vars = 'qc0 qc1 qc2 qc3 qc4 qc5 qc6 qc7 qc8 qc9'
        execute_on = 'initial timestep_end'
    [../]
-    
+
     # This auxkernel calculates an average linear velocity based on the flow rate and area
     [./vel_y_calc]
         type = AuxAvgLinearVelocity
@@ -1616,7 +1616,7 @@
         flow_rate = flow_rate
         xsec_area = x_sec
     [../]
- 
+
     [./P_ergun]
         type = AuxErgunPressure
         variable = P
@@ -1796,7 +1796,7 @@
         uy = vel_y
         uz = vel_z
     [../]
- 
+
     [./Ef_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Ef
@@ -1806,7 +1806,7 @@
         temperature = Tf
         area_frac = eps
     [../]
- 
+
     [./Es_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Es
@@ -1816,7 +1816,7 @@
         temperature = Ts
         area_frac = s_frac
     [../]
- 
+
 # Oxyegen does not begin flowing immediately, instead we introduce is starting around 1250 seconds
 # and slowly ramp it up to a maximum inlet concentration of 0.148 mol/m^3 by 2750 seconds
     [./O2_FluxIn]
@@ -1841,7 +1841,7 @@
         uy = vel_y
         uz = vel_z
     [../]
- 
+
     [./CO2_FluxIn]
         type = DGPoreConcFluxBC
         variable = CO2
@@ -1885,7 +1885,7 @@
         variable = Tf
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./T_in]
         type = SideAverageValue
         boundary = 'bottom'
@@ -1898,13 +1898,13 @@
         variable = Tf
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Ts_avg]
         type = ElementAverageValue
         variable = Ts
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./qc_avg]
         type = ElementAverageValue
         variable = qc
@@ -1917,7 +1917,7 @@
         variable = O2
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./O2_inside]
         type = ElementAverageValue
         variable = O2
@@ -1929,14 +1929,14 @@
         variable = O2p
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./CO2_out]
         type = SideAverageValue
         boundary = 'top'
         variable = CO2
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./CO2_inside]
         type = ElementAverageValue
         variable = CO2
@@ -1961,7 +1961,7 @@
 [Executioner]
     type = Transient
     scheme = implicit-euler
-    solve_type = newton
+    solve_type = pjfnk
     petsc_options = '-snes_converged_reason'
     petsc_options_iname ='-ksp_type -ksp_gmres_restart -pc_type -sub_pc_type'
     petsc_options_value = 'gmres 300 asm lu'
@@ -1991,4 +1991,3 @@
     csv = true
     interval = 10   #Number of time steps to wait before writing output
 [] #END Outputs
-
