@@ -57,14 +57,14 @@
       family = LAGRANGE
       initial_condition = 0.5
   [../]
- 
+
   [./s_frac]
     # Solids fraction: (1 - eps)
       order = FIRST
       family = LAGRANGE
       initial_condition = 0.5
   [../]
- 
+
   [./vel_x]
       order = FIRST
       family = LAGRANGE
@@ -82,61 +82,61 @@
       family = LAGRANGE
       initial_condition = 0
   [../]
- 
+
   [./Kf]
     order = FIRST
     family = LAGRANGE
     initial_condition = 0.1
   [../]
- 
+
   [./Ks]
     order = FIRST
     family = LAGRANGE
     initial_condition = 20
   [../]
- 
+
   [./h]
     order = FIRST
     family = LAGRANGE
     initial_condition = 600
   [../]
- 
+
   [./Ao]
     order = FIRST
     family = LAGRANGE
     initial_condition = 5000
   [../]
- 
+
   [./rho]
     order = FIRST
     family = LAGRANGE
     initial_condition = 1.2
   [../]
- 
+
   [./cpf]
     order = FIRST
     family = LAGRANGE
     initial_condition = 1100
   [../]
- 
+
   [./rhop]
     order = FIRST
     family = LAGRANGE
     initial_condition = 1500
   [../]
- 
+
   [./cps]
     order = FIRST
     family = LAGRANGE
     initial_condition = 900
   [../]
- 
+
   [./Tw]
       order = FIRST
       family = LAGRANGE
       initial_condition = 300
   [../]
- 
+
   [./hw]
      order = FIRST
      family = LAGRANGE
@@ -177,7 +177,7 @@
         specific_area = Ao
         volume_frac = s_frac
     [../]
- 
+
  # Conservation of energy for solid
     [./Es_dot]
         type = TimeDerivative
@@ -201,7 +201,7 @@
         specific_area = Ao
         volume_frac = 1
     [../]
- 
+
 # Temperature of fluid
     [./Tf_calc]
         type = PhaseTemperature
@@ -210,7 +210,7 @@
         specific_heat = cpf
         density = rho
     [../]
- 
+
 # Temperature of solid
     [./Ts_calc]
         type = PhaseTemperature
@@ -240,7 +240,7 @@
         Dy = Kf
         Dz = Kf
     [../]
-    
+
     [./Es_dgdiff]
         type = DGPhaseThermalConductivity
         variable = Es
@@ -268,7 +268,7 @@
         uy = vel_y
         uz = vel_z
     [../]
- 
+
     [./Ef_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Ef
@@ -278,7 +278,7 @@
         temperature = Tf
         area_frac = eps
     [../]
- 
+
     [./Es_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Es
@@ -288,7 +288,7 @@
         temperature = Ts
         area_frac = s_frac
     [../]
-    
+
 [] #END BCs
 
 
@@ -317,9 +317,48 @@
     type = Transient
     scheme = bdf2
     solve_type = pjfnk
-    petsc_options = '-snes_converged_reason'
-    petsc_options_iname ='-ksp_type -pc_type -sub_pc_type'
-    petsc_options_value = 'bcgs bjacobi lu'
+    # NOTE: Add arg -ksp_view to get info on methods used at linear steps
+    petsc_options = '-snes_converged_reason
+
+                      -ksp_gmres_modifiedgramschmidt'
+
+    # NOTE: The sub_pc_type arg not used if pc_type is ksp,
+    #       Instead, set the ksp_ksp_type to the pc method
+    #       you want. Then, also set the ksp_pc_type to be
+    #       the terminal preconditioner.
+    #
+    # Good terminal precon options: lu, ilu, asm, gasm, pbjacobi
+    #                               bjacobi, redundant, telescope
+    petsc_options_iname ='-ksp_type
+                          -pc_type
+
+                          -sub_pc_type
+
+                          -snes_max_it
+
+                          -sub_pc_factor_shift_type
+                          -pc_asm_overlap
+
+                          -snes_atol
+                          -snes_rtol
+
+                          -ksp_ksp_type
+                          -ksp_pc_type'
+
+    # snes_max_it = maximum non-linear steps
+    petsc_options_value = 'fgmres
+                           ksp
+
+                           lu
+
+                           10
+                           NONZERO
+                           10
+                           1E-8
+                           1E-10
+
+                           gmres
+                           lu'
 
     line_search = none
     nl_rel_tol = 1e-8
@@ -338,7 +377,7 @@
         type = ConstantDT
         dt = 0.2
     [../]
- 
+
 [] #END Executioner
 
 [Outputs]

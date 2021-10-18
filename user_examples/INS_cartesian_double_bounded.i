@@ -17,7 +17,7 @@
 
 [GlobalParams]
 # Below are the parameters for the MOOSE Navier-Stokes methods
-    gravity = '0 -9.8 0'          #gravity accel for body force (should be in m/s/s)
+    gravity = '0 0 0'             #gravity accel for body force (should be in m/s/s)
     integrate_p_by_parts = true   #how to include the pressure gradient term
     supg = true                   #activates SUPG stabilization
     pspg = true                   #activates PSPG stabilization for pressure term
@@ -29,7 +29,7 @@
  []
 
 [Problem]
-    
+
 [] #END Problem
 
 [Mesh]
@@ -52,9 +52,9 @@
          viscosity = 2.25E-5
      [../]
  []
- 
+
 [Variables]
- 
+
     [./vel_x]
         order = FIRST
         family = LAGRANGE
@@ -66,7 +66,7 @@
         family = LAGRANGE
         initial_condition = 3
     [../]
- 
+
     [./p]
         order = FIRST
         family = LAGRANGE
@@ -76,7 +76,7 @@
 [] #END Variables
 
 [AuxVariables]
-    
+
     [./vel_z]
         order = FIRST
         family = LAGRANGE
@@ -93,7 +93,7 @@
         u = vel_x
         v = vel_y
         w = vel_z
-        p = p
+        pressure = p
     [../]
 
     #Conservation of momentum equ in x (with time derivative)
@@ -107,7 +107,7 @@
         u = vel_x
         v = vel_y
         w = vel_z
-        p = p
+        pressure = p
         component = 0
     [../]
 
@@ -122,7 +122,7 @@
         u = vel_x
         v = vel_y
         w = vel_z
-        p = p
+        pressure = p
         component = 1
     [../]
 
@@ -134,7 +134,7 @@
 
 
 [BCs]
- # New INS BC: It does not work as well as I want. The BC is imposed too weakly. Requires LARGE pentalty term
+ # New INS BC: Imposes a specific flux at a BC
      [./y_inlet_const]
          type = INSNormalFlowBC
          variable = vel_y
@@ -148,22 +148,20 @@
          penalty = 1e6  #This term should be larger than the no_slip terms
      [../]
 
- # This is a weaker form of a Dirichlet BC that may be more appropriate
+     # Strict no slip
      [./x_no_slip]
-        type = PenaltyDirichletBC
+        type = DirichletBC
         variable = vel_x
         boundary = 'left right'
         value = 0.0
-        penalty = 1000
      [../]
      [./y_no_slip]
-        type = PenaltyDirichletBC
+        type = DirichletBC
         variable = vel_y
         boundary = 'left right'
         value = 0.0
-        penalty = 1000
      [../]
-    
+
 [] #END BCs
 
 
@@ -185,7 +183,7 @@
         vel_z = vel_z
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./vy_exit]
         type = SideAverageValue
         boundary = 'top'
@@ -211,9 +209,48 @@
     type = Transient
     scheme = bdf2
     solve_type = pjfnk
-    petsc_options = '-snes_converged_reason'
-    petsc_options_iname ='-ksp_type -pc_type -sub_pc_type'
-    petsc_options_value = 'bcgs bjacobi lu'
+    # NOTE: Add arg -ksp_view to get info on methods used at linear steps
+    petsc_options = '-snes_converged_reason
+
+                      -ksp_gmres_modifiedgramschmidt'
+
+    # NOTE: The sub_pc_type arg not used if pc_type is ksp,
+    #       Instead, set the ksp_ksp_type to the pc method
+    #       you want. Then, also set the ksp_pc_type to be
+    #       the terminal preconditioner.
+    #
+    # Good terminal precon options: lu, ilu, asm, gasm, pbjacobi
+    #                               bjacobi, redundant, telescope
+    petsc_options_iname ='-ksp_type
+                          -pc_type
+
+                          -sub_pc_type
+
+                          -snes_max_it
+
+                          -sub_pc_factor_shift_type
+                          -pc_asm_overlap
+
+                          -snes_atol
+                          -snes_rtol
+
+                          -ksp_ksp_type
+                          -ksp_pc_type'
+
+    # snes_max_it = maximum non-linear steps
+    petsc_options_value = 'fgmres
+                           ksp
+
+                           lu
+
+                           10
+                           NONZERO
+                           10
+                           1E-8
+                           1E-10
+
+                           gmres
+                           lu'
 
     line_search = none
     nl_rel_tol = 1e-8
@@ -232,7 +269,7 @@
         type = ConstantDT
         dt = 0.2
     [../]
- 
+
 [] #END Executioner
 
 [Outputs]

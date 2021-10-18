@@ -47,7 +47,7 @@
       family = LAGRANGE
       initial_condition = 0.5
   [../]
- 
+
   [./vel_x]
       order = FIRST
       family = LAGRANGE
@@ -65,32 +65,32 @@
       family = LAGRANGE
       initial_condition = 0
   [../]
- 
+
   [./D]
     order = FIRST
     family = LAGRANGE
     initial_condition = 2.5E-5
   [../]
- 
+
   [./k]
     order = FIRST
     family = LAGRANGE
     initial_condition = 1
   [../]
- 
+
   [./k_eps]
     # Represents (1 - eps)*k
     order = FIRST
     family = LAGRANGE
     initial_condition = 0.5
   [../]
- 
+
   [./eps_p]
       order = FIRST
       family = LAGRANGE
       initial_condition = 0.25
   [../]
- 
+
   [./S_max]
     order = FIRST
     family = LAGRANGE
@@ -150,7 +150,7 @@
       coupled = q
       time_coeff = 1500
     [../]
- 
+
  # Conservation of mass for q
     [./q_dot]
         type = TimeDerivative
@@ -168,7 +168,7 @@
         products = 'q'
         product_stoich = '1'
     [../]
- 
+
  # Conservation of mass for S
     [./S_bal]
       type = MaterialBalance
@@ -251,9 +251,48 @@
     type = Transient
     scheme = bdf2
     solve_type = pjfnk
-    petsc_options = '-snes_converged_reason'
-    petsc_options_iname ='-ksp_type -pc_type -sub_pc_type'
-    petsc_options_value = 'bcgs bjacobi lu'
+    # NOTE: Add arg -ksp_view to get info on methods used at linear steps
+    petsc_options = '-snes_converged_reason
+
+                      -ksp_gmres_modifiedgramschmidt'
+
+    # NOTE: The sub_pc_type arg not used if pc_type is ksp,
+    #       Instead, set the ksp_ksp_type to the pc method
+    #       you want. Then, also set the ksp_pc_type to be
+    #       the terminal preconditioner.
+    #
+    # Good terminal precon options: lu, ilu, asm, gasm, pbjacobi
+    #                               bjacobi, redundant, telescope
+    petsc_options_iname ='-ksp_type
+                          -pc_type
+
+                          -sub_pc_type
+
+                          -snes_max_it
+
+                          -sub_pc_factor_shift_type
+                          -pc_asm_overlap
+
+                          -snes_atol
+                          -snes_rtol
+
+                          -ksp_ksp_type
+                          -ksp_pc_type'
+
+    # snes_max_it = maximum non-linear steps
+    petsc_options_value = 'fgmres
+                           ksp
+
+                           lu
+
+                           10
+                           NONZERO
+                           10
+                           1E-8
+                           1E-10
+
+                           gmres
+                           lu'
 
     line_search = none
     nl_rel_tol = 1e-8
@@ -272,7 +311,7 @@
         type = ConstantDT
         dt = 0.2
     [../]
- 
+
 [] #END Executioner
 
 [Outputs]

@@ -52,9 +52,9 @@
          viscosity = 2.25E-5
      [../]
  []
- 
+
 [Variables]
- 
+
     [./vel_x]
         order = FIRST
         family = LAGRANGE
@@ -66,7 +66,7 @@
         family = LAGRANGE
         initial_condition = 3
     [../]
- 
+
     [./p]
         order = FIRST
         family = LAGRANGE
@@ -76,7 +76,7 @@
 [] #END Variables
 
 [AuxVariables]
-    
+
     [./vel_z]
         order = FIRST
         family = LAGRANGE
@@ -93,7 +93,7 @@
         u = vel_x
         v = vel_y
         w = vel_z
-        p = p
+        pressure = p
     [../]
 
     #Conservation of momentum equ in x (with time derivative)
@@ -107,7 +107,7 @@
         u = vel_x
         v = vel_y
         w = vel_z
-        p = p
+        pressure = p
         component = 0
     [../]
 
@@ -122,7 +122,7 @@
         u = vel_x
         v = vel_y
         w = vel_z
-        p = p
+        pressure = p
         component = 1
     [../]
 
@@ -148,25 +148,28 @@
          penalty = 1e6  #This term should be larger than the no_slip terms
      [../]
 
-# No slip in x direction applies to both the left and right boundary
+# Strong No slip in x direction applies to both the left and right boundary
 # We need the vel_x to be zero at both the wall and the axis of symmetry.
 # Thus, we apply this condition to the left and right boundaries
      [./x_no_slip]
-        type = PenaltyDirichletBC
+        type = DirichletBC
         variable = vel_x
         boundary = 'left right'
         value = 0.0
-        penalty = 1000
      [../]
-# No slip in y direction applies to only the wall boundary (i.e., right)
-     [./y_no_slip]
-        type = PenaltyDirichletBC
-        variable = vel_y
-        boundary = 'right'
-        value = 0.0
-        penalty = 1000
+# NO penetration across the wall
+     [./y_no_penetration]
+         type = INSNormalFlowBC
+         variable = vel_y
+         direction = 1
+         boundary = 'bottom'
+         u_dot_n = 0
+         ux = vel_x
+         uy = vel_y
+         uz = vel_z
+         penalty = 1000
      [../]
-    
+
 [] #END BCs
 
 
@@ -188,7 +191,7 @@
         vel_z = vel_z
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./vy_exit]
         type = SideAverageValue
         boundary = 'top'
@@ -213,10 +216,49 @@
 [Executioner]
     type = Transient
     scheme = bdf2
-    solve_type = newton
-    petsc_options = '-snes_converged_reason'
-    petsc_options_iname ='-ksp_type -pc_type -sub_pc_type'
-    petsc_options_value = 'bcgs bjacobi lu'
+    solve_type = pjfnk
+    # NOTE: Add arg -ksp_view to get info on methods used at linear steps
+    petsc_options = '-snes_converged_reason
+
+                      -ksp_gmres_modifiedgramschmidt'
+
+    # NOTE: The sub_pc_type arg not used if pc_type is ksp,
+    #       Instead, set the ksp_ksp_type to the pc method
+    #       you want. Then, also set the ksp_pc_type to be
+    #       the terminal preconditioner.
+    #
+    # Good terminal precon options: lu, ilu, asm, gasm, pbjacobi
+    #                               bjacobi, redundant, telescope
+    petsc_options_iname ='-ksp_type
+                          -pc_type
+
+                          -sub_pc_type
+
+                          -snes_max_it
+
+                          -sub_pc_factor_shift_type
+                          -pc_asm_overlap
+
+                          -snes_atol
+                          -snes_rtol
+
+                          -ksp_ksp_type
+                          -ksp_pc_type'
+
+    # snes_max_it = maximum non-linear steps
+    petsc_options_value = 'fgmres
+                           ksp
+
+                           lu
+
+                           10
+                           NONZERO
+                           10
+                           1E-8
+                           1E-10
+
+                           gmres
+                           lu'
 
     line_search = bt
     nl_rel_tol = 1e-8
@@ -235,7 +277,7 @@
         type = ConstantDT
         dt = 0.02
     [../]
- 
+
 [] #END Executioner
 
 [Outputs]

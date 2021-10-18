@@ -5,7 +5,7 @@
 #       we gave a conductivity of 0.1 W/m/K, but that value is only good at
 #       certain temperatures. Given the actual column temperature, this value
 #       is closer to 0.03 W/m/K, which has a significant impact on the evolution
-#       of temperature in the column over time. 
+#       of temperature in the column over time.
 
 [GlobalParams]
     forward_activation_energy = 0   #J/mol
@@ -13,7 +13,7 @@
     reverse_activation_energy = 2305   #J/mol
     reverse_pre_exponential = 1     #m^3/mol/s
     enthalpy = -2305    #J/mol
- 
+
     # Gas Properties arguments
     gases = 'N2 C'
     molar_weights = '28 18'
@@ -25,7 +25,7 @@
     execute_on = 'initial timestep_end'
 
     # Below are the parameters for the MOOSE Navier-Stokes methods
-    gravity = '0 -9.8 0'          #gravity accel for body force (should be in m/s/s)
+    gravity = '0 0 0'             #gravity accel for body force (should be in m/s/s)
     integrate_p_by_parts = true   #how to include the pressure gradient term
     supg = true                   #activates SUPG stabilization
     pspg = true                   #activates PSPG stabilization for pressure term
@@ -43,7 +43,7 @@
         viscosity = mu
     [../]
 []
- 
+
 [Problem]
     coord_type = RZ
 [] #END Problem
@@ -95,7 +95,7 @@
         family = LAGRANGE
         initial_condition = 400
     [../]
- 
+
     [./C]
         order = FIRST
         family = MONOMIAL
@@ -145,7 +145,7 @@
       family = MONOMIAL
       initial_condition = 0.5
   [../]
- 
+
   [./s_frac]
     # Solids fraction: (1 - eps)
       order = FIRST
@@ -158,91 +158,91 @@
       family = LAGRANGE
       initial_condition = 0
   [../]
- 
+
   [./Kf]
     order = FIRST
     family = MONOMIAL
     initial_condition = 0.1
   [../]
- 
+
   [./Ks]
     order = FIRST
     family = MONOMIAL
     initial_condition = 20
   [../]
- 
+
   [./h]
     order = FIRST
     family = MONOMIAL
     initial_condition = 600
   [../]
- 
+
   [./Ao]
     order = FIRST
     family = MONOMIAL
     initial_condition = 5000
   [../]
- 
+
   [./rho]
     order = FIRST
     family = MONOMIAL
     initial_condition = 1.2
   [../]
- 
+
   [./cpf]
     order = FIRST
     family = MONOMIAL
     initial_condition = 1100
   [../]
- 
+
   [./rhop]
     order = FIRST
     family = MONOMIAL
     initial_condition = 1500
   [../]
- 
+
   [./cps]
     order = FIRST
     family = MONOMIAL
     initial_condition = 900
   [../]
- 
+
   [./Tw]
       order = FIRST
       family = LAGRANGE
       initial_condition = 300
   [../]
- 
+
   [./hw]
      order = FIRST
      family = MONOMIAL
      initial_condition = 100
   [../]
-  
+
    [./D]
      order = FIRST
      family = MONOMIAL
      initial_condition = 2.5E-5
    [../]
-  
+
    [./k]
      order = FIRST
      family = MONOMIAL
      initial_condition = 1
    [../]
-  
+
    [./eps_p]
        order = FIRST
        family = MONOMIAL
        initial_condition = 0.25
    [../]
-  
+
    [./S_max]
      order = FIRST
      family = MONOMIAL
      initial_condition = 1
    [../]
- 
+
     [./P]
       order = FIRST
       family = MONOMIAL
@@ -254,7 +254,7 @@
         family = MONOMIAL
         initial_condition = 1.81E-5
     [../]
- 
+
     [./N2]
         order = FIRST
         family = MONOMIAL
@@ -295,7 +295,7 @@
         specific_area = Ao
         volume_frac = s_frac
     [../]
- 
+
  # Conservation of energy for solid
     [./Es_dot]
         type = TimeDerivative
@@ -330,7 +330,7 @@
         products = 'q'
         product_stoich = '1'
     [../]
- 
+
 # Temperature of fluid
     [./Tf_calc]
         type = PhaseTemperature
@@ -339,7 +339,7 @@
         specific_heat = cpf
         density = rho
     [../]
- 
+
 # Temperature of solid
     [./Ts_calc]
         type = PhaseTemperature
@@ -348,7 +348,7 @@
         specific_heat = cps
         density = rhop
     [../]
- 
+
  # Conservation of mass for C
     [./C_dot]
         type = VariableCoefTimeDerivative
@@ -400,7 +400,7 @@
       coupled = q
       time_coeff = 1500
     [../]
- 
+
  # Conservation of mass for q
     [./q_dot]
         type = TimeDerivative
@@ -417,7 +417,7 @@
         products = 'q'
         product_stoich = '1'
     [../]
- 
+
  # Conservation of mass for S
     [./S_bal]
       type = MaterialBalance
@@ -488,7 +488,7 @@
         Dy = Kf
         Dz = Kf
     [../]
-    
+
     [./Es_dgdiff]
         type = DGPhaseThermalConductivity
         variable = Es
@@ -520,10 +520,10 @@
 
 [BCs]
 
-    [./Ef_Flux_OpenBounds]
+    [./Ef_Flux_In]
         type = DGFlowEnergyFluxBC
         variable = Ef
-        boundary = 'bottom top'
+        boundary = 'bottom'
         porosity = eps
         specific_heat = cpf
         density = rho
@@ -532,7 +532,18 @@
         uy = vel_y
         uz = vel_z
     [../]
- 
+    [./Ef_Flux_Out]
+        type = DGFlowEnergyFluxBC
+        variable = Ef
+        boundary = 'top'
+        porosity = eps
+        specific_heat = cpf
+        density = rho
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+
     [./Ef_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Ef
@@ -542,7 +553,7 @@
         temperature = Tf
         area_frac = eps
     [../]
- 
+
     [./Es_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Es
@@ -552,7 +563,7 @@
         temperature = Ts
         area_frac = s_frac
     [../]
- 
+
     [./C_FluxIn]
       type = DGPoreConcFluxBC
       variable = C
@@ -573,7 +584,8 @@
       uz = vel_z
     [../]
 
- # New INS BC: It does not work as well as I want. The BC is imposed too weakly. Requires LARGE pentalty term
+    # New INS BC: Can be used to enforce constrant flux (or no flux)
+    #   at a given boundary condition 
      [./y_inlet_const]
          type = INSNormalFlowBC
          variable = vel_y
@@ -587,25 +599,29 @@
          penalty = 1e6  #This term should be larger than the no_slip terms
      [../]
 
-# No slip in x direction applies to both the left and right boundary
-# We need the vel_x to be zero at both the wall and the axis of symmetry.
-# Thus, we apply this condition to the left and right boundaries
+    # No slip in x direction applies to both the left and right boundary
+    # We need the vel_x to be zero at both the wall and the axis of symmetry.
+    # Thus, we apply this condition to the left and right boundaries
      [./x_no_slip]
-        type = PenaltyDirichletBC
+        type = DirichletBC
         variable = vel_x
         boundary = 'left right'
         value = 0.0
-        penalty = 1000
      [../]
-# No slip in y direction applies to only the wall boundary (i.e., right)
-     [./y_no_slip]
-        type = PenaltyDirichletBC
-        variable = vel_y
-        boundary = 'right'
-        value = 0.0
-        penalty = 1000
+    # Partial/full slip in y direction applies to only the wall boundary (i.e., right)
+    #     Allow slip, but force NO PENETRATION
+     [./y_no_penetration]
+         type = INSNormalFlowBC
+         variable = vel_y
+         direction = 1
+         boundary = 'right'
+         u_dot_n = 0
+         ux = vel_x
+         uy = vel_y
+         uz = vel_z
+         penalty = 1000
      [../]
-    
+
 [] #END BCs
 
 [AuxKernels]
@@ -743,7 +759,7 @@
         variable = Ts
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./C_exit]
         type = SideAverageValue
         boundary = 'top'
@@ -755,7 +771,7 @@
         variable = q
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./P_exit]
         type = SideAverageValue
         boundary = 'top'
@@ -768,7 +784,7 @@
         variable = P
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./rho]
         type = ElementAverageValue
         variable = rho
@@ -812,9 +828,48 @@
     type = Transient
     scheme = implicit-euler
     solve_type = pjfnk
-    petsc_options = '-snes_converged_reason'
-    petsc_options_iname ='-ksp_type -ksp_gmres_restart -pc_type -sub_pc_type'
-    petsc_options_value = 'gmres 300 bjacobi lu'
+    # NOTE: Add arg -ksp_view to get info on methods used at linear steps
+    petsc_options = '-snes_converged_reason
+
+                      -ksp_gmres_modifiedgramschmidt'
+
+    # NOTE: The sub_pc_type arg not used if pc_type is ksp,
+    #       Instead, set the ksp_ksp_type to the pc method
+    #       you want. Then, also set the ksp_pc_type to be
+    #       the terminal preconditioner.
+    #
+    # Good terminal precon options: lu, ilu, asm, gasm, pbjacobi
+    #                               bjacobi, redundant, telescope
+    petsc_options_iname ='-ksp_type
+                          -pc_type
+
+                          -sub_pc_type
+
+                          -snes_max_it
+
+                          -sub_pc_factor_shift_type
+                          -pc_asm_overlap
+
+                          -snes_atol
+                          -snes_rtol
+
+                          -ksp_ksp_type
+                          -ksp_pc_type'
+
+    # snes_max_it = maximum non-linear steps
+    petsc_options_value = 'fgmres
+                           ksp
+
+                           lu
+
+                           10
+                           NONZERO
+                           10
+                           1E-8
+                           1E-10
+
+                           gmres
+                           lu'
 
     line_search = bt
     nl_rel_tol = 1e-10
@@ -833,7 +888,7 @@
         type = SolutionTimeAdaptiveDT
         dt = 0.02
     [../]
- 
+
 [] #END Executioner
 
 [Outputs]
