@@ -1547,10 +1547,10 @@
        #   temperature and energy transfer coefficients should
        #   actually be (or that we aren't tracking density
        #   changes yet.)
-       weights = '0 0 -0
-                  0 0 0
-                  0 0 0 0
-                  12990 13740 -344'   #og value
+       weights = '120 100 -150
+                  60 60 60
+                  50 50 50 50
+                  11000 9000 -800'   #og value
 
        scale = non_pore
    [../]
@@ -2024,8 +2024,8 @@
 [Functions]
   [./data_fun]
     type = PiecewiseMultilinear
-    data_file = 1-hexene_temperature.txt
-    #data_file = 1-hexene_temp_in.txt
+    #data_file = 1-hexene_temperature.txt
+    data_file = 1-hexene_temp_in.txt
   [../]
 
 []
@@ -2467,7 +2467,7 @@
         #execute_on = 'initial timestep_end'
 
         type = ElementalVariableValue
-        elementid = 9
+        elementid = 5
         variable = Ts
         execute_on = 'initial timestep_end'
     [../]
