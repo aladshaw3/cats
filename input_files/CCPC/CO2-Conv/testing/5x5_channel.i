@@ -15,9 +15,17 @@
 []
 
 [Mesh]
-  file = 5by5_test_cell.msh
-  #boundary_name = 'inlet outlet solid_exits inner_walls outer_walls'
-  #block = 'channel solid'
+  [file]
+    type = FileMeshGenerator
+    file = 5by5_test_cell.msh
+    #boundary_name = 'inlet outlet solid_exits inner_walls outer_walls'
+    #block = 'channel solid'
+  []
+  [smooth]
+    type = SmoothMeshGenerator
+    input = file
+    iterations = 12
+  []
 []
 
 [Materials]
@@ -55,7 +63,7 @@
   # dead zones in meshes lead to
   # negative concentrations in corners
   [./tracer]
-      order = CONSTANT
+      order = FIRST
       family = MONOMIAL
       initial_condition = 0
       block = 'channel'
@@ -64,7 +72,7 @@
   # This HAS to be first order
   # (unless we use 'advection' in pores)
   [./tracer_p]
-    order = CONSTANT
+    order = FIRST
     family = MONOMIAL
     initial_condition = 0
     block = 'solid'
@@ -371,9 +379,10 @@
   #
   #  +++++++++++++++ NOTE: This doesn't work well +++++++++++
   [./tracer_p_DiffFluxOut]
-      type = DiffusionFluxBC
+      type = NeumannBC
       variable = tracer_p
       boundary = 'solid_exits'
+      value = 0
   [../]
 []
 

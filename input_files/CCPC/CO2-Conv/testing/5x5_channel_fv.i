@@ -208,10 +208,13 @@ velocity_interp_method='rc'
     vel = 'velocity'
   []
 
+  # NOTE: MOOSE generally uses Material Properties
+  #       to setup parameters. They don't seem to like
+  #       doing auxiliary system variables... :<
   [./tracer_p_dot]
      type = FVPorosityTimeDerivative
      variable = tracer_p
-     porosity = 0.4
+     porosity = eps
      block = 'solid'
   [../]
   [./diff_p]
@@ -307,11 +310,10 @@ velocity_interp_method='rc'
     block = 'channel'
   []
 
-  [./ins_dummy]
+  [./solids]
     type = GenericConstantMaterial
-    prop_names = 'rho mu'
-    #              g/cm^3  g/cm/min
-    prop_values = '1.0  0.534'   #VALUES FOR WATER
+    prop_names = 'eps'
+    prop_values = '0.4'  
     block = 'solid'
   [../]
 []
