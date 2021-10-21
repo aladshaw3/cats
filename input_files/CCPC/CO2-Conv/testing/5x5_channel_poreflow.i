@@ -21,12 +21,22 @@
 []
 
 [Materials]
-  [./ins_mat]
+  [./ins_mat_channel]
     type = GenericConstantMaterial
-    block = 'channel solid'
+    block = 'channel'
     prop_names = 'rho mu'
     #              g/cm^3  g/cm/min
     prop_values = '1.0  0.534'   #VALUES FOR WATER
+  [../]
+
+  [./ins_mat_solid]
+    type = GenericConstantMaterial
+    block = 'solid'
+    prop_names = 'rho mu'
+    #              g/cm^3  g/cm/min
+    prop_values = '1.0  534'   #Significant viscosity added in solids
+                                # This forces most flow through channel
+                                # but also allows flow through wall
   [../]
 []
 
@@ -35,19 +45,19 @@
     order = FIRST
     family = LAGRANGE
     initial_condition = 0
-    block = 'channel'
+    block = 'channel solid'
   [../]
   [./vel_y]
     order = FIRST
     family = LAGRANGE
     initial_condition = 0
-    block = 'channel'
+    block = 'channel solid'
   [../]
   [./p]
     order = FIRST
     family = LAGRANGE
     initial_condition = 0
-    block = 'channel'
+    block = 'channel solid'
   [../]
 
   # We want this to be first order
@@ -103,14 +113,14 @@
     u = vel_x
     v = vel_y
     pressure = p
-    block = 'channel'
+    block = 'channel solid'
   [../]
 
   #Conservation of momentum equ in x (with time derivative)
   [./x_momentum_time]
     type = INSMomentumTimeDerivative
     variable = vel_x
-    block = 'channel'
+    block = 'channel solid'
   [../]
   [./x_momentum_space]
     type = INSMomentumLaplaceForm
@@ -119,14 +129,14 @@
     v = vel_y
     pressure = p
     component = 0
-    block = 'channel'
+    block = 'channel solid'
   [../]
 
   #Conservation of momentum equ in y (with time derivative)
   [./y_momentum_time]
     type = INSMomentumTimeDerivative
     variable = vel_y
-    block = 'channel'
+    block = 'channel solid'
   [../]
   [./y_momentum_space]
     type = INSMomentumLaplaceForm
@@ -135,7 +145,7 @@
     v = vel_y
     pressure = p
     component = 1
-    block = 'channel'
+    block = 'channel solid'
   [../]
 
   [./tracer_dot]
@@ -174,6 +184,15 @@
      variable = tracer_p
      coupled_coef = eps
      block = 'solid'
+  [../]
+  [./tracer_p_gadv]
+      type = GPoreConcAdvection
+      variable = tracer_p
+      porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = 0
+      block = 'solid'
   [../]
   [./tracer_p_gdiff]
       type = GVarPoreDiffusion
@@ -222,6 +241,15 @@
       Dz = Dp
       block = 'solid'
   [../]
+  [./tracer_p_dgadv]
+      type = DGPoreConcAdvection
+      variable = tracer_p
+      porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = 0
+      block = 'solid'
+  [../]
 []
 
 # Only need 1 interface kernel per boundary
@@ -232,7 +260,7 @@
      variable = tracer
      neighbor_var = tracer_p
      boundary = 'inner_walls'
-     transfer_rate = 200
+     transfer_rate = 20
    [../]
 [] #END InterfaceKernels
 
@@ -244,6 +272,8 @@
 
   active = 'x_no_slip
             y_no_slip
+            x_no_slip_p
+            y_no_slip_p
             x_inlet_flux_limited
             tracer_FluxIn
             tracer_FluxOut'
@@ -251,41 +281,29 @@
   [./x_no_slip]
     type = DirichletBC
     variable = vel_x
-    boundary = 'inner_walls outer_walls'
+    boundary = 'solid_exits outer_walls'
     value = 0.0
   [../]
   [./y_no_slip]
     type = DirichletBC
     variable = vel_y
-    boundary = 'inner_walls outer_walls'
+    boundary = 'inlet solid_exits outer_walls'
     value = 0.0
   [../]
 
-  #Alternative to the strict no slip condition
-  # is a weak no slip that enforce a no penetration
-  # rule at the boundary. However, this is imposed
-  # weakly and is dependent on the penalty term.
-  [./x_weak_no_slip]
-      type = INSNormalFlowBC
-      variable = vel_x
-      direction = 0
-      boundary = 'inner_walls outer_walls'
-      u_dot_n = 0
-      ux = vel_x
-      uy = vel_y
-      uz = 0
-      penalty = 1e6
+  [./x_no_slip_p]
+    type = PenaltyDirichletBC
+    variable = vel_x
+    boundary = 'inner_walls'
+    value = 0.0
+    penalty = 10000
   [../]
-  [./y_weak_no_slip]
-      type = INSNormalFlowBC
-      variable = vel_y
-      direction = 1
-      boundary = 'inner_walls outer_walls'
-      u_dot_n = 0
-      ux = vel_x
-      uy = vel_y
-      uz = 0
-      penalty = 1e6
+  [./y_no_slip_p]
+    type = PenaltyDirichletBC
+    variable = vel_y
+    boundary = 'inner_walls'
+    value = 0.0
+    penalty = 10000
   [../]
 
 
