@@ -53,8 +53,8 @@
 
 [Kernels]
     active = 'vx_press vy_press
-              x_equ x_press
-              y_equ y_press
+              x_press
+              y_press
               tracer_dot tracer_gadv tracer_gdiff
               x_diff y_diff'
 
@@ -82,10 +82,13 @@
       vy = 1
     [../]
 
+    # Use this kernel with VectorCoupledGradient
+    # ONLY if doing darcy flow
     [./x_equ]
       type = Reaction
       variable = vel_x
     [../]
+
     [./x_press]
       type = VectorCoupledGradient
       variable = vel_x
@@ -97,10 +100,13 @@
       variable = vel_x
     [../]
 
+    # Use this kernel with VectorCoupledGradient
+    # ONLY if doing darcy flow
     [./y_equ]
       type = Reaction
       variable = vel_y
     [../]
+
     [./y_press]
       type = VectorCoupledGradient
       variable = vel_y
@@ -190,7 +196,7 @@
         type = DirichletBC
         variable = pressure
         boundary = 'inlet'
-		    value = 24.0
+		    value = 10.0
   [../]
 
   # Both types of BCs work to give the
@@ -199,9 +205,11 @@
   [./vel_x_inlet]
         type = DirichletBC
         variable = vel_x
-        boundary = 'inlet'
-		    value = 1.39
+        boundary = 'inlet outlet'
+		    value = 1.0
   [../]
+  # NOTE: Setting the velocity at the inlet and
+  #       outlet can make sure that flow is conserved 
 
   [./vel_x_obj]
         type = DirichletBC
