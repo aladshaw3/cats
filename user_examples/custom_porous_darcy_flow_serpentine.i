@@ -1,4 +1,7 @@
-# NOTE: This example seems to only run under the Darcy flow assumption
+# This example is to demonstrate how we can simulate Darcy Flow through
+# a porous media using our own custom kernels and methods. This was necessary
+# to start exploring because the MOOSE PorousFlow module cannot be linked/coupled
+# to our own methods based on how that module was constructed.
 
 [GlobalParams]
 
@@ -47,6 +50,8 @@
       block = 'channel'
   [../]
 
+  # Dummy variable is needed on the other block
+  #   We are not using this variable in this example
   [./dummy]
       order = FIRST
       family = MONOMIAL
@@ -66,23 +71,7 @@
 [] #END ICs
 
 [Kernels]
-    # This is a demo of pure Darcy Flow
-    active = 'press_diff
-
-              x_equ
-              x_press
-              y_equ
-              y_press
-              tracer_dot tracer_gadv tracer_gdiff
-
-              dummy_dot'
-
-
     # Enfore Linear/Planar Pressure
-    #   Good for Darcy flow, but not much else.
-    #   Do not use this form unless doing pressure
-    #   driven darcy flow.
-    #
     # What this does is force the second derivative of
     #   pressure to be zero (when no other kernel is
     #   active for pressure). Thus, pressure is linear
@@ -93,24 +82,14 @@
       block = 'channel'
     [../]
 
-    # Enforce Div*vel = 0
-    [./vx_press]
-      type = VectorCoupledGradient
-      variable = pressure
-      coupled = vel_x
-      vx = 1
-      block = 'channel'
-    [../]
-    [./vy_press]
-      type = VectorCoupledGradient
-      variable = pressure
-      coupled = vel_y
-      vy = 1
-      block = 'channel'
-    [../]
+
+    # NOTE: In this example, the permeability coefficent
+    #       for each velocity component is just 1. This
+    #       is done by setting 'vx' to 1 for the x component
+    #       of velocity and 'vy' to 1 for the y component
+    #       of velocity.
 
     # Use this kernel with VectorCoupledGradient
-    # ONLY if doing darcy flow
     #   This + x_press, gives an expression by
     #   which velocity is calculated purely from
     #   the pressure gradient. The magnitude of
@@ -124,7 +103,6 @@
       variable = vel_x
       block = 'channel'
     [../]
-
     [./x_press]
       type = VectorCoupledGradient
       variable = vel_x
@@ -132,14 +110,8 @@
       vx = 1
       block = 'channel'
     [../]
-    [./x_diff]
-      type = Diffusion
-      variable = vel_x
-      block = 'channel'
-    [../]
 
     # Use this kernel with VectorCoupledGradient
-    # ONLY if doing darcy flow
     #   This + y_press, gives an expression by
     #   which velocity is calculated purely from
     #   the pressure gradient. The magnitude of
@@ -153,7 +125,6 @@
       variable = vel_y
       block = 'channel'
     [../]
-
     [./y_press]
       type = VectorCoupledGradient
       variable = vel_y
@@ -161,18 +132,19 @@
       vy = 1
       block = 'channel'
     [../]
-    [./y_diff]
-      type = Diffusion
-      variable = vel_y
-      block = 'channel'
-    [../]
 
+    # Tracer function using DG methods
     [./tracer_dot]
         type = VariableCoefTimeDerivative
         variable = tracer
-        coupled_coef = 1
+        coupled_coef = 0.5
         block = 'channel'
     [../]
+    # vel_x and vel_y are 'Darcy Velocity' and
+    # not average linear velocity in this case.
+    # Thus, they inherently carry the porosity
+    # term with them. (i.e., Darcy Velocity =
+    # average linear velocity * porosity)
     [./tracer_gadv]
         type = GPoreConcAdvection
         variable = tracer
@@ -185,12 +157,7 @@
     [./tracer_gdiff]
         type = GVarPoreDiffusion
         variable = tracer
-        porosity = 1
-
-        #Dispersion with mechanical mixing may be needed
-        #   Helps to clear out material from the wall due
-        #   to using the no-slip condition (which causes
-        #   a lot of accumulation at the wall)
+        porosity = 0.5
         Dx = 0.1
         Dy = 0.1
         Dz = 0.1
@@ -200,13 +167,18 @@
     [./dummy_dot]
         type = VariableCoefTimeDerivative
         variable = dummy
-        coupled_coef = 1
+        coupled_coef = 0.5
         block = 'solid'
     [../]
 
 [] #END Kernels
 
 [DGKernels]
+  # vel_x and vel_y are 'Darcy Velocity' and
+  # not average linear velocity in this case.
+  # Thus, they inherently carry the porosity
+  # term with them. (i.e., Darcy Velocity =
+  # average linear velocity * porosity)
   [./tracer_dgadv]
       type = DGPoreConcAdvection
       variable = tracer
@@ -219,12 +191,7 @@
   [./tracer_dgdiff]
       type = DGVarPoreDiffusion
       variable = tracer
-      porosity = 1
-
-      #Dispersion with mechanical mixing may be needed
-      #   Helps to clear out material from the wall due
-      #   to using the no-slip condition (which causes
-      #   a lot of accumulation at the wall)
+      porosity = 0.5
       Dx = 0.1
       Dy = 0.1
       Dz = 0.1
@@ -240,18 +207,6 @@
 [BCs]
   # Darcy Flow requires you to know pressure at the inlet and outlet
   # of the domain. This is needed to establish the pressure gradient.
-  # Any expression for pressure differential should suffice, including
-  # the Ergun equation. This equation equates fluid properties and porosity
-  # to a pressure drop over a distance. The issue with this relationship,
-  # however, is that it presumes a constant porosity. Alternatively, instead
-  # of using the Ergun relationship to set a pressure at the boundary, you
-  # could have the Ergun relationship coded as a kernel, but that has not
-  # been tested. 
-  active = 'press_at_exit
-            press_at_enter
-
-            vel_x_obj vel_y_obj
-            tracer_FluxIn tracer_FluxOut'
 
   # Zero pressure at exit (mandatory)
 	[./press_at_exit]
@@ -269,32 +224,9 @@
 		    value = 100.0
   [../]
 
-  # Both types of BCs work to give the
-  # correct flow field, but the DirichletBC
-  # gives slightly 'off' velocity at the inlet
-  [./vel_x_inlet]
-        type = DirichletBC
-        variable = vel_x
-        boundary = 'inlet outlet'
-		    value = 1.0
-  [../]
-  # NOTE: Setting the velocity at the inlet and
-  #       outlet can make sure that flow is conserved
+  # NOTE: The 'No Slip' condition is not necessary in Darcy Flow
 
-  [./vel_x_obj]
-        type = DirichletBC
-        variable = vel_x
-        boundary = 'inner_walls outer_walls'
-		    value = 0.0
-  [../]
-
-  [./vel_y_obj]
-        type = DirichletBC
-        variable = vel_y
-        boundary = 'inner_walls outer_walls inlet outlet'
-		    value = 0.0
-  [../]
-
+  #Add tracer and inlet and let it leave only through the exit
   [./tracer_FluxIn]
       type = DGPoreConcFluxBC
       variable = tracer
