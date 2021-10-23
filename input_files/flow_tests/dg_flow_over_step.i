@@ -1,3 +1,10 @@
+# File demos Navier-Stokes flow with DG methods
+# This establishes the first working example of
+# an implementation of Navier-Stokes equations
+# using DG kernels. Pressure variable stablization
+# is aided using DG methods with high order (second
+# or higher).
+
 [GlobalParams]
 
 [] #END GlobalParams
@@ -23,14 +30,14 @@
 	[../]
 
   [./vel_x]
-		order = FIRST
-		family = LAGRANGE
+		order = SECOND
+		family = L2_LAGRANGE
 		initial_condition = 0.0
 	[../]
 
   [./vel_y]
-		order = FIRST
-		family = LAGRANGE
+		order = SECOND
+		family = L2_LAGRANGE
 		initial_condition = 0.0
 	[../]
 
@@ -56,17 +63,7 @@
               x_press
               y_press
               tracer_dot tracer_gadv tracer_gdiff
-              x_diff y_diff'
-
-
-    # Enfore Linear/Planar Pressure
-    #   Good for Darcy flow, but not much else.
-    #   Do not use this form unless doing pressure
-    #   driven darcy flow.
-    [./press_diff]
-      type = Diffusion
-      variable = pressure
-    [../]
+              x_gdiff y_gdiff'
 
     # Enforce Div*vel = 0
     [./vx_press]
@@ -82,29 +79,26 @@
       vy = 1
     [../]
 
-    # Use this kernel with VectorCoupledGradient
-    # ONLY if doing darcy flow
-    [./x_equ]
-      type = Reaction
-      variable = vel_x
-    [../]
-
     [./x_press]
       type = VectorCoupledGradient
       variable = vel_x
       coupled = pressure
       vx = 1
     [../]
-    [./x_diff]
-      type = Diffusion
+    [./x_gdiff]
+      type = GVariableDiffusion
       variable = vel_x
+      Dx = 1
+      Dy = 1
+      Dz = 1
     [../]
-
-    # Use this kernel with VectorCoupledGradient
-    # ONLY if doing darcy flow
-    [./y_equ]
-      type = Reaction
-      variable = vel_y
+    [./x_gadv]
+        type = GPoreConcAdvection
+        variable = vel_x
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = 0
     [../]
 
     [./y_press]
@@ -113,9 +107,20 @@
       coupled = pressure
       vy = 1
     [../]
-    [./y_diff]
-      type = Diffusion
+    [./y_gdiff]
+      type = GVariableDiffusion
       variable = vel_y
+      Dx = 1
+      Dy = 1
+      Dz = 1
+    [../]
+    [./y_gadv]
+        type = GPoreConcAdvection
+        variable = vel_y
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = 0
     [../]
 
     [./tracer_dot]
@@ -135,11 +140,6 @@
         type = GVarPoreDiffusion
         variable = tracer
         porosity = 1
-
-        #Dispersion with mechanical mixing may be needed
-        #   Helps to clear out material from the wall due
-        #   to using the no-slip condition (which causes
-        #   a lot of accumulation at the wall)
         Dx = 0.1
         Dy = 0.1
         Dz = 0.1
@@ -160,14 +160,47 @@
       type = DGVarPoreDiffusion
       variable = tracer
       porosity = 1
-
-      #Dispersion with mechanical mixing may be needed
-      #   Helps to clear out material from the wall due
-      #   to using the no-slip condition (which causes
-      #   a lot of accumulation at the wall)
       Dx = 0.1
       Dy = 0.1
       Dz = 0.1
+  [../]
+
+  [./x_dgdiff]
+    type = DGVariableDiffusion
+    variable = vel_x
+    Dx = 1
+    Dy = 1
+    Dz = 1
+
+    sigma = 1e2
+    dg_scheme = nipg
+  [../]
+  [./x_dgadv]
+      type = DGPoreConcAdvection
+      variable = vel_x
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = 0
+  [../]
+
+  [./y_dgdiff]
+    type = DGVariableDiffusion
+    variable = vel_y
+    Dx = 1
+    Dy = 1
+    Dz = 1
+
+    sigma = 1e2
+    dg_scheme = nipg
+  [../]
+  [./y_dgadv]
+      type = DGPoreConcAdvection
+      variable = vel_y
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = 0
   [../]
 []
 
@@ -177,11 +210,6 @@
 [] #END AuxKernels
 
 [BCs]
-  active = 'press_at_exit
-
-            vel_x_inlet
-            vel_x_obj vel_y_obj
-            tracer_FluxIn tracer_FluxOut'
 
   # Zero pressure at exit (mandatory)
 	[./press_at_exit]
@@ -191,38 +219,32 @@
 		    value = 0.0
   [../]
 
-  # 100 kPa pressure at enter
-	[./press_at_enter]
-        type = DirichletBC
-        variable = pressure
-        boundary = 'inlet'
-		    value = 10.0
-  [../]
-
-  # Both types of BCs work to give the
-  # correct flow field, but the DirichletBC
-  # gives slightly 'off' velocity at the inlet
   [./vel_x_inlet]
-        type = DirichletBC
+        type = INSNormalFlowBC
         variable = vel_x
         boundary = 'inlet'
-		    value = 1.0
+        u_dot_n = -1
+        direction = 0
+        penalty = 1e4
+        ux = vel_x
+        uy = vel_y
+        uz = 0
   [../]
-  # NOTE: Setting the velocity at the inlet and
-  #       outlet can make sure that flow is conserved
 
   [./vel_x_obj]
-        type = DirichletBC
+        type = PenaltyDirichletBC
         variable = vel_x
         boundary = 'wall'
 		    value = 0.0
+        penalty = 1e4
   [../]
 
   [./vel_y_obj]
-        type = DirichletBC
+        type = PenaltyDirichletBC
         variable = vel_y
         boundary = 'wall'
 		    value = 0.0
+        penalty = 1e4
   [../]
 
   [./tracer_FluxIn]
@@ -308,7 +330,7 @@
   scheme = implicit-euler
   petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres asm lu 100 NONZERO 2 1E-14 1E-12'
+  petsc_options_value = 'gmres asm lu 100 NONZERO 2 1E-10 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
