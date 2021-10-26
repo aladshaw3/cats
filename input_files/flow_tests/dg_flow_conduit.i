@@ -6,27 +6,6 @@
 # important if your inlet momentum flux is
 # increasing with time.
 
-# Solve efficiency is not great. I may need
-# to customize some of the base kernels for
-# Navier-Stokes equations, but when it does
-# solve, the solutions appear correct.
-
-# CONFIRMED: The Jacobians are not correct
-# for the Navier-Stokes. This is because
-# we have recycled some kernels that formulate
-# the correct residual, but are not anticipating
-# the variables with couple.
-
-# LIST OF KERNELS THAT NEED UPDATING:
-# -----------------------------------
-# GPoreConcAdvection
-# DGPoreConcAdvection --> Issue: QpJacobian because of same var coupling
-#
-# GVariableDiffusion
-# DGVariableDiffusion --> Issue: Override defaults for DG scheme
-#
-# DGPoreConcFluxBC --> Issue: QpJacobian because of same var coupling
-
 [GlobalParams]
 
 [] #END GlobalParams
@@ -125,9 +104,10 @@
       Dz = mu
     [../]
     [./x_gadv]
-        type = GPoreConcAdvection
+        type = GINSMomentumAdvection
         variable = vel_x
-        porosity = rho
+        this_variable = vel_x
+        density = rho
         ux = vel_x
         uy = vel_y
         uz = 0
@@ -152,9 +132,10 @@
       Dz = mu
     [../]
     [./y_gadv]
-        type = GPoreConcAdvection
+        type = GINSMomentumAdvection
         variable = vel_y
-        porosity = rho
+        this_variable = vel_y
+        density = rho
         ux = vel_x
         uy = vel_y
         uz = 0
@@ -213,9 +194,10 @@
     dg_scheme = nipg
   [../]
   [./x_dgadv]
-      type = DGPoreConcAdvection
+      type = DGINSMomentumAdvection
       variable = vel_x
-      porosity = rho
+      this_variable = vel_x
+      density = rho
       ux = vel_x
       uy = vel_y
       uz = 0
@@ -232,9 +214,10 @@
     dg_scheme = nipg
   [../]
   [./y_dgadv]
-      type = DGPoreConcAdvection
+      type = DGINSMomentumAdvection
       variable = vel_y
-      porosity = rho
+      this_variable = vel_y
+      density = rho
       ux = vel_x
       uy = vel_y
       uz = 0
@@ -264,19 +247,21 @@
         function = '0+1*t'
   [../]
   [./vel_x_outlet]
-      type = DGPoreConcFluxBC
+      type = DGINSMomentumOutflowBC
       variable = vel_x
+      this_variable = vel_x
       boundary = 'outlet'
-      porosity = rho
+      density = rho
       ux = vel_x
       uy = vel_y
       uz = 0
   [../]
   [./vel_y_outlet]
-      type = DGPoreConcFluxBC
+      type = DGINSMomentumOutflowBC
       variable = vel_y
+      this_variable = vel_y
       boundary = 'outlet'
-      porosity = rho
+      density = rho
       ux = vel_x
       uy = vel_y
       uz = 0
