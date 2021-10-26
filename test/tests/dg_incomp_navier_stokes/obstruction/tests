@@ -1,0 +1,7 @@
+[Tests]
+  [./dg_ins_obstruct]
+    type = Exodiff
+    input = dg_flow_conduit.i
+    exodiff = dg_flow_conduit_out.e
+  [../]
+[]

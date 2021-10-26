@@ -1,0 +1,8 @@
+[Tests]
+  [./dg_ins_step]
+    type = Exodiff
+    input = dg_flow_over_step.i
+    exodiff = dg_flow_over_step_out.e
+    min_parallel = 2
+  [../]
+[]
