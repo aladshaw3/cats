@@ -60,7 +60,6 @@
 # preconditioner. This has been found to give very good
 # convergence over a wide array of problems.
 
-
 [GlobalParams]
   # Default DG methods
   sigma = 10
@@ -75,8 +74,9 @@
 [Mesh]
   [file]
     type = FileMeshGenerator
-    file = 2D-Flow-Converted.unv
-    #boundary_name = 'inlet outlet object top bottom'
+    file = 5by5_test_cell.msh
+    #boundary_name = 'inlet outlet solid_exits inner_walls outer_walls'
+    #block = 'channel solid'
   []
 
 [] # END Mesh
@@ -87,6 +87,7 @@
 		order = FIRST
 		family = LAGRANGE
 		initial_condition = 0.0
+    block = 'channel'
 	[../]
 
   ### For optimal stability: Use 'SECOND' order 'MONOMIAL' functions for velocities
@@ -96,12 +97,14 @@
 		order = SECOND
 		family = MONOMIAL
 		initial_condition = 0.0
+    block = 'channel'
 	[../]
 
   [./vel_y]
 		order = SECOND
 		family = MONOMIAL
 		initial_condition = 0.0
+    block = 'channel'
 	[../]
 
   ### Other variables for mass and energy can be any order 'MONOMIAL' functions
@@ -109,6 +112,15 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 0
+      block = 'channel'
+  [../]
+
+  ### dummy variable to satisfy MOOSE framework
+  [./dummy]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+      block = 'solid'
   [../]
 
 [] #END Variables
@@ -121,13 +133,15 @@
     [./mu]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.2
+        initial_condition = 1
+        block = 'solid channel'
     [../]
 
     [./rho]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1
+        block = 'solid channel'
     [../]
 
 [] #END AuxVariables
@@ -145,6 +159,7 @@
       variable = pressure
       coupled = vel_x
       vx = 1
+      block = 'channel'
     [../]
     # grad(vel_y)_y   --> give 'vy=1' to only grab the gradient in y
     [./vy_press]
@@ -152,6 +167,7 @@
       variable = pressure
       coupled = vel_y
       vy = 1
+      block = 'channel'
     [../]
 
     ### Conservation of x-momentum ###
@@ -160,6 +176,7 @@
       type = VariableCoefTimeDerivative
       variable = vel_x
       coupled_coef = rho
+      block = 'channel'
     [../]
     # -grad(P)_x
     [./x_press]
@@ -167,6 +184,7 @@
       variable = vel_x
       coupled = pressure
       vx = 1
+      block = 'channel'
     [../]
     # Div*(mu*grad(vel_x))
     [./x_gdiff]
@@ -175,6 +193,7 @@
       Dx = mu
       Dy = mu
       Dz = mu
+      block = 'channel'
     [../]
     # Div*(rho*vel*vel_x)
     [./x_gadv]
@@ -185,6 +204,7 @@
         ux = vel_x
         uy = vel_y
         uz = 0
+        block = 'channel'
     [../]
 
     ### Conservation of y-momentum ###
@@ -193,6 +213,7 @@
       type = VariableCoefTimeDerivative
       variable = vel_y
       coupled_coef = rho
+      block = 'channel'
     [../]
     # -grad(P)_y
     [./y_press]
@@ -200,6 +221,7 @@
       variable = vel_y
       coupled = pressure
       vy = 1
+      block = 'channel'
     [../]
     # Div*(mu*grad(vel_y))
     [./y_gdiff]
@@ -208,6 +230,7 @@
       Dx = mu
       Dy = mu
       Dz = mu
+      block = 'channel'
     [../]
     # Div*(rho*vel*vel_y)
     [./y_gadv]
@@ -218,6 +241,7 @@
         ux = vel_x
         uy = vel_y
         uz = 0
+        block = 'channel'
     [../]
 
     ### Conservation of mass for a dilute tracer ###
@@ -225,6 +249,7 @@
         type = VariableCoefTimeDerivative
         variable = tracer
         coupled_coef = 1
+        block = 'channel'
     [../]
     [./tracer_gadv]
         type = GPoreConcAdvection
@@ -233,6 +258,7 @@
         ux = vel_x
         uy = vel_y
         uz = 0
+        block = 'channel'
     [../]
     [./tracer_gdiff]
         type = GVarPoreDiffusion
@@ -241,6 +267,15 @@
         Dx = 0.1
         Dy = 0.1
         Dz = 0.1
+        block = 'channel'
+    [../]
+
+    ### dummy kernel to satisfy MOOSE ###
+    [./dummy_dot]
+        type = VariableCoefTimeDerivative
+        variable = dummy
+        coupled_coef = 1
+        block = 'solid'
     [../]
 
 [] #END Kernels
@@ -256,6 +291,7 @@
       ux = vel_x
       uy = vel_y
       uz = 0
+      block = 'channel'
   [../]
   [./tracer_dgdiff]
       type = DGVarPoreDiffusion
@@ -264,6 +300,7 @@
       Dx = 0.1
       Dy = 0.1
       Dz = 0.1
+      block = 'channel'
   [../]
 
   # Div*(mu*grad(vel_x))
@@ -273,6 +310,7 @@
     Dx = mu
     Dy = mu
     Dz = mu
+    block = 'channel'
   [../]
   # Div*(rho*vel*vel_x)
   [./x_dgadv]
@@ -283,6 +321,7 @@
       ux = vel_x
       uy = vel_y
       uz = 0
+      block = 'channel'
   [../]
 
   # Div*(mu*grad(vel_y))
@@ -292,6 +331,7 @@
     Dx = mu
     Dy = mu
     Dz = mu
+    block = 'channel'
   [../]
   # Div*(rho*vel*vel_y)
   [./y_dgadv]
@@ -302,6 +342,7 @@
       ux = vel_x
       uy = vel_y
       uz = 0
+      block = 'channel'
   [../]
 []
 
@@ -309,9 +350,11 @@
 
 [] #END AuxKernels
 
+
+#boundary_name = 'inlet outlet solid_exits inner_walls outer_walls'
 [BCs]
 
-  # Zero pressure at exit
+  # Zero pressure at exit (mandatory)
 	[./press_at_exit]
         type = DirichletBC
         variable = pressure
@@ -325,7 +368,7 @@
         variable = vel_x
         boundary = 'inlet'
         penalty = 3e2
-        function = '0+1*t'
+        function = '1'
   [../]
 
   ### Momentum Flux Out of Domain ###
@@ -352,25 +395,23 @@
       uz = 0
   [../]
 
-  ### No Slip Conditions at the Walls ###
-  # in x-direction
+  # No Slip BCs
   [./vel_x_obj]
         type = PenaltyDirichletBC
         variable = vel_x
-        boundary = 'top bottom object'
+        boundary = 'inner_walls outer_walls'
 		    value = 0.0
         penalty = 3e2
   [../]
-  # in y-direction
   [./vel_y_obj]
         type = PenaltyDirichletBC
         variable = vel_y
-        boundary = 'top bottom object'
+        boundary = 'inner_walls outer_walls'
 		    value = 0.0
         penalty = 3e2
   [../]
 
-  ### Fluxes for Conservative Tracer ###
+  ## Conservative Tracer fluxes
   [./tracer_FluxIn]
       type = DGPoreConcFluxBC
       variable = tracer
@@ -417,6 +458,7 @@
         type = ElementAverageValue
         variable = pressure
         execute_on = 'initial timestep_end'
+        block = 'channel'
     [../]
 
     [./tracer_inlet]
@@ -502,12 +544,12 @@
   nl_abs_tol = 1e-6
   nl_rel_step_tol = 1e-10
   nl_abs_step_tol = 1e-10
-  nl_max_its = 20
+  nl_max_its = 10
   l_tol = 1e-6
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 20.0
+  end_time = 50.0
   dtmax = 0.5
 
     [./TimeStepper]
@@ -521,7 +563,7 @@
     [./SMP_PJFNK]
       type = SMP
       full = true
-      solve_type = pjfnk
+      solve_type = pjfnk   #newton solver works faster when using very good preconditioner
     [../]
 
 [] #END Preconditioning
