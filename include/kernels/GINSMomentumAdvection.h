@@ -66,13 +66,13 @@ protected:
 		cross coupling of the variables. */
 	virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-	const VariableValue & _density;			    ///< Porosity variable
-	const unsigned int _density_var;				///< Variable identification for porosity
+	const VariableValue & _density;			    ///< Density variable
+	const unsigned int _density_var;				///< Variable identification for density
 
   const VariableValue & _coupled_main;    ///< Primary velocity component variable (i.e., diagonal)
   const unsigned int _main_var;           ///< Variable identification for the primary velocity variable (i.e., diagonal)
 
-  unsigned int _dir;                      ///< Direction that '_main_var' acts on 
+  unsigned int _dir;                      ///< Direction that '_main_var' acts on
 
 private:
 
