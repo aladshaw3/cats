@@ -8,7 +8,7 @@
 # continuity condition and still give a reasonable flow profile. However,
 # the pressure changes in the domain may be inaccurate due to the
 # pressure variable taking on the errors associated with those density
-# variations. 
+# variations.
 
 # Equations:
 # ----------
@@ -149,19 +149,12 @@
 [Kernels]
 
     ####  Enforce Div*vel = 0 ###
-    # grad(vel_x)_x   --> give 'vx=1' to only grab the gradient in x
-    [./vx_press]
-      type = VectorCoupledGradient
-      variable = pressure
-      coupled = vel_x
-      vx = 1
-    [../]
-    # grad(vel_y)_y   --> give 'vy=1' to only grab the gradient in y
-    [./vy_press]
-      type = VectorCoupledGradient
-      variable = pressure
-      coupled = vel_y
-      vy = 1
+    [./cons_fluid_flow]
+        type = DivergenceFreeCondition
+        variable = pressure
+        ux = vel_x
+        uy = vel_y
+        coupled_scalar = rho
     [../]
 
     ### Conservation of x-momentum ###
@@ -330,7 +323,8 @@
   [./rho_fun]
       type = ParsedFunction
       #value = '3+x'        # linearly increasing density
-      value = 'exp(-x)/7'   # exponenially decreasing densit
+      #value = 'exp(-x)/7'   # exponentially decreasing density
+      value = '-0.0714*x+0.857'        # linearly decreasing density
   [../]
 []
 
@@ -497,6 +491,9 @@
                         -snes_max_it
 
                         -sub_pc_factor_shift_type
+                        -pc_factor_shift_type
+                        -ksp_pc_factor_shift_type
+
                         -pc_asm_overlap
 
                         -snes_atol
@@ -514,15 +511,19 @@
                          20
 
                          NONZERO
-                         10
-                         1E-6
-                         1E-8
+                         NONZERO
+                         NONZERO
+
+                         100
+
+                         1E-10
+                         1E-10
 
                          fgmres
                          lu'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = none
+  line_search = bt
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-6
   nl_rel_step_tol = 1e-10

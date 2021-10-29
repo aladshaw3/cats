@@ -63,6 +63,20 @@
 
 [AuxVariables]
 
+    # Variable coefficients for Darcy Flux
+    [./Kx]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1
+        block = 'channel'
+    [../]
+    [./Ky]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1
+        block = 'channel'
+    [../]
+
 [] #END AuxVariables
 
 [ICs]
@@ -89,12 +103,12 @@
     #       of velocity and 'vy' to 1 for the y component
     #       of velocity.
 
-    # Use this kernel with VectorCoupledGradient
+    # Use this kernel with VariableVectorCoupledGradient
     #   This + x_press, gives an expression by
     #   which velocity is calculated purely from
     #   the pressure gradient. The magnitude of
     #   velocity is a scalar multiple of this,
-    #   thus we need a vector coefficient to
+    #   thus we need a variable coefficient (in x-direction) to
     #   add such that we get the correct flow rate
     #   for a specific pressure gradient in a porous
     #   media.
@@ -104,19 +118,19 @@
       block = 'channel'
     [../]
     [./x_press]
-      type = VectorCoupledGradient
+      type = VariableVectorCoupledGradient
       variable = vel_x
       coupled = pressure
-      vx = 1
+      ux = Kx
       block = 'channel'
     [../]
 
-    # Use this kernel with VectorCoupledGradient
+    # Use this kernel with VariableVectorCoupledGradient
     #   This + y_press, gives an expression by
     #   which velocity is calculated purely from
     #   the pressure gradient. The magnitude of
     #   velocity is a scalar multiple of this,
-    #   thus we need a vector coefficient to
+    #   thus we need a variable coefficient (in y-direction) to
     #   add such that we get the correct flow rate
     #   for a specific pressure gradient in a porous
     #   media.
@@ -126,10 +140,10 @@
       block = 'channel'
     [../]
     [./y_press]
-      type = VectorCoupledGradient
+      type = VariableVectorCoupledGradient
       variable = vel_y
       coupled = pressure
-      vy = 1
+      uy = Ky
       block = 'channel'
     [../]
 

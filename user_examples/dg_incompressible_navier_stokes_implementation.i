@@ -139,19 +139,11 @@
 [Kernels]
 
     ####  Enforce Div*vel = 0 ###
-    # grad(vel_x)_x   --> give 'vx=1' to only grab the gradient in x
-    [./vx_press]
-      type = VectorCoupledGradient
-      variable = pressure
-      coupled = vel_x
-      vx = 1
-    [../]
-    # grad(vel_y)_y   --> give 'vy=1' to only grab the gradient in y
-    [./vy_press]
-      type = VectorCoupledGradient
-      variable = pressure
-      coupled = vel_y
-      vy = 1
+    [./cons_fluid_flow]
+        type = DivergenceFreeCondition
+        variable = pressure
+        ux = vel_x
+        uy = vel_y
     [../]
 
     ### Conservation of x-momentum ###
