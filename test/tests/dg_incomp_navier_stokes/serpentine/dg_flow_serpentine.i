@@ -28,7 +28,7 @@
 #     NOTE: A good penalty term for inlet velocity and 'No Slip' conditions has
 #           been found to be '3e2' (or 300) for most cases tested. It is unclear
 #           why this number is good, but a range of values from 1 to 1e6 were
-#           tested for convergence and conservation. 
+#           tested for convergence and conservation.
 #
 # BCs for pressure enforce a 0 pressure at the boundary outlet. As such, the pressure
 # gradients coupled to in the functions are representative of 'gage pressure' and
@@ -519,6 +519,9 @@
                         -snes_max_it
 
                         -sub_pc_factor_shift_type
+                        -pc_factor_shift_type
+                        -ksp_pc_factor_shift_type
+
                         -pc_asm_overlap
 
                         -snes_atol
@@ -536,17 +539,21 @@
                          20
 
                          NONZERO
-                         10
-                         1E-6
-                         1E-8
+                         NONZERO
+                         NONZERO
+
+                         100
+
+                         1E-10
+                         1E-10
 
                          fgmres
                          lu'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
-  nl_rel_tol = 1e-6
-  nl_abs_tol = 1e-6
+  nl_rel_tol = 1e-10
+  nl_abs_tol = 1e-10
   nl_rel_step_tol = 1e-10
   nl_abs_step_tol = 1e-10
   nl_max_its = 10
@@ -568,7 +575,7 @@
     [./SMP_PJFNK]
       type = SMP
       full = true
-      solve_type = pjfnk   
+      solve_type = pjfnk
     [../]
 
 [] #END Preconditioning

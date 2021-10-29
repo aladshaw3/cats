@@ -469,6 +469,9 @@
                         -snes_max_it
 
                         -sub_pc_factor_shift_type
+                        -pc_factor_shift_type
+                        -ksp_pc_factor_shift_type
+
                         -pc_asm_overlap
 
                         -snes_atol
@@ -486,7 +489,11 @@
                          20
 
                          NONZERO
-                         10
+                         NONZERO
+                         NONZERO
+
+                         100
+
                          1E-6
                          1E-8
 
