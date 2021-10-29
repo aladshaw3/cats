@@ -1,0 +1,8 @@
+[Tests]
+  [./setting_petsc_solver_options]
+    type = 'Exodiff'
+    input = 'all_options.i'
+    exodiff = 'all_options_out.e'
+    rel_err = 1e-6
+  [../]
+[]

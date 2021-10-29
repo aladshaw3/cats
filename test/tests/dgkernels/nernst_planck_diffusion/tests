@@ -1,0 +1,8 @@
+[Tests]
+  [./dg_nernst_planck]
+    type = Exodiff
+    input = nernst_planck_const_phi.i
+    exodiff = nernst_planck_const_phi_out.e
+    min_parallel = 1
+  [../]
+[]
