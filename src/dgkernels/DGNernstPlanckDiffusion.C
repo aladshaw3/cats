@@ -71,7 +71,7 @@ InputParameters DGNernstPlanckDiffusion::validParams()
     InputParameters params = DGVariableDiffusion::validParams();
     params.addRequiredCoupledVar("electric_potential","Variable for electric potential (V or J/C)");
     params.addCoupledVar("porosity",1,"Variable for volume fraction or porosity (default = 1)");
-    params.addCoupledVar("temperature",298,"Variable for temperature of the media (default = 298 K)");
+    params.addRequiredCoupledVar("temperature","Variable for temperature of the media [NOTE: Cannot be defaulted to a single value] ");
 
     params.addParam<Real>("valence",0, "Valence of the species being transported (default = 0)");
     params.addParam<Real>("faraday_const",96485.3, "Value of Faraday's constant (default = 96485.3 C/mol)");
@@ -168,9 +168,6 @@ Real DGNernstPlanckDiffusion::computeQpJacobian(Moose::DGJacobianType type)
     _Diffusion(2,2) = _Dz[_qp];
 
     Real r = 0;
-
-  	const unsigned int elem_b_order = static_cast<unsigned int> (_var.order());
-  	const double h_elem = _current_elem->volume()/_current_side_elem->volume() * 1./std::pow(elem_b_order, 2.);
 
   	switch (type)
   	{
@@ -378,8 +375,6 @@ Real DGNernstPlanckDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType typ
 
         switch (type)
         {
-            // (_porosity[_qp]*_u[_qp]*(_valence*_faraday/_gas_const/_temp[_qp]))
-            // (_porosity[_qp]*_u_neighbor[_qp]*(_valence*_faraday/_gas_const/_temp_neighbor[_qp]))
             case Moose::ElementElement:
                 r -= 0.5 * _Diffusion * (_porosity[_qp]*_u[_qp]*(_valence*_faraday/_gas_const/_temp[_qp])) * _grad_phi[_j][_qp] * _normals[_qp] * _test[_i][_qp];
                 r += _epsilon * 0.5 * _phi[_j][_qp] * _Diffusion * (_porosity[_qp]*_u[_qp]*(_valence*_faraday/_gas_const/_temp[_qp])) * _grad_test[_i][_qp] * _normals[_qp];
