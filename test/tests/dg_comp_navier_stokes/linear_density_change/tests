@@ -1,0 +1,9 @@
+[Tests]
+  [./dg_cns_lin_dens_change]
+    type = Exodiff
+    input = cns_linear_dens_change.i
+    exodiff = cns_linear_dens_change_out.e
+    min_parallel = 1
+    rel_err = 1e-4
+  [../]
+[]

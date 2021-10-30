@@ -3,5 +3,6 @@
     type = Exodiff
     input = dg_flow_conduit.i
     exodiff = dg_flow_conduit_out.e
+    rel_err = 1e-4
   [../]
 []
