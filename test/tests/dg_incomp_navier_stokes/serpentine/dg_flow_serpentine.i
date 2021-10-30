@@ -544,16 +544,16 @@
 
                          100
 
-                         1E-10
-                         1E-10
+                         1E-12
+                         1E-12
 
                          fgmres
                          lu'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
-  nl_rel_tol = 1e-10
-  nl_abs_tol = 1e-10
+  nl_rel_tol = 1e-12
+  nl_abs_tol = 1e-12
   nl_rel_step_tol = 1e-10
   nl_abs_step_tol = 1e-10
   nl_max_its = 10
