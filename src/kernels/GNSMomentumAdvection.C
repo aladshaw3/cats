@@ -1,9 +1,9 @@
 /*!
- *  \file GINSMomentumAdvection.h
- *	\brief Kernel for use with the corresponding DGINSMomentumAdvection object
+ *  \file GNSMomentumAdvection.h
+ *	\brief Kernel for use with the corresponding DGNSMomentumAdvection object
  *	\details This file creates a standard MOOSE kernel that is to be used in conjunction
- *            with DGINSMomentumAdvection for the discontinous Galerkin formulation of
- *            the momentum advection term in the Incompressible Navier-Stokes equation.
+ *            with DGNSMomentumAdvection for the discontinous Galerkin formulation of
+ *            the momentum advection term in the Navier-Stokes equation.
  *
  *  \author Austin Ladshaw
  *	\date 10/26/2021
@@ -31,16 +31,16 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "GINSMomentumAdvection.h"
+#include "GNSMomentumAdvection.h"
 
 /**
  * All MOOSE based object classes you create must be registered using this macro.  The first
  * argument is the name of the App with an "App" suffix (i.e., "fennecApp"). The second
  * argument is the name of the C++ class you created.
  */
-registerMooseObject("catsApp", GINSMomentumAdvection);
+registerMooseObject("catsApp", GNSMomentumAdvection);
 
-InputParameters GINSMomentumAdvection::validParams()
+InputParameters GNSMomentumAdvection::validParams()
 {
     InputParameters params = GConcentrationAdvection::validParams();
     params.addRequiredCoupledVar("density","Variable for the density of the domain/subdomain");
@@ -48,7 +48,7 @@ InputParameters GINSMomentumAdvection::validParams()
     return params;
 }
 
-GINSMomentumAdvection::GINSMomentumAdvection(const InputParameters & parameters) :
+GNSMomentumAdvection::GNSMomentumAdvection(const InputParameters & parameters) :
 GConcentrationAdvection(parameters),
 _density(coupledValue("density")),
 _density_var(coupled("density")),
@@ -67,7 +67,7 @@ _main_var(coupled("this_variable"))
     }
 }
 
-Real GINSMomentumAdvection::computeQpResidual()
+Real GNSMomentumAdvection::computeQpResidual()
 {
 	_velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];
@@ -76,7 +76,7 @@ Real GINSMomentumAdvection::computeQpResidual()
 	return GAdvection::computeQpResidual()*_density[_qp];
 }
 
-Real GINSMomentumAdvection::computeQpJacobian()
+Real GNSMomentumAdvection::computeQpJacobian()
 {
   _velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];
@@ -85,7 +85,7 @@ Real GINSMomentumAdvection::computeQpJacobian()
 	return GAdvection::computeQpJacobian()*_density[_qp] + (-_u[_qp]*(_phi[_j][_qp]*_grad_test[_i][_qp](_dir))*_density[_qp]);
 }
 
-Real GINSMomentumAdvection::computeQpOffDiagJacobian(unsigned int jvar)
+Real GNSMomentumAdvection::computeQpOffDiagJacobian(unsigned int jvar)
 {
 	_velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];

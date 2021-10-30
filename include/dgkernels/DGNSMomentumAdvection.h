@@ -1,8 +1,8 @@
 /*!
-*  \file DGINSMomentumAdvection.h
-*	\brief Discontinous Galerkin kernel for momentum advection in Incompressible Navier-Stokes
+*  \file DGNSMomentumAdvection.h
+*	\brief Discontinous Galerkin kernel for momentum advection in Navier-Stokes
 *	\details This file creates a discontinous Galerkin kernel for momentum advection in a given domain.
-*           This file is to be used to solve the Navier-Stokes equations for an Incompressible fluid
+*           This file is to be used to solve the Navier-Stokes equations for a fluid
 *           using discontinous Galerkin methods and shape functions.
 *
 *	\note Any DG kernel under CATS will have a cooresponding G kernel (usually of same name) that must be included
@@ -40,7 +40,7 @@
 
 #include "DGConcentrationAdvection.h"
 
-/// DGINSMomentumAdvection class object inherits from DGConcentrationAdvection object
+/// DGNSMomentumAdvection class object inherits from DGConcentrationAdvection object
 /** This class object inherits from the DGKernel object in the MOOSE framework.
 All public and protected members of this class are required function overrides. The object
 will provide residuals and Jacobians for the discontinous Galerkin formulation of advection
@@ -49,14 +49,14 @@ variable to create a residual for momentum advection.
 
 \note As a reminder, any DGKernel in MOOSE was be accompanied by the equivalent GKernel in
 order to provide the full residuals and Jacobians for the system. */
-class DGINSMomentumAdvection : public DGConcentrationAdvection
+class DGNSMomentumAdvection : public DGConcentrationAdvection
 {
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
 
     /// Required constructor for objects in MOOSE
-    DGINSMomentumAdvection(const InputParameters & parameters);
+    DGNSMomentumAdvection(const InputParameters & parameters);
 
 protected:
     /// Required residual function for DG kernels in MOOSE
@@ -81,7 +81,7 @@ protected:
     const VariableValue & _coupled_main;    ///< Primary velocity component variable (i.e., diagonal)
     const unsigned int _main_var;           ///< Variable identification for the primary velocity variable (i.e., diagonal)
 
-    unsigned int _dir;                      ///< Direction that '_main_var' acts on 
+    unsigned int _dir;                      ///< Direction that '_main_var' acts on
 
 private:
 

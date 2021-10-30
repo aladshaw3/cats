@@ -17,7 +17,7 @@
 #       Div * vel = grad(vel_x)_x + grad(vel_y)_y + grad(vel_z)_z
 #
 #
-# Custom DGINS (and GINS) kernels were developed to handle the momentum advection
+# Custom DGNS (and GNS) kernels were developed to handle the momentum advection
 # and the outflow BCs. Divergence of velocity is computed piecewise, as well as
 # the piecewise resolution of the gradients of pressure.
 #
@@ -170,7 +170,7 @@
     [../]
     # Div*(rho*vel*vel_x)
     [./x_gadv]
-        type = GINSMomentumAdvection
+        type = GNSMomentumAdvection
         variable = vel_x
         this_variable = vel_x
         density = rho
@@ -203,7 +203,7 @@
     [../]
     # Div*(rho*vel*vel_y)
     [./y_gadv]
-        type = GINSMomentumAdvection
+        type = GNSMomentumAdvection
         variable = vel_y
         this_variable = vel_y
         density = rho
@@ -268,7 +268,7 @@
   [../]
   # Div*(rho*vel*vel_x)
   [./x_dgadv]
-      type = DGINSMomentumAdvection
+      type = DGNSMomentumAdvection
       variable = vel_x
       this_variable = vel_x
       density = rho
@@ -287,7 +287,7 @@
   [../]
   # Div*(rho*vel*vel_y)
   [./y_dgadv]
-      type = DGINSMomentumAdvection
+      type = DGNSMomentumAdvection
       variable = vel_y
       this_variable = vel_y
       density = rho
@@ -323,7 +323,7 @@
   ### Momentum Flux Out of Domain ###
   # in x-direction
   [./vel_x_outlet]
-      type = DGINSMomentumOutflowBC
+      type = DGNSMomentumOutflowBC
       variable = vel_x
       this_variable = vel_x
       boundary = 'outlet'
@@ -334,7 +334,7 @@
   [../]
   # in y-direction
   [./vel_y_outlet]
-      type = DGINSMomentumOutflowBC
+      type = DGNSMomentumOutflowBC
       variable = vel_y
       this_variable = vel_y
       boundary = 'outlet'

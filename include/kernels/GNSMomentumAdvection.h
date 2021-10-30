@@ -1,9 +1,9 @@
 /*!
- *  \file GINSMomentumAdvection.h
- *	\brief Kernel for use with the corresponding DGINSMomentumAdvection object
+ *  \file GNSMomentumAdvection.h
+ *	\brief Kernel for use with the corresponding DGNSMomentumAdvection object
  *	\details This file creates a standard MOOSE kernel that is to be used in conjunction
- *            with DGINSMomentumAdvection for the discontinous Galerkin formulation of
- *            the momentum advection term in the Incompressible Navier-Stokes equation.
+ *            with DGNSMomentumAdvection for the discontinous Galerkin formulation of
+ *            the momentum advection term in the Navier-Stokes equation.
  *
  *  \author Austin Ladshaw
  *	\date 10/26/2021
@@ -35,19 +35,19 @@
 
 #include "GConcentrationAdvection.h"
 
-/// GINSMomentumAdvection class object inherits from GConcentrationAdvection object
+/// GNSMomentumAdvection class object inherits from GConcentrationAdvection object
 /** This class object inherits from the GConcentrationAdvection object in CATS.
 	All public and protected members of this class are required function overrides.
 	The kernel has a velocity vector whose components can be set piecewise in an
 	input file. */
-class GINSMomentumAdvection : public GConcentrationAdvection
+class GNSMomentumAdvection : public GConcentrationAdvection
 {
 public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
 
 	/// Required constructor for objects in MOOSE
-	GINSMomentumAdvection(const InputParameters & parameters);
+	GNSMomentumAdvection(const InputParameters & parameters);
 
 protected:
 	/// Required residual function for standard kernels in MOOSE

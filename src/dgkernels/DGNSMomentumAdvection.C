@@ -1,8 +1,8 @@
 /*!
-*  \file DGINSMomentumAdvection.h
-*	\brief Discontinous Galerkin kernel for momentum advection in Incompressible Navier-Stokes
+*  \file DGNSMomentumAdvection.h
+*	\brief Discontinous Galerkin kernel for momentum advection in Navier-Stokes
 *	\details This file creates a discontinous Galerkin kernel for momentum advection in a given domain.
-*           This file is to be used to solve the Navier-Stokes equations for an Incompressible fluid
+*           This file is to be used to solve the Navier-Stokes equations for a fluid
 *           using discontinous Galerkin methods and shape functions.
 *
 *	\note Any DG kernel under CATS will have a cooresponding G kernel (usually of same name) that must be included
@@ -36,16 +36,16 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "DGINSMomentumAdvection.h"
+#include "DGNSMomentumAdvection.h"
 
 /**
  * All MOOSE based object classes you create must be registered using this macro.  The first
  * argument is the name of the App with an "App" suffix (i.e., "fennecApp"). The second
  * argument is the name of the C++ class you created.
  */
-registerMooseObject("catsApp", DGINSMomentumAdvection);
+registerMooseObject("catsApp", DGNSMomentumAdvection);
 
-InputParameters DGINSMomentumAdvection::validParams()
+InputParameters DGNSMomentumAdvection::validParams()
 {
     InputParameters params = DGConcentrationAdvection::validParams();
     params.addRequiredCoupledVar("density","Variable for the density of the domain/subdomain");
@@ -53,7 +53,7 @@ InputParameters DGINSMomentumAdvection::validParams()
     return params;
 }
 
-DGINSMomentumAdvection::DGINSMomentumAdvection(const InputParameters & parameters) :
+DGNSMomentumAdvection::DGNSMomentumAdvection(const InputParameters & parameters) :
 DGConcentrationAdvection(parameters),
 _density(coupledValue("density")),
 _density_var(coupled("density")),
@@ -72,7 +72,7 @@ _main_var(coupled("this_variable"))
   }
 }
 
-Real DGINSMomentumAdvection::computeQpResidual(Moose::DGResidualType type)
+Real DGNSMomentumAdvection::computeQpResidual(Moose::DGResidualType type)
 {
 	_velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];
@@ -81,7 +81,7 @@ Real DGINSMomentumAdvection::computeQpResidual(Moose::DGResidualType type)
 	return DGAdvection::computeQpResidual(type)*_density[_qp];
 }
 
-Real DGINSMomentumAdvection::computeQpJacobian(Moose::DGJacobianType type)
+Real DGNSMomentumAdvection::computeQpJacobian(Moose::DGJacobianType type)
 {
 	_velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];
@@ -124,7 +124,7 @@ Real DGINSMomentumAdvection::computeQpJacobian(Moose::DGJacobianType type)
 	return jac;
 }
 
-Real DGINSMomentumAdvection::computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar)
+Real DGNSMomentumAdvection::computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar)
 {
 	_velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];

@@ -1,5 +1,5 @@
 /*!
- *  \file DGINSMomentumOutflowBC.h
+ *  \file DGNSMomentumOutflowBC.h
  *	\brief Boundary Condition kernel for the flux of momentum out of a domain
  *	\details This file creates a generic boundary condition kernel for the flux of momentum out of
  *			a boundary. The flux is based on a velocity vector, as well as domain density, and is valid
@@ -43,19 +43,19 @@
 
 #include "DGConcentrationFluxBC.h"
 
-/// DGINSMomentumOutflowBC class object inherits from IntegratedBC object
+/// DGNSMomentumOutflowBC class object inherits from IntegratedBC object
 /** This class object inherits from the IntegratedBC object.
 	All public and protected members of this class are required function overrides.
 	The flux BC uses the velocity in the system to apply a boundary
 	condition based on whether or not material is leaving or entering the boundary. */
-class DGINSMomentumOutflowBC : public DGConcentrationFluxBC
+class DGNSMomentumOutflowBC : public DGConcentrationFluxBC
 {
 public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
 
 	/// Required constructor for BC objects in MOOSE
-	DGINSMomentumOutflowBC(const InputParameters & parameters);
+	DGNSMomentumOutflowBC(const InputParameters & parameters);
 
 protected:
 	/// Required function override for BC objects in MOOSE

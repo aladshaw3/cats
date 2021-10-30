@@ -1,5 +1,5 @@
 /*!
- *  \file DGINSMomentumOutflowBC.h
+ *  \file DGNSMomentumOutflowBC.h
  *	\brief Boundary Condition kernel for the flux of momentum out of a domain
  *	\details This file creates a generic boundary condition kernel for the flux of momentum out of
  *			a boundary. The flux is based on a velocity vector, as well as domain density, and is valid
@@ -39,16 +39,16 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "DGINSMomentumOutflowBC.h"
+#include "DGNSMomentumOutflowBC.h"
 
 /**
  * All MOOSE based object classes you create must be registered using this macro.  The first
  * argument is the name of the App with an "App" suffix (i.e., "fennecApp"). The second
  * argument is the name of the C++ class you created.
  */
-registerMooseObject("catsApp", DGINSMomentumOutflowBC);
+registerMooseObject("catsApp", DGNSMomentumOutflowBC);
 
-InputParameters DGINSMomentumOutflowBC::validParams()
+InputParameters DGNSMomentumOutflowBC::validParams()
 {
     InputParameters params = DGConcentrationFluxBC::validParams();
     params.addRequiredCoupledVar("density","Variable for the density of the domain/subdomain");
@@ -56,7 +56,7 @@ InputParameters DGINSMomentumOutflowBC::validParams()
     return params;
 }
 
-DGINSMomentumOutflowBC::DGINSMomentumOutflowBC(const InputParameters & parameters) :
+DGNSMomentumOutflowBC::DGNSMomentumOutflowBC(const InputParameters & parameters) :
 DGConcentrationFluxBC(parameters),
 _density(coupledValue("density")),
 _density_var(coupled("density")),
@@ -82,7 +82,7 @@ _main_var(coupled("this_variable"))
   _u_input = 0;
 }
 
-Real DGINSMomentumOutflowBC::computeQpResidual()
+Real DGNSMomentumOutflowBC::computeQpResidual()
 {
 	_velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];
@@ -104,7 +104,7 @@ Real DGINSMomentumOutflowBC::computeQpResidual()
 	return r;
 }
 
-Real DGINSMomentumOutflowBC::computeQpJacobian()
+Real DGNSMomentumOutflowBC::computeQpJacobian()
 {
 	_velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];
@@ -128,7 +128,7 @@ Real DGINSMomentumOutflowBC::computeQpJacobian()
 	return r;
 }
 
-Real DGINSMomentumOutflowBC::computeQpOffDiagJacobian(unsigned int jvar)
+Real DGNSMomentumOutflowBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
 	_velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];

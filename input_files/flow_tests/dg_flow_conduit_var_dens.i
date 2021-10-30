@@ -1,14 +1,6 @@
-# File demos Incompressible Navier-Stokes flow with DG methods
+# File demos Compressible Navier-Stokes flow with DG methods
 
-# THIS file looks at what changing the value of density spatially
-# would do to the DG-INS implementation. Theoretically, the density
-# SHOULD NOT vary spatially in the domain if the fluid is incompressible.
-# Incidentally, what happens is that the pressure and pressure gradient
-# inside the domain warps with the density changes to maintain the
-# continuity condition and still give a reasonable flow profile. However,
-# the pressure changes in the domain may be inaccurate due to the
-# pressure variable taking on the errors associated with those density
-# variations.
+# THIS file tests the compressible formulation of Navier-Stokes
 
 # Equations:
 # ----------
@@ -16,18 +8,18 @@
 #
 # (1) continuity:   [resolves pressure gradient]
 #
-#       Div * vel = 0
+#       Div * (rho * vel) = 0
 #
 # (2) conservation of momentum: [integration by parts]
 #
-#       rho* d(vel_i)/dt + Div*(rho*vel*vel_i) = -grad(P)_i + Div*(mu*grad(vel_i))
+#       rho* d(vel_i)/dt + Div*(rho*vel*vel_i) = -grad(P)_i + Div*(mu*grad(vel_i)) + (1/3)*mu*(grad(Div*vel)_i)
 #
 #           where i = x, y, or z
 #
 #       Div * vel = grad(vel_x)_x + grad(vel_y)_y + grad(vel_z)_z
 #
 #
-# Custom DGINS (and GINS) kernels were developed to handle the momentum advection
+# Custom DGNS (and GNS) kernels were developed to handle the momentum advection
 # and the outflow BCs. Divergence of velocity is computed piecewise, as well as
 # the piecewise resolution of the gradients of pressure.
 #
@@ -181,7 +173,7 @@
     [../]
     # Div*(rho*vel*vel_x)
     [./x_gadv]
-        type = GINSMomentumAdvection
+        type = GNSMomentumAdvection
         variable = vel_x
         this_variable = vel_x
         density = rho
@@ -214,7 +206,7 @@
     [../]
     # Div*(rho*vel*vel_y)
     [./y_gadv]
-        type = GINSMomentumAdvection
+        type = GNSMomentumAdvection
         variable = vel_y
         this_variable = vel_y
         density = rho
@@ -279,7 +271,7 @@
   [../]
   # Div*(rho*vel*vel_x)
   [./x_dgadv]
-      type = DGINSMomentumAdvection
+      type = DGNSMomentumAdvection
       variable = vel_x
       this_variable = vel_x
       density = rho
@@ -298,7 +290,7 @@
   [../]
   # Div*(rho*vel*vel_y)
   [./y_dgadv]
-      type = DGINSMomentumAdvection
+      type = DGNSMomentumAdvection
       variable = vel_y
       this_variable = vel_y
       density = rho
@@ -350,7 +342,7 @@
   ### Momentum Flux Out of Domain ###
   # in x-direction
   [./vel_x_outlet]
-      type = DGINSMomentumOutflowBC
+      type = DGNSMomentumOutflowBC
       variable = vel_x
       this_variable = vel_x
       boundary = 'outlet'
@@ -361,7 +353,7 @@
   [../]
   # in y-direction
   [./vel_y_outlet]
-      type = DGINSMomentumOutflowBC
+      type = DGNSMomentumOutflowBC
       variable = vel_y
       this_variable = vel_y
       boundary = 'outlet'
