@@ -264,7 +264,7 @@
          type = InitialLangmuirInhibition
          temperature = temp
          coupled_list = 'HCw_heptane HCw_toluene'
-         pre_exponentials = '3.27E+10 2.18E+9'
+         pre_exponentials = '0 0'
          activation_energies = '0 0'
      [../]
   [../]
@@ -416,15 +416,15 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # n-heptane ==> x = 7, y = 16, z = 0
     # toluene ==> x = 7, y = 8, z = 0
     [./O2w_rxns]
         type = ScaledWeightedCoupledSumFunction
         variable = O2w
-        coupled_list = 'r1 r2 r15 r3_heptane r12_heptane r3_toluene r12_toluene'
-        weights = '-0.5 -0.5 -0.25 -11 0 -9 0'
+        coupled_list = 'r1 r2 r15 r3_heptane r3_toluene'
+        weights = '-0.5 -0.5 -0.25 -11 -9'
         scale = non_pore
     [../]
 
@@ -477,7 +477,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # n-heptane ==> x = 7, y = 16, z = 0
     # toluene ==> x = 7, y = 8, z = 0
@@ -593,7 +593,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # n-heptane ==> x = 7, y = 16, z = 0
     # toluene ==> x = 7, y = 8, z = 0
@@ -709,7 +709,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # n-heptane ==> x = 7, y = 16, z = 0
     # toluene ==> x = 7, y = 8, z = 0
@@ -770,7 +770,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # n-heptane ==> x = 7, y = 16, z = 0
     # toluene ==> x = 7, y = 8, z = 0
@@ -831,7 +831,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # n-heptane ==> x = 7, y = 16, z = 0
     # toluene ==> x = 7, y = 8, z = 0
@@ -892,7 +892,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # n-heptane ==> x = 7, y = 16, z = 0
     # toluene ==> x = 7, y = 8, z = 0
@@ -953,7 +953,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # n-heptane ==> x = 7, y = 16, z = 0
     [./HCw_heptane_rxns]
@@ -1013,7 +1013,7 @@
     [../]
     # r3:  CxHyOz + (x + (y/4) - (z/2)) O2 --> x CO2 + (y/2) H2O
     # r10: CxHyOz + (2x + (y/2) - z) NO --> x CO2 + (y/2) H2O + (x + (y/4) - (z/2)) N2
-    # r12: CxHyOz + x H2O --> x CO + (x + (y/2)) H2 + (z/2) O2
+    # r12: CxHyOz + (x - z) H2O --> x CO + (x + (y/2) - z) H2
     #
     # toluene ==> x = 7, y = 8, z = 0
     [./HCw_toluene_rxns]
@@ -1039,7 +1039,7 @@
       this_variable = r1
 
       forward_activation_energy = 235293.33281046877
-      forward_pre_exponential = 1.6550871137667489e+31
+      forward_pre_exponential = 3.2550871137667489e+31
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1088,13 +1088,13 @@
       variable = r4
       this_variable = r4
 
-      forward_activation_energy = 304924.98618328216
-      forward_pre_exponential = 3.473335911420499e+36
-      #forward_pre_exponential = 0
-      forward_inhibition = R_HC
+      # OG #forward_activation_energy = 304924.98618328216
+      # OG #forward_pre_exponential = 3.473335911420499e+36
 
-      #forward_pre_exponential = 3.473335911420499e+32
-      #forward_activation_energy = 324924.98618328216
+      forward_activation_energy = 225293.33281046877
+      forward_pre_exponential = 1.573335911420499e+29
+
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1118,13 +1118,13 @@
       variable = r5
       this_variable = r5
 
-      forward_activation_energy = 170429.67328083533
-      forward_pre_exponential = 3.174729324826581e+22
-      #forward_pre_exponential = 0
-      forward_inhibition = R_HC
+      # OG #forward_activation_energy = 170429.67328083533
+      # OG #forward_pre_exponential = 3.174729324826581e+22
 
-      #forward_pre_exponential = 3.174729324826581e+18
-      #forward_activation_energy = 190429.67328083533
+      forward_activation_energy = 220429.67328083533
+      forward_pre_exponential = 6.174729324826581e+25
+
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1148,13 +1148,13 @@
       variable = r8
       this_variable = r8
 
-      forward_activation_energy = 304127.76066024584
-      forward_pre_exponential = 1.8767305119846367e+38
-      #forward_pre_exponential = 0
-      forward_inhibition = R_HC
+      # OG #forward_activation_energy = 304127.76066024584
+      # OG #forward_pre_exponential = 1.8767305119846367e+38
 
-      #forward_pre_exponential = 1.8767305119846367e+34
-      #forward_activation_energy = 324127.76066024584
+      forward_activation_energy = 225293.33281046877
+      forward_pre_exponential = 2.6767305119846367e+31
+
+      forward_inhibition = R_CO
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1290,12 +1290,8 @@
       variable = r15
       this_variable = r15
 
-      #forward_activation_energy = 300000
-      #forward_pre_exponential = 1e+41
-
-      forward_pre_exponential = 1e+41
-      forward_activation_energy = 300000
-      forward_beta = 0
+      forward_pre_exponential = 1.65e+44
+      forward_activation_energy = 324000
       forward_inhibition = R_CO
 
       reverse_activation_energy = 0
@@ -1321,7 +1317,7 @@
       this_variable = r3_heptane
 
       forward_activation_energy = 204704.19832103234
-      forward_pre_exponential = 4.689916847226846e+26
+      forward_pre_exponential = 7.689916847226846e+26
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1346,7 +1342,7 @@
       this_variable = r10_heptane
 
       forward_activation_energy = 344704.19832103234
-      forward_pre_exponential = 2.189916847226846e+37
+      forward_pre_exponential = 1.189916847226846e+36
 
       reverse_activation_energy = 0
       reverse_pre_exponential = 0
@@ -1488,7 +1484,7 @@
       variable = R_HC
       temperature = temp
       coupled_list = 'HCw_heptane HCw_toluene'
-      pre_exponentials = '3.27E+10 0'
+      pre_exponentials = '0 0'
       activation_energies = '0 0'
     [../]
 
