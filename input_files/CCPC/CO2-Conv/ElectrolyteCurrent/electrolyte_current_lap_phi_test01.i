@@ -27,18 +27,32 @@
   [./pos_ion]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1
+      initial_condition = 1e-8
   [../]
 
   # Negative ion concentration (in mol/volume)
   [./neg_ion]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1
+      initial_condition = 1e-8
   [../]
 
-  # electrolyte potential (in V)
+  # electrolyte potential (in V or J/C)
   [./phi_e]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0
+  [../]
+
+  # Electrolyte current density in x (C/area/time)
+  [./ie_x]
+      order = SECOND
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
+
+  # Electrolyte current density in y (C/area/time)
+  [./ie_y]
       order = SECOND
       family = MONOMIAL
       initial_condition = 0
@@ -50,19 +64,26 @@
     [./Dp]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 1
+        initial_condition = 0.5
     [../]
 
     [./eps]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.5
+        initial_condition = 1
     [../]
 
     [./Te]
         order = FIRST
         family = MONOMIAL
         initial_condition = 298
+    [../]
+
+    # Electrolyte current density in z (C/L^2/T)
+    [./ie_z]
+        order = SECOND
+        family = MONOMIAL
+        initial_condition = 0
     [../]
 
 [] #END AuxVariables
@@ -73,13 +94,47 @@
 
 [Kernels]
     # Enforce lapacian = 0
-    [./phi_e_gdiff]
-        type = GVarPoreDiffusion
+    [./phi_e_diff]
+        type = Diffusion
         variable = phi_e
-        porosity = 1
-        Dx = 1
-        Dy = 1
-        Dz = 1
+    [../]
+
+    # Current density in x-dir from potential gradient
+    #  -ie_x
+    [./ie_x_equ]
+        type = Reaction
+        variable = ie_x
+    [../]
+    #  -K*grad(phi_e)_x   where K=f(ions, diff, etc....)
+    [./ie_x_phigrad]
+        type = ElectrolyteCurrentFromPotentialGradient
+        variable = ie_x
+        direction = 0         # 0=x
+        electric_potential = phi_e
+        porosity = eps
+        temperature = Te
+        ion_conc = 'pos_ion neg_ion'
+        ion_valence = '1 -1'
+        diffusion = 'Dp Dp'
+    [../]
+
+    # Current density in y-dir from potential gradient
+    #  -ie_y
+    [./ie_y_equ]
+        type = Reaction
+        variable = ie_y
+    [../]
+    #  -K*grad(phi_e)_y   where K=f(ions, diff, etc....)
+    [./ie_y_phigrad]
+        type = ElectrolyteCurrentFromPotentialGradient
+        variable = ie_y
+        direction = 1         # 1=y
+        electric_potential = phi_e
+        porosity = eps
+        temperature = Te
+        ion_conc = 'pos_ion neg_ion'
+        ion_valence = '1 -1'
+        diffusion = 'Dp Dp'
     [../]
 
     ### Conservation of mass for pos_ion ###
@@ -140,16 +195,6 @@
 #       corresponding 'DG' kernel down here.
 [DGKernels]
 
-  # Enforce lapacian = 0
-  [./phi_e_dgdiff]
-      type = DGVarPoreDiffusion
-      variable = phi_e
-      porosity = 1
-      Dx = 1
-      Dy = 1
-      Dz = 1
-  [../]
-
   ### Conservation of mass for pos_ion ###
   [./pos_ion_dgdiff]
       type = DGVarPoreDiffusion
@@ -200,20 +245,16 @@
 [BCs]
   ### BCs for phi_e ###
   [./phi_e_left]
-      type = FunctionPenaltyDirichletBC
+      type = FunctionDirichletBC
       variable = phi_e
       boundary = 'left'
-      #function = '1e-4*(1-exp(-t))'
       function = '1e-4*sin(t*3.141459/10)'
-      penalty = 3e2
   [../]
   [./phi_e_right]
-      type = FunctionPenaltyDirichletBC
+      type = FunctionDirichletBC
       variable = phi_e
       boundary = 'right'
-      #function = '-1e-4*(1-exp(-t))'
       function = '-1e-4*sin(t*3.141459/10)'
-      penalty = 3e2
   [../]
 
 [] #END BCs
@@ -341,8 +382,8 @@
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
-  nl_rel_tol = 1e-6
-  nl_abs_tol = 1e-6
+  nl_rel_tol = 1e-8
+  nl_abs_tol = 1e-8
   nl_rel_step_tol = 1e-10
   nl_abs_step_tol = 1e-10
   nl_max_its = 20
