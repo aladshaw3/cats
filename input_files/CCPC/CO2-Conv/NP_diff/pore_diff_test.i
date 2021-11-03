@@ -34,8 +34,7 @@
   [./lin_ic]
     type = FunctionIC
     variable = pos_ion
-    #function = '0'
-    function = '1-0.2*x'
+    function = '0'
   [../]
 []
 
@@ -43,13 +42,13 @@
     [./Dp]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 1
+        initial_condition = 0.5
     [../]
 
     [./eps]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.5
+        initial_condition = 1
     [../]
 
 [] #END AuxVariables

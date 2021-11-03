@@ -15,11 +15,11 @@
     type = GeneratedMesh
     dim = 2
     nx = 10
-    ny = 10
+    ny = 20
     xmin = 0.0
     xmax = 5.0
     ymin = 0.0
-    ymax = 5.0
+    ymax = 10.0
 [] # END Mesh
 
 [Variables]
@@ -27,14 +27,14 @@
   [./pos_ion]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1e-8
+      initial_condition = 0
   [../]
 
   # Negative ion concentration (in mol/volume)
   [./neg_ion]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1e-8
+      initial_condition = 0
   [../]
 
   # electrolyte potential (in V or J/C)
@@ -64,7 +64,7 @@
     [./Dp]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.5
+        initial_condition = 0.05
     [../]
 
     [./eps]
@@ -79,9 +79,20 @@
         initial_condition = 298
     [../]
 
-    # Electrolyte current density in z (C/L^2/T)
-    [./ie_z]
-        order = SECOND
+    [./vel_x]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0
+    [../]
+
+    [./vel_y]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.5
+    [../]
+
+    [./vel_z]
+        order = FIRST
         family = MONOMIAL
         initial_condition = 0
     [../]
@@ -98,6 +109,7 @@
         type = Diffusion
         variable = phi_e
     [../]
+
 
     # Current density in x-dir from potential gradient
     #  -ie_x
@@ -157,6 +169,7 @@
         diffusion = 'Dp Dp'
     [../]
 
+
     ### Conservation of mass for pos_ion ###
     [./pos_ion_dot]
         type = VariableCoefTimeDerivative
@@ -181,6 +194,14 @@
         Dx = Dp
         Dy = Dp
         Dz = Dp
+    [../]
+    [./pos_ion_gadv]
+        type = GPoreConcAdvection
+        variable = pos_ion
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = 0
     [../]
 
     ### Conservation of mass for neg_ion ###
@@ -207,6 +228,14 @@
         Dx = Dp
         Dy = Dp
         Dz = Dp
+    [../]
+    [./neg_ion_gadv]
+        type = GPoreConcAdvection
+        variable = neg_ion
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = 0
     [../]
 
 [] #END Kernels
@@ -235,6 +264,14 @@
       Dy = Dp
       Dz = Dp
   [../]
+  [./pos_ion_dgadv]
+      type = DGPoreConcAdvection
+      variable = pos_ion
+      porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = 0
+  [../]
 
   ### Conservation of mass for neg_ion ###
   [./neg_ion_dgdiff]
@@ -256,6 +293,14 @@
       Dy = Dp
       Dz = Dp
   [../]
+  [./neg_ion_dgadv]
+      type = DGPoreConcAdvection
+      variable = neg_ion
+      porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = 0
+  [../]
 []
 
 [AuxKernels]
@@ -268,13 +313,55 @@
       type = FunctionDirichletBC
       variable = phi_e
       boundary = 'left'
-      function = '1e-4*sin(t*3.141459/10)'
+      function = '5e-5*(1-exp(-t))'
   [../]
   [./phi_e_right]
       type = FunctionDirichletBC
       variable = phi_e
       boundary = 'right'
-      function = '-1e-4*sin(t*3.141459/10)'
+      function = '-5e-5*(1-exp(-t))'
+  [../]
+
+  ### Fluxes for Ions ###
+  [./pos_ion_FluxIn]
+      type = DGPoreConcFluxBC
+      variable = pos_ion
+      boundary = 'bottom'
+      porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = 0
+      u_input = 1e-8
+  [../]
+  [./pos_ion_FluxOut]
+      type = DGPoreConcFluxBC
+      variable = pos_ion
+      boundary = 'top'
+      porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = 0
+  [../]
+
+  ### Fluxes for Ions ###
+  [./neg_ion_FluxIn]
+      type = DGPoreConcFluxBC
+      variable = neg_ion
+      boundary = 'bottom'
+      porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = 0
+      u_input = 1e-8
+  [../]
+  [./neg_ion_FluxOut]
+      type = DGPoreConcFluxBC
+      variable = neg_ion
+      boundary = 'top'
+      porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = 0
   [../]
 
 [] #END BCs
@@ -402,8 +489,8 @@
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
-  nl_rel_tol = 1e-8
-  nl_abs_tol = 1e-8
+  nl_rel_tol = 1e-10
+  nl_abs_tol = 1e-10
   nl_rel_step_tol = 1e-10
   nl_abs_step_tol = 1e-10
   nl_max_its = 20
@@ -411,7 +498,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 10.0
+  end_time = 15.0
   dtmax = 0.5
 
     [./TimeStepper]
