@@ -26,10 +26,18 @@
   [./pos_ion]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0
   [../]
 
 [] #END Variables
+
+[ICs]
+  [./lin_ic]
+    type = FunctionIC
+    variable = pos_ion
+    #function = '0'
+    function = '1-0.2*x'
+  [../]
+[]
 
 [AuxVariables]
     [./Dp]
@@ -88,13 +96,22 @@
 
 [BCs]
   ### BCs for pos_ion ###
-  [./pos_ion_BC]
-      type = PenaltyDirichletBC
+  [./pos_ion_BC_in]
+      type = FunctionPenaltyDirichletBC
       variable = pos_ion
       boundary = 'left'
-      value = 1.0
+      function = '1'
       penalty = 3e2
   [../]
+  #[./pos_ion_BC_out]
+  #    type = VariableDiffusionOutflowFluxBC
+  #    variable = pos_ion
+  #    boundary = 'right'
+  #    porosity = eps
+  #    Dx = Dp
+  #    Dy = Dp
+  #    Dz = Dp
+  #[../]
 
 [] #END BCs
 
@@ -183,12 +200,12 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 10.0
-  dtmax = 0.5
+  end_time = 200.0
+  dtmax = 5
 
     [./TimeStepper]
 		  type = ConstantDT
-      dt = 0.5
+      dt = 5
     [../]
 
 [] #END Executioner
