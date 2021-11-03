@@ -58,6 +58,34 @@
       initial_condition = 0
   [../]
 
+  # Flux of positive ions in x
+  [./pos_ion_flux_x]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
+
+  # Flux of positive ions in y
+  [./pos_ion_flux_y]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
+
+  # Flux of negative ions in x
+  [./neg_ion_flux_x]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
+
+  # Flux of negative ions in y
+  [./neg_ion_flux_y]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
+
 [] #END Variables
 
 [AuxVariables]
@@ -98,6 +126,77 @@
         type = Diffusion
         variable = phi_e
     [../]
+
+
+
+    ## ========= Kernels to calculate effective ion flux variable =========
+    #
+    #     -v = D*grad(u)
+    #
+    # Pos Ion Flux Var (in x)
+    [./pos_x_equ]
+        type = CoefReaction
+        variable = pos_ion_flux_x
+        coefficient = -1
+    [../]
+    [./pos_x_flux]
+        type = VariableVectorCoupledGradient
+        variable = pos_ion_flux_x
+        coupled = pos_ion
+        ux = Dp
+        uy = 0
+        uz = 0
+    [../]
+
+    ## ========= Kernels to calculate effective ion flux variable =========
+    # Pos Ion Flux Var (in y)
+    [./pos_y_equ]
+        type = CoefReaction
+        variable = pos_ion_flux_y
+        coefficient = -1
+    [../]
+    [./pos_y_flux]
+        type = VariableVectorCoupledGradient
+        variable = pos_ion_flux_y
+        coupled = pos_ion
+        ux = 0
+        uy = Dp
+        uz = 0
+    [../]
+
+    ## ========= Kernels to calculate effective ion flux variable =========
+    # Neg Ion Flux Var (in x)
+    [./neg_x_equ]
+        type = CoefReaction
+        variable = neg_ion_flux_x
+        coefficient = -1
+    [../]
+    [./neg_x_flux]
+        type = VariableVectorCoupledGradient
+        variable = neg_ion_flux_x
+        coupled = neg_ion
+        ux = Dp
+        uy = 0
+        uz = 0
+    [../]
+
+    ## ========= Kernels to calculate effective ion flux variable =========
+    # Neg Ion Flux Var (in y)
+    [./neg_y_equ]
+        type = CoefReaction
+        variable = neg_ion_flux_y
+        coefficient = -1
+    [../]
+    [./neg_y_flux]
+        type = VariableVectorCoupledGradient
+        variable = neg_ion_flux_y
+        coupled = neg_ion
+        ux = 0
+        uy = Dp
+        uz = 0
+    [../]
+
+
 
     # Current density in x-dir from potential gradient
     #  -ie_x
@@ -248,13 +347,34 @@
       type = FunctionDirichletBC
       variable = phi_e
       boundary = 'left'
-      function = '1e-4*sin(t*3.141459/10)'
+      function = '1e-4'
   [../]
   [./phi_e_right]
       type = FunctionDirichletBC
       variable = phi_e
       boundary = 'right'
-      function = '-1e-4*sin(t*3.141459/10)'
+      function = '-1e-4'
+  [../]
+
+  # These allow both ions to leave the box through a flux
+  #   that is calculated from the concentration gradients
+  # This can be futher enhanced by adding more terms to the
+  #   calculation of total ion flux.
+  [./neg_ion_BC_out]
+      type = CoupledVariableFluxBC
+      variable = neg_ion
+      boundary = 'left right'
+      fx = neg_ion_flux_x
+      fy = neg_ion_flux_y
+      fz = 0
+  [../]
+  [./pos_ion_BC_out]
+      type = CoupledVariableFluxBC
+      variable = pos_ion
+      boundary = 'left right'
+      fx = pos_ion_flux_x
+      fy = pos_ion_flux_y
+      fz = 0
   [../]
 
 [] #END BCs

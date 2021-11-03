@@ -103,15 +103,6 @@
       function = '1'
       penalty = 3e2
   [../]
-  #[./pos_ion_BC_out]
-  #    type = VariableDiffusionOutflowFluxBC
-  #    variable = pos_ion
-  #    boundary = 'right'
-  #    porosity = eps
-  #    Dx = Dp
-  #    Dy = Dp
-  #    Dz = Dp
-  #[../]
 
 [] #END BCs
 
