@@ -185,7 +185,7 @@
     type = DGFluxLimitedBC
     variable = v
     boundary = 'bottom_to_1'
-    value = 1
+    u_input = 1
   [../]
 []
 

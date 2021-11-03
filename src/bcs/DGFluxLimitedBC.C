@@ -85,7 +85,7 @@ InputParameters DGFluxLimitedBC::validParams()
     params.addParam<Real>("Dzx",0,"zx-component of diffusion tensor");
     params.addParam<Real>("Dzy",0,"zy-component of diffusion tensor");
     params.addParam<Real>("Dzz",0,"zz-component of diffusion tensor");
-    params.addParam<Real>("u_input", 1.0, "input value of u");
+    params.addParam<Real>("u_input", 0.0, "input value of u");
     return params;
 }
 
