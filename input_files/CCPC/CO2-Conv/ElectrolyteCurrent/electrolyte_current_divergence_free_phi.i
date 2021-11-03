@@ -1,4 +1,11 @@
-# File to test pore diffusion with variable BCs
+# NOTE: This does not work. We cannot solve the electric potential
+#       be forcing a divergence free condition on current variables.
+#       (Unless maybe we use something other than LU factorization?).
+#
+#       Solving with preconditioning fails at SUBPC_ERROR, which usually
+#       indicates some issue with LU decomp.
+
+# Alternative:   Formulate a Poisson equation for phi_e 
 
 [GlobalParams]
   # Default DG methods
@@ -46,14 +53,14 @@
 
   # Electrolyte current density in x (C/area/time)
   [./ie_x]
-      order = SECOND
+      order = FIRST
       family = MONOMIAL
       initial_condition = 0
   [../]
 
   # Electrolyte current density in y (C/area/time)
   [./ie_y]
-      order = SECOND
+      order = FIRST
       family = MONOMIAL
       initial_condition = 0
   [../]
@@ -112,6 +119,15 @@
 [] #END ICs
 
 [Kernels]
+    # Enforce Divergence Free Condition on current
+    #[./cons_current_flow]
+    #    type = DivergenceFreeCondition
+    #    variable = phi_e
+    #    ux = ie_x
+    #    uy = ie_y
+    #    uz = 0
+    #[../]
+
     # Enforce lapacian = 0
     [./phi_e_diff]
         type = Diffusion
@@ -334,14 +350,15 @@
       type = FunctionDirichletBC
       variable = phi_e
       boundary = 'left'
-      function = '5e-5*(1-exp(-t))'
+      function = '5e-5*0'
   [../]
   [./phi_e_right]
       type = FunctionDirichletBC
       variable = phi_e
       boundary = 'right'
-      function = '-5e-5*(1-exp(-t))'
+      function = '-5e-5*0'
   [../]
+
 
   ### Fluxes for Ions ###
   [./pos_ion_FluxIn]
@@ -499,7 +516,7 @@
   petsc_options_value = 'fgmres
                          ksp
 
-                         lu
+                         ilu
 
                          20
 
