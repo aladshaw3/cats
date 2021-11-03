@@ -5,7 +5,7 @@
 #       Solving with preconditioning fails at SUBPC_ERROR, which usually
 #       indicates some issue with LU decomp.
 
-# Alternative:   Formulate a Poisson equation for phi_e 
+# Alternative:   Formulate a Poisson equation for phi_e
 
 [GlobalParams]
   # Default DG methods
@@ -129,9 +129,19 @@
     #[../]
 
     # Enforce lapacian = 0
+    #
+    #   NOTE: We can use standard diffusion type kernels
+    #         in this manner instead needing to rely on
+    #         DG type kernels.
+    #
+    #     ONLY VALID FOR LAGRANGE SHAPE FUNCTIONS 
+    #
     [./phi_e_diff]
-        type = Diffusion
+        type = GAnisotropicDiffusion
         variable = phi_e
+        Dxx = 1
+        Dyy = 1
+        Dzz = 1
     [../]
 
 
