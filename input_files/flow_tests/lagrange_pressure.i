@@ -39,7 +39,11 @@
 [] #END Variables
 
 [AuxVariables]
-
+  [./vel_z]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.0
+  [../]
 [] #END AuxVariables
 
 [ICs]

@@ -25,7 +25,7 @@
   [../]
 []
 
-# Won't work, can't couple with darcy_vel_x values 
+# Won't work, can't couple with darcy_vel_x values
 [Kernels]
   [./tracer_dot]
       type = VariableCoefTimeDerivative

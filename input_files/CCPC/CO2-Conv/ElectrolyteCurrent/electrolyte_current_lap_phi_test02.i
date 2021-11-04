@@ -209,7 +209,7 @@
         porosity = eps
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
 
     ### Conservation of mass for neg_ion ###
@@ -243,7 +243,7 @@
         porosity = eps
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
 
 
@@ -291,7 +291,7 @@
       porosity = eps
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 
   ### Conservation of mass for neg_ion ###
@@ -320,7 +320,7 @@
       porosity = eps
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 []
 
@@ -351,7 +351,7 @@
       porosity = eps
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       u_input = 1e-8
   [../]
   [./pos_ion_FluxOut]
@@ -361,7 +361,7 @@
       porosity = eps
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 
   ### Fluxes for Ions ###
@@ -372,7 +372,7 @@
       porosity = eps
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       u_input = 1e-8
   [../]
   [./neg_ion_FluxOut]
@@ -382,7 +382,7 @@
       porosity = eps
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 
 [] #END BCs

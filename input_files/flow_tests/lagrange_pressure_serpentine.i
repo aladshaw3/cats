@@ -57,7 +57,12 @@
 [] #END Variables
 
 [AuxVariables]
-
+  [./vel_z]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.0
+    block = 'channel'
+  [../]
 [] #END AuxVariables
 
 [ICs]
@@ -179,7 +184,7 @@
         porosity = 1
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
         block = 'channel'
     [../]
     [./tracer_gdiff]
@@ -213,7 +218,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       block = 'channel'
   [../]
   [./tracer_dgdiff]
@@ -246,7 +251,7 @@
   # however, is that it presumes a constant porosity. Alternatively, instead
   # of using the Ergun relationship to set a pressure at the boundary, you
   # could have the Ergun relationship coded as a kernel, but that has not
-  # been tested. 
+  # been tested.
   active = 'press_at_exit
             press_at_enter
 
@@ -302,7 +307,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       u_input = 1
   [../]
   [./tracer_FluxOut]
@@ -312,7 +317,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 
 [] #END BCs
