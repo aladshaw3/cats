@@ -128,6 +128,12 @@
         family = MONOMIAL
         initial_condition = 1
     [../]
+    
+    [./vel_z]
+	order = SECOND
+	family = MONOMIAL
+	initial_condition = 0.0
+    [../]
 
 [] #END AuxVariables
 
@@ -183,7 +189,7 @@
         density = rho
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
 
     ### Conservation of y-momentum ###
@@ -216,7 +222,7 @@
         density = rho
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
 
     ### Conservation of mass for a dilute tracer ###
@@ -231,7 +237,7 @@
         porosity = 1
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
     [./tracer_gdiff]
         type = GVarPoreDiffusion
@@ -254,7 +260,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
   [./tracer_dgdiff]
       type = DGVarPoreDiffusion
@@ -281,7 +287,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 
   # Div*(mu*grad(vel_y))
@@ -300,7 +306,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 []
 
@@ -337,7 +343,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
   # in y-direction
   [./vel_y_outlet]
@@ -348,7 +354,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 
   # No Slip BCs
@@ -375,7 +381,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       u_input = 1
   [../]
   [./tracer_FluxOut]
@@ -385,7 +391,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 
 [] #END BCs

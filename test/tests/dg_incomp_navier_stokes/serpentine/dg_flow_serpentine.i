@@ -143,6 +143,13 @@
         initial_condition = 1
         block = 'solid channel'
     [../]
+    
+    [./vel_z]
+	order = SECOND
+	family = MONOMIAL
+	initial_condition = 0
+    	block = 'channel'
+    [../]
 
 [] #END AuxVariables
 
@@ -203,7 +210,7 @@
         density = rho
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
         block = 'channel'
     [../]
 
@@ -240,7 +247,7 @@
         density = rho
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
         block = 'channel'
     [../]
 
@@ -257,7 +264,7 @@
         porosity = 1
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
         block = 'channel'
     [../]
     [./tracer_gdiff]
@@ -295,7 +302,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       block = 'channel'
   [../]
   [./tracer_dgdiff]
@@ -325,7 +332,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       block = 'channel'
   [../]
 
@@ -346,7 +353,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       block = 'channel'
   [../]
 []
@@ -386,7 +393,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
   # in y-direction
   [./vel_y_outlet]
@@ -397,7 +404,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 
   # No Slip BCs
@@ -424,7 +431,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       u_input = 1
   [../]
   [./tracer_FluxOut]
@@ -434,7 +441,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 
 [] #END BCs

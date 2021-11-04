@@ -77,6 +77,13 @@
         block = 'channel'
     [../]
 
+    [./vel_z]
+  		order = FIRST
+  		family = LAGRANGE
+  		initial_condition = 0.0
+      block = 'channel'
+  	[../]
+
 [] #END AuxVariables
 
 [ICs]
@@ -165,7 +172,7 @@
         porosity = 1
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
         block = 'channel'
     [../]
     [./tracer_gdiff]
@@ -199,7 +206,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       block = 'channel'
   [../]
   [./tracer_dgdiff]
@@ -248,7 +255,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       u_input = 1
   [../]
   [./tracer_FluxOut]
@@ -258,7 +265,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 
 [] #END BCs

@@ -66,6 +66,10 @@ Real DGPoreConcAdvection::computeQpResidual(Moose::DGResidualType type)
 	_velocity(1)=_uy[_qp];
 	_velocity(2)=_uz[_qp];
 
+  _velocity_upwind(0)=_ux_upwind[_qp];
+  _velocity_upwind(1)=_uy_upwind[_qp];
+  _velocity_upwind(2)=_uz_upwind[_qp];
+
 	return DGAdvection::computeQpResidual(type)*_porosity[_qp];
 }
 
@@ -75,6 +79,10 @@ Real DGPoreConcAdvection::computeQpJacobian(Moose::DGJacobianType type)
 	_velocity(1)=_uy[_qp];
 	_velocity(2)=_uz[_qp];
 
+  _velocity_upwind(0)=_ux_upwind[_qp];
+  _velocity_upwind(1)=_uy_upwind[_qp];
+  _velocity_upwind(2)=_uz_upwind[_qp];
+
 	return DGAdvection::computeQpJacobian(type)*_porosity[_qp];
 }
 
@@ -83,6 +91,10 @@ Real DGPoreConcAdvection::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
 	_velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];
 	_velocity(2)=_uz[_qp];
+
+  _velocity_upwind(0)=_ux_upwind[_qp];
+  _velocity_upwind(1)=_uy_upwind[_qp];
+  _velocity_upwind(2)=_uz_upwind[_qp];
 
 	if (jvar == _ux_var)
 	{
@@ -95,28 +107,28 @@ Real DGPoreConcAdvection::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += ( _phi[_j][_qp] * _normals[_qp](0) )*_porosity[_qp] * _u[_qp] * _test[_i][_qp];
 				else
-					r += ( _phi[_j][_qp] * _normals[_qp](0) )*_porosity[_qp] * _u_neighbor[_qp] * _test[_i][_qp];
+					r += ( _phi_neighbor[_j][_qp] * _normals[_qp](0) )*_porosity[_qp] * _u_neighbor[_qp] * _test[_i][_qp];
 				break;
 
 			case Moose::ElementNeighbor:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += ( _phi[_j][_qp] * _normals[_qp](0) )*_porosity[_qp] * _u[_qp] * _test[_i][_qp];
 				else
-					r += ( _phi[_j][_qp] * _normals[_qp](0) )*_porosity[_qp] * _u_neighbor[_qp] * _test[_i][_qp];
+					r += ( _phi_neighbor[_j][_qp] * _normals[_qp](0) )*_porosity[_qp] * _u_neighbor[_qp] * _test[_i][_qp];
 				break;
 
 			case Moose::NeighborElement:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += -( _phi[_j][_qp] * _normals[_qp](0) )*_porosity[_qp] * _u[_qp] * _test_neighbor[_i][_qp];
 				else
-					r += -( _phi[_j][_qp] * _normals[_qp](0) )*_porosity[_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+					r += -( _phi_neighbor[_j][_qp] * _normals[_qp](0) )*_porosity[_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
 				break;
 
 			case Moose::NeighborNeighbor:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += -( _phi[_j][_qp] * _normals[_qp](0) )*_porosity[_qp] * _u[_qp] * _test_neighbor[_i][_qp];
 				else
-					r += -( _phi[_j][_qp] * _normals[_qp](0) )*_porosity[_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+					r += -( _phi_neighbor[_j][_qp] * _normals[_qp](0) )*_porosity[_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
 				break;
 		}
 
@@ -134,28 +146,28 @@ Real DGPoreConcAdvection::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += ( _phi[_j][_qp] * _normals[_qp](1) )*_porosity[_qp] * _u[_qp] * _test[_i][_qp];
 				else
-					r += ( _phi[_j][_qp] * _normals[_qp](1) )*_porosity[_qp] * _u_neighbor[_qp] * _test[_i][_qp];
+					r += ( _phi_neighbor[_j][_qp] * _normals[_qp](1) )*_porosity[_qp] * _u_neighbor[_qp] * _test[_i][_qp];
 				break;
 
 			case Moose::ElementNeighbor:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += ( _phi[_j][_qp] * _normals[_qp](1) )*_porosity[_qp] * _u[_qp] * _test[_i][_qp];
 				else
-					r += ( _phi[_j][_qp] * _normals[_qp](1) )*_porosity[_qp] * _u_neighbor[_qp] * _test[_i][_qp];
+					r += ( _phi_neighbor[_j][_qp] * _normals[_qp](1) )*_porosity[_qp] * _u_neighbor[_qp] * _test[_i][_qp];
 				break;
 
 			case Moose::NeighborElement:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += -( _phi[_j][_qp] * _normals[_qp](1) )*_porosity[_qp] * _u[_qp] * _test_neighbor[_i][_qp];
 				else
-					r += -( _phi[_j][_qp] * _normals[_qp](1) )*_porosity[_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+					r += -( _phi_neighbor[_j][_qp] * _normals[_qp](1) )*_porosity[_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
 				break;
 
 			case Moose::NeighborNeighbor:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += -( _phi[_j][_qp] * _normals[_qp](1) )*_porosity[_qp] * _u[_qp] * _test_neighbor[_i][_qp];
 				else
-					r += -( _phi[_j][_qp] * _normals[_qp](1) )*_porosity[_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+					r += -( _phi_neighbor[_j][_qp] * _normals[_qp](1) )*_porosity[_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
 				break;
 		}
 
@@ -173,28 +185,28 @@ Real DGPoreConcAdvection::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += ( _phi[_j][_qp] * _normals[_qp](2) )*_porosity[_qp] * _u[_qp] * _test[_i][_qp];
 				else
-					r += ( _phi[_j][_qp] * _normals[_qp](2) )*_porosity[_qp] * _u_neighbor[_qp] * _test[_i][_qp];
+					r += ( _phi_neighbor[_j][_qp] * _normals[_qp](2) )*_porosity[_qp] * _u_neighbor[_qp] * _test[_i][_qp];
 				break;
 
 			case Moose::ElementNeighbor:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += ( _phi[_j][_qp] * _normals[_qp](2) )*_porosity[_qp] * _u[_qp] * _test[_i][_qp];
 				else
-					r += ( _phi[_j][_qp] * _normals[_qp](2) )*_porosity[_qp] * _u_neighbor[_qp] * _test[_i][_qp];
+					r += ( _phi_neighbor[_j][_qp] * _normals[_qp](2) )*_porosity[_qp] * _u_neighbor[_qp] * _test[_i][_qp];
 				break;
 
 			case Moose::NeighborElement:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += -( _phi[_j][_qp] * _normals[_qp](2) )*_porosity[_qp] * _u[_qp] * _test_neighbor[_i][_qp];
 				else
-					r += -( _phi[_j][_qp] * _normals[_qp](2) )*_porosity[_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+					r += -( _phi_neighbor[_j][_qp] * _normals[_qp](2) )*_porosity[_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
 				break;
 
 			case Moose::NeighborNeighbor:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += -( _phi[_j][_qp] * _normals[_qp](2) )*_porosity[_qp] * _u[_qp] * _test_neighbor[_i][_qp];
 				else
-					r += -( _phi[_j][_qp] * _normals[_qp](2) )*_porosity[_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+					r += -( _phi_neighbor[_j][_qp] * _normals[_qp](2) )*_porosity[_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
 				break;
 		}
 
@@ -212,28 +224,28 @@ Real DGPoreConcAdvection::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
         if ( (_velocity * _normals[_qp]) >= 0.0)
           r += ( _velocity * _normals[_qp] )*_phi[_j][_qp] * _u[_qp] * _test[_i][_qp];
         else
-          r += ( _velocity * _normals[_qp] )*_phi[_j][_qp] * _u_neighbor[_qp] * _test[_i][_qp];
+          r += ( _velocity_upwind * _normals[_qp] )*_phi[_j][_qp] * _u_neighbor[_qp] * _test[_i][_qp];
         break;
 
       case Moose::ElementNeighbor:
         if ( (_velocity * _normals[_qp]) >= 0.0)
           r += ( _velocity * _normals[_qp] )*_phi[_j][_qp] * _u[_qp] * _test[_i][_qp];
         else
-          r += ( _velocity * _normals[_qp] )*_phi[_j][_qp] * _u_neighbor[_qp] * _test[_i][_qp];
+          r += ( _velocity_upwind * _normals[_qp] )*_phi[_j][_qp] * _u_neighbor[_qp] * _test[_i][_qp];
         break;
 
       case Moose::NeighborElement:
         if ( (_velocity * _normals[_qp]) >= 0.0)
           r += -( _velocity * _normals[_qp] )*_phi[_j][_qp] * _u[_qp] * _test_neighbor[_i][_qp];
         else
-          r += -( _velocity * _normals[_qp] )*_phi[_j][_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+          r += -( _velocity_upwind * _normals[_qp] )*_phi[_j][_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
         break;
 
       case Moose::NeighborNeighbor:
         if ( (_velocity * _normals[_qp]) >= 0.0)
           r += -( _velocity * _normals[_qp] )*_phi[_j][_qp] * _u[_qp] * _test_neighbor[_i][_qp];
         else
-          r += -( _velocity * _normals[_qp] )*_phi[_j][_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+          r += -( _velocity_upwind * _normals[_qp] )*_phi[_j][_qp] * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
         break;
     }
 

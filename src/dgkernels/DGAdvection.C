@@ -71,6 +71,10 @@ _vz(getParam<Real>("vz"))
 	_velocity(0)=_vx;
 	_velocity(1)=_vy;
 	_velocity(2)=_vz;
+
+  _velocity_upwind(0)=_vx;
+  _velocity_upwind(1)=_vy;
+  _velocity_upwind(2)=_vz;
 }
 
 Real DGAdvection::computeQpResidual(Moose::DGResidualType type)
@@ -83,14 +87,14 @@ Real DGAdvection::computeQpResidual(Moose::DGResidualType type)
 			if ( (_velocity * _normals[_qp]) >= 0.0)
 				r += (_velocity * _normals[_qp]) * _u[_qp] * _test[_i][_qp];
 			else
-				r += (_velocity * _normals[_qp]) * _u_neighbor[_qp] * _test[_i][_qp];
+				r += (_velocity_upwind * _normals[_qp]) * _u_neighbor[_qp] * _test[_i][_qp];
 			break;
 
 		case Moose::Neighbor:
 			if ( (_velocity * _normals[_qp]) >= 0.0)
 				r += -(_velocity * _normals[_qp]) * _u[_qp] * _test_neighbor[_i][_qp];
 			else
-				r += -(_velocity * _normals[_qp]) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+				r += -(_velocity_upwind * _normals[_qp]) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
 			break;
 	}
 	return r;
@@ -114,7 +118,7 @@ Real DGAdvection::computeQpJacobian(Moose::DGJacobianType type)
 			if ( (_velocity * _normals[_qp]) >= 0.0)
 				r += 0.0;
 			else
-				r += (_velocity * _normals[_qp]) * _phi_neighbor[_j][_qp] * _test[_i][_qp];
+				r += (_velocity_upwind * _normals[_qp]) * _phi_neighbor[_j][_qp] * _test[_i][_qp];
 			break;
 
 		case Moose::NeighborElement:
@@ -128,7 +132,7 @@ Real DGAdvection::computeQpJacobian(Moose::DGJacobianType type)
 			if ( (_velocity * _normals[_qp]) >= 0.0)
 				r += 0.0;
 			else
-				r += -(_velocity * _normals[_qp]) * _phi_neighbor[_j][_qp] * _test_neighbor[_i][_qp];
+				r += -(_velocity_upwind * _normals[_qp]) * _phi_neighbor[_j][_qp] * _test_neighbor[_i][_qp];
 			break;
 	}
 	return r;

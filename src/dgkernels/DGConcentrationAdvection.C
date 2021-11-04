@@ -59,11 +59,19 @@ InputParameters DGConcentrationAdvection::validParams()
 
 DGConcentrationAdvection::DGConcentrationAdvection(const InputParameters & parameters) :
 DGAdvection(parameters),
-_ux(coupledValue("ux")),
-_uy(coupledValue("uy")),
-_uz(coupledValue("uz")),
+_ux_mv(dynamic_cast<MooseVariable &>(*getVar("ux", 0))),
+_ux(_ux_mv.sln()),
+_ux_upwind(_ux_mv.slnNeighbor()),
 _ux_var(coupled("ux")),
+
+_uy_mv(dynamic_cast<MooseVariable &>(*getVar("uy", 0))),
+_uy(_uy_mv.sln()),
+_uy_upwind(_uy_mv.slnNeighbor()),
 _uy_var(coupled("uy")),
+
+_uz_mv(dynamic_cast<MooseVariable &>(*getVar("uz", 0))),
+_uz(_uz_mv.sln()),
+_uz_upwind(_uz_mv.slnNeighbor()),
 _uz_var(coupled("uz"))
 {
 
@@ -84,6 +92,10 @@ Real DGConcentrationAdvection::computeQpJacobian(Moose::DGJacobianType type)
 	_velocity(1)=_uy[_qp];
 	_velocity(2)=_uz[_qp];
 
+  _velocity_upwind(0)=_ux_upwind[_qp];
+  _velocity_upwind(1)=_uy_upwind[_qp];
+  _velocity_upwind(2)=_uz_upwind[_qp];
+
 	return DGAdvection::computeQpJacobian(type);
 }
 
@@ -92,6 +104,10 @@ Real DGConcentrationAdvection::computeQpOffDiagJacobian(Moose::DGJacobianType ty
 	_velocity(0)=_ux[_qp];
 	_velocity(1)=_uy[_qp];
 	_velocity(2)=_uz[_qp];
+
+  _velocity_upwind(0)=_ux_upwind[_qp];
+  _velocity_upwind(1)=_uy_upwind[_qp];
+  _velocity_upwind(2)=_uz_upwind[_qp];
 
 	if (jvar == _ux_var)
 	{
@@ -104,28 +120,28 @@ Real DGConcentrationAdvection::computeQpOffDiagJacobian(Moose::DGJacobianType ty
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += ( _phi[_j][_qp] * _normals[_qp](0) ) * _u[_qp] * _test[_i][_qp];
 				else
-					r += ( _phi[_j][_qp] * _normals[_qp](0) ) * _u_neighbor[_qp] * _test[_i][_qp];
+					r += ( _phi_neighbor[_j][_qp] * _normals[_qp](0) ) * _u_neighbor[_qp] * _test[_i][_qp];
 				break;
 
 			case Moose::ElementNeighbor:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += ( _phi[_j][_qp] * _normals[_qp](0) ) * _u[_qp] * _test[_i][_qp];
 				else
-					r += ( _phi[_j][_qp] * _normals[_qp](0) ) * _u_neighbor[_qp] * _test[_i][_qp];
+					r += ( _phi_neighbor[_j][_qp] * _normals[_qp](0) ) * _u_neighbor[_qp] * _test[_i][_qp];
 				break;
 
 			case Moose::NeighborElement:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += -( _phi[_j][_qp] * _normals[_qp](0) ) * _u[_qp] * _test_neighbor[_i][_qp];
 				else
-					r += -( _phi[_j][_qp] * _normals[_qp](0) ) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+					r += -( _phi_neighbor[_j][_qp] * _normals[_qp](0) ) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
 				break;
 
 			case Moose::NeighborNeighbor:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += -( _phi[_j][_qp] * _normals[_qp](0) ) * _u[_qp] * _test_neighbor[_i][_qp];
 				else
-					r += -( _phi[_j][_qp] * _normals[_qp](0) ) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+					r += -( _phi_neighbor[_j][_qp] * _normals[_qp](0) ) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
 				break;
 		}
 
@@ -143,28 +159,28 @@ Real DGConcentrationAdvection::computeQpOffDiagJacobian(Moose::DGJacobianType ty
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += ( _phi[_j][_qp] * _normals[_qp](1) ) * _u[_qp] * _test[_i][_qp];
 				else
-					r += ( _phi[_j][_qp] * _normals[_qp](1) ) * _u_neighbor[_qp] * _test[_i][_qp];
+					r += ( _phi_neighbor[_j][_qp] * _normals[_qp](1) ) * _u_neighbor[_qp] * _test[_i][_qp];
 				break;
 
 			case Moose::ElementNeighbor:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += ( _phi[_j][_qp] * _normals[_qp](1) ) * _u[_qp] * _test[_i][_qp];
 				else
-					r += ( _phi[_j][_qp] * _normals[_qp](1) ) * _u_neighbor[_qp] * _test[_i][_qp];
+					r += ( _phi_neighbor[_j][_qp] * _normals[_qp](1) ) * _u_neighbor[_qp] * _test[_i][_qp];
 				break;
 
 			case Moose::NeighborElement:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += -( _phi[_j][_qp] * _normals[_qp](1) ) * _u[_qp] * _test_neighbor[_i][_qp];
 				else
-					r += -( _phi[_j][_qp] * _normals[_qp](1) ) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+					r += -( _phi_neighbor[_j][_qp] * _normals[_qp](1) ) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
 				break;
 
 			case Moose::NeighborNeighbor:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += -( _phi[_j][_qp] * _normals[_qp](1) ) * _u[_qp] * _test_neighbor[_i][_qp];
 				else
-					r += -( _phi[_j][_qp] * _normals[_qp](1) ) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+					r += -( _phi_neighbor[_j][_qp] * _normals[_qp](1) ) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
 				break;
 		}
 
@@ -182,28 +198,28 @@ Real DGConcentrationAdvection::computeQpOffDiagJacobian(Moose::DGJacobianType ty
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += ( _phi[_j][_qp] * _normals[_qp](2) ) * _u[_qp] * _test[_i][_qp];
 				else
-					r += ( _phi[_j][_qp] * _normals[_qp](2) ) * _u_neighbor[_qp] * _test[_i][_qp];
+					r += ( _phi_neighbor[_j][_qp] * _normals[_qp](2) ) * _u_neighbor[_qp] * _test[_i][_qp];
 				break;
 
 			case Moose::ElementNeighbor:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += ( _phi[_j][_qp] * _normals[_qp](2) ) * _u[_qp] * _test[_i][_qp];
 				else
-					r += ( _phi[_j][_qp] * _normals[_qp](2) ) * _u_neighbor[_qp] * _test[_i][_qp];
+					r += ( _phi_neighbor[_j][_qp] * _normals[_qp](2) ) * _u_neighbor[_qp] * _test[_i][_qp];
 				break;
 
 			case Moose::NeighborElement:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += -( _phi[_j][_qp] * _normals[_qp](2) ) * _u[_qp] * _test_neighbor[_i][_qp];
 				else
-					r += -( _phi[_j][_qp] * _normals[_qp](2) ) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+					r += -( _phi_neighbor[_j][_qp] * _normals[_qp](2) ) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
 				break;
 
 			case Moose::NeighborNeighbor:
 				if ( (_velocity * _normals[_qp]) >= 0.0)
 					r += -( _phi[_j][_qp] * _normals[_qp](2) ) * _u[_qp] * _test_neighbor[_i][_qp];
 				else
-					r += -( _phi[_j][_qp] * _normals[_qp](2) ) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
+					r += -( _phi_neighbor[_j][_qp] * _normals[_qp](2) ) * _u_neighbor[_qp] * _test_neighbor[_i][_qp];
 				break;
 		}
 

@@ -75,8 +75,10 @@ protected:
      main coupled variable itself. */
     virtual Real computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar) override;
 
-    const VariableValue & _density;			    ///< Porosity variable
-  	const unsigned int _density_var;				///< Variable identification for porosity
+    MooseVariable & _dens_mv;
+    const VariableValue & _density;			    ///< Density variable
+    const VariableValue & _density_upwind;			///< Density variable
+    unsigned int _density_var;				    ///< Variable identification for density
 
     const VariableValue & _coupled_main;    ///< Primary velocity component variable (i.e., diagonal)
     const unsigned int _main_var;           ///< Variable identification for the primary velocity variable (i.e., diagonal)

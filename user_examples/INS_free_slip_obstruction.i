@@ -1,7 +1,7 @@
 # This input file tests various options for the incompressible NS equations in a channel.
 
 # NOTE: This file also demonstrates mass transfer into the obstruction subdomain
-#       using the InterfaceKernels system. 
+#       using the InterfaceKernels system.
 
 # CONVERGES WELL
 
@@ -91,6 +91,13 @@
         family = MONOMIAL
         initial_condition = 10000
     [../]
+
+    [./vel_z]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0
+      block = 'conduit'
+    [../]
 []
 
 [Kernels]
@@ -125,7 +132,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       block = 'conduit'
   [../]
   [./CO2_gdiff]
@@ -188,7 +195,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       block = 'conduit'
   [../]
   [./CO2_dgdiff]
@@ -252,7 +259,7 @@
     penalty = 1e6
     ux = vel_x
     uy = vel_y
-    uz = 0
+    uz = vel_z
   [../]
 
   [./y_no_slip]
@@ -277,7 +284,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       pressure = 101.35
       temperature = 273
       inlet_ppm = 130000
@@ -289,7 +296,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 []
 

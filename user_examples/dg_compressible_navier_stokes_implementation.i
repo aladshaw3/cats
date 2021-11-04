@@ -3,7 +3,7 @@
 # THIS file tests the compressible formulation of Navier-Stokes by having the
 # density of the fluid decreasing linearly along the mesh x-axis. As a result,
 # the fluid will 'speed-up' along the x-axis to account for this loss in density
-# and ensure the total fluid mass flux is conserved. 
+# and ensure the total fluid mass flux is conserved.
 
 
 ### NOTE: You are REQUIRED to provide an actual variable for coupling
@@ -196,7 +196,7 @@
         density = rho
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
     # (1/3)*mu*(grad(Div*vel)_x)
     [./x_gvisdiv]
@@ -206,7 +206,7 @@
         viscosity = mu
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
 
     ### Conservation of y-momentum ###
@@ -239,7 +239,7 @@
         density = rho
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
     # (1/3)*mu*(grad(Div*vel)_y)
     [./y_gvisdiv]
@@ -249,7 +249,7 @@
         viscosity = mu
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
 
     ### Conservation of mass for a dilute tracer ###
@@ -264,7 +264,7 @@
         porosity = 1
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
     [./tracer_gdiff]
         type = GVarPoreDiffusion
@@ -287,7 +287,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
   [./tracer_dgdiff]
       type = DGVarPoreDiffusion
@@ -314,7 +314,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
   # (1/3)*mu*(grad(Div*vel)_x)
   [./x_dgvisdiv]
@@ -343,7 +343,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
   # (1/3)*mu*(grad(Div*vel)_y)
   [./y_dgvisdiv]
@@ -404,7 +404,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
   # in y-direction
   [./vel_y_outlet]
@@ -415,7 +415,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 
   ### No Slip Conditions at the Walls ###
@@ -444,7 +444,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       u_input = 1
   [../]
   [./tracer_FluxOut]
@@ -454,7 +454,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 
 [] #END BCs

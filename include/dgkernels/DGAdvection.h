@@ -78,7 +78,8 @@ protected:
 		system and is used in preconditioning of the linear sub-problem. */
 	virtual Real computeQpJacobian(Moose::DGJacobianType type) override;
 
-	RealVectorValue _velocity;			///< Vector of velocity
+	RealVectorValue _velocity;			      ///< Vector of velocity (@ current element)
+  RealVectorValue _velocity_upwind;			///< Vector of velocity (@ neighbor element)
 	Real _vx;							///< x-component of velocity (optional - set in input file)
 	Real _vy;							///< y-component of velocity (optional - set in input file)
 	Real _vz;							///< z-component of velocity (optional - set in input file)

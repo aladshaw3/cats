@@ -79,13 +79,21 @@ protected:
      main coupled variable itself. */
     virtual Real computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar) override;
 
-    const VariableValue & _ux;			///< Velocity in the x-direction
-    const VariableValue & _uy;			///< Velocity in the y-direction
-    const VariableValue & _uz;			///< Velocity in the z-direction
+    MooseVariable & _ux_mv;
+    const VariableValue & _ux;			       ///< Velocity in the x-direction
+    const VariableValue & _ux_upwind;			///< Velocity in the x-direction
+    unsigned int _ux_var;					        ///< Variable identification for ux
 
-    const unsigned int _ux_var;					///< Variable identification for ux
-    const unsigned int _uy_var;					///< Variable identification for uy
-    const unsigned int _uz_var;					///< Variable identification for uz
+    MooseVariable & _uy_mv;
+    const VariableValue & _uy;			       ///< Velocity in the y-direction
+    const VariableValue & _uy_upwind;			///< Velocity in the y-direction
+    unsigned int _uy_var;					        ///< Variable identification for uy
+
+    MooseVariable & _uz_mv;
+    const VariableValue & _uz;			       ///< Velocity in the z-direction
+    const VariableValue & _uz_upwind;			///< Velocity in the z-direction
+    unsigned int _uz_var;					        ///< Variable identification for uz
+
 
 private:
 
