@@ -113,27 +113,17 @@
 
 [Kernels]
     # Potential Conductivity Term
-    ## NOTE: This will ALWAYS fail to converge if 'ion_conc' values are ever '0'
-    #         Simple fix is to add a 'min' value for sum of ions such that
-    #         we never get zero in matrix diagonals.
-    [./phi_e_pot_cond]
-        type = ElectrolytePotentialConductivity
+    [./phi_e_poisson]
+        type = Diffusion
         variable = phi_e
-        porosity = eps
-        temperature = Te
-        ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
-        diffusion = 'Dp Dp'
     [../]
-    #[./phi_e_ion_cond]
-    #    type = ElectrolyteIonConductivity
-    #    variable = phi_e
-    #    porosity = eps
-    #    ion_conc = 'pos_ion neg_ion'
-    #    ion_valence = '1 -1'
-    #    diffusion = 'Dp Dp'
-    #    tight_coupling = false
-    #[../]
+    [./phi_e_charge_density]
+        type = ScaledWeightedCoupledSumFunction
+        variable = phi_e
+        coupled_list = 'pos_ion neg_ion'
+        weights = '1 -1'
+        scale = 96485.3
+    [../]
 
 
     # Current density in x-dir from potential gradient
@@ -350,7 +340,7 @@
   [./phi_e_top]
       type = FunctionDirichletBC
       variable = phi_e
-      boundary = 'left right'
+      boundary = 'left'
       function = '0'
   [../]
 
@@ -537,7 +527,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 15.0
+  end_time = 30.0
   dtmax = 0.5
 
     [./TimeStepper]

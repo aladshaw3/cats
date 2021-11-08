@@ -146,16 +146,6 @@
         ion_valence = '1 -1'
         diffusion = 'Dp Dp'
     [../]
-    #  -F*eps*SUM( zj*Dj*grad(ion)_x )
-    [./ie_x_iongrad]
-        type = ElectrolyteCurrentFromIonGradient
-        variable = ie_x
-        direction = 0         # 0=x
-        porosity = eps
-        ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
-        diffusion = 'Dp Dp'
-    [../]
 
     # Current density in y-dir from potential gradient
     #  -ie_y
@@ -171,16 +161,6 @@
         electric_potential = phi_e
         porosity = eps
         temperature = Te
-        ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
-        diffusion = 'Dp Dp'
-    [../]
-    #  -F*eps*SUM( zj*Dj*grad(ion)_y )
-    [./ie_y_iongrad]
-        type = ElectrolyteCurrentFromIonGradient
-        variable = ie_y
-        direction = 1         # 1=y
-        porosity = eps
         ion_conc = 'pos_ion neg_ion'
         ion_valence = '1 -1'
         diffusion = 'Dp Dp'
@@ -342,7 +322,7 @@
   [./phi_e_top]
       type = FunctionDirichletBC
       variable = phi_e
-      boundary = 'top bottom'
+      boundary = 'top'
       function = '0'
   [../]
 
