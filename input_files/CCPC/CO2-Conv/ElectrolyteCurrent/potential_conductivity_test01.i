@@ -1,11 +1,4 @@
-# NOTE: This does not work. We cannot solve the electric potential
-#       be forcing a divergence free condition on current variables.
-#       (Unless maybe we use something other than LU factorization?).
-#
-#       Solving with preconditioning fails at SUBPC_ERROR, which usually
-#       indicates some issue with LU decomp.
-
-# Alternative:   Formulate a Poisson equation for phi_e
+# File to test pore diffusion with variable BCs
 
 [GlobalParams]
   # Default DG methods
@@ -34,14 +27,14 @@
   [./pos_ion]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1e-20
+      initial_condition = 0
   [../]
 
   # Negative ion concentration (in mol/volume)
   [./neg_ion]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1e-20
+      initial_condition = 0
   [../]
 
   # electrolyte potential (in V or J/C)
@@ -53,16 +46,16 @@
 
   # Electrolyte current density in x (C/area/time)
   [./ie_x]
-      order = FIRST
+      order = SECOND
       family = MONOMIAL
-      initial_condition = 1e-20
+      initial_condition = 0
   [../]
 
   # Electrolyte current density in y (C/area/time)
   [./ie_y]
-      order = FIRST
+      order = SECOND
       family = MONOMIAL
-      initial_condition = 1e-20
+      initial_condition = 0
   [../]
 
 
@@ -119,14 +112,21 @@
 [] #END ICs
 
 [Kernels]
-    # Enforce Divergence Free Condition on current
-    [./cons_current_flow]
-        type = DivergenceFreeCondition
+    # Potential Conductivity Term
+    ## NOTE: This will ALWAYS fail to converge if 'ion_conc' values are ever '0'
+    #         Simple fix is to add a 'min' value for sum of ions such that
+    #         we never get zero in matrix diagonals.
+    [./phi_e_pot_cond]
+        type = ElectrolytePotentialConductivity
         variable = phi_e
-        ux = ie_x
-        uy = ie_y
-        uz = 0
+
+        porosity = eps
+        temperature = Te
+        ion_conc = 'pos_ion neg_ion'
+        ion_valence = '1 -1'
+        diffusion = 'Dp Dp'
     [../]
+
 
     # Current density in x-dir from potential gradient
     #  -ie_x
@@ -339,13 +339,12 @@
 
 [BCs]
   ### BCs for phi_e ###
-  [./phi_e_top]
+  [./phi_e_bot]
       type = FunctionDirichletBC
       variable = phi_e
-      boundary = 'top bottom'
+      boundary = 'bottom'
       function = '0'
   [../]
-
 
   ### Fluxes for Ions ###
   [./pos_ion_FluxIn]
@@ -503,7 +502,7 @@
   petsc_options_value = 'fgmres
                          ksp
 
-                         ilu
+                         lu
 
                          20
 
