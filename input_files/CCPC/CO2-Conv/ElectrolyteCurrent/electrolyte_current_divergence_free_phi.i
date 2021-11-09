@@ -322,7 +322,7 @@
   [./phi_e_top]
       type = FunctionDirichletBC
       variable = phi_e
-      boundary = 'top'
+      boundary = 'left right'
       function = '0'
   [../]
 

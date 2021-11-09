@@ -88,7 +88,7 @@ protected:
 
   std::vector<Real> _valence;                             ///< Valence list for corresponding ions
 
-  bool _tight;                      ///< Boolean to determine whether to use tight or loose coupling 
+  bool _tight;                      ///< Boolean to determine whether to use tight or loose coupling
 
 private:
 

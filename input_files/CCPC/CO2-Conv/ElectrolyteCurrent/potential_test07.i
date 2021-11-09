@@ -40,7 +40,7 @@
   # electrolyte potential (in V or J/C)
   [./phi_e]
       order = FIRST
-      family = LAGRANGE
+      family = MONOMIAL
       initial_condition = 0
   [../]
 
@@ -73,6 +73,12 @@
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.05
+    [../]
+
+    [./sigma_e]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-10
     [../]
 
     [./eps]
@@ -117,23 +123,13 @@
     #         Simple fix is to add a 'min' value for sum of ions such that
     #         we never get zero in matrix diagonals.
     [./phi_e_pot_cond]
-        type = ElectrolytePotentialConductivity
+        type = GVarPoreDiffusion
         variable = phi_e
         porosity = eps
-        temperature = Te
-        ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
-        diffusion = 'Dp Dp'
+        Dx = sigma_e
+        Dy = sigma_e
+        Dz = sigma_e
     [../]
-    #[./phi_e_ion_cond]
-    #    type = ElectrolyteIonConductivity
-    #    variable = phi_e
-    #    porosity = eps
-    #    ion_conc = 'pos_ion neg_ion'
-    #    ion_valence = '1 -1'
-    #    diffusion = 'Dp Dp'
-    #    tight_coupling = true
-    #[../]
 
 
     # Current density in x-dir from potential gradient
@@ -282,6 +278,15 @@
 #       corresponding 'DG' kernel down here.
 [DGKernels]
 
+  [./phi_e_dgpot_cond]
+      type = DGVarPoreDiffusion
+      variable = phi_e
+      porosity = eps
+      Dx = sigma_e
+      Dy = sigma_e
+      Dz = sigma_e
+  [../]
+
   ### Conservation of mass for pos_ion ###
   [./pos_ion_dgdiff]
       type = DGVarPoreDiffusion
@@ -342,18 +347,34 @@
 []
 
 [AuxKernels]
+    [./sigma_e_calc]
+        type = ElectrolyteConductivity
+        variable = sigma_e
+        temperature = Te
+        ion_conc = '1e-8 1e-8'
+        ion_valence = '1 -1'
+        diffusion = 'Dp Dp'
+        execute_on = 'initial timestep_end'
+    [../]
 
 [] #END AuxKernels
 
 [BCs]
   ### BCs for phi_e ###
-  #[./phi_e_top]
-  #    type = FunctionPenaltyDirichletBC
-  #    variable = phi_e
-  #    boundary = 'left right'
-  #    function = '0'
-  #    penalty = 300
-  #[../]
+  [./phi_e_left]
+      type = FunctionPenaltyDirichletBC
+      variable = phi_e
+      boundary = 'left'
+      function = '0'
+      penalty = 300
+  [../]
+  [./phi_e_right]
+      type = FunctionPenaltyDirichletBC
+      variable = phi_e
+      boundary = 'right'
+      function = '1e-3'
+      penalty = 300
+  [../]
 
   ### Fluxes for Ions ###
   [./pos_ion_FluxIn]
@@ -468,6 +489,12 @@
     [./sum_ion_avg]
         type = ElementAverageValue
         variable = ion_sum
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./sigma_avg]
+        type = ElementAverageValue
+        variable = sigma_e
         execute_on = 'initial timestep_end'
     [../]
 

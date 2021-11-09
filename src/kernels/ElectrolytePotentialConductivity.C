@@ -10,8 +10,6 @@
  *                  of an All Vanadium Redox Flow Battery", Sandia Report, SAND2014-0190,
  *                  Sandia National Laboratories, Albuquerque, NM, January 2014.
  *
- *  \note Users MUST provide the direction of the current vector being calculated (0=>x, 1=>y, 2=>z)
- *
  *  \author Austin Ladshaw
  *	\date 11/08/2021
  *	\copyright This kernel was designed and built at Oak Ridge National
@@ -61,7 +59,7 @@ InputParameters ElectrolytePotentialConductivity::validParams()
     params.addRequiredCoupledVar("diffusion","List of names of the diffusion variables (L^2/T)");
     params.addParam< std::vector<Real> >("ion_valence","List of valences for coupled ion concentrations");
 
-    params.addParam<Real>("min_conductivity",1e-50, "Minimum value of conductivity to prevent zero diagonals in Jacobians");
+    params.addParam<Real>("min_conductivity",1e-30, "Minimum value of conductivity to prevent zero diagonals in Jacobians");
     return params;
 }
 
@@ -70,8 +68,8 @@ Kernel(parameters),
 
 _porosity(coupledValue("porosity")),
 _porosity_var(coupled("porosity")),
-_temp(coupledValue("porosity")),
-_temp_var(coupled("porosity")),
+_temp(coupledValue("temperature")),
+_temp_var(coupled("temperature")),
 
 _faraday(getParam<Real>("faraday_const")),
 _gas_const(getParam<Real>("gas_const")),

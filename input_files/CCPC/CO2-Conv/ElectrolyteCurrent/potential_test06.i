@@ -26,14 +26,14 @@
   # Positive ion concentration (in mol/volume)
   [./pos_ion]
       order = FIRST
-      family = LAGRANGE
+      family = MONOMIAL
       initial_condition = 0
   [../]
 
   # Negative ion concentration (in mol/volume)
   [./neg_ion]
       order = FIRST
-      family = LAGRANGE
+      family = MONOMIAL
       initial_condition = 0
   [../]
 
@@ -41,6 +41,28 @@
   [./phi_e]
       order = FIRST
       family = LAGRANGE
+      initial_condition = 0
+  [../]
+
+  # Electrolyte current density in x (C/area/time)
+  [./ie_x]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
+
+  # Electrolyte current density in y (C/area/time)
+  [./ie_y]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
+
+
+  # Check for ElectroNeutral Condition
+  [./ion_sum]
+      order = FIRST
+      family = MONOMIAL
       initial_condition = 0
   [../]
 
@@ -74,7 +96,7 @@
     [./vel_y]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0
+        initial_condition = 0.5
     [../]
 
     [./vel_z]
@@ -94,39 +116,155 @@
     ## NOTE: This will ALWAYS fail to converge if 'ion_conc' values are ever '0'
     #         Simple fix is to add a 'min' value for sum of ions such that
     #         we never get zero in matrix diagonals.
-    [./phi_e_pot_cond]
-        type = ElectrolytePotentialConductivity
+    #[./phi_e_pot_cond]
+    #    type = ElectrolytePotentialConductivity
+    #    variable = phi_e
+    #    porosity = eps
+    #    temperature = Te
+    #    ion_conc = 'pos_ion neg_ion'
+    #    ion_valence = '1 -1'
+    #    diffusion = 'Dp Dp'
+    #[../]
+    #[./phi_e_ion_cond]
+    #    type = ElectrolyteIonConductivity
+    #    variable = phi_e
+    #    porosity = eps
+    #    ion_conc = 'pos_ion neg_ion'
+    #    ion_valence = '1 -1'
+    #    diffusion = 'Dp Dp'
+    #    tight_coupling = true
+    #[../]
+
+
+    # Poisson's Equation for electric field
+    [./phi_e_poisson]
+        type = Diffusion
         variable = phi_e
+    [../]
+    [./phi_e_charge_density]
+        type = ScaledWeightedCoupledSumFunction
+        variable = phi_e
+        coupled_list = 'pos_ion neg_ion'
+        weights = '1 -1'
+        scale = 1.36E12   #Approximately: F/e ==> e = er*e0 ==> e0 = 8.854187e-12 C/V/m
+    [../]
+
+
+    # Current density in x-dir from potential gradient
+    #  -ie_x
+    [./ie_x_equ]
+        type = Reaction
+        variable = ie_x
+    [../]
+    #  -K*grad(phi_e)_x   where K=f(ions, diff, etc....)
+    [./ie_x_phigrad]
+        type = ElectrolyteCurrentFromPotentialGradient
+        variable = ie_x
+        direction = 0         # 0=x
+        electric_potential = phi_e
         porosity = eps
         temperature = Te
         ion_conc = 'pos_ion neg_ion'
         ion_valence = '1 -1'
         diffusion = 'Dp Dp'
     [../]
-
-    # Conclusion: I do not think this statement is accurate...
-    [./phi_e_ion_cond]
-        type = ElectrolyteIonConductivity
-        variable = phi_e
+    #  -F*eps*SUM( zj*Dj*grad(ion)_x )
+    [./ie_x_iongrad]
+        type = ElectrolyteCurrentFromIonGradient
+        variable = ie_x
+        direction = 0         # 0=x
         porosity = eps
         ion_conc = 'pos_ion neg_ion'
         ion_valence = '1 -1'
         diffusion = 'Dp Dp'
-        tight_coupling = true
+    [../]
+
+    # Current density in y-dir from potential gradient
+    #  -ie_y
+    [./ie_y_equ]
+        type = Reaction
+        variable = ie_y
+    [../]
+    #  -K*grad(phi_e)_y   where K=f(ions, diff, etc....)
+    [./ie_y_phigrad]
+        type = ElectrolyteCurrentFromPotentialGradient
+        variable = ie_y
+        direction = 1         # 1=y
+        electric_potential = phi_e
+        porosity = eps
+        temperature = Te
+        ion_conc = 'pos_ion neg_ion'
+        ion_valence = '1 -1'
+        diffusion = 'Dp Dp'
+    [../]
+    #  -F*eps*SUM( zj*Dj*grad(ion)_y )
+    [./ie_y_iongrad]
+        type = ElectrolyteCurrentFromIonGradient
+        variable = ie_y
+        direction = 1         # 1=y
+        porosity = eps
+        ion_conc = 'pos_ion neg_ion'
+        ion_valence = '1 -1'
+        diffusion = 'Dp Dp'
     [../]
 
 
     ### Conservation of mass for pos_ion ###
-    [./pos_ion_gdiff]
-        type = Diffusion
+    [./pos_ion_dot]
+        type = VariableCoefTimeDerivative
         variable = pos_ion
+        coupled_coef = eps
+    [../]
+    [./pos_ion_gdiff]
+        type = GVarPoreDiffusion
+        variable = pos_ion
+        porosity = eps
+        Dx = Dp
+        Dy = Dp
+        Dz = Dp
+    [../]
+    [./pos_ion_gnpdiff]
+        type = GNernstPlanckDiffusion
+        variable = pos_ion
+        valence = 1
+        porosity = eps
+        electric_potential = phi_e
+        temperature = Te
+        Dx = Dp
+        Dy = Dp
+        Dz = Dp
+    [../]
+    [./pos_ion_gadv]
+        type = GPoreConcAdvection
+        variable = pos_ion
+        porosity = eps
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
     [../]
 
-
-    ### Conservation of mass for neg_ion ###
-    [./neg_ion_gdiff]
-        type = Diffusion
+    ### Solve for negative ion as function of other ions (forces electroneutrality) ###
+    [./neg_ion_equ]
+        type = Reaction
         variable = neg_ion
+    [../]
+    [./neg_ion_fun]
+        type = WeightedCoupledSumFunction
+        variable = neg_ion
+        coupled_list = 'pos_ion'
+        weights = '1'
+    [../]
+
+    # Check for ElectroNeutral
+    [./sum_equ]
+        type = Reaction
+        variable = ion_sum
+    [../]
+    [./sum_of_ions]
+        type = WeightedCoupledSumFunction
+        variable = ion_sum
+        coupled_list = 'pos_ion neg_ion'
+        weights = '1 -1'
     [../]
 
 [] #END Kernels
@@ -134,6 +272,35 @@
 # NOTE: All'G' prefixed kernels from above MUST have a
 #       corresponding 'DG' kernel down here.
 [DGKernels]
+
+  ### Conservation of mass for pos_ion ###
+  [./pos_ion_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = pos_ion
+      porosity = eps
+      Dx = Dp
+      Dy = Dp
+      Dz = Dp
+  [../]
+  [./pos_ion_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = pos_ion
+      valence = 1
+      porosity = eps
+      electric_potential = phi_e
+      temperature = Te
+      Dx = Dp
+      Dy = Dp
+      Dz = Dp
+  [../]
+  [./pos_ion_dgadv]
+      type = DGPoreConcAdvection
+      variable = pos_ion
+      porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
 
 []
 
@@ -143,43 +310,40 @@
 
 [BCs]
   ### BCs for phi_e ###
-  [./phi_e_top]
-      type = FunctionDirichletBC
+  [./phi_e_left]
+      type = FunctionPenaltyDirichletBC
       variable = phi_e
       boundary = 'left'
       function = '0'
+      penalty = 300
+  [../]
+  [./phi_e_right]
+      type = FunctionPenaltyDirichletBC
+      variable = phi_e
+      boundary = 'right'
+      function = '1e-5'
+      penalty = 300
   [../]
 
   ### Fluxes for Ions ###
   [./pos_ion_FluxIn]
-      type = FunctionPenaltyDirichletBC
+      type = DGPoreConcFluxBC
       variable = pos_ion
       boundary = 'bottom'
-      function = '1e-8'
-      penalty = 300
+      porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      u_input = 1e-8
   [../]
   [./pos_ion_FluxOut]
-      type = FunctionPenaltyDirichletBC
+      type = DGPoreConcFluxBC
       variable = pos_ion
       boundary = 'top'
-      function = '0'
-      penalty = 300
-  [../]
-
-  ### Fluxes for Ions ###
-  [./neg_ion_FluxIn]
-      type = FunctionPenaltyDirichletBC
-      variable = neg_ion
-      boundary = 'top'
-      function = '1e-8'
-      penalty = 300
-  [../]
-  [./neg_ion_FluxOut]
-      type = FunctionPenaltyDirichletBC
-      variable = neg_ion
-      boundary = 'bottom'
-      function = '0'
-      penalty = 300
+      porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
   [../]
 
 [] #END BCs
@@ -246,6 +410,13 @@
     [./phi_e_avg]
         type = ElementAverageValue
         variable = phi_e
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./sum_ion_avg]
+        type = ElementAverageValue
+        variable = ion_sum
         execute_on = 'initial timestep_end'
     [../]
 

@@ -25,14 +25,14 @@
 [Variables]
   # Positive ion concentration (in mol/volume)
   [./pos_ion]
-      order = FIRST
+      order = Constant
       family = MONOMIAL
       initial_condition = 0
   [../]
 
   # Negative ion concentration (in mol/volume)
   [./neg_ion]
-      order = FIRST
+      order = Constant
       family = MONOMIAL
       initial_condition = 0
   [../]
@@ -46,14 +46,14 @@
 
   # Electrolyte current density in x (C/area/time)
   [./ie_x]
-      order = SECOND
+      order = FIRST
       family = MONOMIAL
       initial_condition = 0
   [../]
 
   # Electrolyte current density in y (C/area/time)
   [./ie_y]
-      order = SECOND
+      order = FIRST
       family = MONOMIAL
       initial_condition = 0
   [../]
@@ -112,7 +112,7 @@
 [] #END ICs
 
 [Kernels]
-    # Potential Conductivity Term
+    # Poisson's Equation for electric field
     [./phi_e_poisson]
         type = Diffusion
         variable = phi_e
@@ -121,8 +121,8 @@
         type = ScaledWeightedCoupledSumFunction
         variable = phi_e
         coupled_list = 'pos_ion neg_ion'
-        weights = '1 -1'
-        scale = 96485.3
+        weights = '1 -2'
+        scale = 1.36E12   #Approximately: F/e ==> e = er*e0 ==> e0 = 8.854187e-12 C/V/m
     [../]
 
 
@@ -141,7 +141,7 @@
         porosity = eps
         temperature = Te
         ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
+        ion_valence = '1 -2'
         diffusion = 'Dp Dp'
     [../]
     #  -F*eps*SUM( zj*Dj*grad(ion)_x )
@@ -151,7 +151,7 @@
         direction = 0         # 0=x
         porosity = eps
         ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
+        ion_valence = '1 -2'
         diffusion = 'Dp Dp'
     [../]
 
@@ -170,7 +170,7 @@
         porosity = eps
         temperature = Te
         ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
+        ion_valence = '1 -2'
         diffusion = 'Dp Dp'
     [../]
     #  -F*eps*SUM( zj*Dj*grad(ion)_y )
@@ -180,7 +180,7 @@
         direction = 1         # 1=y
         porosity = eps
         ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
+        ion_valence = '1 -2'
         diffusion = 'Dp Dp'
     [../]
 
@@ -236,7 +236,7 @@
     [./neg_ion_gnpdiff]
         type = GNernstPlanckDiffusion
         variable = neg_ion
-        valence = -1
+        valence = -2
         porosity = eps
         electric_potential = phi_e
         temperature = Te
@@ -263,7 +263,7 @@
         type = WeightedCoupledSumFunction
         variable = ion_sum
         coupled_list = 'pos_ion neg_ion'
-        weights = '1 -1'
+        weights = '1 -2'
     [../]
 
 [] #END Kernels
@@ -313,7 +313,7 @@
   [./neg_ion_dgnpdiff]
       type = DGNernstPlanckDiffusion
       variable = neg_ion
-      valence = -1
+      valence = -2
       porosity = eps
       electric_potential = phi_e
       temperature = Te
@@ -337,11 +337,17 @@
 
 [BCs]
   ### BCs for phi_e ###
-  [./phi_e_top]
+  [./phi_e_left]
       type = FunctionDirichletBC
       variable = phi_e
       boundary = 'left'
       function = '0'
+  [../]
+  [./phi_e_right]
+      type = FunctionDirichletBC
+      variable = phi_e
+      boundary = 'right'
+      function = '1e-3'
   [../]
 
   ### Fluxes for Ions ###
@@ -353,7 +359,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 1e-8
+      u_input = 2e-8
   [../]
   [./pos_ion_FluxOut]
       type = DGPoreConcFluxBC
