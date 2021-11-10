@@ -83,19 +83,29 @@ def perform_standard_processing(list, output_folder):
     data.mathOperations('H2O (mol/L)',"/",'TC bot sample out 1 (K)') #From kPa to mol/L using Ideal gas law
 
     data.mathOperations('NH3 (300,3000)[bypass]',"/",1E6,True,'NH3 (mol/L)[bypass]')    #From ppmv to molefraction
-    data.mathOperations('NH3 (mol/L)[bypass]',"*","P bottom in (kPa)")    #From molefraction to kPa
+    data.mathOperations('NH3 (mol/L)[bypass]',"*","P bottom out (kPa)")    #From molefraction to kPa
     data.mathOperations('NH3 (mol/L)[bypass]',"/",8.314)
-    data.mathOperations('NH3 (mol/L)[bypass]',"/",'TC bot sample in (K)') #From kPa to mol/L using Ideal gas law
+    data.mathOperations('NH3 (mol/L)[bypass]',"/",'TC bot sample out 1 (K)') #From kPa to mol/L using Ideal gas law
 
     data.mathOperations('H2O% (20)[bypass]',"/",100,True,'H2O (mol/L)[bypass]')    #From vol % to molefraction
-    data.mathOperations('H2O (mol/L)[bypass]',"*","P bottom in (kPa)")    #From molefraction to kPa
+    data.mathOperations('H2O (mol/L)[bypass]',"*","P bottom out (kPa)")    #From molefraction to kPa
     data.mathOperations('H2O (mol/L)[bypass]',"/",8.314)
-    data.mathOperations('H2O (mol/L)[bypass]',"/",'TC bot sample in (K)') #From kPa to mol/L using Ideal gas law
+    data.mathOperations('H2O (mol/L)[bypass]',"/",'TC bot sample out 1 (K)') #From kPa to mol/L using Ideal gas law
 
     #Calculate the mass retention for species of interest
     #       NOTE: calculation assumes time in min and flow rate in hours (and taking from file name)
-    data.calculateRetentionIntegrals('NH3 (mol/L)')
-    data.calculateRetentionIntegrals('H2O (mol/L)')
+    #           No temperature adjustment is automatically made to the 'flow rate', thus,
+    #           some unit conversions may be required. [Result is at STP based on space velocity]
+    #
+    #   Conversion factor should be [(inlet Temp)/(273.15 K) * (101.35 kPa)/(inlet pressure)]
+    data.calculateRetentionIntegrals('NH3 (mol/L)', conv_factor=1)
+    data.calculateRetentionIntegrals('H2O (mol/L)', conv_factor=1)
+
+    data.mathOperations('NH3 (mol/L)-Retained',"+",0,True,'NH3 (mol/L)-Retained@STP')
+    data.mathOperations('H2O (mol/L)-Retained',"+",0,True,'H2O (mol/L)-Retained@STP')
+
+    # Remove the first integral results to avoid confusion
+    data.deleteColumns(['NH3 (mol/L)-Retained','H2O (mol/L)-Retained'])
 
     #Save all plots in each time frame
     data.saveTimeFramePlots(output_folder)

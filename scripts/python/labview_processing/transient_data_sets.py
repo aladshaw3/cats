@@ -23,7 +23,7 @@
 
 #Generally speaking, we do not know whether or not there is bypass data in the
 #   folders that may need to be paired, so we import all objects from transient_data
-from transient_data import TransientData, PairedTransientData
+from labview_processing.transient_data import TransientData, PairedTransientData
 import os, sys, getopt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
@@ -518,7 +518,7 @@ class TransientDataFolder(object):
         if subdir == "" and save==True:
             subdir = self.folder_name+"-Plots/"+obj_name.split(".")[0]+"/"
         self.grabDataObj(obj_name).createPlot(column_list, range, display, save, file_name, file_type, subdir)
-    
+
     ## Function to fit a 2-peak distribution to the TPD
     #
     #   This function will attempt to fit a 2-peak normal distribution to the last time_frame set of
@@ -575,7 +575,7 @@ class TransientDataFolder(object):
                 path = folder+file.split(".")[0]+"/range(All)"+"/"
             self.unpaired_data[file].savePlots(range,path,file_type)
             print("\nComplete!")
-    
+
     ##Function to save all fitted 2-peak TPD plots
     def save2peakTPDs(self, column_name, folder="", file_type=".png"):
         if folder=="":
@@ -586,7 +586,7 @@ class TransientDataFolder(object):
             folder += self.folder_name+"-TPDmodelPlots/"
         params = []
         con = []
-            
+
         print("\nComputing 2-peak TPD curve ratios for " + str(self.folder_name) + ". Please wait...")
         for file in self.paired_data:
             if "TPD" in file:
@@ -1371,7 +1371,7 @@ class TransientDataFolderSets(object):
     def savePlots(self, range=None, file_type=".png"):
         for folder in self.folder_data:
             self.folder_data[folder].savePlots(range, file_type)
-    
+
     ##Function to save all fitted 2-peak TPD plots
     def save2peakTPDs(self, column_name, subdir="", file_type=".png"):
         for folder in self.folder_data:
@@ -1811,8 +1811,8 @@ def testing():
 
     #test01.grabFolderObj("AllNH3Data/BASFCuSSZ13-700C4h-NH3storage").save2peakTPDs('NH3 (300,3000)',"test")
     #test01.save2peakTPDs('NH3 (300,3000)',"test")
-    
-    
+
+
     #print("Calculating sum...")
     #print(test01.calculateIntegralSum('NH3 (300,3000)',None,None,15,24))
 
