@@ -122,7 +122,7 @@
         variable = phi_e
         coupled_list = 'pos_ion neg_ion'
         weights = '1 -2'
-        scale = 1.36E12   #Approximately: F/e ==> e = er*e0 ==> e0 = 8.854187e-12 C/V/m
+        scale = -1.36E12   #Approximately: F/e ==> e = er*e0 ==> e0 = 8.854187e-12 C/V/m
     [../]
 
 
@@ -337,12 +337,12 @@
 
 [BCs]
   ### BCs for phi_e ###
-  [./phi_e_left]
-      type = FunctionDirichletBC
-      variable = phi_e
-      boundary = 'left'
-      function = '0'
-  [../]
+  #[./phi_e_left]
+  #    type = FunctionDirichletBC
+  #    variable = phi_e
+  #    boundary = 'left'
+  #    function = '0'
+  #[../]
   [./phi_e_right]
       type = FunctionDirichletBC
       variable = phi_e
@@ -514,7 +514,7 @@
                          NONZERO
                          NONZERO
 
-                         100
+                         10
 
                          1E-10
                          1E-10

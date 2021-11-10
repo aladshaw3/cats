@@ -1,4 +1,13 @@
-# File to test pore diffusion with variable BCs
+# NOTE: This ONLY works when the solution is electroneutral with
+#       no applied potential at the boundaries.
+#
+#       Any reactions that take place must involve
+#       the equal formation or consumption of a counter-ion.
+#       Otherwise, this will never converge.
+#
+#       By consequence, the electrolyte potential in the system
+#       is ALWAYS near zero. And in this case, is there even a
+#       point in keeping the Nernst-Planck diffusion expression?
 
 [GlobalParams]
   # Default DG methods
@@ -112,18 +121,17 @@
 [] #END ICs
 
 [Kernels]
-    # Potential Conductivity Term
-    ## NOTE: This will ALWAYS fail to converge if 'ion_conc' values are ever '0'
-    #         Simple fix is to add a 'min' value for sum of ions such that
-    #         we never get zero in matrix diagonals.
-    [./phi_e_pot_cond]
-        type = ElectrolytePotentialConductivity
+    # Poisson's Equation for electric field
+    [./phi_e_poisson]
+        type = Diffusion
         variable = phi_e
-        porosity = eps
-        temperature = Te
-        ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
-        diffusion = 'Dp Dp'
+    [../]
+    [./phi_e_charge_density]
+        type = ScaledWeightedCoupledSumFunction
+        variable = phi_e
+        coupled_list = 'pos_ion neg_ion'
+        weights = '1 -2'
+        scale = -1.36E12   #Approximately: F/e ==> e = er*e0 ==> e0 = 8.854187e-12 C/V/m
     [../]
 
 
@@ -142,7 +150,7 @@
         porosity = eps
         temperature = Te
         ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
+        ion_valence = '1 -2'
         diffusion = 'Dp Dp'
     [../]
     #  -F*eps*SUM( zj*Dj*grad(ion)_x )
@@ -152,7 +160,7 @@
         direction = 0         # 0=x
         porosity = eps
         ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
+        ion_valence = '1 -2'
         diffusion = 'Dp Dp'
     [../]
 
@@ -171,7 +179,7 @@
         porosity = eps
         temperature = Te
         ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
+        ion_valence = '1 -2'
         diffusion = 'Dp Dp'
     [../]
     #  -F*eps*SUM( zj*Dj*grad(ion)_y )
@@ -181,7 +189,7 @@
         direction = 1         # 1=y
         porosity = eps
         ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
+        ion_valence = '1 -2'
         diffusion = 'Dp Dp'
     [../]
 
@@ -237,7 +245,7 @@
     [./neg_ion_gnpdiff]
         type = GNernstPlanckDiffusion
         variable = neg_ion
-        valence = -1
+        valence = -2
         porosity = eps
         electric_potential = phi_e
         temperature = Te
@@ -264,7 +272,7 @@
         type = WeightedCoupledSumFunction
         variable = ion_sum
         coupled_list = 'pos_ion neg_ion'
-        weights = '1 -1'
+        weights = '1 -2'
     [../]
 
 [] #END Kernels
@@ -314,7 +322,7 @@
   [./neg_ion_dgnpdiff]
       type = DGNernstPlanckDiffusion
       variable = neg_ion
-      valence = -1
+      valence = -2
       porosity = eps
       electric_potential = phi_e
       temperature = Te
@@ -338,19 +346,17 @@
 
 [BCs]
   ### BCs for phi_e ###
-  [./phi_e_left]
-      type = FunctionPenaltyDirichletBC
-      variable = phi_e
-      boundary = 'left'
-      function = '0'
-      penalty = 300
-  [../]
+  #[./phi_e_left]
+  #    type = FunctionDirichletBC
+  #    variable = phi_e
+  #    boundary = 'left'
+  #    function = '0'
+  #[../]
   [./phi_e_right]
-      type = FunctionPenaltyDirichletBC
+      type = FunctionDirichletBC
       variable = phi_e
       boundary = 'right'
       function = '0'
-      penalty = 300
   [../]
 
   ### Fluxes for Ions ###
@@ -362,7 +368,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 1e-8
+      u_input = 2e-8
   [../]
   [./pos_ion_FluxOut]
       type = DGPoreConcFluxBC
@@ -506,8 +512,8 @@
                         -ksp_pc_type'
 
   # snes_max_it = maximum non-linear steps
-  petsc_options_value = 'gmres
-                         asm
+  petsc_options_value = 'fgmres
+                         ksp
 
                          lu
 
@@ -536,7 +542,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 15.0
+  end_time = 30.0
   dtmax = 0.5
 
     [./TimeStepper]

@@ -347,13 +347,13 @@
 
 [BCs]
   ### BCs for phi_e ###
-  #[./phi_e_top]
-  #    type = FunctionPenaltyDirichletBC
-  #    variable = phi_e
-  #    boundary = 'left right'
-  #    function = '0'
-  #    penalty = 300
-  #[../]
+  [./phi_e_top]
+      type = FunctionPenaltyDirichletBC
+      variable = phi_e
+      boundary = 'bottom'
+      function = '0'
+      penalty = 300
+  [../]
 
   ### Fluxes for Ions ###
   [./pos_ion_FluxIn]
@@ -508,8 +508,8 @@
                         -ksp_pc_type'
 
   # snes_max_it = maximum non-linear steps
-  petsc_options_value = 'fgmres
-                         ksp
+  petsc_options_value = 'gmres
+                         asm
 
                          lu
 
@@ -519,7 +519,7 @@
                          NONZERO
                          NONZERO
 
-                         100
+                         10
 
                          1E-10
                          1E-10
@@ -552,7 +552,7 @@
     [./SMP_PJFNK]
       type = SMP
       full = true
-      solve_type = pjfnk
+      solve_type = newton
     [../]
 
 [] #END Preconditioning

@@ -1,4 +1,9 @@
-# File to test pore diffusion with variable BCs
+# NOTE: This works with any options. Does not require electroneutrality
+#       and can apply a potential at the boundaries to separate ions.
+#       Potential is fully resolved by providing specific boundary
+#       conditions, but the interpretation and meaning of the results
+#       is questionable.
+#
 
 [GlobalParams]
   # Default DG methods
@@ -112,18 +117,10 @@
 [] #END ICs
 
 [Kernels]
-    # Potential Conductivity Term
-    ## NOTE: This will ALWAYS fail to converge if 'ion_conc' values are ever '0'
-    #         Simple fix is to add a 'min' value for sum of ions such that
-    #         we never get zero in matrix diagonals.
+    # Laplacian with applied potential
     [./phi_e_pot_cond]
-        type = ElectrolytePotentialConductivity
+        type = Diffusion
         variable = phi_e
-        porosity = eps
-        temperature = Te
-        ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
-        diffusion = 'Dp Dp'
     [../]
 
 
@@ -349,7 +346,7 @@
       type = FunctionPenaltyDirichletBC
       variable = phi_e
       boundary = 'right'
-      function = '0'
+      function = '1e-3'
       penalty = 300
   [../]
 
@@ -506,8 +503,8 @@
                         -ksp_pc_type'
 
   # snes_max_it = maximum non-linear steps
-  petsc_options_value = 'gmres
-                         asm
+  petsc_options_value = 'fgmres
+                         ksp
 
                          lu
 
@@ -517,7 +514,7 @@
                          NONZERO
                          NONZERO
 
-                         10
+                         100
 
                          1E-10
                          1E-10

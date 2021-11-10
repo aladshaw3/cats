@@ -1,4 +1,14 @@
-# File to test pore diffusion with variable BCs
+# NOTE: This ONLY works when using 'asm' with 'lu' AND
+#       only when the solution is electroneutral with
+#       no applied potential at the boundaries.
+#
+#       Any reactions that take place must involve
+#       the equal formation or consumption of a counter-ion.
+#       Otherwise, this will never converge.
+#
+#       By consequence, the electrolyte potential in the system
+#       is ALWAYS near zero. And in this case, is there even a
+#       point in keeping the Nernst-Planck diffusion expression?
 
 [GlobalParams]
   # Default DG methods
@@ -27,14 +37,14 @@
   [./pos_ion]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0
+      initial_condition = 1e-20
   [../]
 
   # Negative ion concentration (in mol/volume)
   [./neg_ion]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0
+      initial_condition = 1e-20
   [../]
 
   # electrolyte potential (in V or J/C)
@@ -48,14 +58,14 @@
   [./ie_x]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0
+      initial_condition = 1e-20
   [../]
 
   # Electrolyte current density in y (C/area/time)
   [./ie_y]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0
+      initial_condition = 1e-20
   [../]
 
 
@@ -112,20 +122,14 @@
 [] #END ICs
 
 [Kernels]
-    # Potential Conductivity Term
-    ## NOTE: This will ALWAYS fail to converge if 'ion_conc' values are ever '0'
-    #         Simple fix is to add a 'min' value for sum of ions such that
-    #         we never get zero in matrix diagonals.
-    [./phi_e_pot_cond]
-        type = ElectrolytePotentialConductivity
+    # Enforce Divergence Free Condition on current
+    [./cons_current_flow]
+        type = DivergenceFreeCondition
         variable = phi_e
-        porosity = eps
-        temperature = Te
-        ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
-        diffusion = 'Dp Dp'
+        ux = ie_x
+        uy = ie_y
+        uz = 0
     [../]
-
 
     # Current density in x-dir from potential gradient
     #  -ie_x
@@ -338,20 +342,14 @@
 
 [BCs]
   ### BCs for phi_e ###
-  [./phi_e_left]
+  [./phi_e_bottom]
       type = FunctionPenaltyDirichletBC
       variable = phi_e
-      boundary = 'left'
+      boundary = 'bottom'
       function = '0'
       penalty = 300
   [../]
-  [./phi_e_right]
-      type = FunctionPenaltyDirichletBC
-      variable = phi_e
-      boundary = 'right'
-      function = '0'
-      penalty = 300
-  [../]
+
 
   ### Fluxes for Ions ###
   [./pos_ion_FluxIn]
@@ -506,6 +504,12 @@
                         -ksp_pc_type'
 
   # snes_max_it = maximum non-linear steps
+
+
+  ######## NOTE: Best convergence results with asm pc and lu sub-pc ##############
+  ##      Issue may be caused by the terminal pc of the ksp pc method
+  #       using MUMPS as the linear solver (which is an inefficient method)
+
   petsc_options_value = 'gmres
                          asm
 
@@ -522,7 +526,7 @@
                          1E-10
                          1E-10
 
-                         fgmres
+                         gmres
                          lu'
 
   #NOTE: turning off line search can help converge for high Renolds number

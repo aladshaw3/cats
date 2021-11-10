@@ -289,12 +289,13 @@
 
 [BCs]
   ### BCs for phi_e ###
-  #[./phi_e_top]
-  #    type = FunctionDirichletBC
-  #    variable = phi_e
-  #    boundary = 'top'
-  #    function = '0'
-  #[../]
+  [./phi_e_top]
+      type = FunctionPenaltyDirichletBC
+      variable = phi_e
+      boundary = 'right'
+      function = '0'
+      penalty = 300
+  [../]
 
 
   ### Fluxes for Ions ###
@@ -429,10 +430,10 @@
                         -ksp_pc_type'
 
   # snes_max_it = maximum non-linear steps
-  petsc_options_value = 'fgmres
-                         ksp
+  petsc_options_value = 'gmres
+                         asm
 
-                         ilu
+                         lu
 
                          20
 
@@ -440,7 +441,7 @@
                          NONZERO
                          NONZERO
 
-                         100
+                         10
 
                          1E-10
                          1E-10

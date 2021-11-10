@@ -1,4 +1,14 @@
-# File to test pore diffusion with variable BCs
+# NOTE: This ONLY works when using 'asm' with 'lu' AND
+#       only when the solution is electroneutral with
+#       no applied potential at the boundaries.
+#
+#       Any reactions that take place must involve
+#       the equal formation or consumption of a counter-ion.
+#       Otherwise, this will never converge.
+#
+#       By consequence, the electrolyte potential in the system
+#       is ALWAYS near zero. And in this case, is there even a
+#       point in keeping the Nernst-Planck diffusion expression?
 
 [GlobalParams]
   # Default DG methods

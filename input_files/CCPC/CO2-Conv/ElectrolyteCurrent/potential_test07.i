@@ -111,6 +111,20 @@
         initial_condition = 0
     [../]
 
+    # Positive ion concentration (in mol/volume)
+    [./pos_ion_const]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-7
+    [../]
+
+    # Negative ion concentration (in mol/volume)
+    [./neg_ion_const]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-7
+    [../]
+
 [] #END AuxVariables
 
 [ICs]
@@ -351,10 +365,10 @@
         type = ElectrolyteConductivity
         variable = sigma_e
         temperature = Te
-        ion_conc = 'pos_ion neg_ion'
+        ion_conc = 'pos_ion_const neg_ion_const'
         ion_valence = '1 -1'
         diffusion = 'Dp Dp'
-        #execute_on = 'initial timestep_end'
+        execute_on = 'initial timestep_end'
     [../]
 
 [] #END AuxKernels
@@ -372,7 +386,7 @@
       type = FunctionPenaltyDirichletBC
       variable = phi_e
       boundary = 'right'
-      function = '0'
+      function = '1e-3'
       penalty = 300
   [../]
 
@@ -536,7 +550,7 @@
 
   # snes_max_it = maximum non-linear steps
   petsc_options_value = 'fgmres
-                         ksp
+                         asm
 
                          lu
 
@@ -546,7 +560,7 @@
                          NONZERO
                          NONZERO
 
-                         100
+                         10
 
                          1E-10
                          1E-10

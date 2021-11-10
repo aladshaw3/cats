@@ -1,4 +1,9 @@
-# File to test pore diffusion with variable BCs
+# NOTE: This works with any options. Does not require electroneutrality
+#       and can apply a potential at the boundaries to separate ions.
+#       Potential is fully resolved by providing specific boundary
+#       conditions, but the interpretation and meaning of the results
+#       is questionable.
+#
 
 [GlobalParams]
   # Default DG methods
@@ -40,7 +45,7 @@
   # electrolyte potential (in V or J/C)
   [./phi_e]
       order = FIRST
-      family = LAGRANGE
+      family = MONOMIAL
       initial_condition = 0
   [../]
 
@@ -75,6 +80,12 @@
         initial_condition = 0.05
     [../]
 
+    [./sigma_e]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-10
+    [../]
+
     [./eps]
         order = FIRST
         family = MONOMIAL
@@ -105,6 +116,20 @@
         initial_condition = 0
     [../]
 
+    # Positive ion concentration (in mol/volume)
+    [./pos_ion_const]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-7
+    [../]
+
+    # Negative ion concentration (in mol/volume)
+    [./neg_ion_const]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1e-7
+    [../]
+
 [] #END AuxVariables
 
 [ICs]
@@ -117,13 +142,12 @@
     #         Simple fix is to add a 'min' value for sum of ions such that
     #         we never get zero in matrix diagonals.
     [./phi_e_pot_cond]
-        type = ElectrolytePotentialConductivity
+        type = GVarPoreDiffusion
         variable = phi_e
         porosity = eps
-        temperature = Te
-        ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
-        diffusion = 'Dp Dp'
+        Dx = sigma_e
+        Dy = sigma_e
+        Dz = sigma_e
     [../]
 
 
@@ -273,6 +297,15 @@
 #       corresponding 'DG' kernel down here.
 [DGKernels]
 
+  [./phi_e_dgpot_cond]
+      type = DGVarPoreDiffusion
+      variable = phi_e
+      porosity = eps
+      Dx = sigma_e
+      Dy = sigma_e
+      Dz = sigma_e
+  [../]
+
   ### Conservation of mass for pos_ion ###
   [./pos_ion_dgdiff]
       type = DGVarPoreDiffusion
@@ -333,6 +366,15 @@
 []
 
 [AuxKernels]
+    [./sigma_e_calc]
+        type = ElectrolyteConductivity
+        variable = sigma_e
+        temperature = Te
+        ion_conc = 'pos_ion_const neg_ion_const'
+        ion_valence = '1 -1'
+        diffusion = 'Dp Dp'
+        execute_on = 'initial timestep_end'
+    [../]
 
 [] #END AuxKernels
 
@@ -349,7 +391,7 @@
       type = FunctionPenaltyDirichletBC
       variable = phi_e
       boundary = 'right'
-      function = '0'
+      function = '1e-3'
       penalty = 300
   [../]
 
@@ -469,6 +511,12 @@
         execute_on = 'initial timestep_end'
     [../]
 
+    [./sigma_avg]
+        type = ElementAverageValue
+        variable = sigma_e
+        execute_on = 'initial timestep_end'
+    [../]
+
 [] #END Postprocessors
 
 [Executioner]
@@ -506,7 +554,7 @@
                         -ksp_pc_type'
 
   # snes_max_it = maximum non-linear steps
-  petsc_options_value = 'gmres
+  petsc_options_value = 'fgmres
                          asm
 
                          lu

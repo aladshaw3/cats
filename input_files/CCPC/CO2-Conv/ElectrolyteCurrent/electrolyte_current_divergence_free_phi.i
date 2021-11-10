@@ -339,11 +339,12 @@
 
 [BCs]
   ### BCs for phi_e ###
-  [./phi_e_right]
-      type = FunctionDirichletBC
+  [./phi_e_bottom]
+      type = FunctionPenaltyDirichletBC
       variable = phi_e
-      boundary = 'right'
+      boundary = 'bottom'
       function = '0'
+      penalty = 300
   [../]
 
 
@@ -500,10 +501,16 @@
                         -ksp_pc_type'
 
   # snes_max_it = maximum non-linear steps
-  petsc_options_value = 'fgmres
-                         ksp
 
-                         ilu
+
+  ######## NOTE: Best convergence results with asm pc and lu sub-pc ##############
+  ##      Issue may be caused by the terminal pc of the ksp pc method
+  #       using MUMPS as the linear solver (which is an inefficient method)
+
+  petsc_options_value = 'gmres
+                         asm
+
+                         lu
 
                          20
 
@@ -511,12 +518,12 @@
                          NONZERO
                          NONZERO
 
-                         100
+                         10
 
                          1E-10
                          1E-10
 
-                         fgmres
+                         gmres
                          lu'
 
   #NOTE: turning off line search can help converge for high Renolds number
