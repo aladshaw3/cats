@@ -356,175 +356,6 @@ def printTnValues(obj, out_dir):
     file.close()
     return
 
-##Function to print out conversion rates at different temperatures
-def printConvRates(obj, out_dir, tau, inlet_temp=True):
-    conv_temp = [120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,420,440,460,480,500]
-    span = 5
-    if inlet_temp == True:
-        temp = 'TC top sample in (C)'
-    else:
-        temp = 'Avg Internal Temp (C)'
-        conv_temp.append(520)
-    chem_name = out_dir.split("/")[0].split("-")[0]
-
-    conv_map = {}
-    conv_map['TC top sample in (C)'] = [0.]*len(conv_temp)
-    conv_map['THC Conversion %'] = [0.]*len(conv_temp)
-    conv_map['CO Conversion %'] = [0.]*len(conv_temp)
-    conv_map['NOx Conversion %'] = [0.]*len(conv_temp)
-    conv_map['TC top sample mid 2 (C)'] = [0.]*len(conv_temp)
-    conv_map['TC top sample out (C)'] = [0.]*len(conv_temp)
-    conv_map['Avg Internal Temp (C)'] = [0.]*len(conv_temp)
-    conv_map['O2%'] = [0.]*len(conv_temp)
-
-    for item in obj.data_map:
-        #What we want from all files
-        if 'N2O' in item and 'bypass' not in item:
-            conv_map[item] = [0.]*len(conv_temp)
-            conv_map[item+'[bypass]'] = [0.]*len(conv_temp)
-            conv_map['N2O'+'[Mrxn]'] = [0.]*len(conv_temp)
-        if 'NO' in item and 'bypass' not in item and 'NOx' not in item and 'NO2' not in item:
-            conv_map[item] = [0.]*len(conv_temp)
-            conv_map[item+'[bypass]'] = [0.]*len(conv_temp)
-            conv_map['NO'+'[Mrxn]'] = [0.]*len(conv_temp)
-        if 'NO2' in item and 'bypass' not in item:
-            conv_map[item] = [0.]*len(conv_temp)
-            conv_map[item+'[bypass]'] = [0.]*len(conv_temp)
-            conv_map['NO2'+'[Mrxn]'] = [0.]*len(conv_temp)
-        if 'H2O' in item and 'bypass' not in item:
-            conv_map[item] = [0.]*len(conv_temp)
-            conv_map[item+'[bypass]'] = [0.]*len(conv_temp)
-            conv_map['H2O'+'[Mrxn]'] = [0.]*len(conv_temp)
-        if 'CO2' in item and 'bypass' not in item:
-            conv_map[item] = [0.]*len(conv_temp)
-            conv_map[item+'[bypass]'] = [0.]*len(conv_temp)
-            conv_map['CO2'+'[Mrxn]'] = [0.]*len(conv_temp)
-        if 'FID' in item and 'bypass' not in item:
-            conv_map[item] = [0.]*len(conv_temp)
-            conv_map[item+'[bypass]'] = [0.]*len(conv_temp)
-            conv_map['FID'+'[Mrxn]'] = [0.]*len(conv_temp)
-        if 'NH3' in item and 'bypass' not in item:
-            conv_map[item] = [0.]*len(conv_temp)
-            conv_map[item+'[bypass]'] = [0.]*len(conv_temp)
-            conv_map['NH3'+'[Mrxn]'] = [0.]*len(conv_temp)
-        if 'CO' in item and 'bypass' not in item and 'Conversion' not in item and 'CO2' not in item:
-            conv_map[item] = [0.]*len(conv_temp)
-            conv_map[item+'[bypass]'] = [0.]*len(conv_temp)
-            conv_map['CO'+'[Mrxn]'] = [0.]*len(conv_temp)
-
-        #Special Case
-        #if chem_name == "CH3CH2OH+iC8H18+C6H5CH3":
-        #    if 'ethanol' in item and 'bypass' not in item:
-        #        conv_map[item] = [0.]*len(conv_temp)
-        #        conv_map[item+'[bypass]'] = [0.]*len(conv_temp)
-        #        conv_map['ethanol'+'[Mrxn]'] = [0.]*len(conv_temp)
-        #    if 'iso-octane' in item and 'bypass' not in item:
-        #        conv_map[item] = [0.]*len(conv_temp)
-        #        conv_map[item+'[bypass]'] = [0.]*len(conv_temp)
-        #        conv_map['iso-octane'+'[Mrxn]'] = [0.]*len(conv_temp)
-        #    if 'toluene' in item and 'bypass' not in item:
-        #        conv_map[item] = [0.]*len(conv_temp)
-        #        conv_map[item+'[bypass]'] = [0.]*len(conv_temp)
-        #        conv_map['toluene'+'[Mrxn]'] = [0.]*len(conv_temp)
-
-    #Loop for form conv map at specified temperatures
-    for item in conv_map:
-        if item in obj.data_map:
-            i=0
-            for ct in conv_temp:
-                count = 0
-                j=0
-                for value in obj.data_map[item]:
-                    if obj.data_map[temp][j] >= ct - span and obj.data_map[temp][j] <= ct + span:
-                        conv_map[item][i] += obj.data_map[item][j]
-                        count+=1
-                    j+=1
-                conv_map[item][i] = conv_map[item][i]/count
-                i+=1
-
-    #One more loop to calculate the overall conversion rates
-    for item in obj.data_map:
-        #What we want from all files
-        if 'N2O' in item and 'bypass' not in item:
-            j=0
-            for value in conv_map[item]:
-                conv_map['N2O'+'[Mrxn]'][j] = (conv_map[item][j] - conv_map[item+'[bypass]'][j])*tau
-                j+=1
-        if 'NO' in item and 'bypass' not in item and 'NOx' not in item and 'NO2' not in item:
-            j=0
-            for value in conv_map[item]:
-                conv_map['NO'+'[Mrxn]'][j] = (conv_map[item][j] - conv_map[item+'[bypass]'][j])*tau
-                j+=1
-        if 'NO2' in item and 'bypass' not in item:
-            j=0
-            for value in conv_map[item]:
-                conv_map['NO2'+'[Mrxn]'][j] = (conv_map[item][j] - conv_map[item+'[bypass]'][j])*tau
-                j+=1
-        if 'H2O' in item and 'bypass' not in item:
-            j=0
-            for value in conv_map[item]:
-                conv_map['H2O'+'[Mrxn]'][j] = (conv_map[item][j] - conv_map[item+'[bypass]'][j])*tau
-                j+=1
-        if 'CO2' in item and 'bypass' not in item:
-            j=0
-            for value in conv_map[item]:
-                conv_map['CO2'+'[Mrxn]'][j] = (conv_map[item][j] - conv_map[item+'[bypass]'][j])*tau
-                j+=1
-        if 'FID' in item and 'bypass' not in item:
-            j=0
-            for value in conv_map[item]:
-                conv_map['FID'+'[Mrxn]'][j] = (conv_map[item][j] - conv_map[item+'[bypass]'][j])*tau
-                j+=1
-        if 'NH3' in item and 'bypass' not in item:
-            j=0
-            for value in conv_map[item]:
-                conv_map['NH3'+'[Mrxn]'][j] = (conv_map[item][j] - conv_map[item+'[bypass]'][j])*tau
-                j+=1
-        if 'CO' in item and 'bypass' not in item and 'Conversion' not in item and 'CO2' not in item:
-            j=0
-            for value in conv_map[item]:
-                conv_map['CO'+'[Mrxn]'][j] = (conv_map[item][j] - conv_map[item+'[bypass]'][j])*tau
-                j+=1
-
-        #Special Case
-        #if chem_name == "CH3CH2OH+iC8H18+C6H5CH3":
-        #    if 'ethanol' in item and 'bypass' not in item:
-        #        j=0
-        #        for value in conv_map[item]:
-        #            conv_map['ethanol'+'[Mrxn]'][j] = (conv_map[item][j] - conv_map[item+'[bypass]'][j])*tau
-        #            j+=1
-        #    if 'iso-octane' in item and 'bypass' not in item:
-        #        j=0
-        #        for value in conv_map[item]:
-        #            conv_map['iso-octane'+'[Mrxn]'][j] = (conv_map[item][j] - conv_map[item+'[bypass]'][j])*tau
-        #            j+=1
-        #    if 'toluene' in item and 'bypass' not in item:
-        #        j=0
-        #        for value in conv_map[item]:
-        #            conv_map['toluene'+'[Mrxn]'][j] = (conv_map[item][j] - conv_map[item+'[bypass]'][j])*tau
-        #            j+=1
-
-
-    if inlet_temp == True:
-        file_name = out_dir + "ConversionRates.dat"
-    else:
-        file_name = out_dir + "ConversionRates-CatTemp.dat"
-    file = open(file_name,'w')
-    file.write("RefTemp (C)")
-    for item in conv_map:
-        file.write("\t"+item)
-    file.write("\n")
-    i=0
-    for value in conv_temp:
-        file.write(str(value))
-        for item in conv_map:
-            file.write("\t"+str(conv_map[item][i]))
-        i+=1
-        file.write("\n")
-    file.close()
-
-    return
-
 ##Function to print out the rate map
 def printRateMap(obj, map, out_dir):
     file_name = out_dir + "ApproximateRateData.dat"
@@ -577,7 +408,7 @@ def printRateMap(obj, map, out_dir):
     return
 
 ## Function to read in a specific folder
-def readCoOptimaBlendFolder(folder, tau):
+def readCoOptimaBlendFolder(folder):
     # Read in the bypass and run files separately
     run = []
 
@@ -787,10 +618,6 @@ def readCoOptimaBlendFolder(folder, tau):
         # May also want to calculate different T-n values and print to another file
         printTnValues(obj, out_dir=base_folder+"-output/"+sub_folder+"/")
 
-        # Print the conversion rates (NOTE: We may have to pass the folder because each folder has different headers)
-        printConvRates(obj, base_folder+"-output/"+sub_folder+"/", tau)
-        printConvRates(obj, base_folder+"-output/"+sub_folder+"/", tau, False)
-
         i+=1
 
 
@@ -823,10 +650,6 @@ def readCoOptimaBlendFolder(folder, tau):
 
     # May also want to calculate different T-n values and print to another file
     printTnValues(avg_run, out_dir=base_folder+"-output/"+sub_folder+"/")
-
-    # Print the conversion rates (NOTE: We may have to pass the folder because each folder has different headers)
-    printConvRates(avg_run, base_folder+"-output/"+sub_folder+"/", tau)
-    printConvRates(avg_run, base_folder+"-output/"+sub_folder+"/", tau, False)
 
 
     # Lastly, we will compress the rows and print the data to a file
@@ -862,16 +685,16 @@ def main(argv):
     # the runs and by-pass do not match exactly. Instead, we will read in each seperately and
     # combine manually.
 
-    #readCoOptimaBlendFolder("50-50_toluene-nheptane", tau=8.3333)
-    #readCoOptimaBlendFolder("25-75_toluene-nheptane", tau=8.3333)
-    #readCoOptimaBlendFolder("10-90_toluene-nheptane-30k", tau=8.3333)
-    #readCoOptimaBlendFolder("10-90_toluene-nheptane-60k", tau=16.6666)
-    #readCoOptimaBlendFolder("05-95_toluene-nheptane", tau=8.3333)
+    #readCoOptimaBlendFolder("50-50_toluene-nheptane")
+    #readCoOptimaBlendFolder("25-75_toluene-nheptane")
+    #readCoOptimaBlendFolder("10-90_toluene-nheptane-30k")
+    #readCoOptimaBlendFolder("10-90_toluene-nheptane-60k")
+    #readCoOptimaBlendFolder("05-95_toluene-nheptane")
 
-    #readCoOptimaBlendFolder("BOB-baseline", tau=8.3333)
-    #readCoOptimaBlendFolder("BOB-E10", tau=8.3333)
-    #readCoOptimaBlendFolder("BOB-E20", tau=8.3333)
-    readCoOptimaBlendFolder("BOB-E30", tau=8.3333)
+    #readCoOptimaBlendFolder("BOB-baseline")
+    #readCoOptimaBlendFolder("BOB-E10")
+    #readCoOptimaBlendFolder("BOB-E20")
+    readCoOptimaBlendFolder("BOB-E30")
 
     return
 

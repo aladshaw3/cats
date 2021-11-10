@@ -71,29 +71,31 @@ def perform_standard_processing(list, output_folder):
     #Delete the pressure columns from the bypass run that we also don't need
     data.deleteColumns(['P bottom in (bar)[bypass]','P bottom out (bar)[bypass]'])
 
+    #Calculate NH3 and H2O in mol/L assuming ideal gas law
+    data.mathOperations('NH3 (300,3000)',"/",1E6,True,'NH3 (mol/L)')    #From ppmv to molefraction
+    data.mathOperations('NH3 (mol/L)',"*","P bottom out (kPa)")    #From molefraction to kPa
+    data.mathOperations('NH3 (mol/L)',"/",8.314)
+    data.mathOperations('NH3 (mol/L)',"/",'TC bot sample out 1 (K)') #From kPa to mol/L using Ideal gas law
+
+    data.mathOperations('H2O% (20)',"/",100,True,'H2O (mol/L)')    #From vol % to molefraction
+    data.mathOperations('H2O (mol/L)',"*","P bottom out (kPa)")    #From molefraction to kPa
+    data.mathOperations('H2O (mol/L)',"/",8.314)
+    data.mathOperations('H2O (mol/L)',"/",'TC bot sample out 1 (K)') #From kPa to mol/L using Ideal gas law
+
+    data.mathOperations('NH3 (300,3000)[bypass]',"/",1E6,True,'NH3 (mol/L)[bypass]')    #From ppmv to molefraction
+    data.mathOperations('NH3 (mol/L)[bypass]',"*","P bottom in (kPa)")    #From molefraction to kPa
+    data.mathOperations('NH3 (mol/L)[bypass]',"/",8.314)
+    data.mathOperations('NH3 (mol/L)[bypass]',"/",'TC bot sample in (K)') #From kPa to mol/L using Ideal gas law
+
+    data.mathOperations('H2O% (20)[bypass]',"/",100,True,'H2O (mol/L)[bypass]')    #From vol % to molefraction
+    data.mathOperations('H2O (mol/L)[bypass]',"*","P bottom in (kPa)")    #From molefraction to kPa
+    data.mathOperations('H2O (mol/L)[bypass]',"/",8.314)
+    data.mathOperations('H2O (mol/L)[bypass]',"/",'TC bot sample in (K)') #From kPa to mol/L using Ideal gas law
+
     #Calculate the mass retention for species of interest
-    data.calculateRetentionIntegrals('NH3 (300,3000)')
-    data.calculateRetentionIntegrals('H2O% (20)')
-
-    #NH3 has units of ppmv, want to convert this to mol adsorbed / L catalyst
-    data.mathOperations('NH3 (300,3000)-Retained',"/",1E6)                     #From ppmv to molefraction
-    data.mathOperations('NH3 (300,3000)-Retained',"*","P bottom out (kPa)")    #From molefraction to kPa
-    data.mathOperations('NH3 (300,3000)-Retained',"/",8.314)
-    data.mathOperations('NH3 (300,3000)-Retained',"/",'TC bot sample out 1 (K)') #From kPa to mol/L using Ideal gas law
-    data.mathOperations('NH3 (300,3000)-Retained',"*",0.015708)                #From mol/L to total moles (multiply by total volume)
-    #From total moles to mol ads / L cat using solids fraction, then store in new column and delete old column
-    data.mathOperations('NH3 (300,3000)-Retained',"/",(1-0.3309)*0.015708,True,"NH3 ads (mol/L)")
-    data.deleteColumns('NH3 (300,3000)-Retained')
-
-    #H2O has units of %, want to convert this to mol adsorbed / L catalyst
-    data.mathOperations('H2O% (20)-Retained',"/",100)                     #From % to molefraction
-    data.mathOperations('H2O% (20)-Retained',"*","P bottom out (kPa)")    #From molefraction to kPa
-    data.mathOperations('H2O% (20)-Retained',"/",8.314)
-    data.mathOperations('H2O% (20)-Retained',"/",'TC bot sample out 1 (K)') #From kPa to mol/L using Ideal gas law
-    data.mathOperations('H2O% (20)-Retained',"*",0.015708)                #From mol/L to total moles (multiply by total volume)
-    #From total moles to mol ads / L cat using solids fraction, then store in new column and delete old column
-    data.mathOperations('H2O% (20)-Retained',"/",(1-0.3309)*0.015708,True,"H2O ads (mol/L)")
-    data.deleteColumns('H2O% (20)-Retained')
+    #       NOTE: calculation assumes time in min and flow rate in hours (and taking from file name)
+    data.calculateRetentionIntegrals('NH3 (mol/L)')
+    data.calculateRetentionIntegrals('H2O (mol/L)')
 
     #Save all plots in each time frame
     data.saveTimeFramePlots(output_folder)
