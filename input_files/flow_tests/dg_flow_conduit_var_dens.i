@@ -131,7 +131,7 @@
     [./mu]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 1
+        initial_condition = 0.1
     [../]
 
     [./rho]
@@ -193,7 +193,7 @@
         density = rho
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
     # (1/3)*mu*(grad(Div*vel)_x)
     [./x_gvisdiv]
@@ -203,7 +203,7 @@
         viscosity = mu
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
 
     ### Conservation of y-momentum ###
@@ -236,7 +236,7 @@
         density = rho
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
     # (1/3)*mu*(grad(Div*vel)_y)
     [./y_gvisdiv]
@@ -246,7 +246,7 @@
         viscosity = mu
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
 
     ### Conservation of mass for a dilute tracer ###
@@ -261,7 +261,7 @@
         porosity = 1
         ux = vel_x
         uy = vel_y
-        uz = 0
+        uz = vel_z
     [../]
     [./tracer_gdiff]
         type = GVarPoreDiffusion
@@ -284,7 +284,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
   [./tracer_dgdiff]
       type = DGVarPoreDiffusion
@@ -311,7 +311,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
   # (1/3)*mu*(grad(Div*vel)_x)
   [./x_dgvisdiv]
@@ -340,7 +340,7 @@
       density = rho
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
   # (1/3)*mu*(grad(Div*vel)_y)
   [./y_dgvisdiv]
