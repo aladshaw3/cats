@@ -20,9 +20,10 @@
 #                    (NTRC) by Austin Ladshaw for research in the catalytic
 #                    reduction of NOx. Copyright (c) 2020, all rights reserved.
 
-
-from transient_data_sets import TransientDataFolder, TransientDataFolderSets
-import os, sys, getopt
+import sys
+sys.path.append('../..')
+from labview_processing.transient_data_sets import TransientDataFolder, TransientDataFolderSets
+import os, getopt
 import time
 
 ##Define a help message to display
