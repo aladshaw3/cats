@@ -116,38 +116,38 @@
     ## NOTE: This will ALWAYS fail to converge if 'ion_conc' values are ever '0'
     #         Simple fix is to add a 'min' value for sum of ions such that
     #         we never get zero in matrix diagonals.
-    #[./phi_e_pot_cond]
-    #    type = ElectrolytePotentialConductivity
-    #    variable = phi_e
-    #    porosity = eps
-    #    temperature = Te
-    #    ion_conc = 'pos_ion neg_ion'
-    #    ion_valence = '1 -1'
-    #    diffusion = 'Dp Dp'
-    #[../]
-    #[./phi_e_ion_cond]
-    #    type = ElectrolyteIonConductivity
-    #    variable = phi_e
-    #    porosity = eps
-    #    ion_conc = 'pos_ion neg_ion'
-    #    ion_valence = '1 -1'
-    #    diffusion = 'Dp Dp'
-    #    tight_coupling = true
-    #[../]
+    [./phi_e_pot_cond]
+        type = ElectrolytePotentialConductivity
+        variable = phi_e
+        porosity = eps
+        temperature = Te
+        ion_conc = 'pos_ion neg_ion'
+        ion_valence = '1 -1'
+        diffusion = 'Dp Dp'
+    [../]
+    [./phi_e_ion_cond]
+        type = ElectrolyteIonConductivity
+        variable = phi_e
+        porosity = eps
+        ion_conc = 'pos_ion neg_ion'
+        ion_valence = '1 -1'
+        diffusion = 'Dp Dp'
+        tight_coupling = true
+    [../]
 
 
     # Poisson's Equation for electric field
-    [./phi_e_poisson]
-        type = Diffusion
-        variable = phi_e
-    [../]
-    [./phi_e_charge_density]
-        type = ScaledWeightedCoupledSumFunction
-        variable = phi_e
-        coupled_list = 'pos_ion neg_ion'
-        weights = '1 -1'
-        scale = 1.36E12   #Approximately: F/e ==> e = er*e0 ==> e0 = 8.854187e-12 C/V/m
-    [../]
+    #[./phi_e_poisson]
+    #    type = Diffusion
+    #    variable = phi_e
+    #[../]
+    #[./phi_e_charge_density]
+    #    type = ScaledWeightedCoupledSumFunction
+    #    variable = phi_e
+    #    coupled_list = 'pos_ion neg_ion'
+    #    weights = '1 -1'
+    #    scale = 1.36E12   #Approximately: F/e ==> e = er*e0 ==> e0 = 8.854187e-12 C/V/m
+    #[../]
 
 
     # Current density in x-dir from potential gradient
@@ -321,7 +321,7 @@
       type = FunctionPenaltyDirichletBC
       variable = phi_e
       boundary = 'right'
-      function = '1e-5'
+      function = '0'
       penalty = 300
   [../]
 

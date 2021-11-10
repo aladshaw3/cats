@@ -351,10 +351,10 @@
         type = ElectrolyteConductivity
         variable = sigma_e
         temperature = Te
-        ion_conc = '1e-8 1e-8'
+        ion_conc = 'pos_ion neg_ion'
         ion_valence = '1 -1'
         diffusion = 'Dp Dp'
-        execute_on = 'initial timestep_end'
+        #execute_on = 'initial timestep_end'
     [../]
 
 [] #END AuxKernels
@@ -372,7 +372,7 @@
       type = FunctionPenaltyDirichletBC
       variable = phi_e
       boundary = 'right'
-      function = '1e-3'
+      function = '0'
       penalty = 300
   [../]
 

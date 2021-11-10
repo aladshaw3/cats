@@ -25,14 +25,14 @@
 [Variables]
   # Positive ion concentration (in mol/volume)
   [./pos_ion]
-      order = Constant
+      order = FIRST
       family = MONOMIAL
       initial_condition = 0
   [../]
 
   # Negative ion concentration (in mol/volume)
   [./neg_ion]
-      order = Constant
+      order = FIRST
       family = MONOMIAL
       initial_condition = 0
   [../]
@@ -347,7 +347,7 @@
       type = FunctionDirichletBC
       variable = phi_e
       boundary = 'right'
-      function = '1e-3'
+      function = '0'
   [../]
 
   ### Fluxes for Ions ###

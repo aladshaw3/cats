@@ -125,15 +125,15 @@
         ion_valence = '1 -1'
         diffusion = 'Dp Dp'
     [../]
-    #[./phi_e_ion_cond]
-    #    type = ElectrolyteIonConductivity
-    #    variable = phi_e
-    #    porosity = eps
-    #    ion_conc = 'pos_ion neg_ion'
-    #    ion_valence = '1 -1'
-    #    diffusion = 'Dp Dp'
-    #    tight_coupling = true
-    #[../]
+    [./phi_e_ion_cond]
+        type = ElectrolyteIonConductivity
+        variable = phi_e
+        porosity = eps
+        ion_conc = 'pos_ion neg_ion'
+        ion_valence = '1 -1'
+        diffusion = 'Dp Dp'
+        tight_coupling = true
+    [../]
 
 
     # Current density in x-dir from potential gradient

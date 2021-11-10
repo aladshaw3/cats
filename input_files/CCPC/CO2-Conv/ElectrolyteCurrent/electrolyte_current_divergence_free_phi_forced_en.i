@@ -1,4 +1,11 @@
-# File to test pore diffusion with variable BCs
+# NOTE: This does not work. We cannot solve the electric potential
+#       be forcing a divergence free condition on current variables.
+#       (Unless maybe we use something other than LU factorization?).
+#
+#       Solving with preconditioning fails at SUBPC_ERROR, which usually
+#       indicates some issue with LU decomp.
+
+# Alternative:   Formulate a Poisson equation for phi_e
 
 [GlobalParams]
   # Default DG methods
@@ -27,14 +34,14 @@
   [./pos_ion]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0
+      initial_condition = 1e-20
   [../]
 
   # Negative ion concentration (in mol/volume)
   [./neg_ion]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0
+      initial_condition = 1e-20
   [../]
 
   # electrolyte potential (in V or J/C)
@@ -48,14 +55,14 @@
   [./ie_x]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0
+      initial_condition = 1e-20
   [../]
 
   # Electrolyte current density in y (C/area/time)
   [./ie_y]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0
+      initial_condition = 1e-20
   [../]
 
 
@@ -112,20 +119,14 @@
 [] #END ICs
 
 [Kernels]
-    # Potential Conductivity Term
-    ## NOTE: This will ALWAYS fail to converge if 'ion_conc' values are ever '0'
-    #         Simple fix is to add a 'min' value for sum of ions such that
-    #         we never get zero in matrix diagonals.
-    [./phi_e_pot_cond]
-        type = ElectrolytePotentialConductivity
+    # Enforce Divergence Free Condition on current
+    [./cons_current_flow]
+        type = DivergenceFreeCondition
         variable = phi_e
-        porosity = eps
-        temperature = Te
-        ion_conc = 'pos_ion neg_ion'
-        ion_valence = '1 -1'
-        diffusion = 'Dp Dp'
+        ux = ie_x
+        uy = ie_y
+        uz = 0
     [../]
-
 
     # Current density in x-dir from potential gradient
     #  -ie_x
@@ -220,38 +221,16 @@
         uz = vel_z
     [../]
 
-    ### Conservation of mass for neg_ion ###
-    [./neg_ion_dot]
-        type = VariableCoefTimeDerivative
+    ### Solve for negative ion as function of other ions (forces electroneutrality) ###
+    [./neg_ion_equ]
+        type = Reaction
         variable = neg_ion
-        coupled_coef = eps
     [../]
-    [./neg_ion_gdiff]
-        type = GVarPoreDiffusion
+    [./neg_ion_fun]
+        type = WeightedCoupledSumFunction
         variable = neg_ion
-        porosity = eps
-        Dx = Dp
-        Dy = Dp
-        Dz = Dp
-    [../]
-    [./neg_ion_gnpdiff]
-        type = GNernstPlanckDiffusion
-        variable = neg_ion
-        valence = -1
-        porosity = eps
-        electric_potential = phi_e
-        temperature = Te
-        Dx = Dp
-        Dy = Dp
-        Dz = Dp
-    [../]
-    [./neg_ion_gadv]
-        type = GPoreConcAdvection
-        variable = neg_ion
-        porosity = eps
-        ux = vel_x
-        uy = vel_y
-        uz = vel_z
+        coupled_list = 'pos_ion'
+        weights = '1'
     [../]
 
 
@@ -302,34 +281,6 @@
       uz = vel_z
   [../]
 
-  ### Conservation of mass for neg_ion ###
-  [./neg_ion_dgdiff]
-      type = DGVarPoreDiffusion
-      variable = neg_ion
-      porosity = eps
-      Dx = Dp
-      Dy = Dp
-      Dz = Dp
-  [../]
-  [./neg_ion_dgnpdiff]
-      type = DGNernstPlanckDiffusion
-      variable = neg_ion
-      valence = -1
-      porosity = eps
-      electric_potential = phi_e
-      temperature = Te
-      Dx = Dp
-      Dy = Dp
-      Dz = Dp
-  [../]
-  [./neg_ion_dgadv]
-      type = DGPoreConcAdvection
-      variable = neg_ion
-      porosity = eps
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
-  [../]
 []
 
 [AuxKernels]
@@ -338,20 +289,13 @@
 
 [BCs]
   ### BCs for phi_e ###
-  [./phi_e_left]
-      type = FunctionPenaltyDirichletBC
-      variable = phi_e
-      boundary = 'left'
-      function = '0'
-      penalty = 300
-  [../]
-  [./phi_e_right]
-      type = FunctionPenaltyDirichletBC
-      variable = phi_e
-      boundary = 'right'
-      function = '0'
-      penalty = 300
-  [../]
+  #[./phi_e_top]
+  #    type = FunctionDirichletBC
+  #    variable = phi_e
+  #    boundary = 'top'
+  #    function = '0'
+  #[../]
+
 
   ### Fluxes for Ions ###
   [./pos_ion_FluxIn]
@@ -362,32 +306,11 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 1e-8
+      u_input = 2e-8
   [../]
   [./pos_ion_FluxOut]
       type = DGPoreConcFluxBC
       variable = pos_ion
-      boundary = 'top'
-      porosity = eps
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
-  [../]
-
-  ### Fluxes for Ions ###
-  [./neg_ion_FluxIn]
-      type = DGPoreConcFluxBC
-      variable = neg_ion
-      boundary = 'bottom'
-      porosity = eps
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
-      u_input = 1e-8
-  [../]
-  [./neg_ion_FluxOut]
-      type = DGPoreConcFluxBC
-      variable = neg_ion
       boundary = 'top'
       porosity = eps
       ux = vel_x
@@ -509,7 +432,7 @@
   petsc_options_value = 'fgmres
                          ksp
 
-                         lu
+                         ilu
 
                          20
 
