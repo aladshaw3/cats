@@ -93,6 +93,8 @@ protected:
 
   Real _min_conductivity;                                 ///< Minimum allowable value for conductivity (based on sum of ions)
 
+  bool _tight;                      ///< Boolean to determine whether to use tight or loose coupling
+
 private:
 
 };

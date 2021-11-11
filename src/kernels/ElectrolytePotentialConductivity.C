@@ -60,6 +60,8 @@ InputParameters ElectrolytePotentialConductivity::validParams()
     params.addParam< std::vector<Real> >("ion_valence","List of valences for coupled ion concentrations");
 
     params.addParam<Real>("min_conductivity",1e-30, "Minimum value of conductivity to prevent zero diagonals in Jacobians");
+
+    params.addParam<bool>("tight_coupling",true, "True = use tight coupling of ion concentrations");
     return params;
 }
 
@@ -75,7 +77,8 @@ _faraday(getParam<Real>("faraday_const")),
 _gas_const(getParam<Real>("gas_const")),
 
 _valence(getParam<std::vector<Real> >("ion_valence")),
-_min_conductivity(getParam<Real>("min_conductivity"))
+_min_conductivity(getParam<Real>("min_conductivity")),
+_tight(getParam<bool>("tight_coupling"))
 {
     unsigned int c = coupledComponents("ion_conc");
     _ion_conc_vars.resize(c);
@@ -104,7 +107,10 @@ _min_conductivity(getParam<Real>("min_conductivity"))
     for (unsigned int i = 0; i<_ion_conc.size(); ++i)
     {
         _ion_conc_vars[i] = coupled("ion_conc",i);
-        _ion_conc[i] = &coupledValue("ion_conc",i);
+        if (_tight==false)
+            _ion_conc[i] = &coupledValueOld("ion_conc",i);
+        else
+            _ion_conc[i] = &coupledValue("ion_conc",i);
     }
 
     for (unsigned int i = 0; i<_diffusion.size(); ++i)
@@ -158,7 +164,7 @@ Real ElectrolytePotentialConductivity::computeQpOffDiagJacobian(unsigned int jva
     Real offjac = 0.0;
     for (unsigned int i = 0; i<_ion_conc.size(); ++i)
     {
-        if (jvar == _ion_conc_vars[i])
+        if (jvar == _ion_conc_vars[i] && _tight == true)
           offjac = _grad_test[_i][_qp]*( (_faraday*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*_valence[i]*_valence[i]*(*_diffusion[i])[_qp]*_phi[_j][_qp] )*_grad_u[_qp];
           break;
         if (jvar == _diffusion_vars[i])
