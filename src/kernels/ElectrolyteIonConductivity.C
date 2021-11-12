@@ -12,8 +12,6 @@
  *                  of an All Vanadium Redox Flow Battery", Sandia Report, SAND2014-0190,
  *                  Sandia National Laboratories, Albuquerque, NM, January 2014.
  *
- *  \note Users MUST provide the direction of the current vector being calculated (0=>x, 1=>y, 2=>z)
- *
  *  \author Austin Ladshaw
  *	\date 11/08/2021
  *	\copyright This kernel was designed and built at Oak Ridge National

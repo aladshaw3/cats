@@ -127,11 +127,9 @@
 [] #END ICs
 
 [Kernels]
-    # Calculate potential from gradients in system
-    #   Provide background ions because they help
-    #   to control the system's overall conductivity
+    # DG Implementation for electric potential
     [./phi_e_pot_cond]
-        type = ElectrolytePotentialConductivity
+        type = GElectrolytePotentialConductivity
         variable = phi_e
         porosity = eps
         temperature = Te
@@ -141,7 +139,7 @@
         tight_coupling = true
     [../]
     [./phi_e_ion_cond]
-        type = ElectrolyteIonConductivity
+        type = GElectrolyteIonConductivity
         variable = phi_e
         porosity = eps
         ion_conc = 'pos_ion_background pos_ion'
