@@ -1,0 +1,7 @@
+[Tests]
+  [./test_dg_diffuse_flux]
+    type = 'Exodiff'
+    input = 'diff_flux_bc.i'
+    exodiff = 'diff_flux_bc_out.e'
+  [../]
+[]
