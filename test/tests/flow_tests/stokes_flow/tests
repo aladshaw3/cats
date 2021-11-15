@@ -1,0 +1,8 @@
+[Tests]
+  [./basic_stokes_flow]
+    type = Exodiff
+    input = stokes_flow.i
+    exodiff = stokes_flow_out.e
+    rel_err = 1e-4
+  [../]
+[]

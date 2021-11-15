@@ -133,7 +133,7 @@ Real ElectrolyteCurrentFromIonGradient::sum_ion_gradient_terms()
 
 Real ElectrolyteCurrentFromIonGradient::computeQpResidual()
 {
-    return -_test[_i][_qp]*_faraday*_porosity[_qp]*sum_ion_gradient_terms();
+    return _test[_i][_qp]*_faraday*_porosity[_qp]*sum_ion_gradient_terms();
 }
 
 Real ElectrolyteCurrentFromIonGradient::computeQpJacobian()
@@ -145,17 +145,17 @@ Real ElectrolyteCurrentFromIonGradient::computeQpOffDiagJacobian(unsigned int jv
 {
     if (jvar == _porosity_var)
     {
-        return -_test[_i][_qp]*_faraday*_phi[_j][_qp]*sum_ion_gradient_terms();
+        return _test[_i][_qp]*_faraday*_phi[_j][_qp]*sum_ion_gradient_terms();
     }
 
     Real offjac = 0.0;
     for (unsigned int i = 0; i<_ion_conc_grad.size(); ++i)
     {
         if (jvar == _ion_conc_vars[i])
-          offjac = -_test[_i][_qp]*_faraday*_porosity[_qp] * _valence[i]*(*_diffusion[i])[_qp]*( _norm_vec*_grad_phi[_j][_qp] );
+          offjac = _test[_i][_qp]*_faraday*_porosity[_qp] * _valence[i]*(*_diffusion[i])[_qp]*( _norm_vec*_grad_phi[_j][_qp] );
           break;
         if (jvar == _diffusion_vars[i])
-          offjac = -_test[_i][_qp]*_faraday*_porosity[_qp] * _valence[i]*_phi[_j][_qp]*( _norm_vec*(*_ion_conc_grad[i])[_qp] );
+          offjac = _test[_i][_qp]*_faraday*_porosity[_qp] * _valence[i]*_phi[_j][_qp]*( _norm_vec*(*_ion_conc_grad[i])[_qp] );
           break;
     }
 

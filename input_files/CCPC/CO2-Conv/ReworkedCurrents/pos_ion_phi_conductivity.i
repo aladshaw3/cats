@@ -151,7 +151,7 @@
     [../]
 
     # Current density in x-dir from potential gradient
-    #  -ie_x
+    #  ie_x
     [./ie_x_equ]
         type = Reaction
         variable = ie_x
@@ -180,7 +180,7 @@
     [../]
 
     # Current density in y-dir from potential gradient
-    #  -ie_y
+    #  ie_y
     [./ie_y_equ]
         type = Reaction
         variable = ie_y
@@ -364,14 +364,14 @@
   [./phi_e_right]
       type = FunctionPenaltyDirichletBC
       variable = phi_e
-      boundary = 'right'
+      boundary = 'bottom'
       function = '0'
       penalty = 300
   [../]
   [./phi_e_left]
       type = FunctionNeumannBC
       variable = phi_e
-      boundary = 'left'
+      boundary = 'top'
       function = '1e-6*t'
   [../]
 
