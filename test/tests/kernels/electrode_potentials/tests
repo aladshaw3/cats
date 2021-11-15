@@ -1,0 +1,7 @@
+[Tests]
+  [./electrode_potentials]
+    type = 'Exodiff'
+    input = 'electrode_only.i'
+    exodiff = 'electrode_only_out.e'
+  [../]
+[]
