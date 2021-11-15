@@ -71,9 +71,7 @@
 [] #END ICs
 
 [Kernels]
-    # Calculate potential from gradients in system
-    #   Provide background ions because they help
-    #   to control the system's overall conductivity
+    # Calculate potential from conductivity
     [./phi_s_pot_cond]
         type = ElectrodePotentialConductivity
         variable = phi_s

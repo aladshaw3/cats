@@ -1,0 +1,7 @@
+[Tests]
+  [./coupling_flow_nernst_planck_and_potentials_no_rxns]
+    type = Exodiff
+    input = porous_electrode_no_reactions.i
+    exodiff = porous_electrode_no_reactions_out.e
+  [../]
+[]
