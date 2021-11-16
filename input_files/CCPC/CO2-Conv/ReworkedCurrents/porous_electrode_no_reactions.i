@@ -5,7 +5,7 @@
 #   BCs for Darcy flow can either be 'No Slip' or 'No Penetration'.
 #   The 'No Penetration' BC for Darcy flow will result in smoother,
 #   more stable results, while 'No Slip' generally works better for
-#   Stokes flow. 
+#   Stokes flow.
 
 [GlobalParams]
   # Default DG methods

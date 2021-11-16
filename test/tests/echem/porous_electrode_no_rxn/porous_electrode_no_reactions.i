@@ -528,22 +528,26 @@
       function = '100*(1-exp(-0.01*t))'
   [../]
 
-  ### No Slip Conditions at the Walls ###
+  ### No Penetration Conditions at the Walls ###
   # in x-direction
   [./vel_x_obj]
-        type = PenaltyDirichletBC
+        type = INSNormalFlowBC
         variable = vel_x
         boundary = 'left right'
-		    value = 0.0
-        penalty = 3e2
+        direction = 0
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
   [../]
   # in y-direction
   [./vel_y_obj]
-        type = PenaltyDirichletBC
+        type = INSNormalFlowBC
         variable = vel_y
         boundary = 'left right'
-		    value = 0.0
-        penalty = 3e2
+        direction = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
   [../]
 
 
