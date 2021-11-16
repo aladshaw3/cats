@@ -351,12 +351,12 @@
       uz = vel_z
   [../]
 
-  ### No Slip Conditions at the Walls ###
+  ### No Slip Conditions at the Obstruction Walls ###
   # in x-direction
   [./vel_x_obj]
         type = PenaltyDirichletBC
         variable = vel_x
-        boundary = 'top bottom object'
+        boundary = 'object'
 		    value = 0.0
         penalty = 3e2
   [../]
@@ -364,9 +364,32 @@
   [./vel_y_obj]
         type = PenaltyDirichletBC
         variable = vel_y
-        boundary = 'top bottom object'
+        boundary = 'object'
 		    value = 0.0
         penalty = 3e2
+  [../]
+
+
+  ### No Penatration Conditions at the Outer Walls ###
+  # in x-direction
+  [./vel_x_wall]
+        type = INSNormalFlowBC
+        variable = vel_x
+        boundary = 'top bottom object'
+        direction = 0
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+  [../]
+  # in y-direction
+  [./vel_y_owall]
+        type = INSNormalFlowBC
+        variable = vel_y
+        boundary = 'top bottom object'
+        direction = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
   [../]
 
   ### Fluxes for Conservative Tracer ###

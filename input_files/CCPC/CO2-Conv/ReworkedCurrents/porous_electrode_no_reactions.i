@@ -1,5 +1,11 @@
 # This file presents all physics of a porous electrode, but without
 #   the reactions (and assumed isothermal).
+#
+# Darcy flow is being used to assess the velocity in the domain.
+#   BCs for Darcy flow can either be 'No Slip' or 'No Penetration'.
+#   The 'No Penetration' BC for Darcy flow will result in smoother,
+#   more stable results, while 'No Slip' generally works better for
+#   Stokes flow. 
 
 [GlobalParams]
   # Default DG methods
@@ -530,20 +536,43 @@
 
   ### No Slip Conditions at the Walls ###
   # in x-direction
+  #[./vel_x_obj]
+  #      type = PenaltyDirichletBC
+  #      variable = vel_x
+  #      boundary = 'left right'
+	#	    value = 0.0
+  #      penalty = 3e2
+  #[../]
+  # in y-direction
+  #[./vel_y_obj]
+  #      type = PenaltyDirichletBC
+  #      variable = vel_y
+  #      boundary = 'left right'
+	#	    value = 0.0
+  #      penalty = 3e2
+  #[../]
+
+
+  ### No Penetration Conditions at the Walls ###
+  # in x-direction
   [./vel_x_obj]
-        type = PenaltyDirichletBC
+        type = INSNormalFlowBC
         variable = vel_x
         boundary = 'left right'
-		    value = 0.0
-        penalty = 3e2
+        direction = 0
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
   [../]
   # in y-direction
   [./vel_y_obj]
-        type = PenaltyDirichletBC
+        type = INSNormalFlowBC
         variable = vel_y
         boundary = 'left right'
-		    value = 0.0
-        penalty = 3e2
+        direction = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
   [../]
 
 
