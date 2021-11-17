@@ -193,6 +193,96 @@ def readCoOptimaFile(run_name, bypass_name):
         'P tup in (bar)', 'P top out (bar)',
         'NH3 (300,3000)', 'CO (500,10000)', 'Ethanol (1000,10000)', 'CH4 (250,3000)']
 
+    # isooctane-nheptane
+    if base_folder == "50pctisooctane50pctNheptane":
+        list = ['Elapsed Time (min)', 'N2O (100,200,300)', 'NO (350,3000)', 'NO2 (150)', 'H2O% (20)', 'CO2% (20)',
+        'Formaldehyde (70)', 'Acetaldehyde (1000)', 'Acetylene (1000)', 'Ethylene (100,3000)', 'Toluene (1000)',
+        'Isobutylene (500)', 'Propylene (200,1000)', 'Isopentane (500)', 'AI 57', 'AI 71', 'AI (#3)', 'AI (#4)',
+        'FID THC (ppm C1)',
+        'TC top sample in (C)', 'TC top sample mid 2 (C)', 'TC top sample out (C)',
+        'P tup in (bar)', 'P top out (bar)',
+        'NH3 (300,3000)', 'CO (500,10000)', 'Ethanol (1000,10000)', 'CH4 (250,3000)']
+
+    # isooctane-toluene
+    if base_folder == "50pctisooctane50pcttoluene":
+        list = ['Elapsed Time (min)', 'N2O (100,200,300)', 'NO (350,3000)', 'NO2 (150)', 'H2O% (20)', 'CO2% (20)',
+        'Formaldehyde (70)', 'Acetaldehyde (1000)', 'Acetylene (1000)', 'Ethylene (100,3000)', 'Toluene (1000)',
+        'Isobutylene (500)', 'Propylene (200,1000)', 'Isopentane (500)', 'AI 57', 'AI (#3)', 'AI (#4)',
+        'FID THC (ppm C1)',
+        'TC top sample in (C)', 'TC top sample mid 2 (C)', 'TC top sample out (C)',
+        'P tup in (bar)', 'P top out (bar)',
+        'NH3 (300,3000)', 'CO (500,10000)', 'Ethanol (1000,10000)', 'CH4 (250,3000)']
+
+    # diiso-isooctane
+    if base_folder == "30pctDiiso70pctIsooctane":
+        list = ['Elapsed Time (min)', 'N2O (100,200,300)', 'NO (350,3000)', 'NO2 (150)', 'H2O% (20)', 'CO2% (20)',
+        'Formaldehyde (70)', 'Acetaldehyde (1000)', 'Acetylene (1000)', 'Ethylene (100,3000)', 'Toluene (1000)',
+        'Isobutylene (500)', 'Propylene (200,1000)', 'Isopentane (500)', 'AI 57',
+        'FID THC (ppm C1)',
+        'TC top sample in (C)', 'TC top sample mid 2 (C)', 'TC top sample out (C)',
+        'P tup in (bar)', 'P top out (bar)',
+        'NH3 (300,3000)', 'CO (500,10000)', 'Ethanol (1000,10000)', 'CH4 (250,3000)']
+
+    # diiso-nheptane
+    if base_folder == "30pctDiiso70pctNheptane":
+        list = ['Elapsed Time (min)', 'N2O (100,200,300)', 'NO (350,3000)', 'NO2 (150)', 'H2O% (20)', 'CO2% (20)',
+        'Formaldehyde (70)', 'Acetaldehyde (1000)', 'Acetylene (1000)', 'Ethylene (100,3000)', 'Toluene (1000)',
+        'Isobutylene (500)', 'Propylene (200,1000)', 'Isopentane (500)',
+        'FID THC (ppm C1)',
+        'TC top sample in (C)', 'TC top sample mid 2 (C)', 'TC top sample out (C)',
+        'P tup in (bar)', 'P top out (bar)',
+        'NH3 (300,3000)', 'CO (500,10000)', 'Ethanol (1000,10000)', 'CH4 (250,3000)']
+
+    # diiso-toluene
+    if base_folder == "30pctDiiso70pcttoluene":
+        list = ['Elapsed Time (min)', 'N2O (100,200,300)', 'NO (350,3000)', 'NO2 (150)', 'H2O% (20)', 'CO2% (20)',
+        'Formaldehyde (70)', 'Acetaldehyde (1000)', 'Acetylene (1000)', 'Ethylene (100,3000)', 'Toluene (1000)',
+        'Isobutylene (500)', 'Propylene (200,1000)', 'Isopentane (500)',
+        'FID THC (ppm C1)',
+        'TC top sample in (C)', 'TC top sample mid 2 (C)', 'TC top sample out (C)',
+        'P tup in (bar)', 'P top out (bar)',
+        'NH3 (300,3000)', 'CO (500,10000)', 'Ethanol (1000,10000)', 'CH4 (250,3000)']
+
+    # ethanol-isooctane
+    if base_folder == "30pctEtOH70pctIsooctane":
+        list = ['Elapsed Time (min)', 'N2O (100,200,300)', 'NO (350,3000)', 'NO2 (150)', 'H2O% (20)', 'CO2% (20)',
+        'Formaldehyde (70)', 'Acetaldehyde (1000)', 'Acetylene (1000)', 'Ethylene (100,3000)', 'Toluene (1000)',
+        'Isobutylene (500)', 'Propylene (200,1000)', 'Isopentane (500)',
+        'FID THC (ppm C1)',
+        'TC top sample in (C)', 'TC top sample mid 2 (C)', 'TC top sample out (C)',
+        'P tup in (bar)', 'P top out (bar)',
+        'NH3 (300,3000)', 'CO (500,10000)', 'Ethanol (1000,10000)', 'CH4 (250,3000)']
+
+    # ethanol-nheptane
+    if base_folder == "30pctEtOH70pctNheptane":
+        list = ['Elapsed Time (min)', 'N2O (100,200,300)', 'NO (350,3000)', 'NO2 (150)', 'H2O% (20)', 'CO2% (20)',
+        'Formaldehyde (70)', 'Acetaldehyde (1000)', 'Acetylene (1000)', 'Ethylene (100,3000)', 'Toluene (1000)',
+        'Isobutylene (500)', 'Propylene (200,1000)', 'Isopentane (500)',
+        'FID THC (ppm C1)',
+        'TC top sample in (C)', 'TC top sample mid 2 (C)', 'TC top sample out (C)',
+        'P tup in (bar)', 'P top out (bar)',
+        'NH3 (300,3000)', 'CO (500,10000)', 'Ethanol (1000,10000)', 'CH4 (250,3000)']
+
+    # ethanol-toluene
+    if base_folder == "30pctEtOH70pcttoluene":
+        list = ['Elapsed Time (min)', 'N2O (100,200,300)', 'NO (350,3000)', 'NO2 (150)', 'H2O% (20)', 'CO2% (20)',
+        'Formaldehyde (70)', 'Acetaldehyde (1000)', 'Acetylene (1000)', 'Ethylene (100,3000)', 'Toluene (1000)',
+        'Isobutylene (500)', 'Propylene (200,1000)', 'Isopentane (500)',
+        'FID THC (ppm C1)',
+        'TC top sample in (C)', 'TC top sample mid 2 (C)', 'TC top sample out (C)',
+        'P tup in (bar)', 'P top out (bar)',
+        'NH3 (300,3000)', 'CO (500,10000)', 'Ethanol (1000,10000)', 'CH4 (250,3000)']
+
+    # isooctane-nheptane-1hexene
+    if base_folder == "IsooctaneNheptane":
+        list = ['Elapsed Time (min)', 'N2O (100,200,300)', 'NO (350,3000)', 'NO2 (150)', 'H2O% (20)', 'CO2% (20)',
+        'Formaldehyde (70)', 'Acetaldehyde (1000)', 'Acetylene (1000)', 'Ethylene (100,3000)', 'Toluene (1000)',
+        'Isobutylene (500)', 'Propylene (200,1000)', 'Isopentane (500)',
+        'FID THC (ppm C1)',
+        'TC top sample in (C)', 'TC top sample mid 2 (C)', 'TC top sample out (C)',
+        'P tup in (bar)', 'P top out (bar)',
+        'NH3 (300,3000)', 'CO (500,10000)', 'Ethanol (1000,10000)', 'CH4 (250,3000)']
+
     #End if statements for folder names
 
     # Uncomment out these lines to view the column names at this point
@@ -294,8 +384,6 @@ def readCoOptimaFile(run_name, bypass_name):
     #       25/75 tol/hep                0.708
     #       10/90 tol/hep                0.724
     #        5/95 tol/hep                0.729
-    #
-    #       10% diiso/BOB                unknown
 
     # 50% toluene and 50% n-heptane
     if base_folder == "50pctToluene50pctNheptane":
@@ -331,27 +419,63 @@ def readCoOptimaFile(run_name, bypass_name):
 
     # 10pct_diiso
     if base_folder == "Diiso10pctBobBOB":
-        frame_list = [0.]*len(run.getTimeFrames())
+        frame_list = [0.706]*len(run.getTimeFrames())
 
     # 20pct_diiso
     if base_folder == "Diiso20pctBobBOB":
-        frame_list = [0.]*len(run.getTimeFrames())
+        frame_list = [0.707]*len(run.getTimeFrames())
 
     # 30pct_diiso
     if base_folder == "Diiso30pctBobBOB":
-        frame_list = [0.]*len(run.getTimeFrames())
+        frame_list = [0.708]*len(run.getTimeFrames())
 
     # 10pct_ibutoh
     if base_folder == "iBuOH10pctBobBOB":
-        frame_list = [0.]*len(run.getTimeFrames())
+        frame_list = [0.706]*len(run.getTimeFrames())
 
     # 20pct_ibutoh
     if base_folder == "iBuOH20pctBobBOB":
-        frame_list = [0.]*len(run.getTimeFrames())
+        frame_list = [0.707]*len(run.getTimeFrames())
 
     # 30pct_ibutoh
     if base_folder == "iBuOH30pctBobBOB":
-        frame_list = [0.]*len(run.getTimeFrames())
+        frame_list = [0.708]*len(run.getTimeFrames())
+
+    # isooctane-nheptane
+    if base_folder == "50pctisooctane50pctNheptane":
+        frame_list = [0.734]*len(run.getTimeFrames())
+
+    # isooctane-toluene
+    if base_folder == "50pctisooctane50pcttoluene":
+        frame_list = [0.684]*len(run.getTimeFrames())
+
+    # diiso-isooctane
+    if base_folder == "30pctDiiso70pctIsooctane":
+        frame_list = [0.726]*len(run.getTimeFrames())
+
+    # diiso-nheptane
+    if base_folder == "30pctDiiso70pctNheptane":
+        frame_list = [0.728]*len(run.getTimeFrames())
+
+    # diiso-toluene
+    if base_folder == "30pctDiiso70pcttoluene":
+        frame_list = [0.665]*len(run.getTimeFrames())
+
+    # ethanol-isooctane
+    if base_folder == "30pctEtOH70pctIsooctane":
+        frame_list = [0.728]*len(run.getTimeFrames())
+
+    # ethanol-nheptane
+    if base_folder == "30pctEtOH70pctNheptane":
+        frame_list = [0.730]*len(run.getTimeFrames())
+
+    # ethanol-toluene
+    if base_folder == "30pctEtOH70pcttoluene":
+        frame_list = [0.661]*len(run.getTimeFrames())
+
+    # isooctane-nheptane-1hexene
+    if base_folder == "IsooctaneNheptane":
+        frame_list = [0.733]*len(run.getTimeFrames())
 
     #End if statements for different blends
 
@@ -769,6 +893,209 @@ def readCoOptimaBlendFolder(folder):
 
         run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
 
+    # isooctane-nheptane (3)
+    if folder == "isooctane-nheptane":
+        bypass_name = "20190129-CPTMA-MalibuTWC-SGDI-30k-50pctisooctane50pctNheptane-5Cramp-lambda0_999-bp-1"
+        run_name =    "20190129-CPTMA-MalibuTWC-SGDI-30k-50pctisooctane50pctNheptane-5Cramp-lambda0_999-1"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+        avg_run = readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name)
+
+        bypass_name = "20190129-CPTMA-MalibuTWC-SGDI-30k-50pctisooctane50pctNheptane-5Cramp-lambda0_999-bp-2"
+        run_name =    "20190129-CPTMA-MalibuTWC-SGDI-30k-50pctisooctane50pctNheptane-5Cramp-lambda0_999-2"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20190129-CPTMA-MalibuTWC-SGDI-30k-50pctisooctane50pctNheptane-5Cramp-lambda0_999-bp-3"
+        run_name =    "20190129-CPTMA-MalibuTWC-SGDI-30k-50pctisooctane50pctNheptane-5Cramp-lambda0_999-3"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+    # isooctane-toluene (3)
+    if folder == "isooctane-toluene":
+        bypass_name = "20190128-CPTMA-MalibuTWC-SGDI-30k-50pctisooctane50pcttoluene-5Cramp-lambda0_999-bp-1"
+        run_name =    "20190128-CPTMA-MalibuTWC-SGDI-30k-50pctisooctane50pcttoluene-5Cramp-lambda0_999-1"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+        avg_run = readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name)
+
+        bypass_name = "20190128-CPTMA-MalibuTWC-SGDI-30k-50pctisooctane50pcttoluene-5Cramp-lambda0_999-bp-2"
+        run_name =    "20190128-CPTMA-MalibuTWC-SGDI-30k-50pctisooctane50pcttoluene-5Cramp-lambda0_999-2"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20190128-CPTMA-MalibuTWC-SGDI-30k-50pctisooctane50pcttoluene-5Cramp-lambda0_999-bp-3"
+        run_name =    "20190128-CPTMA-MalibuTWC-SGDI-30k-50pctisooctane50pcttoluene-5Cramp-lambda0_999-3"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+    # diiso-isooctane (6)
+    if folder == "diiso-isooctane":
+        bypass_name = "20181211-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctIsooctane-5Cramp-lambda0_999-bp-1"
+        run_name =    "20181211-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctIsooctane-5Cramp-lambda0_999-1"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+        avg_run = readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name)
+
+        bypass_name = "20181211-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctIsooctane-5Cramp-lambda0_999-bp-2"
+        run_name =    "20181211-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctIsooctane-5Cramp-lambda0_999-2"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20181211-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctIsooctane-5Cramp-lambda0_999-bp-3"
+        run_name =    "20181211-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctIsooctane-5Cramp-lambda0_999-3"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20181213-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctIsooctane-5Cramp-lambda0_999-bp-1"
+        run_name =    "20181213-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctIsooctane-5Cramp-lambda0_999-1"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20181213-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctIsooctane-5Cramp-lambda0_999-bp-2"
+        run_name =    "20181213-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctIsooctane-5Cramp-lambda0_999-2"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20181213-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctIsooctane-5Cramp-lambda0_999-bp-3"
+        run_name =    "20181213-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctIsooctane-5Cramp-lambda0_999-3"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+    # diiso-nheptane (7)
+    if folder == "diiso-nheptane":
+        bypass_name = "20190110-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-bp-1"
+        run_name =    "20190110-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-1"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+        avg_run = readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name)
+
+        bypass_name = "20190110-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-bp-2"
+        run_name =    "20190110-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-2"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        # There are issuse with Runs 3 and 4 that force me to disregard.
+        #bypass_name = "20190110-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-bp-3"
+        #run_name =    "20190110-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-3"
+
+        #run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        #bypass_name = "20190110-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-bp-4"
+        #run_name =    "20190110-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-4"
+
+        #run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20190114-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-bp-1"
+        run_name =    "20190114-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-1"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20190114-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-bp-2"
+        run_name =    "20190114-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-2"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20190114-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-bp-3"
+        run_name =    "20190114-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pctNheptane-5Cramp-lambda0_999-3"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+    # diiso-toluene (3)
+    if folder == "diiso-toluene":
+        bypass_name = "20190125-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pcttoluene-5Cramp-lambda0_999-bp-1"
+        run_name =    "20190125-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pcttoluene-5Cramp-lambda0_999-1"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+        avg_run = readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name)
+
+        bypass_name = "20190125-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pcttoluene-5Cramp-lambda0_999-bp-2"
+        run_name =    "20190125-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pcttoluene-5Cramp-lambda0_999-2"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20190125-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pcttoluene-5Cramp-lambda0_999-bp-3"
+        run_name =    "20190125-CPTMA-MalibuTWC-SGDI-30k-30pctDiiso70pcttoluene-5Cramp-lambda0_999-3"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+    # ethanol-isooctane (3)
+    if folder == "ethanol-isooctane":
+        bypass_name = "20181116-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pctIsooctane-5Cramp-lambda0_999-bp-1"
+        run_name =    "20181116-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pctIsooctane-5Cramp-lambda0_999-1"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+        avg_run = readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name)
+
+        bypass_name = "20181116-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pctIsooctane-5Cramp-lambda0_999-bp-2"
+        run_name =    "20181116-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pctIsooctane-5Cramp-lambda0_999-2"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20181116-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pctIsooctane-5Cramp-lambda0_999-bp-3"
+        run_name =    "20181116-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pctIsooctane-5Cramp-lambda0_999-3"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+    # ethanol-nheptane (3)
+    if folder == "ethanol-nheptane":
+        bypass_name = "20190117-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pctNheptane-5Cramp-lambda0_999-bp-1"
+        run_name =    "20190117-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pctNheptane-5Cramp-lambda0_999-1"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+        avg_run = readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name)
+
+        bypass_name = "20190117-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pctNheptane-5Cramp-lambda0_999-bp-2"
+        run_name =    "20190117-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pctNheptane-5Cramp-lambda0_999-2"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20190117-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pctNheptane-5Cramp-lambda0_999-bp-3"
+        run_name =    "20190117-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pctNheptane-5Cramp-lambda0_999-3"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+    # ethanol-toluene (4)
+    if folder == "ethanol-toluene":
+        bypass_name = "20190123-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pcttoluene-5Cramp-lambda0_999-bp-1"
+        run_name =    "20190123-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pcttoluene-5Cramp-lambda0_999-1"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+        avg_run = readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name)
+
+        bypass_name = "20190123-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pcttoluene-5Cramp-lambda0_999-bp-2"
+        run_name =    "20190123-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pcttoluene-5Cramp-lambda0_999-2"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20190123-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pcttoluene-5Cramp-lambda0_999-bp-3"
+        run_name =    "20190123-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pcttoluene-5Cramp-lambda0_999-3"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20190123-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pcttoluene-5Cramp-lambda0_999-bp-4"
+        run_name =    "20190123-CPTMA-MalibuTWC-SGDI-30k-30pctEtOH70pcttoluene-5Cramp-lambda0_999-4"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+    # isooctane-nheptane-1hexene (3)
+    if folder == "isooctane-nheptane-1hexene":
+        bypass_name = "20190201-CPTMA-MalibuTWC-SGDI-30k-Isooctane-Nheptane-1hexene-5Cramp-lambda0_999-bp-1"
+        run_name =    "20190201-CPTMA-MalibuTWC-SGDI-30k-Isooctane-Nheptane-1hexene-5Cramp-lambda0_999-1"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+        avg_run = readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name)
+
+        bypass_name = "20190201-CPTMA-MalibuTWC-SGDI-30k-Isooctane-Nheptane-1hexene-5Cramp-lambda0_999-bp-2"
+        run_name =    "20190201-CPTMA-MalibuTWC-SGDI-30k-Isooctane-Nheptane-1hexene-5Cramp-lambda0_999-2"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
+        bypass_name = "20190201-CPTMA-MalibuTWC-SGDI-30k-Isooctane-Nheptane-1hexene-5Cramp-lambda0_999-bp-3"
+        run_name =    "20190201-CPTMA-MalibuTWC-SGDI-30k-Isooctane-Nheptane-1hexene-5Cramp-lambda0_999-3"
+
+        run.append(readCoOptimaFile(folder+"/"+run_name, folder+"/"+bypass_name))
+
     #End if statements for folder names
 
     #After the nested if statements, the run list should be holding all pre-processed data
@@ -873,7 +1200,9 @@ def readCoOptimaBlendFolder(folder):
 def main(argv):
     # Co-Optima data cannot be automatically paired with by-pass data since the data frames for
     # the runs and by-pass do not match exactly. Instead, we will read in each seperately and
-    # combine manually.
+    # combine manually. Some additional manual adjustment is also needed based off of (i) file
+    # names, (ii) column names, and (iii) O2 levels, since that information was either not
+    # standardized, or was left out of the data files themselves.
 
     #readCoOptimaBlendFolder("50-50_toluene-nheptane")
     #readCoOptimaBlendFolder("25-75_toluene-nheptane")
@@ -886,13 +1215,26 @@ def main(argv):
     #readCoOptimaBlendFolder("BOB-E20")
     #readCoOptimaBlendFolder("BOB-E30")
 
-    #readCoOptimaBlendFolder("10pct_diiso")
-    #readCoOptimaBlendFolder("20pct_diiso")
-    #readCoOptimaBlendFolder("30pct_diiso")
+    readCoOptimaBlendFolder("10pct_diiso")
+    readCoOptimaBlendFolder("20pct_diiso")
+    readCoOptimaBlendFolder("30pct_diiso")
 
-    #readCoOptimaBlendFolder("10pct_ibutoh")
-    #readCoOptimaBlendFolder("20pct_ibutoh")
+    readCoOptimaBlendFolder("10pct_ibutoh")
+    readCoOptimaBlendFolder("20pct_ibutoh")
     readCoOptimaBlendFolder("30pct_ibutoh")
+
+    #readCoOptimaBlendFolder("isooctane-nheptane")
+    #readCoOptimaBlendFolder("isooctane-toluene")
+
+    #readCoOptimaBlendFolder("diiso-isooctane")
+    #readCoOptimaBlendFolder("diiso-nheptane")
+    #readCoOptimaBlendFolder("diiso-toluene")
+
+    #readCoOptimaBlendFolder("ethanol-isooctane")
+    #readCoOptimaBlendFolder("ethanol-nheptane")
+    #readCoOptimaBlendFolder("ethanol-toluene")
+
+    #readCoOptimaBlendFolder("isooctane-nheptane-1hexene")
 
     return
 

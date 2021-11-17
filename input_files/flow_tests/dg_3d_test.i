@@ -7,7 +7,7 @@
 #   This appears to work fine, but the memory and time make it
 #   inefficient. Best to use MOOSE CG INS module or FV module.
 #   This would then also require the ability to couple CG/DG
-#   FE variables to FV variables. 
+#   FE variables to FV variables.
 
 # Equations:
 # ----------
@@ -121,7 +121,7 @@
 
   ### Other variables for mass and energy can be any order 'MONOMIAL' functions
   [./tracer]
-      order = Constant
+      order = FIRST
       family = MONOMIAL
       initial_condition = 0
   [../]
@@ -134,14 +134,14 @@
     #       jumps in velocity magnitudes near boundaries. You can stabilize the
     #       flow by artificially increasing viscosity, but this will lower accuracy.
     [./mu]
-        order = Constant
-        family = MONOMIAL
+        order = FIRST
+        family = LAGRANGE
         initial_condition = 0.2
     [../]
 
     [./rho]
-        order = Constant
-        family = MONOMIAL
+        order = FIRST
+        family = LAGRANGE
         initial_condition = 1
     [../]
 
@@ -564,7 +564,7 @@
 
   # snes_max_it = maximum non-linear steps
   petsc_options_value = 'fgmres
-                         ksp
+                         lu
 
                          lu
 
