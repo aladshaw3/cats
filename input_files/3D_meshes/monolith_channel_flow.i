@@ -371,9 +371,9 @@
   [./vel_y_inlet]
         type = FunctionPenaltyDirichletBC
         variable = vel_y
-        boundary = 'inlet'
-        penalty = 3e2
-        function = '0.1*(1-exp(-0.1*t))'
+        boundary = 'inlet outlet'
+        penalty = 3e4
+        function = '100*t'
   [../]
 
   ### Momentum Flux Out of Domain ###
@@ -418,7 +418,7 @@
         variable = vel_x
         boundary = 'washcoat_walls'
 		    value = 0.0
-        penalty = 3e2
+        penalty = 3e4
   [../]
   # in y-direction
   [./vel_y_obj]
@@ -426,7 +426,7 @@
         variable = vel_y
         boundary = 'washcoat_walls'
 		    value = 0.0
-        penalty = 3e2
+        penalty = 3e4
   [../]
   # in z-direction
   [./vel_z_obj]
@@ -434,7 +434,7 @@
         variable = vel_z
         boundary = 'washcoat_walls'
 		    value = 0.0
-        penalty = 3e2
+        penalty = 3e4
   [../]
 
   ### Fluxes for Conservative Tracer ###
