@@ -1,0 +1,7 @@
+[Tests]
+  [./const_rxn_with_zero_equ_pot]
+    type = Exodiff
+    input = basic_rxn.i
+    exodiff = basic_rxn_out.e
+  [../]
+[]
