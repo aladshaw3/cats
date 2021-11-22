@@ -50,7 +50,7 @@ InputParameters InterfaceEnergyTransfer::validParams()
     params.addRequiredCoupledVar("transfer_coef","Variable for heat transfer coefficient (W/m^2/K)");
     params.addRequiredCoupledVar("master_temp","Variable for the master temperature (K)");
     params.addRequiredCoupledVar("neighbor_temp","Variable for the neighbor temperature (K)");
-    params.addRequiredCoupledVar("area_frac","Variable for contact area fraction (or volume fraction) (-)");
+    params.addCoupledVar("area_frac",1,"Variable for contact area fraction (or volume fraction) (-)");
     return params;
 }
 
@@ -100,7 +100,7 @@ Real InterfaceEnergyTransfer::computeQpJacobian(Moose::DGJacobianType /* type */
 Real InterfaceEnergyTransfer::computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar)
 {
     Real jac = 0.0;
-    
+
     if (jvar == _Tu_var || jvar == _Tv_var)
     {
         switch (type)
@@ -108,22 +108,22 @@ Real InterfaceEnergyTransfer::computeQpOffDiagJacobian(Moose::DGJacobianType typ
             case Moose::ElementElement:
                 jac = _test[_i][_qp] * _h[_qp] * _areafrac[_qp] * _phi[_j][_qp];
                 break;
-        
+
             case Moose::NeighborNeighbor:
                 jac = -_test_neighbor[_i][_qp] * -_h[_qp] * _areafrac[_qp] * _phi_neighbor[_j][_qp];
                 break;
-        
+
             case Moose::NeighborElement:
                 jac = -_test_neighbor[_i][_qp] * _h[_qp] * _areafrac[_qp] * _phi[_j][_qp];
                 break;
-        
+
             case Moose::ElementNeighbor:
                 jac = _test[_i][_qp] * -_h[_qp] * _areafrac[_qp] * _phi_neighbor[_j][_qp];
                 break;
         }
         return jac;
     }
-    
+
     if (jvar == _h_var)
     {
         switch (type)
@@ -131,22 +131,22 @@ Real InterfaceEnergyTransfer::computeQpOffDiagJacobian(Moose::DGJacobianType typ
             case Moose::ElementElement:
                 jac = _test[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp]  * (_Tu[_qp] - _Tv[_qp]);
                 break;
-        
+
             case Moose::NeighborNeighbor:
                 jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp]  * (_Tu[_qp] - _Tv[_qp]);
                 break;
-        
+
             case Moose::NeighborElement:
                 jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp]  * (_Tu[_qp] - _Tv[_qp]);
                 break;
-        
+
             case Moose::ElementNeighbor:
                 jac = _test[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp]  * (_Tu[_qp] - _Tv[_qp]);
                 break;
         }
         return jac;
     }
-    
+
     if (jvar == _areafrac_var)
     {
         switch (type)
@@ -154,21 +154,21 @@ Real InterfaceEnergyTransfer::computeQpOffDiagJacobian(Moose::DGJacobianType typ
             case Moose::ElementElement:
                 jac = _test[_i][_qp] * _phi[_j][_qp] * _h[_qp]  * (_Tu[_qp] - _Tv[_qp]);
                 break;
-        
+
             case Moose::NeighborNeighbor:
                 jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _h[_qp]  * (_Tu[_qp] - _Tv[_qp]);
                 break;
-        
+
             case Moose::NeighborElement:
                 jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _h[_qp]  * (_Tu[_qp] - _Tv[_qp]);
                 break;
-        
+
             case Moose::ElementNeighbor:
                 jac = _test[_i][_qp] * _phi[_j][_qp] * _h[_qp]  * (_Tu[_qp] - _Tv[_qp]);
                 break;
         }
         return jac;
     }
-    
+
     return 0.0;
 }

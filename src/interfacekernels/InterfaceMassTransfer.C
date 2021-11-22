@@ -44,13 +44,17 @@ registerMooseObject("catsApp", InterfaceMassTransfer);
 InputParameters InterfaceMassTransfer::validParams()
 {
     InputParameters params = InterfaceKernel::validParams();
-    params.addParam< Real >("transfer_rate",1.0,"Mass/energy transfer coefficient");
+    params.addCoupledVar("transfer_rate",1.0,"Variable for mass transfer coefficient (length/time)");
+    params.addCoupledVar("area_frac",1,"Variable for contact area fraction (or volume fraction) (-)");
     return params;
 }
 
 InterfaceMassTransfer::InterfaceMassTransfer(const InputParameters & parameters)
   : InterfaceKernel(parameters),
-_trans_rate(getParam<Real>("transfer_rate"))
+  _km(coupledValue("transfer_rate")),
+  _km_var(coupled("transfer_rate")),
+  _areafrac(coupledValue("area_frac")),
+  _areafrac_var(coupled("area_frac"))
 {
 }
 
@@ -63,13 +67,13 @@ Real InterfaceMassTransfer::computeQpResidual(Moose::DGResidualType type)
     // Residual = km*(u - v)
     // Weak form for master domain is: (test, km*(u - v) )
     case Moose::Element:
-      r = _test[_i][_qp] * _trans_rate * (_u[_qp] - _neighbor_value[_qp]);
+      r = _test[_i][_qp] * _km[_qp] * _areafrac[_qp] * (_u[_qp] - _neighbor_value[_qp]);
       break;
 
     // Similarly, weak form for slave domain is: -(test, km*(u - v)),
     // flip the sign because the direction is opposite.
     case Moose::Neighbor:
-      r = -_test_neighbor[_i][_qp] * _trans_rate * (_u[_qp] - _neighbor_value[_qp]);
+      r = -_test_neighbor[_i][_qp] * _areafrac[_qp] * _km[_qp] * (_u[_qp] - _neighbor_value[_qp]);
       break;
   }
   return r;
@@ -81,17 +85,70 @@ Real InterfaceMassTransfer::computeQpJacobian(Moose::DGJacobianType type)
   switch (type)
   {
     case Moose::ElementElement:
-      jac = _test[_i][_qp] * _trans_rate * _phi[_j][_qp];
+      jac = _test[_i][_qp] * _km[_qp] * _areafrac[_qp] * _phi[_j][_qp];
       break;
     case Moose::NeighborNeighbor:
-      jac = -_test_neighbor[_i][_qp] * -_trans_rate * _phi_neighbor[_j][_qp];
+      jac = -_test_neighbor[_i][_qp] * -_km[_qp] * _areafrac[_qp] * _phi_neighbor[_j][_qp];
       break;
     case Moose::NeighborElement:
-      jac = -_test_neighbor[_i][_qp] * _trans_rate * _phi[_j][_qp];
+      jac = -_test_neighbor[_i][_qp] * _km[_qp] * _areafrac[_qp] * _phi[_j][_qp];
       break;
     case Moose::ElementNeighbor:
-      jac = _test[_i][_qp] * -_trans_rate * _phi_neighbor[_j][_qp];
+      jac = _test[_i][_qp] * -_km[_qp] * _areafrac[_qp] * _phi_neighbor[_j][_qp];
       break;
   }
   return jac;
+}
+
+Real InterfaceMassTransfer::computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar)
+{
+    Real jac = 0.0;
+
+    if (jvar == _km_var)
+    {
+        switch (type)
+        {
+            case Moose::ElementElement:
+                jac = _test[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
+                break;
+
+            case Moose::NeighborNeighbor:
+                jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
+                break;
+
+            case Moose::NeighborElement:
+                jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
+                break;
+
+            case Moose::ElementNeighbor:
+                jac = _test[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
+                break;
+        }
+        return jac;
+    }
+
+    if (jvar == _areafrac_var)
+    {
+        switch (type)
+        {
+            case Moose::ElementElement:
+                jac = _test[_i][_qp] * _phi[_j][_qp] * _km[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
+                break;
+
+            case Moose::NeighborNeighbor:
+                jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _km[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
+                break;
+
+            case Moose::NeighborElement:
+                jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _km[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
+                break;
+
+            case Moose::ElementNeighbor:
+                jac = _test[_i][_qp] * _phi[_j][_qp] * _km[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
+                break;
+        }
+        return jac;
+    }
+
+    return 0.0;
 }

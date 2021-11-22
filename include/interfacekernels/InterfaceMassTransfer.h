@@ -66,6 +66,15 @@ protected:
      system and is used in preconditioning of the linear sub-problem. */
     virtual Real computeQpJacobian(Moose::DGJacobianType type) override;
 
-    Real _trans_rate;             ///< Mass/energy transfer rate between domains
+    /// Not required, but recomended function for DG kernels in MOOSE
+    /** This function returns an off-diagonal jacobian contribution for this object. The jacobian
+     being computed will be associated with the variables coupled to this object and not the
+     main coupled variable itself. */
+    virtual Real computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar) override;
+
+    const VariableValue & _km;            ///< Variable for mass transfer coefficient (length/time)
+    const unsigned int _km_var;           ///< Variable identification for mass transfer
+    const VariableValue & _areafrac;      ///< Variable for area fraction (-)
+    const unsigned int _areafrac_var;     ///< Variable identification for area fraction
 
 };
