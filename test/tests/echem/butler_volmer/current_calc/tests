@@ -1,0 +1,7 @@
+[Tests]
+  [./current_calc_with_non_zero_pot]
+    type = Exodiff
+    input = current_calc.i
+    exodiff = current_calc_out.e
+  [../]
+[]
