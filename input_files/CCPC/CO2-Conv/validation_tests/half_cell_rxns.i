@@ -15,6 +15,33 @@
 #
 # Reaction rate should be 1.75E-7 m/s.
 
+# NOTE 3: Results from literature are likely incorrect.
+# It is NOT possible to get the results they claim based
+# on their own given set of values. In this particular
+# case, the 'J' term from Butler-Volmer is very close
+# to being a constant value because the potentials are
+# all very close to constant and all concentrations
+# were defined to be constant. Based on this, you could
+# approximately solve their system as:
+#
+#   K*d^2(phi_e)/dx^2 = J
+#   S*d^2(phi_s)/dx^2 = -J
+#
+#   where J, K, and S are all constant
+#
+#   If solving in this manner, and using an approximate
+#   'J' based on their given information, you cannot even
+#   come remotely close to what they report.
+#
+#   If I scale down that value, then I can recreate the
+#   result.
+#
+#   Futhermore, our formulation of the Butler-Volmer is
+#   independently validated by comparing the calculated
+#   'J' value to a calculation of the same (using same
+#   parameters, different equation) and get the same
+#   reported result. Thus, Butler-Volmer is validated.
+
 [GlobalParams]
 
 [] #END GlobalParams
@@ -272,6 +299,7 @@
 
     weights = '1'
 
+    # Manually edited scale factor to get the results reported in literature
     scale = 3.95867E-5
   [../]
 
@@ -293,6 +321,7 @@
 
     weights = '-1'
 
+    # Manually edited scale factor to get the results reported in literature
     scale = 3.95867E-5
   [../]
 
@@ -539,7 +568,7 @@
   petsc_options_value = 'fgmres
                          ksp
 
-                         lu
+                         ilu
 
                          20
 
@@ -552,8 +581,8 @@
                          1E-10
                          1E-10
 
-                         gmres
-                         lu'
+                         fgmres
+                         ilu'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
@@ -563,7 +592,7 @@
   nl_abs_step_tol = 1e-10
   nl_max_its = 20
   l_tol = 1e-6
-  l_max_its = 300
+  l_max_its = 20
 
 [] #END Executioner
 
