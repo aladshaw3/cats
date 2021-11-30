@@ -1,0 +1,7 @@
+[Tests]
+  [./binary_validation]
+    type = Exodiff
+    input = binary_validation.i
+    exodiff = binary_validation_out.e
+  [../]
+[]
