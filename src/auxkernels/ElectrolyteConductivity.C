@@ -96,10 +96,8 @@ _min_conductivity(getParam<Real>("min_conductivity"))
       _diffusion[i] = &coupledValue("diffusion",i);
   }
 
-  if (_min_conductivity > 1e-20)
-      _min_conductivity = 1e-20;
-  if (_min_conductivity < 1e-50)
-      _min_conductivity = 1e-50;
+  if (_min_conductivity < 1e-30)
+      _min_conductivity = 1e-30;
 }
 
 Real ElectrolyteConductivity::computeValue()
