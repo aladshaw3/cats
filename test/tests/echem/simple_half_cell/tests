@@ -1,0 +1,7 @@
+[Tests]
+  [./no_mass_balance_half_cell_rxn_validation]
+    type = Exodiff
+    input = half_cell_validation.i
+    exodiff = half_cell_validation_out.e
+  [../]
+[]
