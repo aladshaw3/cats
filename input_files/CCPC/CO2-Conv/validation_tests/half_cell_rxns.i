@@ -76,6 +76,20 @@
       family = MONOMIAL
       initial_condition = -0.2595 # V
   [../]
+
+  # Electrolyte current density in x (C/m^2/s)
+  [./ie_x]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0
+  [../]
+
+  # electrode current density in x (C/m^2/s)
+  [./is_x]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0
+  [../]
 []
 
 [AuxVariables]
@@ -319,6 +333,41 @@
     electron_transfer_coef = 0.5
   [../]
 
+  # Current density in x-dir from potential gradient
+  #  ie_x
+  [./ie_x_equ]
+      type = Reaction
+      variable = ie_x
+  [../]
+  #  -K*grad(phi_e)_x   where K=f(ions, diff, etc....)
+  [./ie_x_phigrad]
+      type = ElectrolyteCurrentFromPotentialGradient
+      variable = ie_x
+      direction = 0         # 0=x
+      electric_potential = phi_e
+      porosity = 1
+      temperature = Te
+      ion_conc = 'C_V_II C_V_III C_HSO4 C_SO4 C_H C_f'
+      diffusion = 'D_V_II D_V_III D_HSO4 D_SO4 D_H D_f'
+      ion_valence = '2 3 -1 -2 1 -1'
+  [../]
+
+  # Current density in x-dir from potential gradient
+  #  is_x
+  [./is_x_equ]
+      type = Reaction
+      variable = is_x
+  [../]
+  #  -sigma*(1-eps)*grad(phi_s)_x
+  [./is_x_phigrad]
+      type = ElectrodeCurrentFromPotentialGradient
+      variable = is_x
+      direction = 0         # 0=x
+      electric_potential = phi_s
+      solid_frac = 1
+      conductivity = sigma_s
+  [../]
+
 []
 
 [DGKernels]
@@ -380,15 +429,15 @@
 []
 
 [Postprocessors]
-  [./Keff_avg]
+  [./is_avg]
       type = ElementAverageValue
-      variable = Keff
+      variable = is_x
       execute_on = 'initial timestep_end'
   [../]
 
-  [./r_avg]
+  [./ie_avg]
       type = ElementAverageValue
-      variable = r
+      variable = ie_x
       execute_on = 'initial timestep_end'
   [../]
 
