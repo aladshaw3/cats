@@ -6,41 +6,14 @@
 
 # NOTE: The Keff calculation does not match what
 # is reported in literature given the values they
-# state in there problem.
+# state in there problem. We correct this in our example.
 
 # NOTE 2: Literature conveniently left off some
 # computation details, forcing me to 'guess' some
-# values. The 'equilibrium_potential' is either
-# -0.255 V or -0.1603 V.
+# values. The 'equilibrium_potential' is has been
+# determined to be -0.3497 V (to give constant U of -0.255 V)
 #
 # Reaction rate should be 1.75E-7 m/s.
-
-# NOTE 3: Results from literature are likely incorrect.
-# It is NOT possible to get the results they claim based
-# on their own given set of values. In this particular
-# case, the 'J' term from Butler-Volmer is very close
-# to being a constant value because the potentials are
-# all very close to constant and all concentrations
-# were defined to be constant. Based on this, you could
-# approximately solve their system as:
-#
-#   K*d^2(phi_e)/dx^2 = J
-#   S*d^2(phi_s)/dx^2 = -J
-#
-#   where J, K, and S are all constant
-#
-#   If solving in this manner, and using an approximate
-#   'J' based on their given information, you cannot even
-#   come remotely close to what they report.
-#
-#   If I scale down that value, then I can recreate the
-#   result.
-#
-#   Futhermore, our formulation of the Butler-Volmer is
-#   independently validated by comparing the calculated
-#   'J' value to a calculation of the same (using same
-#   parameters, different equation) and get the same
-#   reported result. Thus, Butler-Volmer is validated.
 
 [GlobalParams]
 
@@ -94,7 +67,7 @@
   [./J]
       order = FIRST
       family = MONOMIAL
-      initial_condition = -2.0E7  # C/m^3/s
+      initial_condition = -2.0E5  # C/m^3/s
   [../]
 
   # Variable for potential difference
@@ -211,30 +184,6 @@
     initial_condition = 1.359301E6  # m^-1
   [../]
 
-  #Approximate delta(phi) [nearly constant]
-  [./Dphi_approx]
-    order = FIRST
-    family = LAGRANGE
-    initial_condition = -0.2595  # V
-  [../]
-
-  # Approximate guess for Butler-Volmer current density
-  # (I cannot recreate the literature results without
-  # significantly altering this parameter, which should
-  # approximately be constant in this case.)
-  #
-  # HOWEVER, this should be calculated by Butler-Volmer,
-  # and my calculated value approximately matches what
-  # theres should be based on their given data, but with
-  # that value, I cannot get the correct potentials.
-  [./J_guess]
-      order = FIRST
-      family = MONOMIAL
-
-      # Use this value below with a 'scale factor' below
-      initial_condition = -2.526129e+07  # C/m^3/s
-  [../]
-
   # eps_e
   [./eps_e]
       order = FIRST
@@ -291,15 +240,8 @@
   [./phi_e_J]
     type = ScaledWeightedCoupledSumFunction
     variable = phi_e
-
-    #coupled_list = 'J_guess'    # Temporary for testing
-
     coupled_list = 'J'
-
     weights = '1'
-
-    # Manually edited scale factor to get the results reported in literature
-    scale = 0.0043
   [../]
 
   ### ==================== Electrode Potentials ==========================
@@ -313,15 +255,8 @@
   [./phi_s_J]
     type = ScaledWeightedCoupledSumFunction
     variable = phi_s
-
-    #coupled_list = 'J_guess'    # Temporary for testing
-
     coupled_list = 'J'
-
     weights = '-1'
-
-    # Manually edited scale factor to get the results reported in literature
-    scale = 0.0043
   [../]
 
   ## electroneutrality
@@ -344,15 +279,13 @@
     variable = r
 
     reaction_rate_const = 1.75E-7  # m/s
-    equilibrium_potential = -0.255 # V
+    equilibrium_potential = -0.3497 # V  (gives U = -0.255 V)
 
     reduced_state_vars = 'C_V_II'
     reduced_state_stoich = '1'
 
     oxidized_state_vars = 'C_V_III'
     oxidized_state_stoich = '1'
-
-    #electric_potential_difference = Dphi_approx  # Temporary for testing
 
     electric_potential_difference = phi_diff
 
