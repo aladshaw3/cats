@@ -56,9 +56,9 @@
     nx = 20
     ny = 1
     xmin = 0.0
-    xmax = 0.04   # m
+    xmax = 0.004   # m
     ymin = 0.0
-    ymax = 0.004  # m
+    ymax = 0.0004  # m
 [] # END Mesh
 
 [Variables]
@@ -230,9 +230,8 @@
   [./J_guess]
       order = FIRST
       family = MONOMIAL
-      #initial_condition = -1e3  # C/m^3/s
 
-      # Use this value below with a 'scale factor' of 3.9586E-5 for matched results
+      # Use this value below with a 'scale factor' below
       initial_condition = -2.526129e+07  # C/m^3/s
   [../]
 
@@ -300,7 +299,7 @@
     weights = '1'
 
     # Manually edited scale factor to get the results reported in literature
-    scale = 3.95867E-5
+    scale = 0.0043
   [../]
 
   ### ==================== Electrode Potentials ==========================
@@ -322,7 +321,7 @@
     weights = '-1'
 
     # Manually edited scale factor to get the results reported in literature
-    scale = 3.95867E-5
+    scale = 0.0043
   [../]
 
   ## electroneutrality
