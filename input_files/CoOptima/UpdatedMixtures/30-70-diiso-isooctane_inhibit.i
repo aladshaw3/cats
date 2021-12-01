@@ -1479,8 +1479,8 @@
       variable = R_HC
       temperature = temp
       coupled_list = 'HCw_isooctane HCw_diiso'
-      pre_exponentials = '1e8 0'
-      activation_energies = '0 0'
+      pre_exponentials = '4.5E6 0'
+      activation_energies = '-25000 0'
     [../]
 
 
@@ -2310,7 +2310,7 @@
   petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = bt
+  line_search = none
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-4
   nl_rel_step_tol = 1e-10
