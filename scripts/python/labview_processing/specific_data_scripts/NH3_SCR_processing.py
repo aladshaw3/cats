@@ -26,6 +26,7 @@ from labview_processing.transient_data import TransientData, PairedTransientData
 import os, getopt
 import time
 
+# Processing for data that must be manually paired
 def perform_standard_processing_not_aligned(result_file, bypass_file, output_folder=""):
     data = TransientData(result_file)
     bp = TransientData(bypass_file)
@@ -124,7 +125,7 @@ def perform_standard_processing_not_aligned(result_file, bypass_file, output_fol
     file_name = data.input_file_name.split(".")[0]+"-output.dat"
     data.printAlltoFile(output_folder+"/"+file_name)
 
-
+# Processing for data that can be automatically paired
 def perform_standard_processing_aligned(result_file, bypass_file, output_folder=""):
     data = PairedTransientData(bypass_file, result_file)
     data.compressColumns()
@@ -172,14 +173,38 @@ def perform_standard_processing_aligned(result_file, bypass_file, output_folder=
     file_name = data.result_trans_obj.input_file_name.split(".")[0]+"-AllPairedOutput.dat"
     data.printAlltoFile(output_folder+"/"+file_name)
 
+# Processing for a given folder of data (represents all runs from a specific aged catalyst)
+def run_all_data_in_folder(input_folder, output_folder=""):
+    unpairable_list = []
+    pairable_list = []
+    pairable_bp = ""
+    unpairable_bp = []
+    for file in os.listdir(input_folder):
+        if (file.split("-")[4]=="NH3Inv"):
+            if (file.split("-")[-1]!="bp"):
+                pairable_list.append(file)
+            else:
+                pairable_bp=file
+        else:
+            if (file.split("-")[-1]!="bp"):
+                unpairable_list.append(file)
+            else:
+                unpairable_bp.append(file)
+    #print(pairable_list)
+    #print(pairable_bp)
+    print(unpairable_list)
+    print(unpairable_bp)
+
 ##Directs python to call the main function
 if __name__ == "__main__":
     folder = "raw/BASFCuSSZ13-700C4h-SCRprotocol/"
-    
-    file = "20160202-CLRK-BASFCuSSZ13-700C4h-NH3Inv-60k-a1_0-250C"
-    bp =   "20160202-CLRK-BASFCuSSZ13-700C4h-NH3Inv-60k-a1_0-bp"
-    perform_standard_processing_aligned(folder+file,folder+bp)
+
+    #file = "20160202-CLRK-BASFCuSSZ13-700C4h-NH3Inv-60k-a1_0-250C"
+    #bp =   "20160202-CLRK-BASFCuSSZ13-700C4h-NH3Inv-60k-a1_0-bp"
+    #perform_standard_processing_aligned(folder+file,folder+bp)
 
     #file = "20160202-CLRK-BASFCuSSZ13-700C4h-NO+NO2SCR-60k-a1_0-250-150C"
     #bp =   "20160202-CLRK-BASFCuSSZ13-700C4h-NO+NO2SCR-60k-a1_0-bp"
     #perform_standard_processing_not_aligned(folder+file,folder+bp)
+
+    run_all_data_in_folder(folder)
