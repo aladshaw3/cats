@@ -33,11 +33,11 @@ def help_message():
     print()
     print("\t-h           Print this message")
     print("\t-i <folder>  Provide the name of the folder that contains folders of data")
-    print("\t-o <folder>  Provide the name of a location to which output will be saved")
+    print("\t-o <folder>  [Optional] Provide the name of a location to which output will be saved")
     print()
     print("Example Usage:")
     print()
-    print("\tpython NH3_H2O_data_processing.py -i AllNH3Data/ -o output")
+    print("\tpython NH3_H2O_data_processing.py -i AllNH3StorageData/ -o output")
     print()
 
 ##Define a function that reads all data in a given subdirectory and performs standard processing
@@ -111,7 +111,7 @@ def perform_standard_processing(list, output_folder):
     data.saveTimeFramePlots(output_folder)
     data.saveOverlayPlots('NH3 (300,3000)',None, output_folder)
     data.saveOverlayPlots('NH3 (300,3000)','TC bot sample out 1 (K)', output_folder)
-    data.saveCrossOverlayPlots('NH3 (300,3000)',output_folder)
+    #data.saveCrossOverlayPlots('NH3 (300,3000)',output_folder)
     #Compress the processed data for visualization in spreadsheets
     data.compressAllRows()
     #Print the results to a series of output files

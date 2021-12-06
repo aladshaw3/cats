@@ -120,7 +120,7 @@ def perform_standard_processing_not_aligned(result_file, bypass_file, output_fol
         output_folder = "output"
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-    data.savePlots(folder=output_folder+"/plots/")
+    data.savePlots(folder=output_folder+"/Other-plots/"+data.input_file_name.split("-")[4]+"/")
     data.compressRows(factor=10)
     file_name = data.input_file_name.split(".")[0]+"-output.dat"
     data.printAlltoFile(output_folder+"/"+file_name)
@@ -168,7 +168,7 @@ def perform_standard_processing_aligned(result_file, bypass_file, output_folder=
         output_folder = "output"
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-    data.savePlots(folder=output_folder+"/plots/")
+    data.savePlots(folder=output_folder+"/NH3Inv-plots/"+data.result_trans_obj.input_file_name.split("-")[-1]+"/")
     data.compressRows(factor=10)
     file_name = data.result_trans_obj.input_file_name.split(".")[0]+"-AllPairedOutput.dat"
     data.printAlltoFile(output_folder+"/"+file_name)
@@ -190,14 +190,41 @@ def run_all_data_in_folder(input_folder, output_folder=""):
                 unpairable_list.append(file)
             else:
                 unpairable_bp.append(file)
-    #print(pairable_list)
-    #print(pairable_bp)
-    print(unpairable_list)
-    print(unpairable_bp)
+
+    unpaired_tuples = []
+    for item in unpairable_list:
+        for bp in unpairable_bp:
+            if (item.split("-")[4]==bp.split("-")[4]):
+                unpaired_tuples.append((item,bp))
+
+    if (input_folder.split("/")[-1]!=''):
+        input_folder = input_folder+"/"
+    if (output_folder==""):
+        output_folder = input_folder.split("/")[-2]+"-Output"
+    for result in pairable_list:
+        print("\n\nReading file "+result)
+        perform_standard_processing_aligned(input_folder+result, input_folder+pairable_bp, output_folder)
+    for pair in unpaired_tuples:
+        print("\n\nReading file "+pair[0])
+        perform_standard_processing_not_aligned(input_folder+pair[0], input_folder+pair[1], output_folder)
+
+##Define a help message to display
+def help_message():
+    print()
+    print("NH3_SCR_processing.py script command line options...")
+    print()
+    print("\t-h           Print this message")
+    print("\t-i <folder>  Provide the name of the folder that contains folders of all SCR data files")
+    print("\t-o <folder>  [Optional] Provide the name of a location to which output will be saved")
+    print()
+    print("Example Usage:")
+    print()
+    print("\tpython NH3_SCR_processing.py -i AllSCRData/ -o output")
+    print()
 
 ##Directs python to call the main function
 if __name__ == "__main__":
-    folder = "raw/BASFCuSSZ13-700C4h-SCRprotocol/"
+    folder = "AllSCRData/BASFCuSSZ13-700C4h-SCRprotocol/"
 
     #file = "20160202-CLRK-BASFCuSSZ13-700C4h-NH3Inv-60k-a1_0-250C"
     #bp =   "20160202-CLRK-BASFCuSSZ13-700C4h-NH3Inv-60k-a1_0-bp"

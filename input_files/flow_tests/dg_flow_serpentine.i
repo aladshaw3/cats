@@ -531,7 +531,7 @@
 
   # snes_max_it = maximum non-linear steps
   petsc_options_value = 'fgmres
-                         ksp
+                         asm
 
                          lu
 
