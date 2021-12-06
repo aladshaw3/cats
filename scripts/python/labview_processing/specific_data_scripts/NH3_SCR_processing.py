@@ -30,6 +30,7 @@ import time
 def perform_standard_processing_not_aligned(result_file, bypass_file, output_folder=""):
     data = TransientData(result_file)
     bp = TransientData(bypass_file)
+    total_data = data.getNumCols()*data.getNumRows()
     data.compressColumns()
     bp.compressColumns()
 
@@ -125,9 +126,12 @@ def perform_standard_processing_not_aligned(result_file, bypass_file, output_fol
     file_name = data.input_file_name.split(".")[0]+"-output.dat"
     data.printAlltoFile(output_folder+"/"+file_name)
 
+    return total_data
+
 # Processing for data that can be automatically paired
 def perform_standard_processing_aligned(result_file, bypass_file, output_folder=""):
     data = PairedTransientData(bypass_file, result_file)
+    total_data = data.getNumCols()*data.getNumRows()
     data.compressColumns()
     data.retainOnlyColumns(['Elapsed Time (min)','NH3 (300,3000)', 'H2O% (20)',
         'N2O (100,200,300)', 'NO (350,3000)', 'NO2 (150,2000)',
@@ -173,6 +177,8 @@ def perform_standard_processing_aligned(result_file, bypass_file, output_folder=
     file_name = data.result_trans_obj.input_file_name.split(".")[0]+"-AllPairedOutput.dat"
     data.printAlltoFile(output_folder+"/"+file_name)
 
+    return total_data
+
 # Processing for a given folder of data (represents all runs from a specific aged catalyst)
 def run_all_data_in_folder(input_folder, output_folder=""):
     unpairable_list = []
@@ -192,6 +198,7 @@ def run_all_data_in_folder(input_folder, output_folder=""):
                 unpairable_bp.append(file)
 
     unpaired_tuples = []
+    total_data=0
     for item in unpairable_list:
         for bp in unpairable_bp:
             if (item.split("-")[4]==bp.split("-")[4]):
@@ -203,10 +210,12 @@ def run_all_data_in_folder(input_folder, output_folder=""):
         output_folder = input_folder.split("/")[-2]+"-Output"
     for result in pairable_list:
         print("\n\nReading file "+result)
-        perform_standard_processing_aligned(input_folder+result, input_folder+pairable_bp, output_folder)
+        total_data += perform_standard_processing_aligned(input_folder+result, input_folder+pairable_bp, output_folder)
     for pair in unpaired_tuples:
         print("\n\nReading file "+pair[0])
-        perform_standard_processing_not_aligned(input_folder+pair[0], input_folder+pair[1], output_folder)
+        total_data += perform_standard_processing_not_aligned(input_folder+pair[0], input_folder+pair[1], output_folder)
+
+    return total_data
 
 ##Define a help message to display
 def help_message():
@@ -222,16 +231,58 @@ def help_message():
     print("\tpython NH3_SCR_processing.py -i AllSCRData/ -o output")
     print()
 
+##Define the 'main' function
+#
+#   argv is the list of arguments pass to the script at the command line
+#
+#   Accepted arguments include...
+#
+#       -h         ==>  display help information
+#
+#       -i dir/    ==>   path and name of the folder than contains other folders of data
+#
+#       -o dir/    ==>   path and name of the folder to place output into
+def main(argv):
+    input_folder = ""
+    output_folder = ""
+    #Check for valid arguments
+    try:
+        opts, args = getopt.getopt(argv,"hi:o:",["input_dir=","output_dir="])
+    except:
+        help_message()
+        sys.exit(2)
+    #Iterate through arguments and save some information
+    for opt, arg in opts:
+        if opt == '-h':
+            help_message()
+            sys.exit()
+        if opt in ("-i", "--ifile"):
+            input_folder = arg
+            if input_folder[-1] == "/":
+                input_folder = input_folder[0:-1]
+        if opt in ("-o", "--ofile"):
+            output_folder = arg
+            if output_folder[-1] == "/":
+                output_folder = output_folder[0:-1]
+
+    #If we made it to this point, then no errors in input
+    #Check to see if the input_folder does exist
+    if os.path.isdir(input_folder) == False:
+        print("Error! Given argument is not a folder!")
+        help_message()
+        sys.exit()
+
+    start = time.time()
+    total=0
+    for folder in os.listdir(input_folder):
+        print("\n\nReading from " + input_folder+"/"+folder)
+        total+=run_all_data_in_folder(input_folder+"/"+folder)
+
+    end = time.time()
+    elapse_min = (end-start)/60
+    print("\nCOMPLETED!!!")
+    print("\tWe processed " + str(total) + " data points in " + str(elapse_min) + " min!\n")
+
 ##Directs python to call the main function
 if __name__ == "__main__":
-    folder = "AllSCRData/BASFCuSSZ13-700C4h-SCRprotocol/"
-
-    #file = "20160202-CLRK-BASFCuSSZ13-700C4h-NH3Inv-60k-a1_0-250C"
-    #bp =   "20160202-CLRK-BASFCuSSZ13-700C4h-NH3Inv-60k-a1_0-bp"
-    #perform_standard_processing_aligned(folder+file,folder+bp)
-
-    #file = "20160202-CLRK-BASFCuSSZ13-700C4h-NO+NO2SCR-60k-a1_0-250-150C"
-    #bp =   "20160202-CLRK-BASFCuSSZ13-700C4h-NO+NO2SCR-60k-a1_0-bp"
-    #perform_standard_processing_not_aligned(folder+file,folder+bp)
-
-    run_all_data_in_folder(folder)
+    main(sys.argv[1:])
