@@ -74,7 +74,11 @@
   [./phi_diff]
       order = FIRST
       family = MONOMIAL
-      initial_condition = -0.2595 # V
+      [./InitialCondition]
+          type = InitialPotentialDifference
+          electrode_potential = phi_s
+          electrolyte_potential = phi_e
+      [../]
   [../]
 
   # Electrolyte current density in x (C/m^2/s)
@@ -368,10 +372,10 @@
       function = '0'
   [../]
   [./phi_e_right]
-      type = FunctionDirichletBC
+      type = FunctionNeumannBC
       variable = phi_e
       boundary = 'right'
-      function = '0.2645'
+      function = '1000'
   [../]
 
   ### BCs for phi_s ###
@@ -390,14 +394,16 @@
 []
 
 [Postprocessors]
-  [./is_avg]
-      type = ElementAverageValue
+  [./is_left]
+      type = SideAverageValue
+      boundary = 'left'
       variable = is_x
       execute_on = 'initial timestep_end'
   [../]
 
-  [./ie_avg]
-      type = ElementAverageValue
+  [./ie_left]
+      type = SideAverageValue
+      boundary = 'left'
       variable = ie_x
       execute_on = 'initial timestep_end'
   [../]
@@ -405,6 +411,12 @@
   [./J_avg]
       type = ElementAverageValue
       variable = J
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./r_avg]
+      type = ElementAverageValue
+      variable = r
       execute_on = 'initial timestep_end'
   [../]
 
@@ -422,12 +434,6 @@
       execute_on = 'initial timestep_end'
   [../]
 
-  [./phi_e_avg]
-      type = ElementAverageValue
-      variable = phi_e
-      execute_on = 'initial timestep_end'
-  [../]
-
   [./phi_s_left]
       type = SideAverageValue
       boundary = 'left'
@@ -438,12 +444,6 @@
   [./phi_s_right]
       type = SideAverageValue
       boundary = 'right'
-      variable = phi_s
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./phi_s_avg]
-      type = ElementAverageValue
       variable = phi_s
       execute_on = 'initial timestep_end'
   [../]

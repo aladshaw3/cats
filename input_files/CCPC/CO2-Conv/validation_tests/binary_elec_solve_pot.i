@@ -296,12 +296,6 @@
         execute_on = 'initial timestep_end'
     [../]
 
-    [./salt_avg]
-        type = ElementAverageValue
-        variable = salt
-        execute_on = 'initial timestep_end'
-    [../]
-
     [./phi_e_left]
         type = SideAverageValue
         boundary = 'left'
