@@ -1,0 +1,7 @@
+[Tests]
+  [./half_cell_rxn_validation_custom_ics]
+    type = Exodiff
+    input = half_cell_rxns.i
+    exodiff = half_cell_rxns_out.e
+  [../]
+[]
