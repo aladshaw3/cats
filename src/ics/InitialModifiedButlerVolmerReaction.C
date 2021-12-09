@@ -222,6 +222,6 @@ Real InitialModifiedButlerVolmerReaction::oxidation_state()
 
 Real InitialModifiedButlerVolmerReaction::value(const Point & /*p*/)
 {
-  return _scale*oxidation_rate_fun()*reduction_state()*oxidation_exp_fun()
-          - _scale*reduction_rate_fun()*oxidation_state()*reduction_exp_fun();
+  return -_scale*oxidation_rate_fun()*reduction_state()*oxidation_exp_fun()
+          + _scale*reduction_rate_fun()*oxidation_state()*reduction_exp_fun();
 }

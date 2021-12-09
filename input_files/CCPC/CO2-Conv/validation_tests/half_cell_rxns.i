@@ -84,7 +84,13 @@
   [./J]
       order = FIRST
       family = MONOMIAL
-      initial_condition = -2.0E5  # C/m^3/s
+      [./InitialCondition]
+          type = InitialButlerVolmerCurrentDensity
+
+          number_of_electrons = 1
+          specific_area = As
+          rate_var = r
+      [../]
   [../]
 
   # Variable for potential difference
