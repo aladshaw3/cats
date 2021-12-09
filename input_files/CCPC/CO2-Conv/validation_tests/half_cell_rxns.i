@@ -60,7 +60,24 @@
   [./r]
       order = FIRST
       family = MONOMIAL
-      initial_condition = -1.97E-4  #mol/m^2/s
+      [./InitialCondition]
+          type = InitialModifiedButlerVolmerReaction
+
+          reaction_rate_const = 1.75E-7  # m/s
+          equilibrium_potential = -0.3497 # V  (gives U = -0.255 V)
+
+          reduced_state_vars = 'C_V_II'
+          reduced_state_stoich = '1'
+
+          oxidized_state_vars = 'C_V_III'
+          oxidized_state_stoich = '1'
+
+          electric_potential_difference = phi_diff
+
+          temperature = Te
+          number_of_electrons = 1
+          electron_transfer_coef = 0.5
+      [../]
   [../]
 
   # Butler-Volmer current density
