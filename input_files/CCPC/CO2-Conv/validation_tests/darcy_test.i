@@ -259,63 +259,23 @@
 
 [AuxKernels]
 
+  # Need a way to calculate an effective dispersion from
+  # the molecular diffusion
   [./Disp_calc]
-      type = SimpleGasDispersion
+      type = ConstantAux
       variable = Dp
-
-      pressure = 100
-      temperature = 298
-      micro_porosity = 1
-      macro_porosity = eps
-
-      # NOTE: For this calculation, use electrode thickness
-      characteristic_length = 4
-      char_length_unit = "mm"
-
-      velocity = 66
-      vel_length_unit = "cm"
-      vel_time_unit = "min"
-
-      ref_diffusivity = 5E-4
-      diff_length_unit = "cm"
-      diff_time_unit = "s"
-      ref_diff_temp = 298
-
-      output_length_unit = "cm"
-      output_time_unit = "min"
+      value = 8.4E-1  #cm^2/min
 
       execute_on = 'initial timestep_end'
-
       block = 'neg_electrode pos_electrode'
   [../]
 
   [./Disp_calc_mem]
-      type = SimpleGasDispersion
+      type = ConstantAux
       variable = Dp
-
-      pressure = 100
-      temperature = 298
-      micro_porosity = 1
-      macro_porosity = eps
-
-      # NOTE: For this calculation, use membrane thickness
-      characteristic_length = 0.018
-      char_length_unit = "mm"
-
-      velocity = 6
-      vel_length_unit = "cm"
-      vel_time_unit = "min"
-
-      ref_diffusivity = 5E-5
-      diff_length_unit = "cm"
-      diff_time_unit = "s"
-      ref_diff_temp = 298
-
-      output_length_unit = "cm"
-      output_time_unit = "min"
+      value = 8.4E-2  #cm^2/min
 
       execute_on = 'initial timestep_end'
-
       block = 'membrane'
   [../]
 []
