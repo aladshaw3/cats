@@ -48,48 +48,199 @@
       block = 'neg_electrode membrane pos_electrode'
   [../]
 
+  # velocity in x
+  [./vel_x]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.0
+    block = 'neg_electrode membrane pos_electrode'
+  [../]
+
+  # velocity in y
+  [./vel_y]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.0
+    block = 'neg_electrode membrane pos_electrode'
+  [../]
+
   # dummy
   [./dummy]
       order = FIRST
       family = LAGRANGE
       initial_condition = 0
   [../]
+
+  ### Other variables for mass and energy can be any order 'MONOMIAL' functions
+  [./tracer]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+      block = 'neg_electrode membrane pos_electrode'
+  [../]
+[]
+
+[AuxVariables]
+  [./DarcyCoeff]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 4
+  [../]
+
+  [./SchloeglCoeff]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 2
+  [../]
+
+  # velocity in z
+  [./vel_z]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.0
+    block = 'neg_electrode membrane pos_electrode'
+  [../]
 []
 
 [Kernels]
-  [./pressure_laplace]
-    type = AnisotropicDiffusion
+  [./pressure_laplace_electrodes]
+    type = VariableLaplacian
     variable = pressure
-    tensor_coeff = '4 0 0
-                    0 4 0
-                    0 0 4'
+    coupled_coef = DarcyCoeff
+    block = 'neg_electrode pos_electrode'
+  [../]
+  [./pressure_laplace_membrane]
+    type = VariableLaplacian
+    variable = pressure
+    coupled_coef = SchloeglCoeff
+    block = 'membrane'
+  [../]
+
+  [./v_x_equ]
+      type = Reaction
+      variable = vel_x
+  [../]
+  [./x_darcy]
+    type = VariableVectorCoupledGradient
+    variable = vel_x
+    coupled = pressure
+    ux = DarcyCoeff
+    block = 'neg_electrode pos_electrode'
+  [../]
+  [./x_schloegl]
+    type = VariableVectorCoupledGradient
+    variable = vel_x
+    coupled = pressure
+    ux = SchloeglCoeff
+    block = 'membrane'
+  [../]
+
+  [./v_y_equ]
+      type = Reaction
+      variable = vel_y
+  [../]
+  [./y_darcy]
+    type = VariableVectorCoupledGradient
+    variable = vel_y
+    coupled = pressure
+    uy = DarcyCoeff
+    block = 'neg_electrode pos_electrode'
+  [../]
+  [./y_schloegl]
+    type = VariableVectorCoupledGradient
+    variable = vel_y
+    coupled = pressure
+    ux = SchloeglCoeff
+    block = 'membrane'
   [../]
 
   [./dummy]
     type = Diffusion
     variable = dummy
   [../]
+
+  ### Conservation of mass for a dilute tracer ###
+  [./tracer_dot]
+      type = VariableCoefTimeDerivative
+      variable = tracer
+      coupled_coef = 1
+  [../]
+  [./tracer_gadv]
+      type = GPoreConcAdvection
+      variable = tracer
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./tracer_gdiff]
+      type = GVarPoreDiffusion
+      variable = tracer
+      porosity = 1
+      Dx = 0.1
+      Dy = 0.1
+      Dz = 0.1
+  [../]
 []
 
 [DGKernels]
+  ### Conservation of mass for a dilute tracer ###
+  [./tracer_dgadv]
+      type = DGPoreConcAdvection
+      variable = tracer
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./tracer_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = tracer
+      porosity = 1
+      Dx = 0.1
+      Dy = 0.1
+      Dz = 0.1
+  [../]
 []
 
 [BCs]
   # exit pressure
   [./press_at_exit]
-        type = DirichletBC
-        variable = pressure
-        boundary = 'pos_electrode_top neg_electrode_top'
-        value = 0.0
+      type = DirichletBC
+      variable = pressure
+      boundary = 'pos_electrode_top neg_electrode_top'
+      value = 0.0
   [../]
 
   # inlet pressure grad
   [./press_grad_at_inlet]
-        type = NeumannBC
-        variable = pressure
-        boundary = 'pos_electrode_bottom neg_electrode_bottom'
-        value = 100
+      type = NeumannBC
+      variable = pressure
+      boundary = 'pos_electrode_bottom neg_electrode_bottom'
+      value = 100
   [../]
+
+  ### Fluxes for Conservative Tracer ###
+  [./tracer_FluxIn]
+      type = DGPoreConcFluxBC
+      variable = tracer
+      boundary = 'pos_electrode_bottom neg_electrode_bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      u_input = 1
+  [../]
+  [./tracer_FluxOut]
+      type = DGPoreConcFluxBC
+      variable = tracer
+      boundary = 'pos_electrode_top neg_electrode_top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
 []
 
 [Postprocessors]
@@ -106,11 +257,53 @@
       variable = pressure
       execute_on = 'initial timestep_end'
   [../]
+
+  [./vel_y_inlet]
+      type = SideAverageValue
+      boundary = 'pos_electrode_bottom neg_electrode_bottom'
+      variable = vel_y
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./vel_y_outlet]
+      type = SideAverageValue
+      boundary = 'pos_electrode_top neg_electrode_top'
+      variable = vel_y
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./vel_x_membrane]
+      type = ElementAverageValue
+      block = 'membrane'
+      variable = vel_x
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./vel_y_membrane]
+      type = ElementAverageValue
+      block = 'membrane'
+      variable = vel_y
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./tracer_inlet]
+      type = SideAverageValue
+      boundary = 'pos_electrode_bottom neg_electrode_bottom'
+      variable = tracer
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./tracer_outlet]
+      type = SideAverageValue
+      boundary = 'pos_electrode_top neg_electrode_top'
+      variable = tracer
+      execute_on = 'initial timestep_end'
+  [../]
 []
 
 [Executioner]
-  type = Steady
-  #scheme = implicit-euler
+  type = Transient
+  scheme = implicit-euler
 
   # NOTE: Add arg -ksp_view to get info on methods used at linear steps
   petsc_options = '-snes_converged_reason
@@ -178,6 +371,15 @@
   nl_max_its = 20
   l_tol = 1e-6
   l_max_its = 20
+
+  start_time = 0.0
+  end_time = 1.0
+  dtmax = 0.025
+
+  [./TimeStepper]
+		  type = ConstantDT
+      dt = 0.025
+  [../]
 
 [] #END Executioner
 
