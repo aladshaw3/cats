@@ -1,4 +1,4 @@
-# Testing Darcy Flow
+# Testing Darcy Flow on Full Cell Mesh
 #
 # Key to making the DG work is to either
 # do interface kernels to match fluxes at
@@ -68,7 +68,7 @@
   [./pressure]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0
+      initial_condition = 300 # kPa
       block = 'neg_electrode membrane pos_electrode'
   [../]
 
@@ -105,16 +105,26 @@
 []
 
 [AuxVariables]
+  # = (df^2/K/mu) * (eps^3/(1-eps)^2)  [cm^2/kPa/min]
+  #
+  #   df = 0.001 cm
+  #   mu = 1.667E-8 kPa*min (10^-3 Pa*s)
+  #   K = 5.55
+  #   eps = 0.68
   [./DarcyCoeff]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 4
+      initial_condition = 33.189
   [../]
 
+  # = kp / mu   [cm^2/kPa/min]
+  #
+  #   kp = 1.58E-14 cm^2
+  #   mu = 1.667E-8 kPa*min (10^-3 Pa*s)
   [./SchloeglCoeff]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 2
+      initial_condition = 9.4798E-7
   [../]
 
   [./eps]
@@ -123,6 +133,7 @@
       initial_condition = 0.68
   [../]
 
+  # Should be calculated in Aux system
   [./Dp]
       order = FIRST
       family = MONOMIAL
@@ -171,13 +182,13 @@
     block = 'membrane'
   [../]
   ## To represent fluid flow across membrane
-  [./x_test]
-    type = VariableVectorCoupledGradient
-    variable = vel_x
-    coupled = pressure
-    uy = -0.1
-    block = 'membrane'
-  [../]
+  #[./x_test]
+  #  type = VariableVectorCoupledGradient
+  #  variable = vel_x
+  #  coupled = pressure
+  #  uy = -0.4
+  #  block = 'membrane'
+  #[../]
 
   [./v_y_equ]
       type = Reaction
@@ -260,11 +271,12 @@
 [AuxKernels]
 
   # Need a way to calculate an effective dispersion from
-  # the molecular diffusion
+  # the molecular diffusion (good rule of thumb, dispersion
+  # is 2 orders of magnitude higher than pure diffusion)
   [./Disp_calc]
       type = ConstantAux
       variable = Dp
-      value = 8.4E-1  #cm^2/min
+      value = 8.4E-2  #cm^2/min
 
       execute_on = 'initial timestep_end'
       block = 'neg_electrode pos_electrode'
@@ -273,7 +285,7 @@
   [./Disp_calc_mem]
       type = ConstantAux
       variable = Dp
-      value = 8.4E-2  #cm^2/min
+      value = 4.2E-2  #cm^2/min
 
       execute_on = 'initial timestep_end'
       block = 'membrane'
@@ -286,7 +298,7 @@
       type = DirichletBC
       variable = pressure
       boundary = 'pos_electrode_top neg_electrode_top'
-      value = 0.0
+      value = 300 # kPa
   [../]
 
   # inlet pressure grad
@@ -363,27 +375,6 @@
       type = ElementAverageValue
       block = 'membrane'
       variable = vel_x
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./vel_y_membrane]
-      type = ElementAverageValue
-      block = 'membrane'
-      variable = vel_y
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./vel_y_membrane_out]
-      type = SideAverageValue
-      boundary = 'membrane_top'
-      variable = vel_y
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./vel_y_membrane_in]
-      type = SideAverageValue
-      boundary = 'membrane_bottom'
-      variable = vel_y
       execute_on = 'initial timestep_end'
   [../]
 
