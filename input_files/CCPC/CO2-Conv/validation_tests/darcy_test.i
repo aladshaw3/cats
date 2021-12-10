@@ -15,7 +15,7 @@
 #               - {NOTE} This also means that the coupled potential to
 #                 ion flux across the membrane MUST be the same variable.
 #                 (i.e., electric potential in membrane must be same
-#                 variable as electric potential in electrolyte). 
+#                 variable as electric potential in electrolyte).
 #
 #
 # Lastly: To help maximize stability, calculate an effective dispersion
@@ -99,7 +99,7 @@
   [./tracer]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 20
+      initial_condition = 0.0012 #mol/cm^3
       block = 'neg_electrode membrane pos_electrode'
   [../]
 []
@@ -119,13 +119,13 @@
 
   [./eps]
       order = FIRST
-      family = LAGRANGE
+      family = MONOMIAL
       initial_condition = 0.68
   [../]
 
   [./Dp]
       order = FIRST
-      family = LAGRANGE
+      family = MONOMIAL
       initial_condition = 5E-2
   [../]
 
@@ -171,13 +171,13 @@
     block = 'membrane'
   [../]
   ## To represent fluid flow across membrane
-  #[./x_test]
-  #  type = VariableVectorCoupledGradient
-  #  variable = vel_x
-  #  coupled = pressure
-  #  uy = 0.1
-  #  block = 'membrane'
-  #[../]
+  [./x_test]
+    type = VariableVectorCoupledGradient
+    variable = vel_x
+    coupled = pressure
+    uy = -0.1
+    block = 'membrane'
+  [../]
 
   [./v_y_equ]
       type = Reaction
@@ -255,13 +255,6 @@
 []
 
 [InterfaceKernels]
-    #[./interfaces]
-    #  type = InterfaceMassTransfer
-    #  variable = tracer        #variable must be the variable in the master block
-    #  neighbor_var = tracer    #neighbor_var must the the variable in the paired block
-    #  boundary = 'neg_electrode_interface_membrane membrane_interface_pos_electrode'
-    #  transfer_rate = 1e-5
-    #[../]
 [] #END InterfaceKernels
 
 [AuxKernels]
@@ -275,7 +268,7 @@
       micro_porosity = 1
       macro_porosity = eps
 
-      # NOTE: For this calculation, use bed diameter as char_length
+      # NOTE: For this calculation, use electrode thickness
       characteristic_length = 4
       char_length_unit = "mm"
 
@@ -305,15 +298,15 @@
       micro_porosity = 1
       macro_porosity = eps
 
-      # NOTE: For this calculation, use bed diameter as char_length
-      characteristic_length = 4
+      # NOTE: For this calculation, use membrane thickness
+      characteristic_length = 0.018
       char_length_unit = "mm"
 
-      velocity = 66
+      velocity = 6
       vel_length_unit = "cm"
       vel_time_unit = "min"
 
-      ref_diffusivity = 5E-6
+      ref_diffusivity = 5E-5
       diff_length_unit = "cm"
       diff_time_unit = "s"
       ref_diff_temp = 298
@@ -353,7 +346,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 40
+      u_input = 0.0024
   [../]
   [./tracer_FluxIn_neg]
       type = DGPoreConcFluxBC
@@ -363,7 +356,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 20
+      u_input = 0.0012
   [../]
   [./tracer_FluxOut]
       type = DGPoreConcFluxBC
@@ -447,6 +440,7 @@
       variable = tracer
       execute_on = 'initial timestep_end'
   [../]
+
 []
 
 [Executioner]
@@ -483,13 +477,6 @@
 
                         -ksp_ksp_type
                         -ksp_pc_type'
-
-  # snes_max_it = maximum non-linear steps
-
-
-  ######## NOTE: Best convergence results with asm pc and lu sub-pc ##############
-  ##      Issue may be caused by the terminal pc of the ksp pc method
-  #       using MUMPS as the linear solver (which is an inefficient method)
 
   petsc_options_value = 'fgmres
                          ksp
