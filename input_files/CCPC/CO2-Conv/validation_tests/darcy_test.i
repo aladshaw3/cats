@@ -1,3 +1,27 @@
+# Testing Darcy Flow
+#
+# Key to making the DG work is to either
+# do interface kernels to match fluxes at
+# the boundaries or to change diffusion
+# as a function of location.
+#
+# Interface:  - Requires new kernels for flux matching
+#             - Requires different sets of DG kernels
+#               acting on each domain
+#
+# Updating Dp:  - Use different Time kernels but same transport kernels
+#               - Update Dp and vel within each domain individually
+#
+#               - {NOTE} This also means that the coupled potential to
+#                 ion flux across the membrane MUST be the same variable.
+#                 (i.e., electric potential in membrane must be same
+#                 variable as electric potential in electrolyte). 
+#
+#
+# Lastly: To help maximize stability, calculate an effective dispersion
+#         coefficient based on mechanical mixing. This will add artificial
+#         diffusion and help stablize simulations of ions.
+
 [GlobalParams]
 
 [] #END GlobalParams
@@ -75,7 +99,7 @@
   [./tracer]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0
+      initial_condition = 20
       block = 'neg_electrode membrane pos_electrode'
   [../]
 []
@@ -83,14 +107,26 @@
 [AuxVariables]
   [./DarcyCoeff]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       initial_condition = 4
   [../]
 
   [./SchloeglCoeff]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       initial_condition = 2
+  [../]
+
+  [./eps]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0.68
+  [../]
+
+  [./Dp]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 5E-2
   [../]
 
   # velocity in z
@@ -134,6 +170,14 @@
     ux = SchloeglCoeff
     block = 'membrane'
   [../]
+  ## To represent fluid flow across membrane
+  #[./x_test]
+  #  type = VariableVectorCoupledGradient
+  #  variable = vel_x
+  #  coupled = pressure
+  #  uy = 0.1
+  #  block = 'membrane'
+  #[../]
 
   [./v_y_equ]
       type = Reaction
@@ -163,12 +207,19 @@
   [./tracer_dot]
       type = VariableCoefTimeDerivative
       variable = tracer
+      coupled_coef = eps
+      block = 'neg_electrode pos_electrode'
+  [../]
+  [./tracer_dot_mem]
+      type = VariableCoefTimeDerivative
+      variable = tracer
       coupled_coef = 1
+      block = 'membrane'
   [../]
   [./tracer_gadv]
       type = GPoreConcAdvection
       variable = tracer
-      porosity = 1
+      porosity = eps
       ux = vel_x
       uy = vel_y
       uz = vel_z
@@ -176,10 +227,10 @@
   [./tracer_gdiff]
       type = GVarPoreDiffusion
       variable = tracer
-      porosity = 1
-      Dx = 0.1
-      Dy = 0.1
-      Dz = 0.1
+      porosity = eps
+      Dx = Dp
+      Dy = Dp
+      Dz = Dp
   [../]
 []
 
@@ -188,7 +239,7 @@
   [./tracer_dgadv]
       type = DGPoreConcAdvection
       variable = tracer
-      porosity = 1
+      porosity = eps
       ux = vel_x
       uy = vel_y
       uz = vel_z
@@ -196,10 +247,83 @@
   [./tracer_dgdiff]
       type = DGVarPoreDiffusion
       variable = tracer
-      porosity = 1
-      Dx = 0.1
-      Dy = 0.1
-      Dz = 0.1
+      porosity = eps
+      Dx = Dp
+      Dy = Dp
+      Dz = Dp
+  [../]
+[]
+
+[InterfaceKernels]
+    #[./interfaces]
+    #  type = InterfaceMassTransfer
+    #  variable = tracer        #variable must be the variable in the master block
+    #  neighbor_var = tracer    #neighbor_var must the the variable in the paired block
+    #  boundary = 'neg_electrode_interface_membrane membrane_interface_pos_electrode'
+    #  transfer_rate = 1e-5
+    #[../]
+[] #END InterfaceKernels
+
+[AuxKernels]
+
+  [./Disp_calc]
+      type = SimpleGasDispersion
+      variable = Dp
+
+      pressure = 100
+      temperature = 298
+      micro_porosity = 1
+      macro_porosity = eps
+
+      # NOTE: For this calculation, use bed diameter as char_length
+      characteristic_length = 4
+      char_length_unit = "mm"
+
+      velocity = 66
+      vel_length_unit = "cm"
+      vel_time_unit = "min"
+
+      ref_diffusivity = 5E-4
+      diff_length_unit = "cm"
+      diff_time_unit = "s"
+      ref_diff_temp = 298
+
+      output_length_unit = "cm"
+      output_time_unit = "min"
+
+      execute_on = 'initial timestep_end'
+
+      block = 'neg_electrode pos_electrode'
+  [../]
+
+  [./Disp_calc_mem]
+      type = SimpleGasDispersion
+      variable = Dp
+
+      pressure = 100
+      temperature = 298
+      micro_porosity = 1
+      macro_porosity = eps
+
+      # NOTE: For this calculation, use bed diameter as char_length
+      characteristic_length = 4
+      char_length_unit = "mm"
+
+      velocity = 66
+      vel_length_unit = "cm"
+      vel_time_unit = "min"
+
+      ref_diffusivity = 5E-6
+      diff_length_unit = "cm"
+      diff_time_unit = "s"
+      ref_diff_temp = 298
+
+      output_length_unit = "cm"
+      output_time_unit = "min"
+
+      execute_on = 'initial timestep_end'
+
+      block = 'membrane'
   [../]
 []
 
@@ -217,25 +341,35 @@
       type = NeumannBC
       variable = pressure
       boundary = 'pos_electrode_bottom neg_electrode_bottom'
-      value = 100
+      value = 66   # vel in cm/min (0.37 to 1.1 cm/s)
   [../]
 
   ### Fluxes for Conservative Tracer ###
-  [./tracer_FluxIn]
+  [./tracer_FluxIn_pos]
       type = DGPoreConcFluxBC
       variable = tracer
-      boundary = 'pos_electrode_bottom neg_electrode_bottom'
-      porosity = 1
+      boundary = 'pos_electrode_bottom'
+      porosity = eps
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 1
+      u_input = 40
+  [../]
+  [./tracer_FluxIn_neg]
+      type = DGPoreConcFluxBC
+      variable = tracer
+      boundary = 'neg_electrode_bottom'
+      porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      u_input = 20
   [../]
   [./tracer_FluxOut]
       type = DGPoreConcFluxBC
       variable = tracer
       boundary = 'pos_electrode_top neg_electrode_top'
-      porosity = 1
+      porosity = eps
       ux = vel_x
       uy = vel_y
       uz = vel_z
@@ -282,6 +416,20 @@
   [./vel_y_membrane]
       type = ElementAverageValue
       block = 'membrane'
+      variable = vel_y
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./vel_y_membrane_out]
+      type = SideAverageValue
+      boundary = 'membrane_top'
+      variable = vel_y
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./vel_y_membrane_in]
+      type = SideAverageValue
+      boundary = 'membrane_bottom'
       variable = vel_y
       execute_on = 'initial timestep_end'
   [../]
