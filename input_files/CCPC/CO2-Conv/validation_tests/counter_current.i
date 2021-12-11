@@ -1,26 +1,49 @@
-# Testing Darcy Flow on Full Cell Mesh
+# Testing Darcy Flow with counter current
 #
-# Key to making the DG work is to either
-# do interface kernels to match fluxes at
-# the boundaries or to change diffusion
-# as a function of location.
+# Darcy/Porous flow (and flow through membranes
+# and/or catalysts) is easiest to solve using
+# LAGRANGE shape functions and pressure relationships
+# rather than solving Navier-Stokes equations. This
+# is especially true for complex, multi-domain meshes.
 #
-# Interface:  - Requires new kernels for flux matching
-#             - Requires different sets of DG kernels
-#               acting on each domain
+# To solve the simpler flow models, all you need to
+# have is an expression for velocity as a function of
+# the pressure gradients.
 #
-# Updating Dp:  - Use different Time kernels but same transport kernels
-#               - Update Dp and vel within each domain individually
+#   i.e., vel = K * grad(P)
 #
-#               - {NOTE} This also means that the coupled potential to
-#                 ion flux across the membrane MUST be the same variable.
-#                 (i.e., electric potential in membrane must be same
-#                 variable as electric potential in electrolyte).
+#   where K is any function or variable
 #
+# Under these conditions, the conservation of mass for
+# incompressible flow becomes as follows:
 #
-# Lastly: To help maximize stability, calculate an effective dispersion
-#         coefficient based on mechanical mixing. This will add artificial
-#         diffusion and help stablize simulations of ions.
+#   Div * vel = Div * (K * grad(P)) = 0
+#
+# In a finite element sense, this then just becomes a
+# Laplace's (or Diffusion) type of expression
+#
+#             == 0 = grad(test) * K * grad(P)
+#
+# Then, setting up this problem involves only Laplace's
+# equation for Pressure and coupled vectors for velocity
+# in each direction.
+#
+# BCs would be to set outlet pressure to a value, then
+# specify a NeumannBC for inlet pressure where the slope
+# is equal to the velocity in that direction.
+#
+# This file demonstrates using this concept to solve a
+# counter-current system where the left channel has flow
+# from top to bottom and the right channel has flow from
+# bottom to top.
+#
+# There is also a permeable membrane separating the 2
+# channels, thus there is some amount of flow from 1
+# channel into the next.
+#
+# NOTE: It is generally not necessary to impose 'No Slip'
+# conditions for flow at the walls, since the velocities
+# are not solved as Boundary-Value problems any more. 
 
 [GlobalParams]
 
@@ -297,7 +320,7 @@
   [./press_at_exit]
       type = DirichletBC
       variable = pressure
-      boundary = 'pos_electrode_top neg_electrode_top'
+      boundary = 'pos_electrode_top neg_electrode_bottom'
       value = 300 # kPa
   [../]
 
@@ -312,7 +335,13 @@
   [./press_grad_at_inlet]
       type = NeumannBC
       variable = pressure
-      boundary = 'pos_electrode_bottom neg_electrode_bottom'
+      boundary = 'neg_electrode_top'
+      value = 66   # vel in cm/min (0.37 to 1.1 cm/s)
+  [../]
+  [./press_grad_at_inlet2]
+      type = NeumannBC
+      variable = pressure
+      boundary = 'pos_electrode_bottom'
       value = 66   # vel in cm/min (0.37 to 1.1 cm/s)
   [../]
 
@@ -466,7 +495,7 @@
   l_max_its = 20
 
   start_time = 0.0
-  end_time = 1.0
+  end_time = 0.075
   dtmax = 0.025
 
   [./TimeStepper]

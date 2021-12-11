@@ -1,0 +1,8 @@
+[Tests]
+  [./counter_current_darcy_flow]
+    type = Exodiff
+    input = counter_current.i
+    exodiff = counter_current_out.e
+    rel_err = 1e-4
+  [../]
+[]
