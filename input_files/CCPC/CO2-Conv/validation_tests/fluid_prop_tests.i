@@ -95,6 +95,18 @@
     family = LAGRANGE
     initial_condition = 0.0
   [../]
+
+  [./MolDiff]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.0
+  [../]
+
+  [./eff_disp]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.0
+  [../]
 []
 
 [Kernels]
@@ -292,6 +304,86 @@
 
       execute_on = 'initial timestep_end'
   [../]
+
+  [./MolDiff_calc]
+      type = SimpleFluidDispersion
+      variable = MolDiff
+
+      # ========== Standard Input Args ============
+      pressure = pressure
+      pressure_unit = "kPa"
+      temperature = 298 # in K
+      macro_porosity = eps
+
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      vel_length_unit = "cm"
+      vel_time_unit = "min"
+
+      ionic_strength = 0.005
+      ionic_strength_volume_unit = "cm^3"
+
+      ref_diffusivity = 2.296E-5
+      diff_length_unit = "cm"
+      diff_time_unit = "s"
+      effective_diffusivity_factor = 1.5
+
+      dispersivity = 0.01
+      disp_length_unit = "cm"
+
+      # No args for viscosity or density will make calculations
+      # assuming that the solvent is water and use the standard
+      # built-in coefficients to calculate properties
+
+      # ========== Output Args ============
+      output_length_unit = "cm"
+      output_time_unit = "min"
+      include_dispersivity_correction = false
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./disp_calc]
+      type = SimpleFluidDispersion
+      variable = eff_disp
+
+      # ========== Standard Input Args ============
+      pressure = pressure
+      pressure_unit = "kPa"
+      temperature = 298 # in K
+      macro_porosity = eps
+
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      vel_length_unit = "cm"
+      vel_time_unit = "min"
+
+      ionic_strength = 0.005
+      ionic_strength_volume_unit = "cm^3"
+
+      ref_diffusivity = 2.296E-5
+      diff_length_unit = "cm"
+      diff_time_unit = "s"
+      effective_diffusivity_factor = 1.5
+
+      dispersivity = 0.01
+      disp_length_unit = "cm"
+
+      # No args for viscosity or density will make calculations
+      # assuming that the solvent is water and use the standard
+      # built-in coefficients to calculate properties
+
+      # ========== Output Args ============
+      output_length_unit = "cm"
+      output_time_unit = "min"
+      include_dispersivity_correction = true
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+  [../]
 []
 
 [BCs]
@@ -354,6 +446,18 @@
   [./density]
       type = ElementAverageValue
       variable = rho
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./MolDiff]
+      type = ElementAverageValue
+      variable = MolDiff
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./eff_disp]
+      type = ElementAverageValue
+      variable = eff_disp
       execute_on = 'initial timestep_end'
   [../]
 

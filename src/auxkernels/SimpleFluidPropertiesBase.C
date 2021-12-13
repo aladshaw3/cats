@@ -82,7 +82,7 @@ InputParameters SimpleFluidPropertiesBase::validParams()
     params.addParam< std::string >("diff_time_unit","s","Time units for diffusivity");
     params.addParam< Real >("ref_diff_temp",298.15,"Reference temperature value for diffusivity (K)");
 
-    params.addParam< Real >("effective_diffusivity_factor",1.5,"Factor applied to pore diffusivity to estimate effective diffusion: Range (1,2)");
+    params.addParam< Real >("effective_diffusivity_factor",0.5,"Factor applied to pore diffusivity to estimate effective diffusion: Range (1,2)");
 
     params.addParam< Real >("dispersivity",0.01,"Dispersivity coefficient of the porous media");
     params.addParam< std::string >("disp_length_unit","cm","Length units for dispersivity");
@@ -392,6 +392,13 @@ Real SimpleFluidPropertiesBase::fluid_density(Real temperature, Real pressure)
 Real SimpleFluidPropertiesBase::molecular_diffusion(Real temperature)
 {
   return _ref_diffusivity*std::exp(-1991.805*((1/temperature)-(1/_ref_diff_temp)));
+}
+
+Real SimpleFluidPropertiesBase::effective_molecular_diffusion(Real temperature, Real porosity)
+{
+  if (porosity > 1 || porosity < 0)
+    moose::internal::mooseErrorRaw("Variable for 'macro_porosity' must be strictly < 1 and > 0 [0 < eps < 1]");
+  return molecular_diffusion(temperature)*std::pow(porosity, _eff_diff_factor);
 }
 
 Real SimpleFluidPropertiesBase::dispersion(Real temperature)

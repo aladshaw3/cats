@@ -109,6 +109,9 @@ protected:
     /// Calculation of molecular diffusion
     Real molecular_diffusion(Real temperature);
 
+    /// Calculation of effective molecular diffusion (includes porosity adjustment)
+    Real effective_molecular_diffusion(Real temperature, Real porosity);
+
     /// Calculation of dispersion
     Real dispersion(Real temperature);
 
