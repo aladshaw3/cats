@@ -149,6 +149,16 @@
 
 [AuxKernels]
 
+  [./darcy_calc]
+      type = KozenyCarmanDarcyCoefficient
+      variable = DarcyCoeff
+      porosity = eps
+      viscosity = viscosity
+      particle_diameter = 0.001  #cm
+      kozeny_carman_const = 5.55
+      execute_on = 'initial timestep_end'
+  [../]
+
   [./viscosity_calc]
       type = SimpleFluidViscosity
       variable = viscosity
@@ -458,6 +468,12 @@
   [./eff_disp]
       type = ElementAverageValue
       variable = eff_disp
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./DarcyCoeff]
+      type = ElementAverageValue
+      variable = DarcyCoeff
       execute_on = 'initial timestep_end'
   [../]
 
