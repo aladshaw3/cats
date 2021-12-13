@@ -72,7 +72,13 @@
 
 
   # Testing fluid prop base
-  [./test_prop]
+  [./viscosity]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.0
+  [../]
+
+  [./mass_viscosity]
     order = FIRST
     family = LAGRANGE
     initial_condition = 0.0
@@ -119,10 +125,11 @@
 
 [AuxKernels]
 
-  [./test_calc]
-      type = SimpleFluidPropertiesBase
-      variable = test_prop
+  [./viscosity_calc]
+      type = SimpleFluidViscosity
+      variable = viscosity
 
+      # ========== Standard Input Args ============
       pressure = pressure
       pressure_unit = "kPa"
       temperature = 298 # in K
@@ -148,6 +155,51 @@
       # No args for viscosity or density will make calculations
       # assuming that the solvent is water and use the standard
       # built-in coefficients to calculate properties
+
+      # ========== Output Args ============
+      output_pressure_unit = "kPa"
+      output_time_unit = "min"
+      unit_basis = "pressure"
+
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./mass_viscosity_calc]
+      type = SimpleFluidViscosity
+      variable = mass_viscosity
+
+      # ========== Standard Input Args ============
+      pressure = pressure
+      pressure_unit = "kPa"
+      temperature = 298 # in K
+      macro_porosity = eps
+
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      vel_length_unit = "cm"
+      vel_time_unit = "min"
+
+      ionic_strength = 0.005
+      ionic_strength_volume_unit = "cm^3"
+
+      ref_diffusivity = 2.296E-5
+      diff_length_unit = "cm"
+      diff_time_unit = "s"
+      effective_diffusivity_factor = 1.5
+
+      dispersivity = 0.01
+      disp_length_unit = "cm"
+
+      # No args for viscosity or density will make calculations
+      # assuming that the solvent is water and use the standard
+      # built-in coefficients to calculate properties
+
+      # ========== Output Args ============
+      output_mass_unit = "kg"
+      output_length_unit = "cm"
+      output_time_unit = "min"
+      unit_basis = "mass"
 
       execute_on = 'initial timestep_end'
   [../]
@@ -192,9 +244,15 @@
       execute_on = 'initial timestep_end'
   [../]
 
-  [./test]
+  [./viscosity]
       type = ElementAverageValue
-      variable = test_prop
+      variable = viscosity
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./mass_viscosity]
+      type = ElementAverageValue
+      variable = mass_viscosity
       execute_on = 'initial timestep_end'
   [../]
 
