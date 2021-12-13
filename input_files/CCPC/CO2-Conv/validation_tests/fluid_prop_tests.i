@@ -83,6 +83,12 @@
     family = LAGRANGE
     initial_condition = 0.0
   [../]
+
+  [./viscosity_electrolyte]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.0
+  [../]
 []
 
 [Kernels]
@@ -203,6 +209,45 @@
 
       execute_on = 'initial timestep_end'
   [../]
+
+  [./viscosity_ele_calc]
+      type = SimpleFluidElectrolyteViscosity
+      variable = viscosity_electrolyte
+
+      # ========== Standard Input Args ============
+      pressure = pressure
+      pressure_unit = "kPa"
+      temperature = 298 # in K
+      macro_porosity = eps
+
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      vel_length_unit = "cm"
+      vel_time_unit = "min"
+
+      ionic_strength = 0.005
+      ionic_strength_volume_unit = "cm^3"
+
+      ref_diffusivity = 2.296E-5
+      diff_length_unit = "cm"
+      diff_time_unit = "s"
+      effective_diffusivity_factor = 1.5
+
+      dispersivity = 0.01
+      disp_length_unit = "cm"
+
+      # No args for viscosity or density will make calculations
+      # assuming that the solvent is water and use the standard
+      # built-in coefficients to calculate properties
+
+      # ========== Output Args ============
+      output_pressure_unit = "kPa"
+      output_time_unit = "min"
+      unit_basis = "pressure"
+
+      execute_on = 'initial timestep_end'
+  [../]
 []
 
 [BCs]
@@ -253,6 +298,12 @@
   [./mass_viscosity]
       type = ElementAverageValue
       variable = mass_viscosity
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./viscosity_electrolyte]
+      type = ElementAverageValue
+      variable = viscosity_electrolyte
       execute_on = 'initial timestep_end'
   [../]
 

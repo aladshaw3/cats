@@ -1,9 +1,10 @@
 /*!
- *  \file SimpleFluidViscosity.h
- *    \brief AuxKernel kernel to calculate viscosity of a liquid (default = water)
- *    \details This file is responsible for calculating the viscosity of a liquid by
+ *  \file SimpleFluidElectrolyteViscosity.h
+ *    \brief AuxKernel kernel to calculate viscosity of an electrolyte liquid (default = water + NaCl)
+ *    \details This file is responsible for calculating the viscosity of an electrolyte liquid by
  *            using an emperical relationship (see SimpleFluidPropertiesBase for
- *            more details). User can specify if they want a pressure unit basis
+ *            more details). That relationship is a function of the ionic strength
+ *            of the electrolyte solution. User can specify if they want a pressure unit basis
  *            or a mass unit basis on output.
  *
  *            Pressure Basis:   [Pressure * Time]
@@ -38,19 +39,19 @@
 
 #pragma once
 
-#include "SimpleFluidPropertiesBase.h"
+#include "SimpleFluidViscosity.h"
 
-/// SimpleFluidViscosity class object inherits from SimpleFluidPropertiesBase object
-/** This class object inherits from the SimpleFluidPropertiesBase object in the CATS framework.
+/// SimpleFluidViscosity class object inherits from SimpleFluidViscosity object
+/** This class object inherits from the SimpleFluidViscosity object in the CATS framework.
     All public and protected members of this class are required function overrides. */
-class SimpleFluidViscosity : public SimpleFluidPropertiesBase
+class SimpleFluidElectrolyteViscosity : public SimpleFluidViscosity
 {
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
 
     /// Required constructor for objects in MOOSE
-    SimpleFluidViscosity(const InputParameters & parameters);
+    SimpleFluidElectrolyteViscosity(const InputParameters & parameters);
 
 protected:
     /// Required MOOSE function override
@@ -58,14 +59,6 @@ protected:
         system pressure is needed. You are required to override this function for any inherited
         AuxKernel. */
     virtual Real computeValue() override;
-
-    std::string _output_length_unit;                ///< Units of the length term in viscosity (m, cm, mm)
-    std::string _output_mass_unit;                  ///< Units of the mass term in viscosity (kg, g, mg)
-    std::string _output_time_unit;                  ///< Units of the time term in viscosity (hr, min, s)
-
-    std::string _output_pressure_unit;              ///< Units of the pressure term in viscosity (kPa, Pa, mPa)
-
-    MooseEnum _output_basis;					              ///< Enumerator to determine what basis to use (pressure or mass)
 
 private:
 
