@@ -1,0 +1,7 @@
+[Tests]
+  [./darcy_schloegl_flow]
+    type = 'Exodiff'
+    input = 'darcy_schloegl.i'
+    exodiff = 'darcy_schloegl_out.e'
+  [../]
+[]
