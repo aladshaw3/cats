@@ -1,9 +1,9 @@
 /*!
- *  \file KozenyCarmanDarcyCoefficient.h
- *    \brief Auxillary kernel for a Kozney-Carman coefficient for implementation of Darcy's Law
+ *  \file SchloeglDarcyCoefficient.h
+ *    \brief Auxillary kernel for a Schloegl coefficient for implementation of Darcy's Law in membranes
  *    \details This file is responsible for calculating the value of an auxvariable
- *              according to the Kozney-Carman relationship for porous media. This calculated
- *              coefficient is to be used in the calculation of velocity in a porous media
+ *              according to the Schloegl relationship for Darcy flow in membranes. This calculated
+ *              coefficient is to be used in the calculation of velocity in/across a membrane
  *              assuming Darcy flow. This is where all velocities are resolved via only
  *              pressure gradients in the domain and the pressure is resolved with a Laplace's
  *              equation with proper boundary conditions applied.
@@ -12,8 +12,12 @@
  *
  *              Laplace's Equation:  0 = Coeff * Div * grad(P)
  *
+ *  \note This kernel can also be used in conjuction with SchloeglElectrokineticCoefficient to
+ *        determine a velocity flux through the membrane that is also a function of the potential
+ *        gradient across that membrane.
+ *
  *  \author Austin Ladshaw
- *  \date 12/13/2021
+ *  \date 12/14/2021
  *	\copyright This kernel was designed and built at Oak Ridge National
  *              Laboratory by Austin Ladshaw for research in electrochemical
  *              CO2 conversion.
@@ -38,31 +42,31 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "KozenyCarmanDarcyCoefficient.h"
+#pragma once
 
-registerMooseObject("catsApp", KozenyCarmanDarcyCoefficient);
+#include "AuxKernel.h"
 
-InputParameters KozenyCarmanDarcyCoefficient::validParams()
+/// SchloeglDarcyCoefficient class inherits from AuxKernel
+/** This class object creates an AuxKernel for use in the MOOSE framework. The AuxKernel will
+    calculate the new values for the auxvariable based on linear changes with time. */
+class SchloeglDarcyCoefficient : public AuxKernel
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addCoupledVar("porosity",0.5,"Name of the bulk porosity variable");
-    params.addCoupledVar("viscosity",0.001,"Name of the viscosity variable (default = 10^-3 Pa*s)");
-    params.addParam< Real >("particle_diameter",0.01,"Average particle diameter of fibers/spheres/etc in the porous domain");
-    params.addParam< Real >("kozeny_carman_const",5.55,"Kozeny-Carman Constant for the porous media");
-    return params;
-}
+public:
+    /// Required new syntax for InputParameters
+    static InputParameters validParams();
 
-KozenyCarmanDarcyCoefficient::KozenyCarmanDarcyCoefficient(const InputParameters & parameters) :
-AuxKernel(parameters),
-_viscosity(coupledValue("viscosity")),
-_macro_pore(coupledValue("porosity")),
-_particle_dia(getParam< Real >("particle_diameter")),
-_K(getParam< Real >("kozeny_carman_const"))
-{
+    /// Standard MOOSE public constructor
+    SchloeglDarcyCoefficient(const InputParameters & parameters);
 
-}
+protected:
+    /// Required MOOSE function override
+    /** This is the function that is called by the MOOSE framework when a calculation of the total
+        system pressure is needed. You are required to override this function for any inherited
+        AuxKernel. */
+    virtual Real computeValue() override;
 
-Real KozenyCarmanDarcyCoefficient::computeValue()
-{
-    return _particle_dia*_particle_dia*_macro_pore[_qp]*_macro_pore[_qp]*_macro_pore[_qp]/_K/(_viscosity[_qp]+1e-15)/(1.0-_macro_pore[_qp])/(1.0-_macro_pore[_qp]);
-}
+private:
+    const VariableValue & _viscosity;                 ///< Variable for the viscosity of the fluid (typical units: Pressure * Time)
+    const VariableValue & _hydro_perm;                ///< Variable for the hydrolic permeability of the membrane (units: Length^2)
+
+};

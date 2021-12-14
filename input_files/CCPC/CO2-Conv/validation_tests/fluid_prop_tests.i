@@ -57,6 +57,33 @@
       initial_condition = 33.189
   [../]
 
+  # = kp / mu   [cm^2/kPa/min]
+  #
+  #   kp = 1.58E-14 cm^2
+  #   mu = 1.667E-8 kPa*min (10^-3 Pa*s)
+  [./SchloeglCoeff]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 9.4798E-7
+  [../]
+
+  # = (ko / mu) * (F*C) * f   [(cm^2/kPa/min) * (C/mol * mol/cm^3) * (kPa*cm^3/J)] = [C*cm^2/J/min]
+  #
+  #   ko = 1.13E-15 cm^2
+  #   mu = 1.667E-8 kPa*min (10^-3 Pa*s)
+  #
+  #   F = 96,485.3 C/mol
+  #   C = 0.0012 mol/cm^3 (should be coupled variable)
+  #
+  #   f = conversion factor necessary to deal with complex units
+  #     = 0.001 kPa*cm^3/J
+  #       [Will ultimately depend on units defined by all other variables]
+  [./SchloeglElecCoeff]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 7.8485E-9
+  [../]
+
   [./eps]
       order = FIRST
       family = LAGRANGE
@@ -156,6 +183,24 @@
       viscosity = viscosity
       particle_diameter = 0.001  #cm
       kozeny_carman_const = 5.55
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./schloegl_darcy_calc]
+      type = SchloeglDarcyCoefficient
+      variable = SchloeglCoeff
+      hydraulic_permeability = 1.58E-14 # cm^2
+      viscosity = viscosity             # kPa*min
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./schloegl_ele_calc]
+      type = SchloeglElectrokineticCoefficient
+      variable = SchloeglElecCoeff
+      electrokinetic_permeability = 1.13E-15  # cm^2
+      viscosity = viscosity                   # kPa*min
+      ion_conc = 0.0012                       # mol/cm^3
+      conversion_factor = 0.001               # kPa*cm^3/J
       execute_on = 'initial timestep_end'
   [../]
 
@@ -474,6 +519,18 @@
   [./DarcyCoeff]
       type = ElementAverageValue
       variable = DarcyCoeff
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./SchloeglCoeff]
+      type = ElementAverageValue
+      variable = SchloeglCoeff
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./SchloeglElecCoeff]
+      type = ElementAverageValue
+      variable = SchloeglElecCoeff
       execute_on = 'initial timestep_end'
   [../]
 
