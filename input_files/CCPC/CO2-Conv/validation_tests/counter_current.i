@@ -43,7 +43,7 @@
 #
 # NOTE: It is generally not necessary to impose 'No Slip'
 # conditions for flow at the walls, since the velocities
-# are not solved as Boundary-Value problems any more. 
+# are not solved as Boundary-Value problems any more.
 
 [GlobalParams]
 
@@ -495,7 +495,7 @@
   l_max_its = 20
 
   start_time = 0.0
-  end_time = 0.075
+  end_time = 1.0
   dtmax = 0.025
 
   [./TimeStepper]

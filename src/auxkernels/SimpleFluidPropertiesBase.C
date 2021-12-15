@@ -82,7 +82,7 @@ InputParameters SimpleFluidPropertiesBase::validParams()
     params.addParam< std::string >("diff_time_unit","s","Time units for diffusivity");
     params.addParam< Real >("ref_diff_temp",298.15,"Reference temperature value for diffusivity (K)");
 
-    params.addParam< Real >("effective_diffusivity_factor",0.5,"Factor applied to pore diffusivity to estimate effective diffusion: Range (1,2)");
+    params.addParam< Real >("effective_diffusivity_factor",0.5,"Factor applied to pore diffusivity to estimate effective diffusion: Range (0,2)");
 
     params.addParam< Real >("dispersivity",0.01,"Dispersivity coefficient of the porous media");
     params.addParam< std::string >("disp_length_unit","cm","Length units for dispersivity");
@@ -152,8 +152,8 @@ _rho_ref(getParam< Real >("ref_density")),
 _rho_mass_unit(getParam<std::string >("density_mass_unit")),
 _rho_volume_unit(getParam<std::string >("density_volume_unit"))
 {
-    if (_eff_diff_factor < 1.0)
-      _eff_diff_factor = 1.0;
+    if (_eff_diff_factor < 0)
+      _eff_diff_factor = 0;
     if (_eff_diff_factor > 2.0)
       _eff_diff_factor = 2.0;
 
