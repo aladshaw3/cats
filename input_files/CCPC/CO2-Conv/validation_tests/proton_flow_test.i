@@ -1,4 +1,15 @@
 # Testing Proton flow over membrane with dummy potential
+#
+# May need 2 different diffusion terms for proton in membrane
+#   (1) For the potential grad (use real molecular diff)
+#   (2) For the concentration grad (for stabilization)
+#
+#   The secondary piece is needed since the Deff acts differently
+#   for a diffusion only problem, then a diffusion advection problem.
+#
+#   Net effect is a smoother transition through the membrane and the
+#   membrane is still 'relatively' impenetrable without a potential
+#   gradient.
 
 [GlobalParams]
 
@@ -153,6 +164,13 @@
       block = 'neg_electrode membrane pos_electrode'
   [../]
 
+  [./Dp_proton_ekin]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 5E-2
+      block = 'neg_electrode membrane pos_electrode'
+  [../]
+
   # velocity in z
   [./vel_z]
     order = FIRST
@@ -301,9 +319,9 @@
       porosity = eps
       electric_potential = dummy
       temperature = Te
-      Dx = Dp_proton
-      Dy = Dp_proton
-      Dz = Dp_proton
+      Dx = Dp_proton_ekin
+      Dy = Dp_proton_ekin
+      Dz = Dp_proton_ekin
   [../]
 []
 
@@ -351,9 +369,9 @@
       porosity = eps
       electric_potential = dummy
       temperature = Te
-      Dx = Dp_proton
-      Dy = Dp_proton
-      Dz = Dp_proton
+      Dx = Dp_proton_ekin
+      Dy = Dp_proton_ekin
+      Dz = Dp_proton_ekin
   [../]
 []
 
@@ -541,6 +559,46 @@
       block = 'membrane'
   [../]
 
+  [./Disp_proton_mem_ekin]
+      type = SimpleFluidDispersion
+      variable = Dp_proton_ekin
+
+      # ========== Standard Input Args ============
+      pressure = pressure
+      pressure_unit = "kPa"
+      temperature = Te # in K
+      macro_porosity = eps
+
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      vel_length_unit = "cm"
+      vel_time_unit = "min"
+
+      ref_diffusivity = 1.4E-5
+      ref_diff_temp = 298
+      diff_length_unit = "cm"
+      diff_time_unit = "s"
+      effective_diffusivity_factor = 0.5
+
+      dispersivity = 0.001
+      disp_length_unit = "cm"
+
+      # No args for viscosity or density will make calculations
+      # assuming that the solvent is water and use the standard
+      # built-in coefficients to calculate properties
+
+      # ========== Output Args ============
+      output_length_unit = "cm"
+      output_time_unit = "min"
+      include_dispersivity_correction = false
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+
+      block = 'membrane neg_electrode pos_electrode'
+  [../]
+
   [./darcy_calc]
       type = KozenyCarmanDarcyCoefficient
       variable = DarcyCoeff
@@ -612,15 +670,15 @@
       type = DirichletBC
       variable = dummy
       boundary = 'neg_electrode_interface_membrane'
-      #value = 1.02
-      value = 1.0
+      value = 1.02
+      #value = 1.0
   [../]
   [./dummy_right_mem]
       type = DirichletBC
       variable = dummy
       boundary = 'membrane_interface_pos_electrode'
-      #value = 1.08
-      value = 1.0
+      value = 1.08
+      #value = 1.0
   [../]
   [./dummy_right_plate]
       type = NeumannBC
@@ -632,8 +690,8 @@
       type = DirichletBC
       variable = dummy
       boundary = 'pos_collector_right'
-      #value = 1.1
-      value = 1.0
+      value = 1.01
+      #value = 1.0
   [../]
 
   # exit pressure
