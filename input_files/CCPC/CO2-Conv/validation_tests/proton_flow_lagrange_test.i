@@ -1,15 +1,11 @@
 # Testing Proton flow over membrane with dummy potential
 #
-# May need 2 different diffusion terms for proton in membrane
-#   (1) For the potential grad (use real molecular diff)
-#   (2) For the concentration grad (for stabilization)
-#
-#   The secondary piece is needed since the Deff acts differently
-#   for a diffusion only problem, then a diffusion advection problem.
-#
-#   Net effect is a smoother transition through the membrane and the
-#   membrane is still 'relatively' impenetrable without a potential
-#   gradient.
+# This test uses Non-DG methods for the proton variable. The
+#   results are remarkably similar to the DG version, likely due
+#   to the fact that the velocity is so low. Thus, we can use
+#   LAGRANGE shape functions to resolve the physics of this just
+#   as well. 
+
 
 [GlobalParams]
 
@@ -94,7 +90,7 @@
 
   [./proton]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       initial_condition = 0.0012 #mol/cm^3
       block = 'neg_electrode membrane pos_electrode'
   [../]
@@ -344,35 +340,6 @@
       Dz = Dp_tracer
   [../]
 
-  ### Conservation of mass for a proton ###
-  [./proton_dgadv]
-      type = DGPoreConcAdvection
-      variable = proton
-      porosity = eps
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
-      block = 'neg_electrode pos_electrode'
-  [../]
-  [./proton_dgdiff]
-      type = DGVarPoreDiffusion
-      variable = proton
-      porosity = eps
-      Dx = Dp_proton
-      Dy = Dp_proton
-      Dz = Dp_proton
-  [../]
-  [./proton_dgnpdiff]
-      type = DGNernstPlanckDiffusion
-      variable = proton
-      valence = 1
-      porosity = eps
-      electric_potential = dummy
-      temperature = Te
-      Dx = Dp_proton_ekin
-      Dy = Dp_proton_ekin
-      Dz = Dp_proton_ekin
-  [../]
 []
 
 [InterfaceKernels]
