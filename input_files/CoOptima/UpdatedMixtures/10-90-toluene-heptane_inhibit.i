@@ -1488,7 +1488,7 @@
       variable = R_HC
       temperature = temp
       coupled_list = 'HCw_heptane HCw_toluene'
-      pre_exponentials = '2.5E5 0'
+      pre_exponentials = '1.5E5 0'
       activation_energies = '-11500 0'
     [../]
 

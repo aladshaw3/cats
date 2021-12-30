@@ -2048,7 +2048,7 @@
         uz = vel_z
         pressure = press
         temperature = temp
-        inlet_ppm = 300
+        inlet_ppm = 385.7143
     [../]
     [./HC_toluene_FluxOut]
         type = DGPoreConcFluxBC
@@ -2074,7 +2074,7 @@
         uz = vel_z
         pressure = press
         temperature = temp
-        inlet_ppm = 112.5
+        inlet_ppm = 37.5
     [../]
     [./HC_diiso_FluxOut]
         type = DGPoreConcFluxBC

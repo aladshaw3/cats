@@ -1479,7 +1479,7 @@
       variable = R_HC
       temperature = temp
       coupled_list = 'HCw_isooctane HCw_diiso'
-      pre_exponentials = '4.5E6 0'
+      pre_exponentials = '2.2E5 0'
       activation_energies = '-25000 0'
     [../]
 
@@ -2052,7 +2052,7 @@
         uz = vel_z
         pressure = press
         temperature = temp
-        inlet_ppm = 262.5
+        inlet_ppm = 337.5
     [../]
     [./HC_isooctane_FluxOut]
         type = DGPoreConcFluxBC
@@ -2078,7 +2078,7 @@
         uz = vel_z
         pressure = press
         temperature = temp
-        inlet_ppm = 112.5
+        inlet_ppm = 37.5
     [../]
     [./HC_diiso_FluxOut]
         type = DGPoreConcFluxBC
