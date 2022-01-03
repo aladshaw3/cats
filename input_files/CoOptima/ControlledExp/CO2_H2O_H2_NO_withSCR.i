@@ -1386,7 +1386,8 @@
 [Functions]
   [./data_fun]
     type = PiecewiseMultilinear
-    data_file = CO2_H2O_H2_NO_temperature.txt
+    #data_file = CO2_H2O_H2_NO_temperature.txt
+    data_file = CO2_H2O_CO_H2_NO_temperature.txt
   [../]
 []
 
