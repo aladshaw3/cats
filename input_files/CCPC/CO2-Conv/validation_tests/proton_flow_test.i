@@ -250,7 +250,7 @@
     type = VariableVectorCoupledGradient
     variable = vel_y
     coupled = pressure
-    ux = SchloeglCoeff
+    uy = SchloeglCoeff
     block = 'membrane'
   [../]
   [./y_schloegl_ele]
