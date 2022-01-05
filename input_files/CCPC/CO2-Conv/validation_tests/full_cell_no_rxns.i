@@ -1,18 +1,20 @@
 ## This example file runs the full cell test WITHOUT reactions coupled
 #
-#     It is UNCLEAR at this moment if we need to have separate
-#       phi_s variables for each electrode, or if a single phi_s
-#       variable is appropriate.
+#     To maximize stability, all variables should be MONOMIAL except for
+#         * pressure
+#         * phi_s
+#         * phi_e
 #
-#     BCs for potentials are still not fully understood. I believe
-#       any zero flux condition is satisfied without needing to add
-#       a specific NeumannBC with value = 0.
+#     These above variables are Poisson/Laplacian Dominated processes and are
+#         easier to model with CGFE with LAGRANGE shape functions.
 #
-#     Still need to add calculations for current from potentials
+#     All other variables should be DGFE with MONOMIAL shape functions to maximize
+#         stability and create sharper/smoother results nearest the interfaces.
 #
-#     Need to consult with Srikanth about BCs
-#
-#     Convergence needs further improvements
+#         - This mixing of methods appears to be relatively efficient and stable
+#             (good stability comes from DGFE, but makes the problem size larger)
+#             (good efficiency comes from CGFE, but makes the problem less stable)
+#             (efficiency is improved with proper Jacobians/PC and good ICs/states) 
 
 [GlobalParams]
 
@@ -83,7 +85,7 @@
   # velocity in x
   [./vel_x]
       order = FIRST
-      family = LAGRANGE
+      family = MONOMIAL
       initial_condition = 0.0
       block = 'neg_electrode membrane pos_electrode'
   [../]
@@ -91,7 +93,7 @@
   # velocity in y
   [./vel_y]
       order = FIRST
-      family = LAGRANGE
+      family = MONOMIAL
       initial_condition = 0.0
       block = 'neg_electrode membrane pos_electrode'
   [../]
@@ -188,6 +190,38 @@
           electrode_potential = phi_s
           electrolyte_potential = phi_e
       [../]
+  [../]
+
+  # Electrolyte current density in x (C/cm^2/min)
+  [./ie_x]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 1e-20
+      block = 'neg_electrode membrane pos_electrode'
+  [../]
+
+  # Electrolyte current density in y (C/cm^2/min)
+  [./ie_y]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 1e-20
+      block = 'neg_electrode membrane pos_electrode'
+  [../]
+
+  # electrode current density in x (C/cm^2/min)
+  [./is_x]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 1e-20
+      block = 'neg_collector neg_electrode pos_electrode pos_collector'
+  [../]
+
+  # electrode current density in y (C/cm^2/min)
+  [./is_y]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 1e-20
+      block = 'neg_collector neg_electrode pos_electrode pos_collector'
   [../]
 
   # H2O
@@ -301,7 +335,7 @@
   # velocity in z
   [./vel_z]
       order = FIRST
-      family = LAGRANGE
+      family = MONOMIAL
       initial_condition = 0.0
       block = 'neg_electrode membrane pos_electrode'
   [../]
@@ -309,7 +343,7 @@
   # water viscosity
   [./viscosity]
       order = FIRST
-      family = LAGRANGE
+      family = MONOMIAL
       initial_condition = 1.667E-8 # kPa*min
       block = 'neg_electrode membrane pos_electrode'
   [../]
@@ -391,7 +425,7 @@
   #Specific surface area (adjusted)
   [./As]
     order = FIRST
-    family = LAGRANGE
+    family = MONOMIAL
     initial_condition = 2E4  # cm^-1
     block = 'neg_electrode pos_electrode'
   [../]
@@ -698,6 +732,238 @@
   [../]
 
 
+  ### ===================== Electrolyte Current ======================
+  # --------------- Current density in x-dir from potential gradient ------------
+  #  ie_x
+  [./ie_x_equ]
+      type = Reaction
+      variable = ie_x
+  [../]
+
+  #  -K*grad(phi_e)_x   where K=f(ions, diff, etc....)
+  [./ie_x_phigrad_neg_electrode]
+      type = ElectrolyteCurrentFromPotentialGradient
+      variable = ie_x
+      direction = 0         # 0=x
+      electric_potential = phi_e
+      porosity = eps
+      temperature = T_e
+      ion_conc = 'H_p V_II V_III'
+      diffusion = 'D_H_p D_V_II D_V_III'
+      ion_valence = '1 2 3'
+      block = 'neg_electrode'
+  [../]
+
+  #  -K*grad(phi_e)_x   where K=f(ions, diff, etc....)
+  [./ie_x_phigrad_pos_electrode]
+      type = ElectrolyteCurrentFromPotentialGradient
+      variable = ie_x
+      direction = 0         # 0=x
+      electric_potential = phi_e
+      porosity = eps
+      temperature = T_e
+      ion_conc = 'H_p V_IV V_V'
+      diffusion = 'D_H_p D_V_IV D_V_V'
+      ion_valence = '1 2 1'
+      block = 'pos_electrode'
+  [../]
+
+  #  -K*grad(phi_e)_x   where K=f(ions, diff, etc....)
+  [./ie_x_phigrad_membrane]
+      type = ElectrolyteCurrentFromPotentialGradient
+      variable = ie_x
+      direction = 0         # 0=x
+      electric_potential = phi_e
+      porosity = 1
+      temperature = T_e
+      ion_conc = 'H_p'
+      ion_valence = '1'
+      diffusion = 'D_H_p'
+      block = 'membrane'
+  [../]
+
+  #  -F*eps*SUM( zj*Dj*grad(ion)_x )
+  [./ie_x_iongrad_neg_electrode]
+      type = ElectrolyteCurrentFromIonGradient
+      variable = ie_x
+      direction = 0         # 0=x
+      porosity = eps
+      ion_conc = 'H_p V_II V_III'
+      diffusion = 'D_H_p D_V_II D_V_III'
+      ion_valence = '1 2 3'
+      block = 'neg_electrode'
+  [../]
+
+  #  -F*eps*SUM( zj*Dj*grad(ion)_x )
+  [./ie_x_iongrad_pos_electrode]
+      type = ElectrolyteCurrentFromIonGradient
+      variable = ie_x
+      direction = 0         # 0=x
+      porosity = eps
+      ion_conc = 'H_p V_IV V_V'
+      diffusion = 'D_H_p D_V_IV D_V_V'
+      ion_valence = '1 2 1'
+      block = 'pos_electrode'
+  [../]
+
+  #  -F*eps*SUM( zj*Dj*grad(ion)_x )
+  [./ie_x_iongrad_membrane]
+      type = ElectrolyteCurrentFromIonGradient
+      variable = ie_x
+      direction = 0         # 0=x
+      porosity = 1
+      ion_conc = 'H_p'
+      ion_valence = '1'
+      diffusion = 'D_H_p'
+      block = 'membrane'
+  [../]
+
+
+  # --------------- Current density in y-dir from potential gradient ---------------
+  #  ie_y
+  [./ie_y_equ]
+      type = Reaction
+      variable = ie_y
+  [../]
+
+  #  -K*grad(phi_e)_y   where K=f(ions, diff, etc....)
+  [./ie_y_phigrad_neg_electrode]
+      type = ElectrolyteCurrentFromPotentialGradient
+      variable = ie_y
+      direction = 1         # 1=y
+      electric_potential = phi_e
+      porosity = eps
+      temperature = T_e
+      ion_conc = 'H_p V_II V_III'
+      diffusion = 'D_H_p D_V_II D_V_III'
+      ion_valence = '1 2 3'
+      block = 'neg_electrode'
+  [../]
+
+  #  -K*grad(phi_e)_y   where K=f(ions, diff, etc....)
+  [./ie_y_phigrad_pos_electrode]
+      type = ElectrolyteCurrentFromPotentialGradient
+      variable = ie_y
+      direction = 1         # 1=y
+      electric_potential = phi_e
+      porosity = eps
+      temperature = T_e
+      ion_conc = 'H_p V_IV V_V'
+      diffusion = 'D_H_p D_V_IV D_V_V'
+      ion_valence = '1 2 1'
+      block = 'pos_electrode'
+  [../]
+
+  #  -K*grad(phi_e)_y   where K=f(ions, diff, etc....)
+  [./ie_y_phigrad_membrane]
+      type = ElectrolyteCurrentFromPotentialGradient
+      variable = ie_y
+      direction = 1         # 1=y
+      electric_potential = phi_e
+      porosity = 1
+      temperature = T_e
+      ion_conc = 'H_p'
+      ion_valence = '1'
+      diffusion = 'D_H_p'
+      block = 'membrane'
+  [../]
+
+  #  -F*eps*SUM( zj*Dj*grad(ion)_y )
+  [./ie_y_iongrad_neg_electrode]
+      type = ElectrolyteCurrentFromIonGradient
+      variable = ie_y
+      direction = 1         # 1=y
+      porosity = eps
+      ion_conc = 'H_p V_II V_III'
+      diffusion = 'D_H_p D_V_II D_V_III'
+      ion_valence = '1 2 3'
+      block = 'neg_electrode'
+  [../]
+
+  #  -F*eps*SUM( zj*Dj*grad(ion)_y )
+  [./ie_y_iongrad_pos_electrode]
+      type = ElectrolyteCurrentFromIonGradient
+      variable = ie_y
+      direction = 1         # 1=y
+      porosity = eps
+      ion_conc = 'H_p V_IV V_V'
+      diffusion = 'D_H_p D_V_IV D_V_V'
+      ion_valence = '1 2 1'
+      block = 'pos_electrode'
+  [../]
+
+  #  -F*eps*SUM( zj*Dj*grad(ion)_y )
+  [./ie_y_iongrad_membrane]
+      type = ElectrolyteCurrentFromIonGradient
+      variable = ie_y
+      direction = 1         # 1=y
+      porosity = 1
+      ion_conc = 'H_p'
+      ion_valence = '1'
+      diffusion = 'D_H_p'
+      block = 'membrane'
+  [../]
+
+  ### ======================= Electrode/Collector Current ==================
+  # -------------- Current density in x-dir from potential gradient --------------
+  #  is_x
+  [./is_x_equ]
+      type = Reaction
+      variable = is_x
+  [../]
+
+  #  -sigma*(1-eps)*grad(phi_s)_x
+  [./is_x_phigrad_electrode]
+      type = ElectrodeCurrentFromPotentialGradient
+      variable = is_x
+      direction = 0         # 0=x
+      electric_potential = phi_s
+      solid_frac = eff_sol_vol
+      conductivity = sigma_s
+      block = 'neg_electrode pos_electrode'
+  [../]
+
+  #  -sigma*(1-eps)*grad(phi_s)_x
+  [./is_x_phigrad_collector]
+      type = ElectrodeCurrentFromPotentialGradient
+      variable = is_x
+      direction = 0         # 0=x
+      electric_potential = phi_s
+      solid_frac = 1
+      conductivity = sigma_c
+      block = 'neg_collector pos_collector'
+  [../]
+
+  # ----------------- Current density in y-dir from potential gradient ----------------
+  #  is_y
+  [./is_y_equ]
+      type = Reaction
+      variable = is_y
+  [../]
+
+  #  -sigma*(1-eps)*grad(phi_s)_y
+  [./is_y_phigrad_electrode]
+      type = ElectrodeCurrentFromPotentialGradient
+      variable = is_y
+      direction = 1         # 1=y
+      electric_potential = phi_s
+      solid_frac = eff_sol_vol
+      conductivity = sigma_s
+      block = 'neg_electrode pos_electrode'
+  [../]
+
+  #  -sigma*(1-eps)*grad(phi_s)_y
+  [./is_y_phigrad_collector]
+      type = ElectrodeCurrentFromPotentialGradient
+      variable = is_y
+      direction = 1         # 1=y
+      electric_potential = phi_s
+      solid_frac = 1
+      conductivity = sigma_c
+      block = 'neg_collector pos_collector'
+  [../]
+
+
   ### ==================== H2O Transport ==========================
   # DG methods must apply same equations to full transport space for connectivity
   #   Non-transport kernels (such as reactions and time derivatives) are allowed
@@ -918,17 +1184,18 @@
   # Applied current on the neg & pos collector plates
   #   NOTE: SIGNS ARE REVERSED FOR DISCHARGING
 
+  # NOTE 2: I CAN have 2 BCs on same side, as long as they are of different types!!!
   # ---- This is what is in the original reference -------
-  #[./phi_s_neg_side_current_charging]
-  #    type = NeumannBC
-  #    variable = phi_s
-  #    boundary = 'neg_collector_left'
-  #    #
-  #    ## -I/a for charging (where I=current = 10 A && a=surface area = 10cm x 10cm)
-  #    # 1 A = 1 C/s ==>  10 A = 600 C/min
-  #    # value = I/A = 6 C/min/cm^2
-  #    value = -6.0
-  #[../]
+  [./phi_s_neg_side_current_charging]
+      type = NeumannBC
+      variable = phi_s
+      boundary = 'neg_collector_left'
+      #
+      ## -I/a for charging (where I=current = 10 A && a=surface area = 10cm x 10cm)
+      # 1 A = 1 C/s ==>  10 A = 600 C/min
+      # value = I/A = 6 C/min/cm^2
+      value = -6.0
+  [../]
 
   # ---- This is what is in the Sandia reference -------
   #   (This BC type may be more numerically stable)
