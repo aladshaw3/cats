@@ -16,6 +16,12 @@
 #             (good efficiency comes from CGFE, but makes the problem less stable)
 #             (efficiency is improved with proper Jacobians/PC and good ICs/states)
 
+
+#### NOTES ####
+#
+#   Do I need to include 'eps' in the reaction terms 'J' and 'r'?
+#       (Could be lumped into 'As' as 'As*eps')
+
 [GlobalParams]
 
 [] #END GlobalParams
@@ -125,7 +131,7 @@
   [../]
 
   # reaction variable for positive electrode
-  #       Rxn:    V(IV) <---> V(V) + e-
+  #       Rxn:    V(IV) (+ H2O) <---> V(V) (+ 2 H+ ) + e-
   [./r_pos]
       order = FIRST
       family = MONOMIAL
@@ -232,10 +238,7 @@
       block = 'neg_electrode membrane pos_electrode'
   [../]
 
-[]
-
-[AuxVariables]
-  # Temporary location of protons and other concentrations
+  # H+
   [./H_p]
       order = FIRST
       family = MONOMIAL
@@ -243,6 +246,10 @@
       block = 'neg_electrode membrane pos_electrode'
   [../]
 
+[]
+
+[AuxVariables]
+  # Temporary location of protons and other concentrations
   [./HSO4_m]
       order = FIRST
       family = MONOMIAL
@@ -980,6 +987,7 @@
   [../]
 
   # Transport kernels
+  #     vel is Darcy vel so no eps correction
   [./H2O_gadv]
       type = GPoreConcAdvection
       variable = H2O
@@ -995,6 +1003,78 @@
       Dx = D_H2O
       Dy = D_H2O
       Dz = D_H2O
+  [../]
+
+  # reaction kernels for positive electrode
+  #       Rxn:    V(IV) (+ H2O) <---> V(V) (+ 2 H+ ) + e-
+  [./H2O_pos_rxn]
+    type = ScaledWeightedCoupledSumFunction
+    variable = H2O
+    coupled_list = 'r_pos'
+    weights = '-1'
+    scale = As
+    block = 'pos_electrode'
+  [../]
+
+
+  ### ==================== H+ Transport ==========================
+  # Divided Sub-domain kernels
+  [./Hp_dot_electrodes]
+      type = VariableCoefTimeDerivative
+      variable = H_p
+      coupled_coef = eps
+      block = 'neg_electrode pos_electrode'
+  [../]
+  [./Hp_dot_membrane]
+      type = VariableCoefTimeDerivative
+      variable = H_p
+      coupled_coef = 1
+      block = 'membrane'
+  [../]
+
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  ### NOTE ###
+  #
+  #     May need to force a new velocity term for JUST Hp
+  #     such than vel inside membrane is zero
+  [./Hp_gadv]
+      type = GPoreConcAdvection
+      variable = H_p
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./Hp_gdiff]
+      type = GVarPoreDiffusion
+      variable = H_p
+      porosity = eps
+      Dx = D_H_p
+      Dy = D_H_p
+      Dz = D_H_p
+  [../]
+  [./Hp_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = H_p
+      valence = 1
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_H_p
+      Dy = D_H_p
+      Dz = D_H_p
+  [../]
+
+  # reaction kernels for positive electrode
+  #       Rxn:    V(IV) (+ H2O) <---> V(V) (+ 2 H+ ) + e-
+  [./Hp_pos_rxn]
+    type = ScaledWeightedCoupledSumFunction
+    variable = H_p
+    coupled_list = 'r_pos'
+    weights = '2'
+    scale = As
+    block = 'pos_electrode'
   [../]
 []
 
@@ -1015,6 +1095,35 @@
       Dx = D_H2O
       Dy = D_H2O
       Dz = D_H2O
+  [../]
+
+  ### ==================== H+ Transport ==========================
+  [./Hp_dgadv]
+      type = DGPoreConcAdvection
+      variable = H_p
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./Hp_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = H_p
+      porosity = eps
+      Dx = D_H_p
+      Dy = D_H_p
+      Dz = D_H_p
+  [../]
+  [./Hp_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = H_p
+      valence = 1
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_H_p
+      Dy = D_H_p
+      Dz = D_H_p
   [../]
 []
 
@@ -1161,6 +1270,8 @@
 
   # NOTE 2: I CAN have 2 BCs on same side, as long as they are of different types!!!
   # ---- Set current density leaving and match with current density entering -------
+  #### NOTE ####
+  #   This BC may be redundant and not needed
   [./phi_s_neg_side_current_charging]
       type = NeumannBC
       variable = phi_s
@@ -1198,7 +1309,7 @@
 
   ### ==================== Electrolyte Potentials ==========================
   # zero fluxes are enforced naturally by the CGFE method
-  # NOTE: Unclear if we need a mixed Cauchy BC here for conc gradients 
+  # NOTE: Unclear if we need a mixed Cauchy BC here for conc gradients
 
 
   ### ==================== Pressure ==========================
@@ -1233,6 +1344,27 @@
   [./H2O_FluxOut]
       type = DGPoreConcFluxBC
       variable = H2O
+      boundary = 'pos_electrode_top neg_electrode_top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== H+ ==========================
+  [./Hp_FluxIn]
+      type = DGPoreConcFluxBC
+      variable = H_p
+      boundary = 'pos_electrode_bottom neg_electrode_bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      u_input = 0.0012
+  [../]
+  [./Hp_FluxOut]
+      type = DGPoreConcFluxBC
+      variable = H_p
       boundary = 'pos_electrode_top neg_electrode_top'
       porosity = 1
       ux = vel_x
@@ -1372,13 +1504,13 @@
   l_tol = 1e-6
   l_max_its = 20
 
-  start_time = -0.025
-  end_time = 0.1
-  dtmax = 0.025
+  start_time = -0.5
+  end_time = 10
+  dtmax = 0.5
 
   [./TimeStepper]
-		  type = ConstantDT
-      dt = 0.025
+		  type = SolutionTimeAdaptiveDT
+      dt = 0.005
   [../]
 
 [] #END Executioner
