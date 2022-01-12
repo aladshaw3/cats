@@ -1,4 +1,4 @@
-## This example file runs the full cell test WITHOUT reactions coupled
+## This example file runs the full cell test with all variables coupled
 #
 #     To maximize stability, all variables should be MONOMIAL except for
 #         * pressure
@@ -545,11 +545,6 @@
   [../]
 
   # reactions in electrodes
-  #     NOTE: BCs for phi_e may NOT be correct... does not converge with this
-  #     NOTE 2: This DOES solve if using NEWTON as the solver, may indicate
-  #             poor jacobians on my part, or something else...
-  #     NOTE 3: After updating Keff in electrolyte, converges with asm/lu
-  #             (does not converge well with ksp)
   [./phi_e_J_neg]
       type = ScaledWeightedCoupledSumFunction
       variable = phi_e
@@ -1161,31 +1156,11 @@
 
 [BCs]
   ### ==================== Solid Potentials ==========================
-  # zero electron flux at all interfaces (except far left and far right)
-  #[./phi_s_zero_flux_neg_side]
-  #    type = NeumannBC
-  #    variable = phi_s
-  #    boundary = 'neg_collector_top neg_collector_bottom
-  #                neg_electrode_top neg_electrode_bottom
-  #                neg_electrode_interface_membrane'
-  #    value = 0
-  #[../]
-
-  # This one causes a segfault, but not the one above?
-  #[./phi_s_zero_flux_pos_side]
-  #    type = NeumannBC
-  #    variable = phi_s
-  #    boundary = 'pos_collector_top pos_collector_bottom
-  #                pos_electrode_top pos_electrode_bottom
-  #                membrane_interface_pos_electrode'
-  #    value = 0
-  #[../]
-
   # Applied current on the neg & pos collector plates
   #   NOTE: SIGNS ARE REVERSED FOR DISCHARGING
 
   # NOTE 2: I CAN have 2 BCs on same side, as long as they are of different types!!!
-  # ---- This is what is in the original reference -------
+  # ---- Set current density leaving and match with current density entering -------
   [./phi_s_neg_side_current_charging]
       type = NeumannBC
       variable = phi_s
@@ -1197,7 +1172,7 @@
       value = -6.0
   [../]
 
-  # ---- This is what is in the Sandia reference -------
+  # ---- Fix a 'ground' state on one side of the system -------
   #   (This BC type may be more numerically stable)
   [./phi_s_neg_side_dirichlet]
       type = DirichletBC
@@ -1208,6 +1183,7 @@
       value = 0 # in V
   [../]
 
+  # ---- Set current density entering and match with current density leaving -------
   [./phi_s_pos_side_current_charging]
       type = NeumannBC
       variable = phi_s
@@ -1221,23 +1197,8 @@
 
 
   ### ==================== Electrolyte Potentials ==========================
-  # zero electron flux at top and bottom of membrane
-  #[./phi_e_zero_flux_membrane]
-  #    type = NeumannBC
-  #    variable = phi_e
-  #    boundary = 'membrane_bottom membrane_top'
-  #    value = 0
-  #[../]
-
-  # This one causes a segfault, but not the one above?
-  # zero electron flux at interface between electrodes and collectors
-  #[./phi_e_zero_flux_interfaces]
-  #    type = NeumannBC
-  #    variable = phi_e
-  #    boundary = 'neg_collector_interface_neg_electrode
-  #                pos_electrode_interface_pos_collector'
-  #    value = 0
-  #[../]
+  # zero fluxes are enforced naturally by the CGFE method
+  # NOTE: Unclear if we need a mixed Cauchy BC here for conc gradients 
 
 
   ### ==================== Pressure ==========================
