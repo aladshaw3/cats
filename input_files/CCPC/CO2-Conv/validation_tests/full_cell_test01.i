@@ -692,7 +692,7 @@
       electron_transfer_coef = 0.5
 
       # NOTE: We can use 'scale' as a correction factor for rate
-      scale = 1
+      scale = 0.0375
   [../]
 
   # Rxn:    V(IV) (+ H2O) <---> V(V) (+ 2 H+ ) + e-
@@ -720,7 +720,7 @@
       electron_transfer_coef = 0.5
 
       # NOTE: We can use 'scale' as a correction factor for rate
-      scale = 1
+      scale = 0.0375
   [../]
 
 
@@ -838,18 +838,6 @@
       block = 'pos_electrode'
   [../]
 
-  #  -F*eps*SUM( zj*Dj*grad(ion)_x )
-  [./ie_x_iongrad_membrane]
-      type = ElectrolyteCurrentFromIonGradient
-      variable = ie_x
-      direction = 0         # 0=x
-      porosity = 1
-      ion_conc = 'H_p'
-      ion_valence = '1'
-      diffusion = 'D_H_p'
-      block = 'membrane'
-  [../]
-
 
   # --------------- Current density in y-dir from potential gradient ---------------
   #  ie_y
@@ -922,18 +910,6 @@
       diffusion = 'D_H_p D_V_IV D_V_V'
       ion_valence = '1 2 1'
       block = 'pos_electrode'
-  [../]
-
-  #  -F*eps*SUM( zj*Dj*grad(ion)_y )
-  [./ie_y_iongrad_membrane]
-      type = ElectrolyteCurrentFromIonGradient
-      variable = ie_y
-      direction = 1         # 1=y
-      porosity = 1
-      ion_conc = 'H_p'
-      ion_valence = '1'
-      diffusion = 'D_H_p'
-      block = 'membrane'
   [../]
 
   ### ======================= Electrode/Collector Current ==================
@@ -1695,16 +1671,16 @@
   # ---- Set current density leaving and match with current density entering -------
   #### NOTE ####
   #   This BC may be redundant and not needed
-  [./phi_s_neg_side_current_charging]
-      type = NeumannBC
-      variable = phi_s
-      boundary = 'neg_collector_left'
-      #
-      ## -I/a for charging (where I=current = 10 A && a=surface area = 10cm x 10cm)
-      # 1 A = 1 C/s ==>  10 A = 600 C/min
-      # value = I/A = 6 C/min/cm^2
-      value = -6.0
-  [../]
+  #[./phi_s_neg_side_current_charging]
+  #    type = NeumannBC
+  #    variable = phi_s
+  #    boundary = 'neg_collector_left'
+  #    #
+  #    ## -I/a for charging (where I=current = 10 A && a=surface area = 10cm x 10cm)
+  #    # 1 A = 1 C/s ==>  10 A = 600 C/min
+  #    # value = I/A = 6 C/min/cm^2
+  #    value = -6.0
+  #[../]
 
   # ---- Fix a 'ground' state on one side of the system -------
   #   (This BC type may be more numerically stable)
@@ -1975,12 +1951,13 @@
 
 [Executioner]
   type = Transient
-  scheme = implicit-euler
+  scheme = bdf2
 
   # NOTE: Add arg -ksp_view to get info on methods used at linear steps
   petsc_options = '-snes_converged_reason
 
-                    -ksp_gmres_modifiedgramschmidt'
+                    -ksp_gmres_modifiedgramschmidt
+                    -ksp_ksp_gmres_modifiedgramschmidt'
 
   # NOTE: The sub_pc_type arg not used if pc_type is ksp,
   #       Instead, set the ksp_ksp_type to the pc method
@@ -1989,6 +1966,8 @@
   #
   # Good terminal precon options: lu, ilu, asm, gasm, pbjacobi
   #                               bjacobi, redundant, telescope
+  #
+  # NOTE: -ksp_pc_factor_mat_solver_type == (mumps or superlu_dist)
   petsc_options_iname ='-ksp_type
                         -pc_type
 
@@ -2006,7 +1985,15 @@
                         -snes_rtol
 
                         -ksp_ksp_type
-                        -ksp_pc_type'
+                        -ksp_pc_type
+
+                        -ksp_gmres_restart
+                        -ksp_ksp_gmres_restart
+
+                        -ksp_max_it
+                        -ksp_ksp_max_it
+
+                        -ksp_pc_factor_mat_solver_type'
 
   petsc_options_value = 'fgmres
                          ksp
@@ -2024,8 +2011,16 @@
                          1E-8
                          1E-8
 
-                         gmres
-                         lu'
+                         fgmres
+                         lu
+
+                         30
+                         30
+
+                         30
+                         30
+
+                         mumps'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
@@ -2037,13 +2032,17 @@
   l_tol = 1e-6
   l_max_its = 30
 
-  start_time = -2
-  end_time = 0.5
+  start_time = -0.2
+  end_time = 0.
   dtmax = 0.5
 
+  # First few times step needs to be fairly small, but afterwards can accelerate
+  #   Current setup: Double step size if successful, otherwise reduce to 75%
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
-      dt = 0.005
+      dt = 0.001
+      cutback_factor_at_failure = 0.75
+      percent_change = 1
   [../]
 
 [] #END Executioner
