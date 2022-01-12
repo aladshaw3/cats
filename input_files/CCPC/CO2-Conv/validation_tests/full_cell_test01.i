@@ -21,6 +21,15 @@
 #
 #   Do I need to include 'eps' in the reaction terms 'J' and 'r'?
 #       (Could be lumped into 'As' as 'As*eps')
+#
+#   If the expected voltage is too low, this could mean that the kinetics
+#       and/or the electrolyte conductivity are too large.
+#       (Because our kinetic expression is missing a correction factor from
+#       literature and the actual conductivity is not precisely known)
+#
+#   Have to take small time steps for good convergence. Probably because of
+#       the sensitivity of the Butler-Volmer kinetics to the changes in
+#       electric potential.
 
 [GlobalParams]
 
@@ -128,6 +137,7 @@
           number_of_electrons = 1
           electron_transfer_coef = 0.5
       [../]
+      scaling = 1000
   [../]
 
   # reaction variable for positive electrode
@@ -154,6 +164,7 @@
           number_of_electrons = 1
           electron_transfer_coef = 0.5
       [../]
+      scaling = 1000
   [../]
 
   # Butler-Volmer current density for neg electrode
@@ -246,10 +257,7 @@
       block = 'neg_electrode membrane pos_electrode'
   [../]
 
-[]
-
-[AuxVariables]
-  # Temporary location of protons and other concentrations
+  # HSO4-
   [./HSO4_m]
       order = FIRST
       family = MONOMIAL
@@ -257,6 +265,7 @@
       block = 'neg_electrode pos_electrode'
   [../]
 
+  # V2+
   [./V_II]
       order = FIRST
       family = MONOMIAL
@@ -264,6 +273,7 @@
       block = 'neg_electrode'
   [../]
 
+  # V3+
   [./V_III]
       order = FIRST
       family = MONOMIAL
@@ -271,6 +281,7 @@
       block = 'neg_electrode'
   [../]
 
+  # VO_2+
   [./V_IV]
       order = FIRST
       family = MONOMIAL
@@ -278,12 +289,17 @@
       block = 'pos_electrode'
   [../]
 
+  # VO2_+
   [./V_V]
       order = FIRST
       family = MONOMIAL
       initial_condition = 0.000027 #mol/cm^3
       block = 'pos_electrode'
   [../]
+
+[]
+
+[AuxVariables]
 
   # Diffusivities
   [./D_H2O]
@@ -297,6 +313,12 @@
       family = MONOMIAL
       initial_condition = 0.0012 #cm^2/min
       block = 'neg_electrode membrane pos_electrode'
+  [../]
+  [./D_HSO4_m]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 6.0857E-4 #cm^2/min
+      block = 'neg_electrode pos_electrode'
   [../]
   [./D_V_II]
       order = FIRST
@@ -645,6 +667,7 @@
 
 
   ## =============== Butler-Volmer Kinetics ================
+  # Rxn:    V(II) <---> V(III) + e-
   [./r_equ_neg]
       type = Reaction
       variable = r_neg
@@ -667,8 +690,12 @@
       temperature = T_e
       number_of_electrons = 1
       electron_transfer_coef = 0.5
+
+      # NOTE: We can use 'scale' as a correction factor for rate
+      scale = 1
   [../]
 
+  # Rxn:    V(IV) (+ H2O) <---> V(V) (+ 2 H+ ) + e-
   [./r_equ_pos]
       type = Reaction
       variable = r_pos
@@ -691,6 +718,9 @@
       temperature = T_e
       number_of_electrons = 1
       electron_transfer_coef = 0.5
+
+      # NOTE: We can use 'scale' as a correction factor for rate
+      scale = 1
   [../]
 
 
@@ -1076,6 +1106,249 @@
     scale = As
     block = 'pos_electrode'
   [../]
+
+
+  ### ==================== HSO4- Transport ==========================
+  # Divided Sub-domain kernels
+  [./HSO4m_dot_electrodes]
+      type = VariableCoefTimeDerivative
+      variable = HSO4_m
+      coupled_coef = eps
+      block = 'neg_electrode pos_electrode'
+  [../]
+
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./HSO4m_gadv]
+      type = GPoreConcAdvection
+      variable = HSO4_m
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./HSO4m_gdiff]
+      type = GVarPoreDiffusion
+      variable = HSO4_m
+      porosity = eps
+      Dx = D_HSO4_m
+      Dy = D_HSO4_m
+      Dz = D_HSO4_m
+  [../]
+  [./HSO4m_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = HSO4_m
+      valence = -1
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_HSO4_m
+      Dy = D_HSO4_m
+      Dz = D_HSO4_m
+  [../]
+
+  ### ==================== V2+ Transport ==========================
+  # Divided Sub-domain kernels
+  [./V2p_dot_electrodes]
+      type = VariableCoefTimeDerivative
+      variable = V_II
+      coupled_coef = eps
+      block = 'neg_electrode'
+  [../]
+
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./V2p_gadv]
+      type = GPoreConcAdvection
+      variable = V_II
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./V2p_gdiff]
+      type = GVarPoreDiffusion
+      variable = V_II
+      porosity = eps
+      Dx = D_V_II
+      Dy = D_V_II
+      Dz = D_V_II
+  [../]
+  [./V2p_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = V_II
+      valence = 2
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_V_II
+      Dy = D_V_II
+      Dz = D_V_II
+  [../]
+
+  # reaction kernels for positive electrode
+  #       Rxn:    V(II) <---> V(III) + e-
+  [./V2p_pos_rxn]
+      type = ScaledWeightedCoupledSumFunction
+      variable = V_II
+      coupled_list = 'r_neg'
+      weights = '-1'
+      scale = As
+      block = 'neg_electrode'
+  [../]
+
+
+  ### ==================== V3+ Transport ==========================
+  # Divided Sub-domain kernels
+  [./V3p_dot_electrodes]
+      type = VariableCoefTimeDerivative
+      variable = V_III
+      coupled_coef = eps
+      block = 'neg_electrode'
+  [../]
+
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./V3p_gadv]
+      type = GPoreConcAdvection
+      variable = V_III
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./V3p_gdiff]
+      type = GVarPoreDiffusion
+      variable = V_III
+      porosity = eps
+      Dx = D_V_III
+      Dy = D_V_III
+      Dz = D_V_III
+  [../]
+  [./V3p_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = V_III
+      valence = 3
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_V_III
+      Dy = D_V_III
+      Dz = D_V_III
+  [../]
+
+  # reaction kernels for positive electrode
+  #       Rxn:    V(II) <---> V(III) + e-
+  [./V3p_pos_rxn]
+      type = ScaledWeightedCoupledSumFunction
+      variable = V_III
+      coupled_list = 'r_neg'
+      weights = '1'
+      scale = As
+      block = 'neg_electrode'
+  [../]
+
+
+  ### ==================== VO_2+ Transport ==========================
+  # Divided Sub-domain kernels
+  [./VO_2p_dot_electrodes]
+      type = VariableCoefTimeDerivative
+      variable = V_IV
+      coupled_coef = eps
+      block = 'pos_electrode'
+  [../]
+
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./VO_2p_gadv]
+      type = GPoreConcAdvection
+      variable = V_IV
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./VO_2p_gdiff]
+      type = GVarPoreDiffusion
+      variable = V_IV
+      porosity = eps
+      Dx = D_V_IV
+      Dy = D_V_IV
+      Dz = D_V_IV
+  [../]
+  [./VO_2p_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = V_IV
+      valence = 2
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_V_IV
+      Dy = D_V_IV
+      Dz = D_V_IV
+  [../]
+
+  # reaction kernels for positive electrode
+  #       Rxn:    V(IV) (+ H2O) <---> V(V) (+ 2 H+ ) + e-
+  [./VO_2p_pos_rxn]
+      type = ScaledWeightedCoupledSumFunction
+      variable = V_IV
+      coupled_list = 'r_pos'
+      weights = '-1'
+      scale = As
+      block = 'pos_electrode'
+  [../]
+
+
+  ### ==================== VO2_+ Transport ==========================
+  # Divided Sub-domain kernels
+  [./VO2_p_dot_electrodes]
+      type = VariableCoefTimeDerivative
+      variable = V_V
+      coupled_coef = eps
+      block = 'pos_electrode'
+  [../]
+
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./VO2_p_gadv]
+      type = GPoreConcAdvection
+      variable = V_V
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./VO2_p_gdiff]
+      type = GVarPoreDiffusion
+      variable = V_V
+      porosity = eps
+      Dx = D_V_V
+      Dy = D_V_V
+      Dz = D_V_V
+  [../]
+  [./VO2_p_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = V_V
+      valence = 1
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_V_V
+      Dy = D_V_V
+      Dz = D_V_V
+  [../]
+
+  # reaction kernels for positive electrode
+  #       Rxn:    V(IV) (+ H2O) <---> V(V) (+ 2 H+ ) + e-
+  [./VO2_p_pos_rxn]
+      type = ScaledWeightedCoupledSumFunction
+      variable = V_V
+      coupled_list = 'r_pos'
+      weights = '1'
+      scale = As
+      block = 'pos_electrode'
+  [../]
 []
 
 [DGKernels]
@@ -1124,6 +1397,156 @@
       Dx = D_H_p
       Dy = D_H_p
       Dz = D_H_p
+  [../]
+
+
+  ### ==================== HSO4- Transport ==========================
+  [./HSO4m_dgadv]
+      type = DGPoreConcAdvection
+      variable = HSO4_m
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./HSO4m_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = HSO4_m
+      porosity = eps
+      Dx = D_H_p
+      Dy = D_H_p
+      Dz = D_H_p
+  [../]
+  [./HSO4m_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = HSO4_m
+      valence = -1
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_HSO4_m
+      Dy = D_HSO4_m
+      Dz = D_HSO4_m
+  [../]
+
+
+  ### ==================== V2+ Transport ==========================
+  [./V2p_dgadv]
+      type = DGPoreConcAdvection
+      variable = V_II
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./V2p_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = V_II
+      porosity = eps
+      Dx = D_V_II
+      Dy = D_V_II
+      Dz = D_V_II
+  [../]
+  [./V2p_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = V_II
+      valence = 2
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_V_II
+      Dy = D_V_II
+      Dz = D_V_II
+  [../]
+
+
+  ### ==================== V3+ Transport ==========================
+  [./V3p_dgadv]
+      type = DGPoreConcAdvection
+      variable = V_III
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./V3p_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = V_III
+      porosity = eps
+      Dx = D_V_III
+      Dy = D_V_III
+      Dz = D_V_III
+  [../]
+  [./V3p_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = V_III
+      valence = 3
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_V_III
+      Dy = D_V_III
+      Dz = D_V_III
+  [../]
+
+
+  ### ==================== VO_2+ Transport ==========================
+  [./VO_2p_dgadv]
+      type = DGPoreConcAdvection
+      variable = V_IV
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./VO_2p_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = V_IV
+      porosity = eps
+      Dx = D_V_IV
+      Dy = D_V_IV
+      Dz = D_V_IV
+  [../]
+  [./VO_2p_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = V_IV
+      valence = 2
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_V_IV
+      Dy = D_V_IV
+      Dz = D_V_IV
+  [../]
+
+
+  ### ==================== VO2_+ Transport ==========================
+  [./VO2_p_dgadv]
+      type = DGPoreConcAdvection
+      variable = V_V
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./VO2_p_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = V_V
+      porosity = eps
+      Dx = D_V_V
+      Dy = D_V_V
+      Dz = D_V_V
+  [../]
+  [./VO2_p_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = V_V
+      valence = 1
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_V_V
+      Dy = D_V_V
+      Dz = D_V_V
   [../]
 []
 
@@ -1371,6 +1794,116 @@
       uy = vel_y
       uz = vel_z
   [../]
+
+
+  ### ==================== HSO4- ==========================
+  [./HSO4m_FluxIn]
+      type = DGPoreConcFluxBC
+      variable = HSO4_m
+      boundary = 'pos_electrode_bottom neg_electrode_bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      u_input = 0.0012
+  [../]
+  [./HSO4m_FluxOut]
+      type = DGPoreConcFluxBC
+      variable = HSO4_m
+      boundary = 'pos_electrode_top neg_electrode_top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+
+  ### ==================== V2+ ==========================
+  [./V2p_FluxIn]
+      type = DGPoreConcFluxBC
+      variable = V_II
+      boundary = 'neg_electrode_bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      u_input = 0.000027
+  [../]
+  [./V2p_FluxOut]
+      type = DGPoreConcFluxBC
+      variable = V_II
+      boundary = 'neg_electrode_top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+
+  ### ==================== V3+ ==========================
+  [./V3p_FluxIn]
+      type = DGPoreConcFluxBC
+      variable = V_III
+      boundary = 'neg_electrode_bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      u_input = 0.001053
+  [../]
+  [./V3p_FluxOut]
+      type = DGPoreConcFluxBC
+      variable = V_III
+      boundary = 'neg_electrode_top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+
+  ### ==================== VO_2+ ==========================
+  [./VO_2p_FluxIn]
+      type = DGPoreConcFluxBC
+      variable = V_IV
+      boundary = 'pos_electrode_bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      u_input = 0.001053
+  [../]
+  [./VO_2p_FluxOut]
+      type = DGPoreConcFluxBC
+      variable = V_IV
+      boundary = 'pos_electrode_top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+
+  ### ==================== VO2_+ ==========================
+  [./VO2_p_FluxIn]
+      type = DGPoreConcFluxBC
+      variable = V_V
+      boundary = 'pos_electrode_bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      u_input = 0.000027
+  [../]
+  [./VO2_p_FluxOut]
+      type = DGPoreConcFluxBC
+      variable = V_V
+      boundary = 'pos_electrode_top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
 []
 
 
@@ -1378,14 +1911,14 @@
 
   [./phi_s_neg_side]
       type = ElementAverageValue
-      block = 'neg_electrode'
+      block = 'neg_collector'
       variable = phi_s
       execute_on = 'initial timestep_end'
   [../]
 
   [./phi_s_pos_side]
       type = ElementAverageValue
-      block = 'pos_electrode'
+      block = 'pos_collector'
       variable = phi_s
       execute_on = 'initial timestep_end'
   [../]
@@ -1480,7 +2013,7 @@
 
                          lu
 
-                         20
+                         50
 
                          NONZERO
                          NONZERO
@@ -1491,7 +2024,7 @@
                          1E-8
                          1E-8
 
-                         fgmres
+                         gmres
                          lu'
 
   #NOTE: turning off line search can help converge for high Renolds number
@@ -1500,12 +2033,12 @@
   nl_abs_tol = 1e-10
   nl_rel_step_tol = 1e-10
   nl_abs_step_tol = 1e-10
-  nl_max_its = 20
+  nl_max_its = 50
   l_tol = 1e-6
-  l_max_its = 20
+  l_max_its = 30
 
-  start_time = -0.5
-  end_time = 10
+  start_time = -2
+  end_time = 0.5
   dtmax = 0.5
 
   [./TimeStepper]
