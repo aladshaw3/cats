@@ -815,7 +815,7 @@
         type = LinearChangeInTime
         variable = temp
         start_time = 15.925
-        end_time = 95.8
+        end_time = 25.8
         end_value = 809.5651714
         execute_on = 'initial timestep_end'
     [../]
@@ -950,12 +950,12 @@
   l_max_its = 300
 
   start_time = -1.0
-  end_time = 100.0
-  dtmax = 0.5
+  end_time = 30.0
+  dtmax = 1
 
   [./TimeStepper]
      type = ConstantDT
-     dt = 0.5
+     dt = 1
   [../]
 [] #END Executioner
 
