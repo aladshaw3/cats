@@ -13,6 +13,8 @@
   #boundary_name = 'inlet outlet washcoat_walls interface wash_in wash_out'
   #block_name = 'washcoat channel'
 
+  # 5cm length x 0.127 cm full channel dia 
+
 []
 
 #Use MONOMIAL for DG and LAGRANGE for non-DG
@@ -71,7 +73,7 @@
     [./Diff]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.25
+        initial_condition = 2.5
         block = 'channel'
     [../]
 
@@ -220,10 +222,10 @@
         type = DGConcentrationFluxBC
         variable = C
         boundary = 'inlet'
-		u_input = 1.0
-		ux = vel_x
-		uy = vel_y
-		uz = vel_z
+    		u_input = 1.0
+    		ux = vel_x
+    		uy = vel_y
+    		uz = vel_z
     [../]
 
 # C and Cw are not defined on channel_washcoat_interface
