@@ -43,7 +43,7 @@
 #
 # NOTE: It is generally not necessary to impose 'No Slip'
 # conditions for flow at the walls, since the velocities
-# are not solved as Boundary-Value problems any more. 
+# are not solved as Boundary-Value problems any more.
 
 [GlobalParams]
 
@@ -347,27 +347,33 @@
 
   ### Fluxes for Conservative Tracer ###
   [./tracer_FluxIn_pos]
-      type = DGPoreConcFluxBC
+      type = DGDiffuseFlowMassFluxBC
       variable = tracer
       boundary = 'pos_electrode_bottom'
       porosity = eps
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 0.0024
+      Dx = Dp
+      Dy = Dp
+      Dz = Dp
+      input_var = 0.0024
   [../]
   [./tracer_FluxIn_neg]
-      type = DGPoreConcFluxBC
+      type = DGDiffuseFlowMassFluxBC
       variable = tracer
       boundary = 'neg_electrode_bottom'
       porosity = eps
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 0.0012
+      Dx = Dp
+      Dy = Dp
+      Dz = Dp
+      input_var = 0.0012
   [../]
   [./tracer_FluxOut]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = tracer
       boundary = 'pos_electrode_top neg_electrode_top'
       porosity = eps

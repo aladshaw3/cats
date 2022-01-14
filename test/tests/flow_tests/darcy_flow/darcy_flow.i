@@ -225,17 +225,17 @@
 
   ### Fluxes for Conservative Tracer ###
   [./tracer_FluxIn]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = tracer
       boundary = 'left'
       porosity = 1
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 1
+      input_var = 1
   [../]
   [./tracer_FluxOut]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = tracer
       boundary = 'right'
       porosity = 1

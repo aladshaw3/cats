@@ -301,6 +301,62 @@
 
 [AuxVariables]
 
+  # H2O
+  [./H2O_inlet]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0042 #mol/cm^3
+      block = 'neg_electrode membrane pos_electrode'
+  [../]
+
+  # H+
+  [./H_p_inlet]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0012 #mol/cm^3
+      block = 'neg_electrode membrane pos_electrode'
+  [../]
+
+  # HSO4-
+  [./HSO4_m_inlet]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0012 #mol/cm^3
+      block = 'neg_electrode pos_electrode'
+  [../]
+
+  # V2+
+  [./V_II_inlet]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.000027 #mol/cm^3
+      block = 'neg_electrode'
+  [../]
+
+  # V3+
+  [./V_III_inlet]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.001053 #mol/cm^3
+      block = 'neg_electrode'
+  [../]
+
+  # VO_2+
+  [./V_IV_inlet]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.001053 #mol/cm^3
+      block = 'pos_electrode'
+  [../]
+
+  # VO2_+
+  [./V_V_inlet]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.000027 #mol/cm^3
+      block = 'pos_electrode'
+  [../]
+
   # Diffusivities
   [./D_H2O]
       order = FIRST
@@ -1731,17 +1787,17 @@
 
   ### ==================== H2O ==========================
   [./H2O_FluxIn]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = H2O
       boundary = 'pos_electrode_bottom neg_electrode_bottom'
       porosity = 1
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 0.0042
+      input_var = H2O_inlet
   [../]
   [./H2O_FluxOut]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = H2O
       boundary = 'pos_electrode_top neg_electrode_top'
       porosity = 1
@@ -1752,17 +1808,17 @@
 
   ### ==================== H+ ==========================
   [./Hp_FluxIn]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = H_p
       boundary = 'pos_electrode_bottom neg_electrode_bottom'
       porosity = 1
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 0.0012
+      input_var = H_p_inlet
   [../]
   [./Hp_FluxOut]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = H_p
       boundary = 'pos_electrode_top neg_electrode_top'
       porosity = 1
@@ -1774,17 +1830,17 @@
 
   ### ==================== HSO4- ==========================
   [./HSO4m_FluxIn]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = HSO4_m
       boundary = 'pos_electrode_bottom neg_electrode_bottom'
       porosity = 1
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 0.0012
+      input_var = HSO4_m_inlet
   [../]
   [./HSO4m_FluxOut]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = HSO4_m
       boundary = 'pos_electrode_top neg_electrode_top'
       porosity = 1
@@ -1796,17 +1852,17 @@
 
   ### ==================== V2+ ==========================
   [./V2p_FluxIn]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = V_II
       boundary = 'neg_electrode_bottom'
       porosity = 1
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 0.000027
+      input_var = V_II_inlet
   [../]
   [./V2p_FluxOut]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = V_II
       boundary = 'neg_electrode_top'
       porosity = 1
@@ -1818,17 +1874,17 @@
 
   ### ==================== V3+ ==========================
   [./V3p_FluxIn]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = V_III
       boundary = 'neg_electrode_bottom'
       porosity = 1
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 0.001053
+      input_var = V_III_inlet
   [../]
   [./V3p_FluxOut]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = V_III
       boundary = 'neg_electrode_top'
       porosity = 1
@@ -1840,17 +1896,17 @@
 
   ### ==================== VO_2+ ==========================
   [./VO_2p_FluxIn]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = V_IV
       boundary = 'pos_electrode_bottom'
       porosity = 1
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 0.001053
+      input_var = V_IV_inlet
   [../]
   [./VO_2p_FluxOut]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = V_IV
       boundary = 'pos_electrode_top'
       porosity = 1
@@ -1862,17 +1918,17 @@
 
   ### ==================== VO2_+ ==========================
   [./VO2_p_FluxIn]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = V_V
       boundary = 'pos_electrode_bottom'
       porosity = 1
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      u_input = 0.000027
+      input_var = V_V_inlet
   [../]
   [./VO2_p_FluxOut]
-      type = DGPoreConcFluxBC
+      type = DGFlowMassFluxBC
       variable = V_V
       boundary = 'pos_electrode_top'
       porosity = 1
