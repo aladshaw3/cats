@@ -73,20 +73,122 @@ _u_input_ppm(getParam<Real>("inlet_ppm"))
 Real DGPoreConcFluxBC_ppm::computeQpResidual()
 {
     _u_input = _press[_qp]*(_u_input_ppm/1e6)/_R/_temp[_qp];
-    return DGPoreConcFluxBC::computeQpResidual();
+    _velocity(0)=_ux[_qp];
+  	_velocity(1)=_uy[_qp];
+  	_velocity(2)=_uz[_qp];
+
+  	Real r = 0;
+
+  	//Output
+  	if ((_velocity)*_normals[_qp] > 0.0)
+  	{
+  		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u[_qp]*_porosity[_qp];
+  	}
+  	//Input
+  	else
+  	{
+  		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u_input*_porosity[_qp];
+  	}
+
+  	return r;
 }
 
 Real DGPoreConcFluxBC_ppm::computeQpJacobian()
 {
     _u_input = _press[_qp]*(_u_input_ppm/1e6)/_R/_temp[_qp];
-    return DGPoreConcFluxBC::computeQpJacobian();
+    _velocity(0)=_ux[_qp];
+  	_velocity(1)=_uy[_qp];
+  	_velocity(2)=_uz[_qp];
+
+  	Real r = 0;
+
+  	//Output
+  	if ((_velocity)*_normals[_qp] > 0.0)
+  	{
+  		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_phi[_j][_qp]*_porosity[_qp];
+  	}
+  	//Input
+  	else
+  	{
+  		r += 0.0;
+  	}
+
+  	return r;
 }
 
 Real DGPoreConcFluxBC_ppm::computeQpOffDiagJacobian(unsigned int jvar)
 {
     _u_input = _press[_qp]*(_u_input_ppm/1e6)/_R/_temp[_qp];
     if (jvar != _temp_var && jvar != _press_var)
-      return DGPoreConcFluxBC::computeQpOffDiagJacobian(jvar);
+    {
+      _velocity(0)=_ux[_qp];
+    	_velocity(1)=_uy[_qp];
+    	_velocity(2)=_uz[_qp];
+
+    	Real r = 0;
+
+    	if (jvar == _ux_var)
+    	{
+    		//Output
+    		if ((_velocity)*_normals[_qp] > 0.0)
+    		{
+    			r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](0))*_porosity[_qp];
+    		}
+    		//Input
+    		else
+    		{
+    			r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](0))*_porosity[_qp];
+    		}
+    		return r;
+    	}
+
+    	if (jvar == _uy_var)
+    	{
+    		//Output
+    		if ((_velocity)*_normals[_qp] > 0.0)
+    		{
+    			r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](1))*_porosity[_qp];
+    		}
+    		//Input
+    		else
+    		{
+    			r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](1))*_porosity[_qp];
+    		}
+    		return r;
+    	}
+
+    	if (jvar == _uz_var)
+    	{
+    		//Output
+    		if ((_velocity)*_normals[_qp] > 0.0)
+    		{
+    			r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](2))*_porosity[_qp];
+    		}
+    		//Input
+    		else
+    		{
+    			r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](2))*_porosity[_qp];
+    		}
+    		return r;
+    	}
+
+      if (jvar == _porosity_var)
+      {
+        //Output
+        if ((_velocity)*_normals[_qp] > 0.0)
+        {
+          r += _test[_i][_qp]*_u[_qp]*(_velocity*_normals[_qp])*_phi[_j][_qp];
+        }
+        //Input
+        else
+        {
+          r += _test[_i][_qp]*_u_input*(_velocity*_normals[_qp])*_phi[_j][_qp];
+        }
+        return r;
+      }
+
+    	return 0.0;
+    }
     else
     {
       return 0;

@@ -137,7 +137,7 @@
           number_of_electrons = 1
           electron_transfer_coef = 0.5
       [../]
-      scaling = 1000
+      scaling = 1
   [../]
 
   # reaction variable for positive electrode
@@ -164,7 +164,7 @@
           number_of_electrons = 1
           electron_transfer_coef = 0.5
       [../]
-      scaling = 1000
+      scaling = 1
   [../]
 
   # Butler-Volmer current density for neg electrode

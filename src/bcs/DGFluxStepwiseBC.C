@@ -129,11 +129,37 @@ Real DGFluxStepwiseBC::newInputValue(Real time)
 Real DGFluxStepwiseBC::computeQpResidual()
 {
     _u_input = newInputValue(_t);
-    return DGFluxBC::computeQpResidual();
+    Real r = 0;
+
+  	//Output
+  	if ((_velocity)*_normals[_qp] > 0.0)
+  	{
+  		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u[_qp];
+  	}
+  	//Input
+  	else
+  	{
+  		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u_input;
+  	}
+
+  	return r;
 }
 
 Real DGFluxStepwiseBC::computeQpJacobian()
 {
     _u_input = newInputValue(_t);
-    return DGFluxBC::computeQpJacobian();
+    Real r = 0;
+
+  	//Output
+  	if ((_velocity)*_normals[_qp] > 0.0)
+  	{
+  		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_phi[_j][_qp];
+  	}
+  	//Input
+  	else
+  	{
+  		r += 0.0;
+  	}
+
+  	return r;
 }

@@ -51,7 +51,7 @@ registerMooseObject("catsApp", DGNSMomentumOutflowBC);
 InputParameters DGNSMomentumOutflowBC::validParams()
 {
     InputParameters params = DGConcentrationFluxBC::validParams();
-    params.addRequiredCoupledVar("density","Variable for the density of the domain/subdomain");
+    params.addCoupledVar("density",1,"Variable for the density of the domain/subdomain");
     params.addRequiredCoupledVar("this_variable","Name of this variable the kernel acts on");
     return params;
 }

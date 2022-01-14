@@ -53,9 +53,9 @@ registerMooseObject("catsApp", CoupledVariableFluxBC);
 InputParameters CoupledVariableFluxBC::validParams()
 {
     InputParameters params = IntegratedBC::validParams();
-    params.addRequiredCoupledVar("fx","Variable for flux in x-direction");
-    params.addRequiredCoupledVar("fy","Variable for flux in y-direction");
-    params.addRequiredCoupledVar("fz","Variable for flux in z-direction");
+    params.addCoupledVar("fx",0.0,"Variable for flux in x-direction");
+    params.addCoupledVar("fy",0.0,"Variable for flux in y-direction");
+    params.addCoupledVar("fz",0.0,"Variable for flux in z-direction");
     params.addParam<Real>("fx_in",0,"x-component of inlet flux vector");
     params.addParam<Real>("fy_in",0,"y-component of inlet flux vector");
     params.addParam<Real>("fz_in",0,"z-component of inlet flux vector");

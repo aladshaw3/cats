@@ -47,10 +47,10 @@ registerMooseObject("catsApp", DGWallEnergyFluxBC);
 InputParameters DGWallEnergyFluxBC::validParams()
 {
     InputParameters params = IntegratedBC::validParams();
-    params.addRequiredCoupledVar("transfer_coef","Variable for heat transfer coefficient (W/m^2/K)");
-    params.addRequiredCoupledVar("wall_temp","Variable for the wall temperature (K)");
+    params.addCoupledVar("transfer_coef",1,"Variable for heat transfer coefficient (W/m^2/K)");
+    params.addCoupledVar("wall_temp",298,"Variable for the wall temperature (K)");
     params.addRequiredCoupledVar("temperature","Variable for the phase temperature (K)");
-    params.addRequiredCoupledVar("area_frac","Variable for contact area fraction (or volume fraction) (-)");
+    params.addCoupledVar("area_frac",1,"Variable for contact area fraction (or volume fraction) (-)");
     return params;
 }
 
@@ -96,6 +96,6 @@ Real DGWallEnergyFluxBC::computeQpOffDiagJacobian(unsigned int jvar)
     {
         return _test[_i][_qp]*_hw[_qp]*_phi[_j][_qp]*(_temp[_qp] - _walltemp[_qp]);
     }
-    
+
     return 0.0;
 }

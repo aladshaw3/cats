@@ -125,17 +125,102 @@ Real DGConcFluxStepwiseBC::newInputValue(Real time)
 Real DGConcFluxStepwiseBC::computeQpResidual()
 {
     _u_input = newInputValue(_t);
-    return DGConcentrationFluxBC::computeQpResidual();
+    _velocity(0)=_ux[_qp];
+  	_velocity(1)=_uy[_qp];
+  	_velocity(2)=_uz[_qp];
+
+  	Real r = 0;
+
+  	//Output
+  	if ((_velocity)*_normals[_qp] > 0.0)
+  	{
+  		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u[_qp];
+  	}
+  	//Input
+  	else
+  	{
+  		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u_input;
+  	}
+
+  	return r;
 }
 
 Real DGConcFluxStepwiseBC::computeQpJacobian()
 {
     _u_input = newInputValue(_t);
-    return DGConcentrationFluxBC::computeQpJacobian();
+    _velocity(0)=_ux[_qp];
+  	_velocity(1)=_uy[_qp];
+  	_velocity(2)=_uz[_qp];
+
+  	Real r = 0;
+
+  	//Output
+  	if ((_velocity)*_normals[_qp] > 0.0)
+  	{
+  		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_phi[_j][_qp];
+  	}
+  	//Input
+  	else
+  	{
+  		r += 0.0;
+  	}
+
+  	return r;
 }
 
 Real DGConcFluxStepwiseBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
     _u_input = newInputValue(_t);
-    return DGConcentrationFluxBC::computeQpOffDiagJacobian(jvar);
+    _velocity(0)=_ux[_qp];
+  	_velocity(1)=_uy[_qp];
+  	_velocity(2)=_uz[_qp];
+
+  	Real r = 0;
+
+  	if (jvar == _ux_var)
+  	{
+  		//Output
+  		if ((_velocity)*_normals[_qp] > 0.0)
+  		{
+  			r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](0));
+  		}
+  		//Input
+  		else
+  		{
+  			r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](0));
+  		}
+  		return r;
+  	}
+
+  	if (jvar == _uy_var)
+  	{
+  		//Output
+  		if ((_velocity)*_normals[_qp] > 0.0)
+  		{
+  			r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](1));
+  		}
+  		//Input
+  		else
+  		{
+  			r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](1));
+  		}
+  		return r;
+  	}
+
+  	if (jvar == _uz_var)
+  	{
+  		//Output
+  		if ((_velocity)*_normals[_qp] > 0.0)
+  		{
+  			r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](2));
+  		}
+  		//Input
+  		else
+  		{
+  			r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](2));
+  		}
+  		return r;
+  	}
+
+  	return 0.0;
 }

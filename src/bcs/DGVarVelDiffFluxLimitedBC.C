@@ -75,9 +75,9 @@ registerMooseObject("catsApp", DGVarVelDiffFluxLimitedBC);
 InputParameters DGVarVelDiffFluxLimitedBC::validParams()
 {
     InputParameters params = DGConcentrationFluxLimitedBC::validParams();
-    params.addRequiredCoupledVar("Dx","Variable for diffusion in x-direction");
-    params.addRequiredCoupledVar("Dy","Variable for diffusion in y-direction");
-    params.addRequiredCoupledVar("Dz","Variable for diffusion in z-direction");
+    params.addCoupledVar("Dx",1,"Variable for diffusion in x-direction");
+    params.addCoupledVar("Dy",1,"Variable for diffusion in y-direction");
+    params.addCoupledVar("Dz",1,"Variable for diffusion in z-direction");
     return params;
 }
 
@@ -111,7 +111,27 @@ Real DGVarVelDiffFluxLimitedBC::computeQpResidual()
   _Diffusion(2,1) = 0.0;
   _Diffusion(2,2) = _Dz[_qp];
 
-	return DGFluxLimitedBC::computeQpResidual();
+  Real r = 0;
+
+	const unsigned int elem_b_order = static_cast<unsigned int> (_var.order());
+	const double h_elem = _current_elem->volume()/_current_side_elem->volume() * 1./std::pow(elem_b_order, 2.);
+
+	//Output (Standard Flux Out)
+	if ((_velocity)*_normals[_qp] > 0.0)
+	{
+		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u[_qp];
+	}
+	//Input (Dirichlet BC)
+	else
+	{
+		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u_input;
+		r -= _test[_i][_qp]*(_velocity*_normals[_qp])*(_u[_qp] - _u_input);
+		r += _epsilon * (_u[_qp] - _u_input) * _Diffusion * _grad_test[_i][_qp] * _normals[_qp];
+		r += _sigma/h_elem * (_u[_qp] - _u_input) * _test[_i][_qp];
+		r -= (_Diffusion * _grad_u[_qp] * _normals[_qp] * _test[_i][_qp]);
+	}
+
+	return r;
 }
 
 Real DGVarVelDiffFluxLimitedBC::computeQpJacobian()
@@ -132,7 +152,27 @@ Real DGVarVelDiffFluxLimitedBC::computeQpJacobian()
   _Diffusion(2,1) = 0.0;
   _Diffusion(2,2) = _Dz[_qp];
 
-	return DGFluxLimitedBC::computeQpJacobian();
+  Real r = 0;
+
+	const unsigned int elem_b_order = static_cast<unsigned int> (_var.order());
+	const double h_elem = _current_elem->volume()/_current_side_elem->volume() * 1./std::pow(elem_b_order, 2.);
+
+	//Output (Standard Flux Out)
+	if ((_velocity)*_normals[_qp] > 0.0)
+	{
+		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_phi[_j][_qp];
+	}
+	//Input (Dirichlet BC)
+	else
+	{
+		r += 0.0;
+		r -= _test[_i][_qp]*(_velocity*_normals[_qp])*_phi[_j][_qp];
+		r += _epsilon * _phi[_j][_qp] * _Diffusion * _grad_test[_i][_qp] * _normals[_qp];
+		r += _sigma/h_elem * _phi[_j][_qp] * _test[_i][_qp];
+		r -= (_Diffusion * _grad_phi[_j][_qp] * _normals[_qp] * _test[_i][_qp]);
+	}
+
+	return r;
 }
 
 Real DGVarVelDiffFluxLimitedBC::computeQpOffDiagJacobian(unsigned int jvar)
@@ -157,17 +197,50 @@ Real DGVarVelDiffFluxLimitedBC::computeQpOffDiagJacobian(unsigned int jvar)
 
   if (jvar == _ux_var)
   {
-    return DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(jvar);
+    //Output
+    if ((_velocity)*_normals[_qp] > 0.0)
+    {
+      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](0));
+    }
+    //Input
+    else
+    {
+      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](0));
+      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](0));
+    }
+    return r;
   }
 
   if (jvar == _uy_var)
   {
-    return DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(jvar);
+    //Output
+    if ((_velocity)*_normals[_qp] > 0.0)
+    {
+      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](1));
+    }
+    //Input
+    else
+    {
+      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](1));
+      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](1));
+    }
+    return r;
   }
 
   if (jvar == _uz_var)
   {
-    return DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(jvar);
+    //Output
+    if ((_velocity)*_normals[_qp] > 0.0)
+    {
+      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](2));
+    }
+    //Input
+    else
+    {
+      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](2));
+      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](2));
+    }
+    return r;
   }
 
   if (jvar == _Dx_var)

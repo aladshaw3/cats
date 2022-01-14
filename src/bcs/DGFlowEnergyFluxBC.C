@@ -52,9 +52,9 @@ registerMooseObject("catsApp", DGFlowEnergyFluxBC);
 InputParameters DGFlowEnergyFluxBC::validParams()
 {
     InputParameters params = DGConcentrationFluxBC::validParams();
-    params.addRequiredCoupledVar("porosity","Variable for the porosity of the domain/subdomain");
-    params.addRequiredCoupledVar("specific_heat","Variable for specific heat (J/kg/K)");
-    params.addRequiredCoupledVar("density","Variable for density (kg/m^3)");
+    params.addCoupledVar("porosity",1,"Variable for the porosity of the domain/subdomain");
+    params.addCoupledVar("specific_heat",1,"Variable for specific heat (J/kg/K)");
+    params.addCoupledVar("density",1,"Variable for density (kg/m^3)");
     params.addCoupledVar("inlet_temp",298,"Variable for the inlet temperature (K)");
     return params;
 }
@@ -187,7 +187,7 @@ Real DGFlowEnergyFluxBC::computeQpOffDiagJacobian(unsigned int jvar)
         }
         return r;
     }
-    
+
     if (jvar == _density_var)
     {
         //Output
@@ -202,7 +202,7 @@ Real DGFlowEnergyFluxBC::computeQpOffDiagJacobian(unsigned int jvar)
         }
         return r;
     }
-    
+
     if (jvar == _specheat_var)
     {
         //Output
@@ -217,7 +217,7 @@ Real DGFlowEnergyFluxBC::computeQpOffDiagJacobian(unsigned int jvar)
         }
         return r;
     }
-    
+
     if (jvar == _inlet_temp_var)
     {
         //Output
@@ -235,4 +235,3 @@ Real DGFlowEnergyFluxBC::computeQpOffDiagJacobian(unsigned int jvar)
 
     return 0.0;
 }
-

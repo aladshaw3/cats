@@ -75,7 +75,7 @@ registerMooseObject("catsApp", DGPoreDiffFluxLimitedBC);
 InputParameters DGPoreDiffFluxLimitedBC::validParams()
 {
     InputParameters params = DGVarVelDiffFluxLimitedBC::validParams();
-  params.addRequiredCoupledVar("porosity","Variable for the porosity of the domain/subdomain");
+    params.addCoupledVar("porosity",1,"Variable for the porosity of the domain/subdomain");
     return params;
 }
 
@@ -191,32 +191,98 @@ Real DGPoreDiffFluxLimitedBC::computeQpOffDiagJacobian(unsigned int jvar)
 
   if (jvar == _ux_var)
   {
-    return DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(jvar)*_porosity[_qp];
+    //Output
+    if ((_velocity)*_normals[_qp] > 0.0)
+    {
+      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](0));
+    }
+    //Input
+    else
+    {
+      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](0));
+      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](0));
+    }
+    return r*_porosity[_qp];
   }
 
   if (jvar == _uy_var)
   {
-    return DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(jvar)*_porosity[_qp];
+    //Output
+    if ((_velocity)*_normals[_qp] > 0.0)
+    {
+      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](1));
+    }
+    //Input
+    else
+    {
+      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](1));
+      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](1));
+    }
+    return r*_porosity[_qp];
   }
 
   if (jvar == _uz_var)
   {
-    return DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(jvar)*_porosity[_qp];
+    //Output
+    if ((_velocity)*_normals[_qp] > 0.0)
+    {
+      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](2));
+    }
+    //Input
+    else
+    {
+      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](2));
+      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](2));
+    }
+    return r*_porosity[_qp];
   }
 
   if (jvar == _Dx_var)
   {
-    return DGVarVelDiffFluxLimitedBC::computeQpOffDiagJacobian(jvar)*_porosity[_qp];
+    //Output
+    if ((_velocity)*_normals[_qp] > 0.0)
+    {
+      r += 0.0;
+    }
+    //Input
+    else
+    {
+      r += _epsilon * (_u[_qp] - _u_input) * _phi[_j][_qp] * _grad_test[_i][_qp](0) * _normals[_qp](0);
+      r -= (_phi[_j][_qp] * _grad_u[_qp](0) * _normals[_qp](0) * _test[_i][_qp]);
+    }
+    return r*_porosity[_qp];
   }
 
   if (jvar == _Dy_var)
   {
-    return DGVarVelDiffFluxLimitedBC::computeQpOffDiagJacobian(jvar)*_porosity[_qp];
+    //Output
+    if ((_velocity)*_normals[_qp] > 0.0)
+    {
+      r += 0.0;
+    }
+    //Input
+    else
+    {
+      r += _epsilon * (_u[_qp] - _u_input) * _phi[_j][_qp] * _grad_test[_i][_qp](1) * _normals[_qp](1);
+      r -= (_phi[_j][_qp] * _grad_u[_qp](1) * _normals[_qp](1) * _test[_i][_qp]);
+    }
+    return r*_porosity[_qp];
   }
 
   if (jvar == _Dz_var)
   {
-    return DGVarVelDiffFluxLimitedBC::computeQpOffDiagJacobian(jvar)*_porosity[_qp];
+    //Output
+    if ((_velocity)*_normals[_qp] > 0.0)
+    {
+      r += 0.0;
+    }
+    //Input
+    else
+    {
+      r += _epsilon * (_u[_qp] - _u_input) * _phi[_j][_qp] * _grad_test[_i][_qp](2) * _normals[_qp](2);
+      r -= (_phi[_j][_qp] * _grad_u[_qp](2) * _normals[_qp](2) * _test[_i][_qp]);
+    }
+    return r*_porosity[_qp];
   }
 
   if (jvar == _porosity_var)

@@ -148,17 +148,119 @@ Real DGConcFluxLimitedStepwiseBC::newInputValue(Real time)
 Real DGConcFluxLimitedStepwiseBC::computeQpResidual()
 {
     _u_input = newInputValue(_t);
-    return DGConcentrationFluxLimitedBC::computeQpResidual();
+    _velocity(0)=_ux[_qp];
+  	_velocity(1)=_uy[_qp];
+  	_velocity(2)=_uz[_qp];
+
+    Real r = 0;
+
+  	const unsigned int elem_b_order = static_cast<unsigned int> (_var.order());
+  	const double h_elem = _current_elem->volume()/_current_side_elem->volume() * 1./std::pow(elem_b_order, 2.);
+
+  	//Output (Standard Flux Out)
+  	if ((_velocity)*_normals[_qp] > 0.0)
+  	{
+  		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u[_qp];
+  	}
+  	//Input (Dirichlet BC)
+  	else
+  	{
+  		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u_input;
+  		r -= _test[_i][_qp]*(_velocity*_normals[_qp])*(_u[_qp] - _u_input);
+  		r += _epsilon * (_u[_qp] - _u_input) * _Diffusion * _grad_test[_i][_qp] * _normals[_qp];
+  		r += _sigma/h_elem * (_u[_qp] - _u_input) * _test[_i][_qp];
+  		r -= (_Diffusion * _grad_u[_qp] * _normals[_qp] * _test[_i][_qp]);
+  	}
+
+  	return r;
 }
 
 Real DGConcFluxLimitedStepwiseBC::computeQpJacobian()
 {
     _u_input = newInputValue(_t);
-    return DGConcentrationFluxLimitedBC::computeQpJacobian();
+    _velocity(0)=_ux[_qp];
+  	_velocity(1)=_uy[_qp];
+  	_velocity(2)=_uz[_qp];
+
+    Real r = 0;
+
+  	const unsigned int elem_b_order = static_cast<unsigned int> (_var.order());
+  	const double h_elem = _current_elem->volume()/_current_side_elem->volume() * 1./std::pow(elem_b_order, 2.);
+
+  	//Output (Standard Flux Out)
+  	if ((_velocity)*_normals[_qp] > 0.0)
+  	{
+  		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_phi[_j][_qp];
+  	}
+  	//Input (Dirichlet BC)
+  	else
+  	{
+  		r += 0.0;
+  		r -= _test[_i][_qp]*(_velocity*_normals[_qp])*_phi[_j][_qp];
+  		r += _epsilon * _phi[_j][_qp] * _Diffusion * _grad_test[_i][_qp] * _normals[_qp];
+  		r += _sigma/h_elem * _phi[_j][_qp] * _test[_i][_qp];
+  		r -= (_Diffusion * _grad_phi[_j][_qp] * _normals[_qp] * _test[_i][_qp]);
+  	}
+
+  	return r;
 }
 
 Real DGConcFluxLimitedStepwiseBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
     _u_input = newInputValue(_t);
-    return DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(jvar);
+    _velocity(0)=_ux[_qp];
+  	_velocity(1)=_uy[_qp];
+  	_velocity(2)=_uz[_qp];
+
+    Real r = 0;
+
+    if (jvar == _ux_var)
+    {
+      //Output
+      if ((_velocity)*_normals[_qp] > 0.0)
+      {
+        r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](0));
+      }
+      //Input
+      else
+      {
+        r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](0));
+        r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](0));
+      }
+      return r;
+    }
+
+    if (jvar == _uy_var)
+    {
+      //Output
+      if ((_velocity)*_normals[_qp] > 0.0)
+      {
+        r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](1));
+      }
+      //Input
+      else
+      {
+        r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](1));
+        r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](1));
+      }
+      return r;
+    }
+
+    if (jvar == _uz_var)
+    {
+      //Output
+      if ((_velocity)*_normals[_qp] > 0.0)
+      {
+        r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](2));
+      }
+      //Input
+      else
+      {
+        r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](2));
+        r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](2));
+      }
+      return r;
+    }
+
+    return 0.0;
 }

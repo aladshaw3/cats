@@ -50,7 +50,7 @@ registerMooseObject("catsApp", DGPoreConcFluxBC);
 InputParameters DGPoreConcFluxBC::validParams()
 {
     InputParameters params = DGConcentrationFluxBC::validParams();
-    params.addRequiredCoupledVar("porosity","Variable for the porosity of the domain/subdomain");
+    params.addCoupledVar("porosity",1,"Variable for the porosity of the domain/subdomain");
     return params;
 }
 
