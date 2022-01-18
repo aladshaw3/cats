@@ -1,0 +1,7 @@
+[Tests]
+  [./test_basic_coupled_bcs]
+    type = 'Exodiff'
+    input = 'coupled_boundary_test.i'
+    exodiff = 'coupled_boundary_test_out.e'
+  [../]
+[]

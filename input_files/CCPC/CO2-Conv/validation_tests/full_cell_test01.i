@@ -384,6 +384,12 @@
       initial_condition = 0.0012 #cm^2/min
       block = 'neg_electrode membrane pos_electrode'
   [../]
+  [./D_H_p_membrane]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 8.40E-4 #cm^2/min
+      block = 'neg_electrode membrane pos_electrode'
+  [../]
   [./D_HSO4_m]
       order = FIRST
       family = MONOMIAL
@@ -1135,6 +1141,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
+      block = 'neg_electrode pos_electrode'
   [../]
   [./Hp_gdiff]
       type = GVarPoreDiffusion
@@ -1143,6 +1150,7 @@
       Dx = D_H_p
       Dy = D_H_p
       Dz = D_H_p
+      ##block = 'neg_electrode pos_electrode'
   [../]
   [./Hp_gnpdiff]
       type = GNernstPlanckDiffusion
@@ -1154,6 +1162,7 @@
       Dx = D_H_p
       Dy = D_H_p
       Dz = D_H_p
+      ##block = 'neg_electrode pos_electrode'
   [../]
 
   # reaction kernels for positive electrode
@@ -1438,6 +1447,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
+      block = 'neg_electrode pos_electrode'
   [../]
   [./Hp_dgdiff]
       type = DGVarPoreDiffusion
@@ -1446,6 +1456,7 @@
       Dx = D_H_p
       Dy = D_H_p
       Dz = D_H_p
+      ##block = 'neg_electrode pos_electrode'
   [../]
   [./Hp_dgnpdiff]
       type = DGNernstPlanckDiffusion
@@ -1457,6 +1468,7 @@
       Dx = D_H_p
       Dy = D_H_p
       Dz = D_H_p
+      ##block = 'neg_electrode pos_electrode'
   [../]
 
 
@@ -1746,78 +1758,78 @@
 
   # ============ Calculation of Conc Inlets =============
   # H2O
-  [./H2O_inlet_pos_side]
-      type = AuxPostprocessorValue
-      variable = H2O_inlet_pos
-      postprocessor = H2O_pos_out
-      execute_on = 'initial timestep_end'
-  [../]
-  [./H2O_inlet_neg_side]
-      type = AuxPostprocessorValue
-      variable = H2O_inlet_neg
-      postprocessor = H2O_neg_out
-      execute_on = 'initial timestep_end'
-  [../]
+  #[./H2O_inlet_pos_side]
+  #    type = AuxPostprocessorValue
+  #    variable = H2O_inlet_pos
+  #    postprocessor = H2O_pos_out
+  #    execute_on = 'initial timestep_end'
+  #[../]
+  #[./H2O_inlet_neg_side]
+  #    type = AuxPostprocessorValue
+  #    variable = H2O_inlet_neg
+  #    postprocessor = H2O_neg_out
+  #    execute_on = 'initial timestep_end'
+  #[../]
 
   # H_p
-  [./H_p_inlet_pos_side]
-      type = AuxPostprocessorValue
-      variable = H_p_inlet_pos
-      postprocessor = H_p_pos_out
-      execute_on = 'initial timestep_end'
-  [../]
-  [./H_p_inlet_neg_side]
-      type = AuxPostprocessorValue
-      variable = H_p_inlet_neg
-      postprocessor = H_p_neg_out
-      execute_on = 'initial timestep_end'
-  [../]
+  #[./H_p_inlet_pos_side]
+  #    type = AuxPostprocessorValue
+  #    variable = H_p_inlet_pos
+  #    postprocessor = H_p_pos_out
+  #    execute_on = 'initial timestep_end'
+  #[../]
+  #[./H_p_inlet_neg_side]
+  #    type = AuxPostprocessorValue
+  #    variable = H_p_inlet_neg
+  #    postprocessor = H_p_neg_out
+  #    execute_on = 'initial timestep_end'
+  #[../]
 
   # HSO4_m
-  [./HSO4_m_inlet_pos_side]
-      type = AuxPostprocessorValue
-      variable = HSO4_m_inlet_pos
-      postprocessor = HSO4_m_pos_out
-      execute_on = 'initial timestep_end'
-  [../]
-  [./HSO4_m_inlet_neg_side]
-      type = AuxPostprocessorValue
-      variable = HSO4_m_inlet_neg
-      postprocessor = HSO4_m_neg_out
-      execute_on = 'initial timestep_end'
-  [../]
+  #[./HSO4_m_inlet_pos_side]
+  #    type = AuxPostprocessorValue
+  #    variable = HSO4_m_inlet_pos
+  #    postprocessor = HSO4_m_pos_out
+  #    execute_on = 'initial timestep_end'
+  #[../]
+  #[./HSO4_m_inlet_neg_side]
+  #    type = AuxPostprocessorValue
+  #    variable = HSO4_m_inlet_neg
+  #    postprocessor = HSO4_m_neg_out
+  #    execute_on = 'initial timestep_end'
+  #[../]
 
   # V_II
-  [./V_II_inlet_neg_side]
-      type = AuxPostprocessorValue
-      variable = V_II_inlet
-      postprocessor = V_II_neg_out
-      execute_on = 'initial timestep_end'
-  [../]
+  #[./V_II_inlet_neg_side]
+  #    type = AuxPostprocessorValue
+  #    variable = V_II_inlet
+  #    postprocessor = V_II_neg_out
+  #    execute_on = 'initial timestep_end'
+  #[../]
 
   # V_III
-  [./V_III_inlet_neg_side]
-      type = AuxPostprocessorValue
-      variable = V_III_inlet
-      postprocessor = V_III_neg_out
-      execute_on = 'initial timestep_end'
-  [../]
+  #[./V_III_inlet_neg_side]
+  #    type = AuxPostprocessorValue
+  #    variable = V_III_inlet
+  #    postprocessor = V_III_neg_out
+  #    execute_on = 'initial timestep_end'
+  #[../]
 
   # V_IV
-  [./V_IV_inlet_pos_side]
-      type = AuxPostprocessorValue
-      variable = V_IV_inlet
-      postprocessor = V_IV_pos_out
-      execute_on = 'initial timestep_end'
-  [../]
+  #[./V_IV_inlet_pos_side]
+  #    type = AuxPostprocessorValue
+  #    variable = V_IV_inlet
+  #    postprocessor = V_IV_pos_out
+  #    execute_on = 'initial timestep_end'
+  #[../]
 
   # V_V
-  [./V_V_inlet_pos_side]
-      type = AuxPostprocessorValue
-      variable = V_V_inlet
-      postprocessor = V_V_pos_out
-      execute_on = 'initial timestep_end'
-  [../]
+  #[./V_V_inlet_pos_side]
+  #    type = AuxPostprocessorValue
+  #    variable = V_V_inlet
+  #    postprocessor = V_V_pos_out
+  #    execute_on = 'initial timestep_end'
+  #[../]
 
 []
 
@@ -1880,11 +1892,12 @@
   [../]
 
   # inlet pressure gradient from velocity
+  #   This BC corresponds to 1 mL/s flow rate
   [./press_grad_at_inlet]
       type = CoupledNeumannBC
       variable = pressure
       boundary = 'pos_electrode_bottom neg_electrode_bottom'
-      coupled = 66   # vel in cm/min (0.37 to 1.1 cm/s)
+      coupled = 22.2   # vel in cm/min (0.37 (22.2 cm/min) to 1.1 cm/s (66 cm/min))
   [../]
 
 
@@ -2169,7 +2182,7 @@
 
 [Executioner]
   type = Transient
-  scheme = bdf2
+  scheme = implicit-euler
 
   # NOTE: Add arg -ksp_view to get info on methods used at linear steps
   petsc_options = '-snes_converged_reason
@@ -2257,15 +2270,18 @@
   start_time = -0.001
   end_time = 33.6
   dtmax = 0.5
-  dtmin = 0.0001
+  dtmin = 1e-6
 
   # First few times step needs to be fairly small, but afterwards can accelerate
-  #   Current setup: Double step size if successful, otherwise reduce to 75%
+  #   Current setup: Increase/decrease step size by 50% of prior step
+  #
+  #   NOTE: May need a custom time stepper since this one may actually reduce
+  #     the step size even on successful step...
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
       dt = 0.001
-      cutback_factor_at_failure = 0.75
-      percent_change = 1
+      cutback_factor_at_failure = 0.5
+      percent_change = 0.5
   [../]
 
 [] #END Executioner
