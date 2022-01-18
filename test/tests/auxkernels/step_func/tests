@@ -1,0 +1,8 @@
+[Tests]
+  [./step_func_aux]
+    type = 'Exodiff'
+    input = 'var_step_input_test.i'
+    exodiff = 'var_step_input_test_out.e'
+    rel_err = 1e-5
+  [../]
+[]
