@@ -552,6 +552,17 @@
       initial_condition = 0 # C/V/cm/min
       block = 'neg_electrode membrane pos_electrode'
   [../]
+
+  # Current flux at boundary
+  ## I/a for charging (where I=current = 10 A && a=surface area = 10cm x 10cm)
+  # 1 A = 1 C/s ==>  10 A = 600 C/min
+  # value = I/A = 6 C/min/cm^2
+  [./current_input]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 6 # C/min/cm^2
+      block = 'pos_collector'
+  [../]
 []
 
 [ICs]
@@ -1831,6 +1842,18 @@
   #    execute_on = 'initial timestep_end'
   #[../]
 
+
+  # ================== Charge Discharge Cycle ==================
+  [./step_input_fr_charge]
+      type = TemporalStepFunction
+      variable = current_input
+      start_value = 6
+      aux_vals = '0 -6'
+      aux_times = '2 4'
+      time_spans = '0.5 0.5'
+      execute_on = 'initial timestep_begin nonlinear'
+  [../]
+
 []
 
 [BCs]
@@ -1873,7 +1896,7 @@
       ## I/a for charging (where I=current = 10 A && a=surface area = 10cm x 10cm)
       # 1 A = 1 C/s ==>  10 A = 600 C/min
       # value = I/A = 6 C/min/cm^2
-      coupled = 6.0
+      coupled = current_input
   [../]
 
 
@@ -2178,6 +2201,13 @@
       execute_on = 'initial timestep_end'
   [../]
 
+  [./current_input]
+      type = SideAverageValue
+      boundary = 'pos_collector_right'
+      variable = current_input
+      execute_on = 'initial timestep_end'
+  [../]
+
 []
 
 [Executioner]
@@ -2226,8 +2256,9 @@
 
                         -ksp_pc_factor_mat_solver_type'
 
+  ## NOTE: May be best to just use lu as pc_type instead of ksp
   petsc_options_value = 'fgmres
-                         ksp
+                         lu
 
                          lu
 
@@ -2267,9 +2298,10 @@
   #       time: 33.6 - 35.6 min (zero current pull)
   #       time: 35.6 - 65 min (discharging at 10 A)
 
+  ## NOTE: For sudden changes in current, may need to reduce max time step
   start_time = -0.001
-  end_time = 33.6
-  dtmax = 0.5
+  end_time = 10
+  dtmax = 0.25
   dtmin = 1e-6
 
   # First few times step needs to be fairly small, but afterwards can accelerate
