@@ -19,17 +19,13 @@
 
 #### NOTES ####
 #
-#   Do I need to include 'eps' in the reaction terms 'J' and 'r'?
-#       (Could be lumped into 'As' as 'As*eps')
-#
-#   If the expected voltage is too low, this could mean that the kinetics
-#       and/or the electrolyte conductivity are too large.
-#       (Because our kinetic expression is missing a correction factor from
-#       literature and the actual conductivity is not precisely known)
-#
-#   Have to take small time steps for good convergence. Probably because of
-#       the sensitivity of the Butler-Volmer kinetics to the changes in
-#       electric potential.
+#   Expected voltage at time 0 is CORRECT!!!
+#     Literature reports expected voltage of ~1.6 V
+#     We calculate ~1.47 V  -HOWEVER-
+#     Literature also reports a total vertical shift of 0.131 V
+#     due to contact resistances between the electrode and current
+#     collectors. Thus, our voltage of 1.47 + 0.131 should compare
+#     to their results: 1.47+0.131 = ~1.6 V == 1.6 V (lit)
 
 [GlobalParams]
 
@@ -302,27 +298,45 @@
 [AuxVariables]
 
   # H2O
-  [./H2O_inlet]
+  [./H2O_inlet_pos]
       order = FIRST
       family = MONOMIAL
       initial_condition = 0.0042 #mol/cm^3
-      block = 'neg_electrode membrane pos_electrode'
+      block = 'pos_electrode'
+  [../]
+  [./H2O_inlet_neg]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0042 #mol/cm^3
+      block = 'neg_electrode'
   [../]
 
   # H+
-  [./H_p_inlet]
+  [./H_p_inlet_pos]
       order = FIRST
       family = MONOMIAL
       initial_condition = 0.0012 #mol/cm^3
-      block = 'neg_electrode membrane pos_electrode'
+      block = 'pos_electrode'
+  [../]
+  [./H_p_inlet_neg]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0012 #mol/cm^3
+      block = 'neg_electrode'
   [../]
 
   # HSO4-
-  [./HSO4_m_inlet]
+  [./HSO4_m_inlet_pos]
       order = FIRST
       family = MONOMIAL
       initial_condition = 0.0012 #mol/cm^3
-      block = 'neg_electrode pos_electrode'
+      block = 'pos_electrode'
+  [../]
+  [./HSO4_m_inlet_neg]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0012 #mol/cm^3
+      block = 'neg_electrode'
   [../]
 
   # V2+
@@ -507,7 +521,7 @@
       block = 'membrane'
   [../]
 
-  #Specific surface area (adjusted)
+  #Specific surface area
   [./As]
     order = FIRST
     family = MONOMIAL
@@ -515,7 +529,17 @@
     block = 'neg_electrode pos_electrode'
   [../]
 
+  #Specific surface area (adjusted = As * eps)
+  #   NOT used or needed
+  [./As_eps]
+    order = FIRST
+    family = MONOMIAL
+    initial_condition = 13600  # cm^-1
+    block = 'neg_electrode pos_electrode'
+  [../]
+
   # Keff calculation to check values for problems
+  #   Just to check some computed values
   [./Keff]
       order = FIRST
       family = MONOMIAL
@@ -566,6 +590,7 @@
       variable = phi_s
       coupled_list = 'J_neg'
       weights = '-1'
+      scale = 1
       block = 'neg_electrode'
   [../]
   [./phi_s_J_pos]
@@ -573,6 +598,7 @@
       variable = phi_s
       coupled_list = 'J_pos'
       weights = '-1'
+      scale = 1
       block = 'pos_electrode'
   [../]
 
@@ -635,6 +661,7 @@
       variable = phi_e
       coupled_list = 'J_neg'
       weights = '1'
+      scale = 1
       block = 'neg_electrode'
   [../]
   [./phi_e_J_pos]
@@ -642,6 +669,7 @@
       variable = phi_e
       coupled_list = 'J_pos'
       weights = '1'
+      scale = 1
       block = 'pos_electrode'
   [../]
 
@@ -1716,6 +1744,81 @@
       block = 'membrane'
   [../]
 
+  # ============ Calculation of Conc Inlets =============
+  # H2O
+  [./H2O_inlet_pos_side]
+      type = AuxPostprocessorValue
+      variable = H2O_inlet_pos
+      postprocessor = H2O_pos_out
+      execute_on = 'initial timestep_end'
+  [../]
+  [./H2O_inlet_neg_side]
+      type = AuxPostprocessorValue
+      variable = H2O_inlet_neg
+      postprocessor = H2O_neg_out
+      execute_on = 'initial timestep_end'
+  [../]
+
+  # H_p
+  [./H_p_inlet_pos_side]
+      type = AuxPostprocessorValue
+      variable = H_p_inlet_pos
+      postprocessor = H_p_pos_out
+      execute_on = 'initial timestep_end'
+  [../]
+  [./H_p_inlet_neg_side]
+      type = AuxPostprocessorValue
+      variable = H_p_inlet_neg
+      postprocessor = H_p_neg_out
+      execute_on = 'initial timestep_end'
+  [../]
+
+  # HSO4_m
+  [./HSO4_m_inlet_pos_side]
+      type = AuxPostprocessorValue
+      variable = HSO4_m_inlet_pos
+      postprocessor = HSO4_m_pos_out
+      execute_on = 'initial timestep_end'
+  [../]
+  [./HSO4_m_inlet_neg_side]
+      type = AuxPostprocessorValue
+      variable = HSO4_m_inlet_neg
+      postprocessor = HSO4_m_neg_out
+      execute_on = 'initial timestep_end'
+  [../]
+
+  # V_II
+  [./V_II_inlet_neg_side]
+      type = AuxPostprocessorValue
+      variable = V_II_inlet
+      postprocessor = V_II_neg_out
+      execute_on = 'initial timestep_end'
+  [../]
+
+  # V_III
+  [./V_III_inlet_neg_side]
+      type = AuxPostprocessorValue
+      variable = V_III_inlet
+      postprocessor = V_III_neg_out
+      execute_on = 'initial timestep_end'
+  [../]
+
+  # V_IV
+  [./V_IV_inlet_pos_side]
+      type = AuxPostprocessorValue
+      variable = V_IV_inlet
+      postprocessor = V_IV_pos_out
+      execute_on = 'initial timestep_end'
+  [../]
+
+  # V_V
+  [./V_V_inlet_pos_side]
+      type = AuxPostprocessorValue
+      variable = V_V_inlet
+      postprocessor = V_V_pos_out
+      execute_on = 'initial timestep_end'
+  [../]
+
 []
 
 [BCs]
@@ -1786,15 +1889,25 @@
 
 
   ### ==================== H2O ==========================
-  [./H2O_FluxIn]
+  [./H2O_FluxIn_pos]
       type = DGFlowMassFluxBC
       variable = H2O
-      boundary = 'pos_electrode_bottom neg_electrode_bottom'
+      boundary = 'pos_electrode_bottom'
       porosity = 1
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = H2O_inlet
+      input_var = H2O_inlet_pos
+  [../]
+  [./H2O_FluxIn_neg]
+      type = DGFlowMassFluxBC
+      variable = H2O
+      boundary = 'neg_electrode_bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = H2O_inlet_neg
   [../]
   [./H2O_FluxOut]
       type = DGFlowMassFluxBC
@@ -1807,15 +1920,25 @@
   [../]
 
   ### ==================== H+ ==========================
-  [./Hp_FluxIn]
+  [./Hp_FluxIn_pos]
       type = DGFlowMassFluxBC
       variable = H_p
-      boundary = 'pos_electrode_bottom neg_electrode_bottom'
+      boundary = 'pos_electrode_bottom'
       porosity = 1
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = H_p_inlet
+      input_var = H_p_inlet_pos
+  [../]
+  [./Hp_FluxIn_neg]
+      type = DGFlowMassFluxBC
+      variable = H_p
+      boundary = 'neg_electrode_bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = H_p_inlet_neg
   [../]
   [./Hp_FluxOut]
       type = DGFlowMassFluxBC
@@ -1829,15 +1952,25 @@
 
 
   ### ==================== HSO4- ==========================
-  [./HSO4m_FluxIn]
+  [./HSO4m_FluxIn_pos]
       type = DGFlowMassFluxBC
       variable = HSO4_m
-      boundary = 'pos_electrode_bottom neg_electrode_bottom'
+      boundary = 'pos_electrode_bottom'
       porosity = 1
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = HSO4_m_inlet
+      input_var = HSO4_m_inlet_pos
+  [../]
+  [./HSO4m_FluxIn_neg]
+      type = DGFlowMassFluxBC
+      variable = HSO4_m
+      boundary = 'neg_electrode_bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = HSO4_m_inlet_neg
   [../]
   [./HSO4m_FluxOut]
       type = DGFlowMassFluxBC
@@ -1941,68 +2074,97 @@
 
 [Postprocessors]
 
-  [./phi_s_neg_side]
-      type = ElementAverageValue
-      block = 'neg_collector'
+  [./phi_s_pos_collector]
+      type = SideAverageValue
+      boundary = 'pos_collector_right'
       variable = phi_s
       execute_on = 'initial timestep_end'
   [../]
 
-  [./phi_s_pos_side]
-      type = ElementAverageValue
-      block = 'pos_collector'
+  [./phi_s_pos_electrode]
+      type = SideAverageValue
+      boundary = 'pos_electrode_interface_pos_collector'
       variable = phi_s
       execute_on = 'initial timestep_end'
   [../]
 
-  [./phi_diff_neg_side]
-      type = ElementAverageValue
-      block = 'neg_electrode'
-      variable = phi_diff
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./phi_diff_pos_side]
-      type = ElementAverageValue
-      block = 'pos_electrode'
-      variable = phi_diff
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./J_neg_side]
-      type = ElementAverageValue
-      block = 'neg_electrode'
-      variable = J_neg
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./J_pos_side]
-      type = ElementAverageValue
-      block = 'pos_electrode'
-      variable = J_pos
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./Keff_pos_elec]
-      type = ElementAverageValue
-      block = 'pos_electrode'
-      variable = Keff
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./Keff_neg_elec]
-      type = ElementAverageValue
-      block = 'neg_electrode'
-      variable = Keff
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./Keff_mem]
+  [./H_p_mem]
       type = ElementAverageValue
       block = 'membrane'
-      variable = Keff
+      variable = H_p
       execute_on = 'initial timestep_end'
   [../]
+
+  [./H2O_neg_out]
+      type = SideAverageValue
+      boundary = 'neg_electrode_top'
+      variable = H2O
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./H2O_pos_out]
+      type = SideAverageValue
+      boundary = 'pos_electrode_top'
+      variable = H2O
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./H_p_neg_out]
+      type = SideAverageValue
+      boundary = 'neg_electrode_top'
+      variable = H_p
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./H_p_pos_out]
+      type = SideAverageValue
+      boundary = 'pos_electrode_top'
+      variable = H_p
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./HSO4_m_neg_out]
+      type = SideAverageValue
+      boundary = 'neg_electrode_top'
+      variable = HSO4_m
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./HSO4_m_pos_out]
+      type = SideAverageValue
+      boundary = 'pos_electrode_top'
+      variable = HSO4_m
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./V_II_neg_out]
+      type = SideAverageValue
+      boundary = 'neg_electrode_top'
+      variable = V_II
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./V_III_neg_out]
+      type = SideAverageValue
+      boundary = 'neg_electrode_top'
+      variable = V_III
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./V_IV_pos_out]
+      type = SideAverageValue
+      boundary = 'pos_electrode_top'
+      variable = V_IV
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./V_V_pos_out]
+      type = SideAverageValue
+      boundary = 'pos_electrode_top'
+      variable = V_V
+      execute_on = 'initial timestep_end'
+  [../]
+
 []
 
 [Executioner]
@@ -2088,8 +2250,8 @@
   l_tol = 1e-6
   l_max_its = 30
 
-  start_time = -0.2
-  end_time = 0.
+  start_time = -0.001
+  end_time = 1
   dtmax = 0.5
 
   # First few times step needs to be fairly small, but afterwards can accelerate
