@@ -1831,37 +1831,37 @@
   #### NOTE ####
   #   This BC may be redundant and not needed
   #[./phi_s_neg_side_current_charging]
-  #    type = NeumannBC
+  #    type = CoupledNeumannBC
   #    variable = phi_s
   #    boundary = 'neg_collector_left'
   #    #
   #    ## -I/a for charging (where I=current = 10 A && a=surface area = 10cm x 10cm)
   #    # 1 A = 1 C/s ==>  10 A = 600 C/min
   #    # value = I/A = 6 C/min/cm^2
-  #    value = -6.0
+  #    coupled = -6.0
   #[../]
 
   # ---- Fix a 'ground' state on one side of the system -------
   #   (This BC type may be more numerically stable)
   [./phi_s_neg_side_dirichlet]
-      type = DirichletBC
+      type = CoupledDirichletBC
       variable = phi_s
       boundary = 'neg_collector_left'
       #
       ## edge value was defined at 0 V
-      value = 0 # in V
+      coupled = 0 # in V
   [../]
 
   # ---- Set current density entering and match with current density leaving -------
   [./phi_s_pos_side_current_charging]
-      type = NeumannBC
+      type = CoupledNeumannBC
       variable = phi_s
       boundary = 'pos_collector_right'
 
       ## I/a for charging (where I=current = 10 A && a=surface area = 10cm x 10cm)
       # 1 A = 1 C/s ==>  10 A = 600 C/min
       # value = I/A = 6 C/min/cm^2
-      value = 6.0
+      coupled = 6.0
   [../]
 
 
@@ -1873,18 +1873,18 @@
   ### ==================== Pressure ==========================
   # exit pressure
   [./press_at_exit]
-      type = DirichletBC
+      type = CoupledDirichletBC
       variable = pressure
       boundary = 'pos_electrode_top neg_electrode_top'
-      value = 300 # kPa
+      coupled = 300 # kPa
   [../]
 
   # inlet pressure gradient from velocity
   [./press_grad_at_inlet]
-      type = NeumannBC
+      type = CoupledNeumannBC
       variable = pressure
       boundary = 'pos_electrode_bottom neg_electrode_bottom'
-      value = 66   # vel in cm/min (0.37 to 1.1 cm/s)
+      coupled = 66   # vel in cm/min (0.37 to 1.1 cm/s)
   [../]
 
 
@@ -2250,9 +2250,14 @@
   l_tol = 1e-6
   l_max_its = 30
 
+  # Case: time: 0 - 33.6 min (charging at 10 A)
+  #       time: 33.6 - 35.6 min (zero current pull)
+  #       time: 35.6 - 65 min (discharging at 10 A)
+
   start_time = -0.001
-  end_time = 1
+  end_time = 33.6
   dtmax = 0.5
+  dtmin = 0.0001
 
   # First few times step needs to be fairly small, but afterwards can accelerate
   #   Current setup: Double step size if successful, otherwise reduce to 75%
