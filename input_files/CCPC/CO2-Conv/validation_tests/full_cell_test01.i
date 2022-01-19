@@ -1769,78 +1769,78 @@
 
   # ============ Calculation of Conc Inlets =============
   # H2O
-  #[./H2O_inlet_pos_side]
-  #    type = AuxPostprocessorValue
-  #    variable = H2O_inlet_pos
-  #    postprocessor = H2O_pos_out
-  #    execute_on = 'initial timestep_end'
-  #[../]
-  #[./H2O_inlet_neg_side]
-  #    type = AuxPostprocessorValue
-  #    variable = H2O_inlet_neg
-  #    postprocessor = H2O_neg_out
-  #    execute_on = 'initial timestep_end'
-  #[../]
+  [./H2O_inlet_pos_side]
+      type = AuxPostprocessorValue
+      variable = H2O_inlet_pos
+      postprocessor = H2O_pos_out
+      execute_on = 'initial timestep_end'
+  [../]
+  [./H2O_inlet_neg_side]
+      type = AuxPostprocessorValue
+      variable = H2O_inlet_neg
+      postprocessor = H2O_neg_out
+      execute_on = 'initial timestep_end'
+  [../]
 
   # H_p
-  #[./H_p_inlet_pos_side]
-  #    type = AuxPostprocessorValue
-  #    variable = H_p_inlet_pos
-  #    postprocessor = H_p_pos_out
-  #    execute_on = 'initial timestep_end'
-  #[../]
-  #[./H_p_inlet_neg_side]
-  #    type = AuxPostprocessorValue
-  #    variable = H_p_inlet_neg
-  #    postprocessor = H_p_neg_out
-  #    execute_on = 'initial timestep_end'
-  #[../]
+  [./H_p_inlet_pos_side]
+      type = AuxPostprocessorValue
+      variable = H_p_inlet_pos
+      postprocessor = H_p_pos_out
+      execute_on = 'initial timestep_end'
+  [../]
+  [./H_p_inlet_neg_side]
+      type = AuxPostprocessorValue
+      variable = H_p_inlet_neg
+      postprocessor = H_p_neg_out
+      execute_on = 'initial timestep_end'
+  [../]
 
   # HSO4_m
-  #[./HSO4_m_inlet_pos_side]
-  #    type = AuxPostprocessorValue
-  #    variable = HSO4_m_inlet_pos
-  #    postprocessor = HSO4_m_pos_out
-  #    execute_on = 'initial timestep_end'
-  #[../]
-  #[./HSO4_m_inlet_neg_side]
-  #    type = AuxPostprocessorValue
-  #    variable = HSO4_m_inlet_neg
-  #    postprocessor = HSO4_m_neg_out
-  #    execute_on = 'initial timestep_end'
-  #[../]
+  [./HSO4_m_inlet_pos_side]
+      type = AuxPostprocessorValue
+      variable = HSO4_m_inlet_pos
+      postprocessor = HSO4_m_pos_out
+      execute_on = 'initial timestep_end'
+  [../]
+  [./HSO4_m_inlet_neg_side]
+      type = AuxPostprocessorValue
+      variable = HSO4_m_inlet_neg
+      postprocessor = HSO4_m_neg_out
+      execute_on = 'initial timestep_end'
+  [../]
 
   # V_II
-  #[./V_II_inlet_neg_side]
-  #    type = AuxPostprocessorValue
-  #    variable = V_II_inlet
-  #    postprocessor = V_II_neg_out
-  #    execute_on = 'initial timestep_end'
-  #[../]
+  [./V_II_inlet_neg_side]
+      type = AuxPostprocessorValue
+      variable = V_II_inlet
+      postprocessor = V_II_neg_out
+      execute_on = 'initial timestep_end'
+  [../]
 
   # V_III
-  #[./V_III_inlet_neg_side]
-  #    type = AuxPostprocessorValue
-  #    variable = V_III_inlet
-  #    postprocessor = V_III_neg_out
-  #    execute_on = 'initial timestep_end'
-  #[../]
+  [./V_III_inlet_neg_side]
+      type = AuxPostprocessorValue
+      variable = V_III_inlet
+      postprocessor = V_III_neg_out
+      execute_on = 'initial timestep_end'
+  [../]
 
   # V_IV
-  #[./V_IV_inlet_pos_side]
-  #    type = AuxPostprocessorValue
-  #    variable = V_IV_inlet
-  #    postprocessor = V_IV_pos_out
-  #    execute_on = 'initial timestep_end'
-  #[../]
+  [./V_IV_inlet_pos_side]
+      type = AuxPostprocessorValue
+      variable = V_IV_inlet
+      postprocessor = V_IV_pos_out
+      execute_on = 'initial timestep_end'
+  [../]
 
   # V_V
-  #[./V_V_inlet_pos_side]
-  #    type = AuxPostprocessorValue
-  #    variable = V_V_inlet
-  #    postprocessor = V_V_pos_out
-  #    execute_on = 'initial timestep_end'
-  #[../]
+  [./V_V_inlet_pos_side]
+      type = AuxPostprocessorValue
+      variable = V_V_inlet
+      postprocessor = V_V_pos_out
+      execute_on = 'initial timestep_end'
+  [../]
 
 
   # ================== Charge Discharge Cycle ==================
@@ -2258,7 +2258,7 @@
 
   ## NOTE: May be best to just use lu as pc_type instead of ksp
   petsc_options_value = 'fgmres
-                         lu
+                         ksp
 
                          lu
 
@@ -2286,10 +2286,10 @@
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
-  nl_rel_tol = 1e-10
-  nl_abs_tol = 1e-10
-  nl_rel_step_tol = 1e-10
-  nl_abs_step_tol = 1e-10
+  nl_rel_tol = 1e-8
+  nl_abs_tol = 1e-8
+  nl_rel_step_tol = 1e-8
+  nl_abs_step_tol = 1e-8
   nl_max_its = 50
   l_tol = 1e-6
   l_max_its = 30
@@ -2300,7 +2300,7 @@
 
   ## NOTE: For sudden changes in current, may need to reduce max time step
   start_time = -0.001
-  end_time = 10
+  end_time = 6
   dtmax = 0.25
   dtmin = 1e-6
 
