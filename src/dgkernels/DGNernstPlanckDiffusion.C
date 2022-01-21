@@ -494,8 +494,7 @@ Real DGNernstPlanckDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType typ
         {
             //Uses test and grad_test
             case Moose::ElementElement:
-                r -= 0.5 * (_Diffusion * (-1.0/_temp[_qp])*_phi[_j][_qp] * (_porosity[_qp]*_u[_qp]*(_valence*_faraday/_gas_const/_temp[_qp])) * _grad_e_potential[_qp] * _normals[_qp] +
-                            _Diffusion_neighbor * (0.0)*_phi_neighbor[_j][_qp] * (_porosity[_qp]*_u_neighbor[_qp]*(_valence*_faraday/_gas_const/_temp_neighbor[_qp])) * _grad_e_potential_neighbor[_qp] * _normals[_qp]) *
+                r -= 0.5 * (_Diffusion * (-1.0/_temp[_qp])*_phi[_j][_qp] * (_porosity[_qp]*_u[_qp]*(_valence*_faraday/_gas_const/_temp[_qp])) * _grad_e_potential[_qp] * _normals[_qp]) *
                             _test[_i][_qp];
                 r += _epsilon * 0.5 * (_e_potential[_qp] - _e_potential_neighbor[_qp]) * _Diffusion * (-1.0/_temp[_qp])*_phi[_j][_qp] * (_porosity[_qp]*_u[_qp]*(_valence*_faraday/_gas_const/_temp[_qp])) * _grad_test[_i][_qp] *
                         _normals[_qp];
@@ -503,26 +502,21 @@ Real DGNernstPlanckDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType typ
 
             //Uses test and grad_test
             case Moose::ElementNeighbor:
-                r -= 0.5 * (_Diffusion * (0.0)*_phi[_j][_qp] * (_porosity[_qp]*_u[_qp]*(_valence*_faraday/_gas_const/_temp[_qp])) * _grad_e_potential[_qp] * _normals[_qp] +
-                            _Diffusion_neighbor * (-1.0/_temp_neighbor[_qp])*_phi_neighbor[_j][_qp] * (_porosity[_qp]*_u_neighbor[_qp]*(_valence*_faraday/_gas_const/_temp_neighbor[_qp])) * _grad_e_potential_neighbor[_qp] * _normals[_qp]) *
+                r -= 0.5 * (_Diffusion_neighbor * (-1.0/_temp_neighbor[_qp])*_phi_neighbor[_j][_qp] * (_porosity[_qp]*_u_neighbor[_qp]*(_valence*_faraday/_gas_const/_temp_neighbor[_qp])) * _grad_e_potential_neighbor[_qp] * _normals[_qp]) *
                             _test[_i][_qp];
-                r += _epsilon * 0.5 * (_e_potential[_qp] - _e_potential_neighbor[_qp]) * _Diffusion * (0.0)*_phi[_j][_qp] * (_porosity[_qp]*_u[_qp]*(_valence*_faraday/_gas_const/_temp[_qp])) * _grad_test[_i][_qp] *
-                    _normals[_qp];
+                r += 0.0;
                 break;
 
             //Uses _test_neighbor and _grad_test_neighbor
             case Moose::NeighborElement:
-                r += 0.5 * (_Diffusion * (-1.0/_temp[_qp])*_phi[_j][_qp] * (_porosity[_qp]*_u[_qp]*(_valence*_faraday/_gas_const/_temp[_qp])) * _grad_e_potential[_qp] * _normals[_qp] +
-                            _Diffusion_neighbor * (0.0)*_phi_neighbor[_j][_qp] * (_porosity[_qp]*_u_neighbor[_qp]*(_valence*_faraday/_gas_const/_temp_neighbor[_qp])) * _grad_e_potential_neighbor[_qp] * _normals[_qp]) *
+                r += 0.5 * (_Diffusion * (-1.0/_temp[_qp])*_phi[_j][_qp] * (_porosity[_qp]*_u[_qp]*(_valence*_faraday/_gas_const/_temp[_qp])) * _grad_e_potential[_qp] * _normals[_qp]) *
                             _test_neighbor[_i][_qp];
-                r += _epsilon * 0.5 * (_e_potential[_qp] - _e_potential_neighbor[_qp]) * _Diffusion_neighbor * (0.0)*_phi_neighbor[_j][_qp] * (_porosity[_qp]*_u_neighbor[_qp]*(_valence*_faraday/_gas_const/_temp_neighbor[_qp])) *
-                    _grad_test_neighbor[_i][_qp] * _normals[_qp];
+                r += 0.0;
                 break;
 
             //Uses _test_neighbor and _grad_test_neighbor
             case Moose::NeighborNeighbor:
-                r += 0.5 * (_Diffusion * (0.0)*_phi[_j][_qp] * (_porosity[_qp]*_u[_qp]*(_valence*_faraday/_gas_const/_temp[_qp])) * _grad_e_potential[_qp] * _normals[_qp] +
-                            _Diffusion_neighbor * (-1.0/_temp_neighbor[_qp])*_phi_neighbor[_j][_qp] * (_porosity[_qp]*_u_neighbor[_qp]*(_valence*_faraday/_gas_const/_temp_neighbor[_qp])) * _grad_e_potential_neighbor[_qp] * _normals[_qp]) *
+                r += 0.5 * (_Diffusion_neighbor * (-1.0/_temp_neighbor[_qp])*_phi_neighbor[_j][_qp] * (_porosity[_qp]*_u_neighbor[_qp]*(_valence*_faraday/_gas_const/_temp_neighbor[_qp])) * _grad_e_potential_neighbor[_qp] * _normals[_qp]) *
                             _test_neighbor[_i][_qp];
                 r += _epsilon * 0.5 * (_e_potential[_qp] - _e_potential_neighbor[_qp]) * _Diffusion_neighbor * (-1.0/_temp_neighbor[_qp])*_phi_neighbor[_j][_qp] * (_porosity[_qp]*_u_neighbor[_qp]*(_valence*_faraday/_gas_const/_temp_neighbor[_qp])) *
                         _grad_test_neighbor[_i][_qp] * _normals[_qp];
