@@ -135,6 +135,12 @@
 	family = MONOMIAL
 	initial_condition = 0.0
     [../]
+    
+    [./D]
+	order = SECOND
+	family = MONOMIAL
+	initial_condition = 0.1
+    [../]
 
 [] #END AuxVariables
 
@@ -244,9 +250,9 @@
         type = GVarPoreDiffusion
         variable = tracer
         porosity = 1
-        Dx = 0.1
-        Dy = 0.1
-        Dz = 0.1
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
 
 [] #END Kernels
@@ -267,9 +273,9 @@
       type = DGVarPoreDiffusion
       variable = tracer
       porosity = 1
-      Dx = 0.1
-      Dy = 0.1
-      Dz = 0.1
+      Dx = D
+      Dy = D
+      Dz = D
   [../]
 
   # Div*(mu*grad(vel_x))

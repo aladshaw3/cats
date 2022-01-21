@@ -155,6 +155,12 @@
         family = MONOMIAL
         initial_condition = 11797       #m^-1
     [../]
+    
+    [./D]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.01
+    [../]
  
 []
 
@@ -248,9 +254,9 @@
         type = GVarPoreDiffusion
         variable = O2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
 []
  
@@ -295,9 +301,9 @@
         type = DGVarPoreDiffusion
         variable = O2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
 []
 

@@ -64,6 +64,12 @@
         family = MONOMIAL
         initial_condition = 298
     [../]
+    
+    [./D]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 1
+    [../]
 
 [] #END AuxVariables
 
@@ -77,9 +83,9 @@
         type = GVarPoreDiffusion
         variable = phi_e
         porosity = 1
-        Dx = 1
-        Dy = 1
-        Dz = 1
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
 
     ### Conservation of mass for pos_ion ###
@@ -145,9 +151,9 @@
       type = DGVarPoreDiffusion
       variable = phi_e
       porosity = 1
-      Dx = 1
-      Dy = 1
-      Dz = 1
+      Dx = D
+      Dy = D
+      Dz = D
   [../]
 
   ### Conservation of mass for pos_ion ###

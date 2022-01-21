@@ -150,6 +150,13 @@
 	initial_condition = 0
     	block = 'channel'
     [../]
+    
+    [./D]
+	order = SECOND
+	family = MONOMIAL
+	initial_condition = 0.1
+    	block = 'solid channel'
+    [../]
 
 [] #END AuxVariables
 
@@ -271,9 +278,9 @@
         type = GVarPoreDiffusion
         variable = tracer
         porosity = 1
-        Dx = 0.1
-        Dy = 0.1
-        Dz = 0.1
+        Dx = D
+        Dy = D
+        Dz = D
         block = 'channel'
     [../]
 
@@ -309,9 +316,9 @@
       type = DGVarPoreDiffusion
       variable = tracer
       porosity = 1
-      Dx = 0.1
-      Dy = 0.1
-      Dz = 0.1
+      Dx = D
+      Dy = D
+      Dz = D
       block = 'channel'
   [../]
 

@@ -219,6 +219,12 @@
         family = MONOMIAL
         initial_condition = 11797       #m^-1
     [../]
+    
+    [./D]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.01
+    [../]
  
 []
 
@@ -325,9 +331,9 @@
         type = GVarPoreDiffusion
         variable = O2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
     [./O2p_trans]
         type = FilmMassTransfer
@@ -395,9 +401,9 @@ rate_variable = 0.1
         type = GVarPoreDiffusion
         variable = CO2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
     [./CO2p_trans]
         type = FilmMassTransfer
@@ -473,9 +479,9 @@ rate_variable = 0.1
         type = DGVarPoreDiffusion
         variable = O2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
  
     [./CO2_dgadv]
@@ -490,9 +496,9 @@ rate_variable = 0.1
         type = DGVarPoreDiffusion
         variable = CO2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
  
 []

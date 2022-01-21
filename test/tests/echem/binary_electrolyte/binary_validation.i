@@ -62,6 +62,12 @@
       family = MONOMIAL
       initial_condition = 300
   [../]
+  
+  [./D]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 4.5e-4
+  [../]
 []
 
 [ICs]
@@ -145,9 +151,9 @@
       type = GVarPoreDiffusion
       variable = salt
       porosity = 1
-      Dx = 4.5e-4
-      Dy = 4.5e-4
-      Dz = 4.5e-4
+      Dx = D
+      Dy = D
+      Dz = D
   [../]
   [./salt_gnpdiff]
       type = GNernstPlanckDiffusion
@@ -156,9 +162,9 @@
       porosity = 1
       electric_potential = phi_e
       temperature = Te
-      Dx = 4.5e-4
-      Dy = 4.5e-4
-      Dz = 4.5e-4
+      Dx = D
+      Dy = D
+      Dz = D
   [../]
 []
 
@@ -169,9 +175,9 @@
       type = DGVarPoreDiffusion
       variable = salt
       porosity = 1
-      Dx = 4.5e-4
-      Dy = 4.5e-4
-      Dz = 4.5e-4
+      Dx = D
+      Dy = D
+      Dz = D
   [../]
   [./salt_dgnpdiff]
       type = DGNernstPlanckDiffusion
@@ -180,9 +186,9 @@
       porosity = 1
       electric_potential = phi_e
       temperature = Te
-      Dx = 4.5e-4
-      Dy = 4.5e-4
-      Dz = 4.5e-4
+      Dx = D
+      Dy = D
+      Dz = D
   [../]
 
 []

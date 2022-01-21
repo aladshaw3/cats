@@ -34,7 +34,7 @@
        [./interface]
          type = SideSetsBetweenSubdomainsGenerator
          input = subdomain1
-         master_block = '0'
+         primary_block = '0'
          paired_block = '1'
          new_boundary = 'master0_interface'
        [../]
@@ -203,6 +203,13 @@
         initial_condition = 11797       #m^-1
         block = '0 1'
     [../]
+    
+    [./D]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.001
+        block = '0 1'
+    [../]
  
 []
 
@@ -287,9 +294,9 @@
         type = GVarPoreDiffusion
         variable = O2
         porosity = 1
-        Dx = 0.001
-        Dy = 0.001
-        Dz = 0.001
+        Dx = D
+        Dy = D
+        Dz = D
         block = 0
     [../]
 []
@@ -339,9 +346,9 @@
         type = DGVarPoreDiffusion
         variable = O2
         porosity = 1
-        Dx = 0.001
-        Dy = 0.001
-        Dz = 0.001
+        Dx = D
+        Dy = D
+        Dz = D
         block = 0
     [../]
 []

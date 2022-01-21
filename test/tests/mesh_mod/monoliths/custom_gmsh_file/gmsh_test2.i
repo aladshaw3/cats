@@ -18,6 +18,20 @@
   [../]
 []
 
+[AuxVariables]
+  [./D]
+    order = FIRST
+    family = MONOMIAL
+    initial_condition = 1
+  [../]
+
+  [./Dp]
+    order = FIRST
+    family = MONOMIAL
+    initial_condition = 0.2
+  [../]
+[]
+
 [Kernels]
   #Mass conservation in channel kernels
     [./C_dot]
@@ -30,9 +44,9 @@
         type = GVarPoreDiffusion
         variable = C
         porosity = 1
-        Dx = 1
-        Dy = 1
-        Dz = 1
+        Dx = D
+        Dy = D
+        Dz = D
         block = inner_surf
     [../]
  
@@ -47,9 +61,9 @@
           type = GVarPoreDiffusion
           variable = Cw
           porosity = 0.2
-          Dx = 0.2
-          Dy = 0.2
-          Dz = 0.2
+          Dx = Dp
+          Dy = Dp
+          Dz = Dp
           block = outer_surf
       [../]
   
@@ -61,9 +75,9 @@
          type = DGVarPoreDiffusion
          variable = C
          porosity = 1
-         Dx = 1
-         Dy = 1
-         Dz = 1
+         Dx = D
+         Dy = D
+         Dz = D
          block = inner_surf
      [../]
   
@@ -71,9 +85,9 @@
          type = DGVarPoreDiffusion
          variable = Cw
          porosity = 0.2
-         Dx = 0.2
-         Dy = 0.2
-         Dz = 0.2
+         Dx = Dp
+         Dy = Dp
+         Dz = Dp
          block = outer_surf
      [../]
 
