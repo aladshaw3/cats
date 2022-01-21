@@ -1,0 +1,9 @@
+[Tests]
+  [./full_cell_sim]
+    type = Exodiff
+    input = test_full_cell_step.i
+    exodiff = test_full_cell_step_out.e
+    min_parallel = 1
+    rel_err = 1e-4
+  [../]
+[]
