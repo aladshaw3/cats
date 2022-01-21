@@ -83,6 +83,10 @@ Real DGConcentrationAdvection::computeQpResidual(Moose::DGResidualType type)
 	_velocity(1)=_uy[_qp];
 	_velocity(2)=_uz[_qp];
 
+  _velocity_upwind(0)=_ux_upwind[_qp];
+  _velocity_upwind(1)=_uy_upwind[_qp];
+  _velocity_upwind(2)=_uz_upwind[_qp];
+
 	return DGAdvection::computeQpResidual(type);
 }
 
