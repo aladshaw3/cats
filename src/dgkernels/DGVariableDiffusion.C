@@ -82,7 +82,10 @@ _Dy(coupledValue("Dy")),
 _Dz(coupledValue("Dz")),
 _Dx_var(coupled("Dx")),
 _Dy_var(coupled("Dy")),
-_Dz_var(coupled("Dz"))
+_Dz_var(coupled("Dz")),
+_Dx_neighbor(coupledNeighborValue("Dx")),
+_Dy_neighbor(coupledNeighborValue("Dy")),
+_Dz_neighbor(coupledNeighborValue("Dz"))
 {
 
 }
@@ -101,6 +104,18 @@ Real DGVariableDiffusion::computeQpResidual(Moose::DGResidualType type)
   _Diffusion(2,1) = 0.0;
   _Diffusion(2,2) = _Dz[_qp];
 
+  _Diffusion_neighbor(0,0) = _Dx_neighbor[_qp];
+	_Diffusion_neighbor(0,1) = 0.0;
+	_Diffusion_neighbor(0,2) = 0.0;
+
+	_Diffusion_neighbor(1,0) = 0.0;
+	_Diffusion_neighbor(1,1) = _Dy_neighbor[_qp];
+	_Diffusion_neighbor(1,2) = 0.0;
+
+	_Diffusion_neighbor(2,0) = 0.0;
+	_Diffusion_neighbor(2,1) = 0.0;
+	_Diffusion_neighbor(2,2) = _Dz_neighbor[_qp];
+
   return DGAnisotropicDiffusion::computeQpResidual(type);
 }
 
@@ -117,6 +132,18 @@ Real DGVariableDiffusion::computeQpJacobian(Moose::DGJacobianType type)
   _Diffusion(2,0) = 0.0;
   _Diffusion(2,1) = 0.0;
   _Diffusion(2,2) = _Dz[_qp];
+
+  _Diffusion_neighbor(0,0) = _Dx_neighbor[_qp];
+	_Diffusion_neighbor(0,1) = 0.0;
+	_Diffusion_neighbor(0,2) = 0.0;
+
+	_Diffusion_neighbor(1,0) = 0.0;
+	_Diffusion_neighbor(1,1) = _Dy_neighbor[_qp];
+	_Diffusion_neighbor(1,2) = 0.0;
+
+	_Diffusion_neighbor(2,0) = 0.0;
+	_Diffusion_neighbor(2,1) = 0.0;
+	_Diffusion_neighbor(2,2) = _Dz_neighbor[_qp];
 
   return DGAnisotropicDiffusion::computeQpJacobian(type);
 }
@@ -135,6 +162,18 @@ Real DGVariableDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
   _Diffusion(2,1) = 0.0;
   _Diffusion(2,2) = _Dz[_qp];
 
+  _Diffusion_neighbor(0,0) = _Dx_neighbor[_qp];
+	_Diffusion_neighbor(0,1) = 0.0;
+	_Diffusion_neighbor(0,2) = 0.0;
+
+	_Diffusion_neighbor(1,0) = 0.0;
+	_Diffusion_neighbor(1,1) = _Dy_neighbor[_qp];
+	_Diffusion_neighbor(1,2) = 0.0;
+
+	_Diffusion_neighbor(2,0) = 0.0;
+	_Diffusion_neighbor(2,1) = 0.0;
+	_Diffusion_neighbor(2,2) = _Dz_neighbor[_qp];
+
   if (jvar == _Dx_var)
   {
     Real r = 0;
@@ -143,7 +182,7 @@ Real DGVariableDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
       //Uses test and grad_test
 			case Moose::ElementElement:
         r -= 0.5 * (_phi[_j][_qp] * _grad_u[_qp](0) * _normals[_qp](0) +
-            _phi[_j][_qp] * _grad_u_neighbor[_qp](0) * _normals[_qp](0)) *
+            _phi_neighbor[_j][_qp] * _grad_u_neighbor[_qp](0) * _normals[_qp](0)) *
             _test[_i][_qp];
         r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi[_j][_qp] * _grad_test[_i][_qp](0) *
             _normals[_qp](0);
@@ -151,7 +190,7 @@ Real DGVariableDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
       //Uses test and grad_test
 			case Moose::ElementNeighbor:
         r -= 0.5 * (_phi[_j][_qp] * _grad_u[_qp](0) * _normals[_qp](0) +
-            _phi[_j][_qp] * _grad_u_neighbor[_qp](0) * _normals[_qp](0)) *
+            _phi_neighbor[_j][_qp] * _grad_u_neighbor[_qp](0) * _normals[_qp](0)) *
             _test[_i][_qp];
         r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi[_j][_qp] * _grad_test[_i][_qp](0) *
             _normals[_qp](0);
@@ -160,17 +199,17 @@ Real DGVariableDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
       //Uses _test_neighbor and _grad_test_neighbor
 			case Moose::NeighborElement:
         r += 0.5 * (_phi[_j][_qp] * _grad_u[_qp](0) * _normals[_qp](0) +
-            _phi[_j][_qp] * _grad_u_neighbor[_qp](0) * _normals[_qp](0)) *
+            _phi_neighbor[_j][_qp] * _grad_u_neighbor[_qp](0) * _normals[_qp](0)) *
             _test_neighbor[_i][_qp];
-        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi[_j][_qp] *
+        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi_neighbor[_j][_qp] *
             _grad_test_neighbor[_i][_qp](0) * _normals[_qp](0);
 				break;
       //Uses _test_neighbor and _grad_test_neighbor
 			case Moose::NeighborNeighbor:
         r += 0.5 * (_phi[_j][_qp] * _grad_u[_qp](0) * _normals[_qp](0) +
-            _phi[_j][_qp] * _grad_u_neighbor[_qp](0) * _normals[_qp](0)) *
+            _phi_neighbor[_j][_qp] * _grad_u_neighbor[_qp](0) * _normals[_qp](0)) *
             _test_neighbor[_i][_qp];
-        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi[_j][_qp] *
+        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi_neighbor[_j][_qp] *
             _grad_test_neighbor[_i][_qp](0) * _normals[_qp](0);
 				break;
 		}
@@ -184,7 +223,7 @@ Real DGVariableDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
       //Uses test and grad_test
       case Moose::ElementElement:
         r -= 0.5 * (_phi[_j][_qp] * _grad_u[_qp](1) * _normals[_qp](1) +
-            _phi[_j][_qp] * _grad_u_neighbor[_qp](1) * _normals[_qp](1)) *
+            _phi_neighbor[_j][_qp] * _grad_u_neighbor[_qp](1) * _normals[_qp](1)) *
             _test[_i][_qp];
         r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi[_j][_qp] * _grad_test[_i][_qp](1) *
             _normals[_qp](1);
@@ -192,7 +231,7 @@ Real DGVariableDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
       //Uses test and grad_test
       case Moose::ElementNeighbor:
         r -= 0.5 * (_phi[_j][_qp] * _grad_u[_qp](1) * _normals[_qp](1) +
-            _phi[_j][_qp] * _grad_u_neighbor[_qp](1) * _normals[_qp](1)) *
+            _phi_neighbor[_j][_qp] * _grad_u_neighbor[_qp](1) * _normals[_qp](1)) *
             _test[_i][_qp];
         r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi[_j][_qp] * _grad_test[_i][_qp](1) *
             _normals[_qp](1);
@@ -201,17 +240,17 @@ Real DGVariableDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
       //Uses _test_neighbor and _grad_test_neighbor
       case Moose::NeighborElement:
         r += 0.5 * (_phi[_j][_qp] * _grad_u[_qp](1) * _normals[_qp](1) +
-            _phi[_j][_qp] * _grad_u_neighbor[_qp](1) * _normals[_qp](1)) *
+            _phi_neighbor[_j][_qp] * _grad_u_neighbor[_qp](1) * _normals[_qp](1)) *
             _test_neighbor[_i][_qp];
-        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi[_j][_qp] *
+        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi_neighbor[_j][_qp] *
             _grad_test_neighbor[_i][_qp](1) * _normals[_qp](1);
         break;
       //Uses _test_neighbor and _grad_test_neighbor
       case Moose::NeighborNeighbor:
         r += 0.5 * (_phi[_j][_qp] * _grad_u[_qp](1) * _normals[_qp](1) +
-            _phi[_j][_qp] * _grad_u_neighbor[_qp](1) * _normals[_qp](1)) *
+            _phi_neighbor[_j][_qp] * _grad_u_neighbor[_qp](1) * _normals[_qp](1)) *
             _test_neighbor[_i][_qp];
-        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi[_j][_qp] *
+        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi_neighbor[_j][_qp] *
             _grad_test_neighbor[_i][_qp](1) * _normals[_qp](1);
         break;
     }
@@ -225,7 +264,7 @@ Real DGVariableDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
       //Uses test and grad_test
       case Moose::ElementElement:
         r -= 0.5 * (_phi[_j][_qp] * _grad_u[_qp](2) * _normals[_qp](2) +
-            _phi[_j][_qp] * _grad_u_neighbor[_qp](2) * _normals[_qp](2)) *
+            _phi_neighbor[_j][_qp] * _grad_u_neighbor[_qp](2) * _normals[_qp](2)) *
             _test[_i][_qp];
         r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi[_j][_qp] * _grad_test[_i][_qp](2) *
             _normals[_qp](2);
@@ -233,7 +272,7 @@ Real DGVariableDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
       //Uses test and grad_test
       case Moose::ElementNeighbor:
         r -= 0.5 * (_phi[_j][_qp] * _grad_u[_qp](2) * _normals[_qp](2) +
-            _phi[_j][_qp] * _grad_u_neighbor[_qp](2) * _normals[_qp](2)) *
+            _phi_neighbor[_j][_qp] * _grad_u_neighbor[_qp](2) * _normals[_qp](2)) *
             _test[_i][_qp];
         r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi[_j][_qp] * _grad_test[_i][_qp](2) *
             _normals[_qp](2);
@@ -242,17 +281,17 @@ Real DGVariableDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, u
       //Uses _test_neighbor and _grad_test_neighbor
       case Moose::NeighborElement:
         r += 0.5 * (_phi[_j][_qp] * _grad_u[_qp](2) * _normals[_qp](2) +
-            _phi[_j][_qp] * _grad_u_neighbor[_qp](2) * _normals[_qp](2)) *
+            _phi_neighbor[_j][_qp] * _grad_u_neighbor[_qp](2) * _normals[_qp](2)) *
             _test_neighbor[_i][_qp];
-        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi[_j][_qp] *
+        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi_neighbor[_j][_qp] *
             _grad_test_neighbor[_i][_qp](2) * _normals[_qp](2);
         break;
       //Uses _test_neighbor and _grad_test_neighbor
       case Moose::NeighborNeighbor:
         r += 0.5 * (_phi[_j][_qp] * _grad_u[_qp](2) * _normals[_qp](2) +
-            _phi[_j][_qp] * _grad_u_neighbor[_qp](2) * _normals[_qp](2)) *
+            _phi_neighbor[_j][_qp] * _grad_u_neighbor[_qp](2) * _normals[_qp](2)) *
             _test_neighbor[_i][_qp];
-        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi[_j][_qp] *
+        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _phi_neighbor[_j][_qp] *
             _grad_test_neighbor[_i][_qp](2) * _normals[_qp](2);
         break;
     }

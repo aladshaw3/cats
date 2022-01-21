@@ -94,15 +94,19 @@ protected:
     /** This function returns an off-diagonal jacobian contribution for this object. The jacobian
      being computed will be associated with the variables coupled to this object and not the
      main coupled variable itself. */
-    virtual Real computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar) override;
+  virtual Real computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar) override;
 
-    const VariableValue & _Dx;			///< Diffusion in the x-direction
+  const VariableValue & _Dx;			///< Diffusion in the x-direction
 	const VariableValue & _Dy;			///< Diffusion in the y-direction
 	const VariableValue & _Dz;			///< Diffusion in the z-direction
 
 	const unsigned int _Dx_var;					///< Variable identification for Dx
 	const unsigned int _Dy_var;					///< Variable identification for Dy
 	const unsigned int _Dz_var;					///< Variable identification for Dz
+
+  const VariableValue & _Dx_neighbor;			///< Diffusion in the x-direction
+	const VariableValue & _Dy_neighbor;			///< Diffusion in the y-direction
+	const VariableValue & _Dz_neighbor;			///< Diffusion in the z-direction
 
 private:
 

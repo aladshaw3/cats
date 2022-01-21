@@ -115,6 +115,18 @@ _Dzz(getParam<Real>("Dzz"))
 	_Diffusion(2,1) = _Dzy;
 	_Diffusion(2,2) = _Dzz;
 
+  _Diffusion_neighbor(0,0) = _Dxx;
+	_Diffusion_neighbor(0,1) = _Dxy;
+	_Diffusion_neighbor(0,2) = _Dxz;
+
+	_Diffusion_neighbor(1,0) = _Dyx;
+	_Diffusion_neighbor(1,1) = _Dyy;
+	_Diffusion_neighbor(1,2) = _Dyz;
+
+	_Diffusion_neighbor(2,0) = _Dzx;
+	_Diffusion_neighbor(2,1) = _Dzy;
+	_Diffusion_neighbor(2,2) = _Dzz;
+
 	if (_sigma < 0.0)
 		_sigma = 0.0;
 
@@ -157,7 +169,7 @@ Real DGAnisotropicDiffusion::computeQpResidual(Moose::DGResidualType type)
 	{
 		case Moose::Element:
 			r -= 0.5 * (_Diffusion * _grad_u[_qp] * _normals[_qp] +
-						_Diffusion * _grad_u_neighbor[_qp] * _normals[_qp]) *
+						_Diffusion_neighbor * _grad_u_neighbor[_qp] * _normals[_qp]) *
 			_test[_i][_qp];
 			r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion * _grad_test[_i][_qp] *
 			_normals[_qp];
@@ -166,9 +178,9 @@ Real DGAnisotropicDiffusion::computeQpResidual(Moose::DGResidualType type)
 
 		case Moose::Neighbor:
 			r += 0.5 * (_Diffusion * _grad_u[_qp] * _normals[_qp] +
-						_Diffusion * _grad_u_neighbor[_qp] * _normals[_qp]) *
+						_Diffusion_neighbor * _grad_u_neighbor[_qp] * _normals[_qp]) *
 			_test_neighbor[_i][_qp];
-			r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion *
+			r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion_neighbor *
 			_grad_test_neighbor[_i][_qp] * _normals[_qp];
 			r -= _sigma / h_elem * (_u[_qp] - _u_neighbor[_qp]) * _test_neighbor[_i][_qp];
 			break;
@@ -194,7 +206,7 @@ Real DGAnisotropicDiffusion::computeQpJacobian(Moose::DGJacobianType type)
 			break;
 
 		case Moose::ElementNeighbor:
-			r -= 0.5 * _Diffusion * _grad_phi_neighbor[_j][_qp] * _normals[_qp] * _test[_i][_qp];
+			r -= 0.5 * _Diffusion_neighbor * _grad_phi_neighbor[_j][_qp] * _normals[_qp] * _test[_i][_qp];
 			r += _epsilon * 0.5 * -_phi_neighbor[_j][_qp] * _Diffusion * _grad_test[_i][_qp] *
 			_normals[_qp];
 			r += _sigma / h_elem * -_phi_neighbor[_j][_qp] * _test[_i][_qp];
@@ -202,15 +214,15 @@ Real DGAnisotropicDiffusion::computeQpJacobian(Moose::DGJacobianType type)
 
 		case Moose::NeighborElement:
 			r += 0.5 * _Diffusion * _grad_phi[_j][_qp] * _normals[_qp] * _test_neighbor[_i][_qp];
-			r += _epsilon * 0.5 * _phi[_j][_qp] * _Diffusion * _grad_test_neighbor[_i][_qp] *
+			r += _epsilon * 0.5 * _phi[_j][_qp] * _Diffusion_neighbor * _grad_test_neighbor[_i][_qp] *
 			_normals[_qp];
 			r -= _sigma / h_elem * _phi[_j][_qp] * _test_neighbor[_i][_qp];
 			break;
 
 		case Moose::NeighborNeighbor:
-			r += 0.5 * _Diffusion * _grad_phi_neighbor[_j][_qp] * _normals[_qp] *
+			r += 0.5 * _Diffusion_neighbor * _grad_phi_neighbor[_j][_qp] * _normals[_qp] *
 			_test_neighbor[_i][_qp];
-			r += _epsilon * 0.5 * -_phi_neighbor[_j][_qp] * _Diffusion *
+			r += _epsilon * 0.5 * -_phi_neighbor[_j][_qp] * _Diffusion_neighbor *
 			_grad_test_neighbor[_i][_qp] * _normals[_qp];
 			r -= _sigma / h_elem * -_phi_neighbor[_j][_qp] * _test_neighbor[_i][_qp];
 			break;

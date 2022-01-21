@@ -96,6 +96,18 @@ Real DGVarPoreDiffusion::computeQpResidual(Moose::DGResidualType type)
   _Diffusion(2,1) = 0.0;
   _Diffusion(2,2) = _Dz[_qp];
 
+  _Diffusion_neighbor(0,0) = _Dx_neighbor[_qp];
+	_Diffusion_neighbor(0,1) = 0.0;
+	_Diffusion_neighbor(0,2) = 0.0;
+
+	_Diffusion_neighbor(1,0) = 0.0;
+	_Diffusion_neighbor(1,1) = _Dy_neighbor[_qp];
+	_Diffusion_neighbor(1,2) = 0.0;
+
+	_Diffusion_neighbor(2,0) = 0.0;
+	_Diffusion_neighbor(2,1) = 0.0;
+	_Diffusion_neighbor(2,2) = _Dz_neighbor[_qp];
+
   Real r = 0;
 
   const unsigned int elem_b_order = static_cast<unsigned int> (_var.order());
@@ -105,7 +117,7 @@ Real DGVarPoreDiffusion::computeQpResidual(Moose::DGResidualType type)
   {
     case Moose::Element:
       r -= 0.5 * (_Diffusion * _grad_u[_qp] * _normals[_qp] +
-            _Diffusion * _grad_u_neighbor[_qp] * _normals[_qp]) *
+            _Diffusion_neighbor * _grad_u_neighbor[_qp] * _normals[_qp]) *
       _test[_i][_qp] * _porosity[_qp];
       r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion * _grad_test[_i][_qp] *
       _normals[_qp] * _porosity[_qp];
@@ -114,9 +126,9 @@ Real DGVarPoreDiffusion::computeQpResidual(Moose::DGResidualType type)
 
     case Moose::Neighbor:
       r += 0.5 * (_Diffusion * _grad_u[_qp] * _normals[_qp] +
-            _Diffusion * _grad_u_neighbor[_qp] * _normals[_qp]) *
+            _Diffusion_neighbor * _grad_u_neighbor[_qp] * _normals[_qp]) *
       _test_neighbor[_i][_qp] * _porosity[_qp];
-      r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion *
+      r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion_neighbor *
       _grad_test_neighbor[_i][_qp] * _normals[_qp] * _porosity[_qp];
       r -= _sigma / h_elem * (_u[_qp] - _u_neighbor[_qp]) * _test_neighbor[_i][_qp];
       break;
@@ -139,6 +151,18 @@ Real DGVarPoreDiffusion::computeQpJacobian(Moose::DGJacobianType type)
   _Diffusion(2,1) = 0.0;
   _Diffusion(2,2) = _Dz[_qp];
 
+  _Diffusion_neighbor(0,0) = _Dx_neighbor[_qp];
+	_Diffusion_neighbor(0,1) = 0.0;
+	_Diffusion_neighbor(0,2) = 0.0;
+
+	_Diffusion_neighbor(1,0) = 0.0;
+	_Diffusion_neighbor(1,1) = _Dy_neighbor[_qp];
+	_Diffusion_neighbor(1,2) = 0.0;
+
+	_Diffusion_neighbor(2,0) = 0.0;
+	_Diffusion_neighbor(2,1) = 0.0;
+	_Diffusion_neighbor(2,2) = _Dz_neighbor[_qp];
+
   Real r = 0;
 
   const unsigned int elem_b_order = static_cast<unsigned int> (_var.order());
@@ -154,7 +178,7 @@ Real DGVarPoreDiffusion::computeQpJacobian(Moose::DGJacobianType type)
       break;
 
     case Moose::ElementNeighbor:
-      r -= 0.5 * _Diffusion * _grad_phi_neighbor[_j][_qp] * _normals[_qp] * _test[_i][_qp] * _porosity[_qp];
+      r -= 0.5 * _Diffusion_neighbor * _grad_phi_neighbor[_j][_qp] * _normals[_qp] * _test[_i][_qp] * _porosity[_qp];
       r += _epsilon * 0.5 * -_phi_neighbor[_j][_qp] * _Diffusion * _grad_test[_i][_qp] *
       _normals[_qp] * _porosity[_qp];
       r += _sigma / h_elem * -_phi_neighbor[_j][_qp] * _test[_i][_qp];
@@ -162,15 +186,15 @@ Real DGVarPoreDiffusion::computeQpJacobian(Moose::DGJacobianType type)
 
     case Moose::NeighborElement:
       r += 0.5 * _Diffusion * _grad_phi[_j][_qp] * _normals[_qp] * _test_neighbor[_i][_qp] * _porosity[_qp];
-      r += _epsilon * 0.5 * _phi[_j][_qp] * _Diffusion * _grad_test_neighbor[_i][_qp] *
+      r += _epsilon * 0.5 * _phi[_j][_qp] * _Diffusion_neighbor * _grad_test_neighbor[_i][_qp] *
       _normals[_qp] * _porosity[_qp];
       r -= _sigma / h_elem * _phi[_j][_qp] * _test_neighbor[_i][_qp];
       break;
 
     case Moose::NeighborNeighbor:
-      r += 0.5 * _Diffusion * _grad_phi_neighbor[_j][_qp] * _normals[_qp] *
+      r += 0.5 * _Diffusion_neighbor * _grad_phi_neighbor[_j][_qp] * _normals[_qp] *
       _test_neighbor[_i][_qp] * _porosity[_qp];
-      r += _epsilon * 0.5 * -_phi_neighbor[_j][_qp] * _Diffusion *
+      r += _epsilon * 0.5 * -_phi_neighbor[_j][_qp] * _Diffusion_neighbor *
       _grad_test_neighbor[_i][_qp] * _normals[_qp] * _porosity[_qp];
       r -= _sigma / h_elem * -_phi_neighbor[_j][_qp] * _test_neighbor[_i][_qp];
       break;
@@ -193,6 +217,18 @@ Real DGVarPoreDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, un
   _Diffusion(2,1) = 0.0;
   _Diffusion(2,2) = _Dz[_qp];
 
+  _Diffusion_neighbor(0,0) = _Dx_neighbor[_qp];
+	_Diffusion_neighbor(0,1) = 0.0;
+	_Diffusion_neighbor(0,2) = 0.0;
+
+	_Diffusion_neighbor(1,0) = 0.0;
+	_Diffusion_neighbor(1,1) = _Dy_neighbor[_qp];
+	_Diffusion_neighbor(1,2) = 0.0;
+
+	_Diffusion_neighbor(2,0) = 0.0;
+	_Diffusion_neighbor(2,1) = 0.0;
+	_Diffusion_neighbor(2,2) = _Dz_neighbor[_qp];
+
   if (jvar == _Dx_var)
   {
     return DGVariableDiffusion::computeQpOffDiagJacobian(type, jvar) * _porosity[_qp];
@@ -213,7 +249,7 @@ Real DGVarPoreDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, un
       //Uses test and grad_test
       case Moose::ElementElement:
         r -= 0.5 * (_Diffusion * _grad_u[_qp] * _normals[_qp] +
-            _Diffusion * _grad_u_neighbor[_qp] * _normals[_qp]) *
+            _Diffusion_neighbor * _grad_u_neighbor[_qp] * _normals[_qp]) *
             _test[_i][_qp];
         r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion * _grad_test[_i][_qp] *
             _normals[_qp];
@@ -221,7 +257,7 @@ Real DGVarPoreDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, un
       //Uses test and grad_test
       case Moose::ElementNeighbor:
         r -= 0.5 * (_Diffusion * _grad_u[_qp] * _normals[_qp] +
-            _Diffusion * _grad_u_neighbor[_qp] * _normals[_qp]) *
+            _Diffusion_neighbor * _grad_u_neighbor[_qp] * _normals[_qp]) *
             _test[_i][_qp];
         r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion * _grad_test[_i][_qp] *
             _normals[_qp];
@@ -230,17 +266,17 @@ Real DGVarPoreDiffusion::computeQpOffDiagJacobian(Moose::DGJacobianType type, un
       //Uses _test_neighbor and _grad_test_neighbor
       case Moose::NeighborElement:
         r += 0.5 * (_Diffusion * _grad_u[_qp] * _normals[_qp] +
-            _Diffusion * _grad_u_neighbor[_qp] * _normals[_qp]) *
+            _Diffusion_neighbor * _grad_u_neighbor[_qp] * _normals[_qp]) *
             _test_neighbor[_i][_qp];
-        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion *
+        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion_neighbor *
             _grad_test_neighbor[_i][_qp] * _normals[_qp];
         break;
       //Uses _test_neighbor and _grad_test_neighbor
       case Moose::NeighborNeighbor:
         r += 0.5 * (_Diffusion * _grad_u[_qp] * _normals[_qp] +
-            _Diffusion * _grad_u_neighbor[_qp] * _normals[_qp]) *
+            _Diffusion_neighbor * _grad_u_neighbor[_qp] * _normals[_qp]) *
             _test_neighbor[_i][_qp];
-        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion *
+        r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion_neighbor *
             _grad_test_neighbor[_i][_qp] * _normals[_qp];
         break;
     }

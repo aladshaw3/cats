@@ -222,7 +222,7 @@
    [./D]
      order = FIRST
      family = MONOMIAL
-     initial_condition = 2.5E-5
+     initial_condition = 2.5E-3
    [../]
 
    [./k]
@@ -435,7 +435,7 @@
         u = vel_x
         v = vel_y
         w = vel_z
-        p = p
+        pressure = p
     [../]
 
     #Conservation of momentum equ in x (with time derivative)
@@ -449,7 +449,7 @@
         u = vel_x
         v = vel_y
         w = vel_z
-        p = p
+        pressure = p
         component = 0
     [../]
 
@@ -464,7 +464,7 @@
         u = vel_x
         v = vel_y
         w = vel_z
-        p = p
+        pressure = p
         component = 1
     [../]
 
@@ -585,7 +585,7 @@
     [../]
 
     # New INS BC: Can be used to enforce constrant flux (or no flux)
-    #   at a given boundary condition 
+    #   at a given boundary condition
      [./y_inlet_const]
          type = INSNormalFlowBC
          variable = vel_y

@@ -69,7 +69,7 @@
   [../]
 
   [./inner]
-    order = CONSTANT
+    order = FIRST
     family = MONOMIAL
     initial_condition = 0
     block = 'obstruction'
@@ -98,6 +98,12 @@
       initial_condition = 0
       block = 'conduit'
     [../]
+
+    [./D]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 2400
+    [../]
 []
 
 [Kernels]
@@ -113,9 +119,9 @@
       type = GVarPoreDiffusion
       variable = inner
       porosity = 1
-      Dx = 2400
-      Dy = 2400
-      Dz = 2400
+      Dx = D
+      Dy = D
+      Dz = D
       block = 'obstruction'
   [../]
 
@@ -139,9 +145,9 @@
       type = GVarPoreDiffusion
       variable = CO2
       porosity = 1
-      Dx = 2400
-      Dy = 2400
-      Dz = 2400
+      Dx = D
+      Dy = D
+      Dz = D
       block = 'conduit'
   [../]
 
@@ -202,9 +208,9 @@
       type = DGVarPoreDiffusion
       variable = CO2
       porosity = 1
-      Dx = 2400
-      Dy = 2400
-      Dz = 2400
+      Dx = D
+      Dy = D
+      Dz = D
       block = 'conduit'
   [../]
 
@@ -212,9 +218,9 @@
       type = DGVarPoreDiffusion
       variable = inner
       porosity = 1
-      Dx = 2400
-      Dy = 2400
-      Dz = 2400
+      Dx = D
+      Dy = D
+      Dz = D
       block = 'obstruction'
   [../]
 []

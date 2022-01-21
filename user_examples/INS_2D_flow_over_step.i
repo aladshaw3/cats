@@ -75,6 +75,12 @@
     family = LAGRANGE
     initial_condition = 0
   [../]
+
+  [./D]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 1
+  [../]
 []
 
 [Kernels]
@@ -137,9 +143,9 @@
       #   Helps to clear out material from the wall due
       #   to using the no-slip condition (which causes
       #   a lot of accumulation at the wall)
-      Dx = 1
-      Dy = 1
-      Dz = 1
+      Dx = D
+      Dy = D
+      Dz = D
   [../]
 []
 
@@ -161,9 +167,9 @@
       #   Helps to clear out material from the wall due
       #   to using the no-slip condition (which causes
       #   a lot of accumulation at the wall)
-      Dx = 1
-      Dy = 1
-      Dz = 1
+      Dx = D
+      Dy = D
+      Dz = D
   [../]
 []
 

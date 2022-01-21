@@ -1964,7 +1964,7 @@
     solve_type = pjfnk
     petsc_options = '-snes_converged_reason'
     petsc_options_iname ='-ksp_type -ksp_gmres_restart -pc_type -sub_pc_type'
-    petsc_options_value = 'gmres 300 asm lu'
+    petsc_options_value = 'gmres 300 ilu lu'
 
     line_search = none
     nl_rel_tol = 1e-8

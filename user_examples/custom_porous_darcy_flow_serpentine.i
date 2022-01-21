@@ -84,6 +84,12 @@
       block = 'channel'
   	[../]
 
+    [./D]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0.1
+    [../]
+
 [] #END AuxVariables
 
 [ICs]
@@ -179,9 +185,9 @@
         type = GVarPoreDiffusion
         variable = tracer
         porosity = 0.5
-        Dx = 0.1
-        Dy = 0.1
-        Dz = 0.1
+        Dx = D
+        Dy = D
+        Dz = D
         block = 'channel'
     [../]
 
@@ -213,9 +219,9 @@
       type = DGVarPoreDiffusion
       variable = tracer
       porosity = 0.5
-      Dx = 0.1
-      Dy = 0.1
-      Dz = 0.1
+      Dx = D
+      Dy = D
+      Dz = D
       block = 'channel'
   [../]
 []

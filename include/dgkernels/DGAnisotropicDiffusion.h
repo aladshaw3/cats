@@ -101,6 +101,7 @@ protected:
 	Real _epsilon;									///< Penalty term for gradient jumps between the solution and test functions
 	Real _sigma;										///< Penalty term applied to element size
 	RealTensorValue _Diffusion;			///< Diffusion tensor matrix parameter
+  RealTensorValue _Diffusion_neighbor;			///< Diffusion tensor matrix parameter
 
 	Real _Dxx, _Dxy, _Dxz;
 	Real _Dyx, _Dyy, _Dyz;

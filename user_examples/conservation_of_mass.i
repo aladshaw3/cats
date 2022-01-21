@@ -69,7 +69,7 @@
   [./D]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 2.5E-5
+    initial_condition = 2.5E-3
   [../]
 
   [./k]
