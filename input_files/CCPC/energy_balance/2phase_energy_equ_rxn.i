@@ -1,21 +1,21 @@
 [GlobalParams]
     dg_scheme = nipg
     sigma = 10
- 
+
     # Since there is only one reaction, we will put reaction kernel parameters as global
     forward_activation_energy = 5.0E4   #J/mol
     forward_pre_exponential = 25        #m^3/mol/s
     # Reverse components automatically calculated for equilibrium reactions
     #reverse_activation_energy = 0   #J/mol
     #reverse_pre_exponential = 0     #m^3/mol/s
-  
+
 [] #END GlobalParams
 
 [Problem]
     #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
     coord_type = RZ
 [] #END Problem
- 
+
 [Mesh]
     type = GeneratedMesh
     dim = 2
@@ -46,7 +46,7 @@
             temperature = Tf
         [../]
     [../]
- 
+
     [./Es]
         order = FIRST
         family = MONOMIAL
@@ -58,26 +58,26 @@
             temperature = Ts
         [../]
     [../]
- 
+
     [./Tf]
         order = FIRST
         family = MONOMIAL
         initial_condition = 723.15  #K
     [../]
- 
+
     [./Ts]
         order = FIRST
         family = MONOMIAL
         initial_condition = 723.15  #K
     [../]
- 
+
     # Bulk gas concentration for O2
     [./O2]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1e-9    #mol/m^3
     [../]
- 
+
      # Surface Carbon (mol/m^2)
      [./qc]
          order = FIRST
@@ -88,14 +88,14 @@
              function = qc_ic
          [../]
      [../]
- 
+
     # O2 in pore-spaces (mol/m^3)
     [./O2p]
         order = FIRST
         family = MONOMIAL
         initial_condition = 10    #mol/m^3
     [../]
- 
+
     # CO2 in pore-spaces (mol/m^3)
     [./CO2p]
         order = FIRST
@@ -103,7 +103,7 @@
         initial_condition = 1e-9    #mol/m^3
     [../]
 []
- 
+
 [AuxVariables]
     [./vel_x]
         order = FIRST
@@ -122,79 +122,85 @@
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./Kg]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.07          #W/m/K
     [../]
- 
+
     [./Ks]
         order = FIRST
         family = MONOMIAL
         initial_condition = 11.9       #W/m/K
     [../]
- 
+
     [./eps]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.4371          #W/m/K
     [../]
- 
+
     [./s_frac]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.5629          #W/m/K
     [../]
- 
+
     [./rho]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.45       #kg/m^3
     [../]
- 
+
     [./rho_s]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1599       #kg/m^3
     [../]
- 
+
     [./cpg]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1000       #J/kg/K
     [../]
- 
+
     [./cps]
         order = FIRST
         family = MONOMIAL
         initial_condition = 680       #J/kg/K
     [../]
- 
+
     [./hw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 50       #W/m^2/K
     [../]
- 
+
     [./Tw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 573.15  #K
     [../]
- 
+
     [./hs]
         order = FIRST
         family = MONOMIAL
         initial_condition = 25       #W/m^2/K
     [../]
- 
+
     [./Ao]
         order = FIRST
         family = MONOMIAL
         initial_condition = 11797       #m^-1
     [../]
- 
+
+    [./D]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.1
+    [../]
+
 []
 
 [Kernels]
@@ -229,7 +235,7 @@
          specific_area = Ao
          volume_frac = s_frac
      [../]
- 
+
     [./Es_dot]
         type = VariableCoefTimeDerivative
         variable = Es
@@ -266,7 +272,7 @@
         products = 'CO2p'
         product_stoich = '1'
     [../]
- 
+
     [./Tf_calc]
         type = PhaseTemperature
         variable = Tf
@@ -275,7 +281,7 @@
         volume_frac = eps
         density = rho
     [../]
- 
+
     [./Ts_calc]
         type = PhaseTemperature
         variable = Ts
@@ -284,7 +290,7 @@
         volume_frac = s_frac
         density = rho_s
     [../]
- 
+
     [./O2_dot]
         type = VariableCoefTimeDerivative
         variable = O2
@@ -302,11 +308,11 @@
         type = GVarPoreDiffusion
         variable = O2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
- 
+
     # Kernels for surface reaction
     [./qc_dot]
         type = TimeDerivative
@@ -324,7 +330,7 @@
         products = 'CO2p'
         product_stoich = '1'
     [../]
- 
+
     [./O2p_dot]
         type = VariableCoefTimeDerivative
         variable = O2p
@@ -342,7 +348,7 @@
         products = 'CO2p'
         product_stoich = '1'
     [../]
- 
+
     [./CO2p_dot]
         type = VariableCoefTimeDerivative
         variable = CO2p
@@ -361,9 +367,9 @@
         product_stoich = '1'
     [../]
 []
- 
+
 [DGKernels]
-    [./Ef_dgadv] 
+    [./Ef_dgadv]
         type = DGPoreConcAdvection
         variable = Ef
         porosity = eps
@@ -380,7 +386,7 @@
         Dy = Kg
         Dz = Kg
     [../]
- 
+
     [./Es_dgdiff]
         type = DGPhaseThermalConductivity
         variable = Es
@@ -390,7 +396,7 @@
         Dy = Ks
         Dz = Ks
     [../]
- 
+
     [./O2_dgadv]
         type = DGPoreConcAdvection
         variable = O2
@@ -403,11 +409,11 @@
         type = DGVarPoreDiffusion
         variable = O2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
- 
+
 []
 
 [BCs]
@@ -423,7 +429,7 @@
         uy = vel_y
         uz = vel_z
     [../]
- 
+
     [./Ef_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Ef
@@ -433,7 +439,7 @@
         temperature = Tf
         area_frac = eps
     [../]
- 
+
     [./Es_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Es
@@ -443,7 +449,7 @@
         temperature = Ts
         area_frac = s_frac
     [../]
- 
+
     [./O2_FluxIn]
         type = DGPoreConcFluxBC
         variable = O2
@@ -466,52 +472,52 @@
 
 []
 
-[Postprocessors] 
+[Postprocessors]
     [./T_out]
         type = SideAverageValue
         boundary = 'top'
         variable = Tf
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./T_in]
         type = SideAverageValue
         boundary = 'bottom'
         variable = Tf
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Ts_avg]
         type = ElementAverageValue
         variable = Ts
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./qc_avg]
         type = ElementAverageValue
         variable = qc
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./O2p_avg]
         type = ElementAverageValue
         variable = O2p
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./CO2p_avg]
         type = ElementAverageValue
         variable = CO2p
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./O2_out]
         type = SideAverageValue
         boundary = 'top'
         variable = O2
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./O2_in]
         type = SideAverageValue
         boundary = 'bottom'
@@ -560,4 +566,3 @@
   exodus = true
   csv = true
 [] #END Outputs
-

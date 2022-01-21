@@ -1,16 +1,16 @@
 [GlobalParams]
     dg_scheme = nipg
     sigma = 10
-  
+
 [] #END GlobalParams
 
 [Problem]
     #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
     coord_type = RZ
 [] #END Problem
- 
+
 [Mesh]
- 
+
     [gen] #block = 0
          type = GeneratedMeshGenerator
          dim = 2
@@ -34,7 +34,7 @@
        [./interface]
          type = SideSetsBetweenSubdomainsGenerator
          input = subdomain1
-         master_block = '0'
+         primary_block = '0'
          paired_block = '1'
          new_boundary = 'master0_interface'
        [../]
@@ -57,12 +57,11 @@
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = cpg
-            volume_frac = 1
             density = rho
             temperature = Tf
         [../]
     [../]
- 
+
     [./Es]
         order = FIRST
         family = MONOMIAL
@@ -71,26 +70,25 @@
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = cps
-            volume_frac = 1
             density = rho_s
             temperature = Ts
         [../]
     [../]
- 
+
     [./Tf]
         order = FIRST
         family = LAGRANGE
         initial_condition = 298  #K
         block = 0
     [../]
- 
+
     [./Ts]
         order = FIRST
         family = LAGRANGE
         initial_condition = 298  #K
         block = 1
     [../]
- 
+
     # Bulk gas concentration for O2
     [./O2]
         order = FIRST
@@ -99,7 +97,7 @@
         block = 0
     [../]
 []
- 
+
 [AuxVariables]
     [./vel_x]
         order = FIRST
@@ -121,91 +119,98 @@
         initial_condition = 0
         block = 0
     [../]
- 
+
     [./Kg]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.1          #W/m/K
         block = 0
     [../]
- 
+
     [./Ks]
         order = FIRST
         family = MONOMIAL
         initial_condition = 11.9       #W/m/K
         block = 1
     [../]
- 
+
     [./eps]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.4371          #W/m/K
         block = 0
     [../]
- 
+
     [./s_frac]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.5629          #W/m/K
         block = '0 1'
     [../]
- 
+
     [./rho]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1       #kg/m^3
         block = 0
     [../]
- 
+
     [./rho_s]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1599       #kg/m^3
         block = 1
     [../]
- 
+
     [./cpg]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1000       #J/kg/K
         block = 0
     [../]
- 
+
     [./cps]
         order = FIRST
         family = MONOMIAL
         initial_condition = 680       #J/kg/K
         block = 1
     [../]
- 
+
     [./hw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 50       #W/m^2/K
         block = '0 1'
     [../]
- 
+
     [./Tw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 253  #K
         block = '0 1'
     [../]
- 
+
     [./hs]
         order = FIRST
         family = MONOMIAL
         initial_condition = 50       #W/m^2/K
         block = '0 1'
     [../]
- 
+
     [./Ao]
         order = FIRST
         family = MONOMIAL
         initial_condition = 11797       #m^-1
         block = '0 1'
     [../]
- 
+
+    [./D]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.1
+        block = '0 1'
+    [../]
+
 []
 
 [Kernels]
@@ -234,7 +239,7 @@
          Dz = Kg
          block = 0
      [../]
- 
+
     [./Es_dot]
         type = VariableCoefTimeDerivative
         variable = Es
@@ -251,27 +256,25 @@
         Dz = Ks
         block = 1
     [../]
- 
+
     [./Tf_calc]
         type = PhaseTemperature
         variable = Tf
         energy = Ef
         specific_heat = cpg
-        volume_frac = 1
         density = rho
         block = 0
     [../]
- 
+
     [./Ts_calc]
         type = PhaseTemperature
         variable = Ts
         energy = Es
         specific_heat = cps
-        volume_frac = 1
         density = rho_s
         block = 1
     [../]
- 
+
     [./O2_dot]
         type = VariableCoefTimeDerivative
         variable = O2
@@ -291,15 +294,15 @@
         type = GVarPoreDiffusion
         variable = O2
         porosity = 1
-        Dx = 0.001
-        Dy = 0.001
-        Dz = 0.001
+        Dx = D
+        Dy = D
+        Dz = D
         block = 0
     [../]
 []
- 
+
 [DGKernels]
-    [./Ef_dgadv] 
+    [./Ef_dgadv]
         type = DGPoreConcAdvection
         variable = Ef
         porosity = 1
@@ -318,7 +321,7 @@
         Dz = Kg
         block = 0
     [../]
- 
+
     [./Es_dgdiff]
         type = DGPhaseThermalConductivity
         variable = Es
@@ -329,7 +332,7 @@
         Dz = Ks
         block = 1
     [../]
- 
+
     [./O2_dgadv]
         type = DGPoreConcAdvection
         variable = O2
@@ -343,9 +346,9 @@
         type = DGVarPoreDiffusion
         variable = O2
         porosity = 1
-        Dx = 0.001
-        Dy = 0.001
-        Dz = 0.001
+        Dx = D
+        Dy = D
+        Dz = D
         block = 0
     [../]
 []
@@ -376,7 +379,7 @@
         uy = vel_y
         uz = vel_z
     [../]
- 
+
     [./Es_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Es
@@ -386,7 +389,7 @@
         temperature = Ts
         area_frac = 1
     [../]
- 
+
     [./O2_FluxIn]
         type = DGPoreConcFluxBC
         variable = O2
@@ -416,49 +419,49 @@
         variable = Ef
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Ef_in]
         type = SideAverageValue
         boundary = 'bottom_to_0'
         variable = Ef
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Es_avg]
         type = ElementAverageValue
         variable = Es
         execute_on = 'initial timestep_end'
         block = 1
     [../]
- 
+
     [./T_out]
         type = SideAverageValue
         boundary = 'top_to_0'
         variable = Tf
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./T_in]
         type = SideAverageValue
         boundary = 'bottom_to_0'
         variable = Tf
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Ts_avg]
         type = ElementAverageValue
         variable = Ts
         execute_on = 'initial timestep_end'
         block = 1
     [../]
- 
+
     [./O2_out]
         type = SideAverageValue
         boundary = 'top_to_0'
         variable = O2
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./O2_in]
         type = SideAverageValue
         boundary = 'bottom_to_0'
@@ -507,4 +510,3 @@
   exodus = true
   csv = true
 [] #END Outputs
-

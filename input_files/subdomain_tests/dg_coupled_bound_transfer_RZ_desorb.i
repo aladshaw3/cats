@@ -33,7 +33,7 @@
   [./interface]
     type = SideSetsBetweenSubdomainsGenerator
     input = subdomain1
-    master_block = '0'
+    primary_block = '0'
     paired_block = '1'
     new_boundary = 'master0_interface'
   [../]
@@ -61,14 +61,14 @@
     initial_condition = 0
     block = 1
   [../]
- 
+
  [./q]
     order = FIRST
     family = MONOMIAL
     initial_condition = 1
     block = 0
  [../]
- 
+
  [./s]
     order = FIRST
     family = MONOMIAL
@@ -102,7 +102,7 @@
       coupled = q
       block = 0
   [../]
- 
+
  [./q_dot]
     type = TimeDerivative
     variable = q
@@ -121,7 +121,7 @@
     product_stoich = '1'
     block = 0
  [../]
- 
+
  [./s_bal]
      type = MaterialBalance
      variable = s
@@ -131,7 +131,7 @@
      total_material = w
      block = 0
  [../]
- 
+
   [./dot_v]
     type = TimeDerivative
     variable = v

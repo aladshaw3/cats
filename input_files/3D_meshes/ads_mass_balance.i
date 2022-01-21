@@ -13,7 +13,7 @@
   #boundary_name = 'inlet outlet washcoat_walls interface wash_in wash_out'
   #block_name = 'washcoat channel'
 
-  # 5cm length x 0.127 cm full channel dia 
+  # 5cm length x 0.127 cm full channel dia
 
 []
 
@@ -338,7 +338,7 @@
   solve_type = pjfnk
   petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -ksp_gmres_restart -pc_type -sub_pc_type'
-  petsc_options_value = 'gmres 300 bjacobi lu'
+  petsc_options_value = 'gmres 300 lu lu'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none

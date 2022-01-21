@@ -170,10 +170,10 @@
 #  scheme = bdf2
   petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres asm lu 100 NONZERO 2 1E-14 1E-12'
+  petsc_options_value = 'gmres lu lu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = basic
+  line_search = bt
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-4
   nl_rel_step_tol = 1e-10

@@ -27,7 +27,7 @@
         initial_condition = 0.0
         block = 'washcoat'
     [../]
- 
+
     [./q]
         order = FIRST
         family = MONOMIAL
@@ -52,7 +52,7 @@
         initial_condition = 0
         block = 'channel'
     [../]
- 
+
     [./vel_y]
         order = FIRST
         family = LAGRANGE
@@ -73,21 +73,21 @@
         initial_condition = 2.5e-5
         block = 'channel'
     [../]
- 
+
     [./Dw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1e-6
         block = 'washcoat'
     [../]
- 
+
     [./ew]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.20
         block = 'washcoat'
     [../]
- 
+
     [./S_max]
       order = FIRST
       family = MONOMIAL
@@ -124,7 +124,7 @@
         Dz = Diff
         block = 'channel'
     [../]
- 
+
     #Mass conservation in washcoat kernels
       [./Cw_dot]
           type = VariableCoefTimeDerivative
@@ -148,7 +148,7 @@
           porosity = 0      #replace porosity with 0 because q is measured as mass per volume washcoat already
           block = 'washcoat'
       [../]
- 
+
     # Adsorption in the washcoat
        [./q_dot]
            type = TimeDerivative
@@ -168,7 +168,7 @@
            product_stoich = '1'
            block = 'washcoat'
        [../]
-    
+
        [./mat_bal]
            type = MaterialBalance
            variable = S
@@ -182,7 +182,7 @@
 []
 
 [DGKernels]
- 
+
     [./C_dgadv]
         type = DGPoreConcAdvection
         variable = C
@@ -201,7 +201,7 @@
         Dz = Diff
         block = 'channel'
     [../]
- 
+
     [./Cw_dgdiff]
         type = DGVarPoreDiffusion
         variable = Cw
@@ -237,7 +237,7 @@
     [../]
 
 []
- 
+
  [InterfaceKernels]
 #This kernel is never getting invoked
     [./interface_kernel]
@@ -248,16 +248,16 @@
         transfer_rate = 2
     [../]
  [] #END InterfaceKernels
- 
+
 [Postprocessors]
- 
+
     [./vy_enter]
         type = SideAverageValue
         boundary = 'inlet'
         variable = vel_y
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./vy_exit]
         type = SideAverageValue
         boundary = 'outlet'
@@ -271,54 +271,54 @@
         variable = C
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./C_avg]
         type = ElementAverageValue
         variable = C
         block = 'channel'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Cw_avg]
         type = ElementAverageValue
         variable = Cw
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./q_avg]
         type = ElementAverageValue
         variable = q
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./S_avg]
         type = ElementAverageValue
         variable = S
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./ew_avg]
         type = ElementAverageValue
         variable = ew
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./volume_washcoat]
         type = VolumePostprocessor
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./volume_channel]
         type = VolumePostprocessor
         block = 'channel'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./xsec_area_channel]
         type = AreaPostprocessor
         boundary = 'outlet'
@@ -350,7 +350,7 @@
    solve_type = newton
   petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -pc_type -sub_pc_type'
-  petsc_options_value = 'gmres bjacobi lu'
+  petsc_options_value = 'gmres ilu lu'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
@@ -379,4 +379,3 @@
   exodus = true
   csv = true
 []
-

@@ -232,9 +232,9 @@
         type = GVarPoreDiffusion
         variable = tracer
         porosity = 1
-        Dx = 0.1
-        Dy = 0.1
-        Dz = 0.1
+        Dx = Dp
+        Dy = Dp
+        Dz = Dp
     [../]
 
 
@@ -270,9 +270,9 @@
       type = DGVarPoreDiffusion
       variable = tracer
       porosity = 1
-      Dx = 0.1
-      Dy = 0.1
-      Dz = 0.1
+      Dx = Dp
+      Dy = Dp
+      Dz = Dp
   [../]
 
   ### Conservation of mass for dilute tracer in washcoat ###

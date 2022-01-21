@@ -12,7 +12,7 @@
   #The above file contains the following boundary names
   #boundary_name = 'inlet outlet washcoat_walls interface wash_in wash_out'
   #block_name = 'washcoat channel'
- 
+
 []
 
 #Use MONOMIAL for DG and LAGRANGE for non-DG
@@ -29,7 +29,7 @@
         initial_condition = 0.0
         block = 'washcoat'
     [../]
- 
+
     [./q]
         order = FIRST
         family = MONOMIAL
@@ -46,14 +46,14 @@
 []
 
 [AuxVariables]
- 
+
     [./vel_x]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
         block = 'channel'
     [../]
- 
+
     [./vel_y]
         order = FIRST
         family = LAGRANGE
@@ -67,28 +67,28 @@
 		initial_condition = 0
         block = 'channel'
 	[../]
- 
+
     [./Diff]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.25
         block = 'channel'
     [../]
- 
+
     [./Dw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.01
         block = 'washcoat'
     [../]
- 
+
     [./ew]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.20
         block = 'washcoat'
     [../]
- 
+
     [./S_max]
       order = FIRST
       family = MONOMIAL
@@ -125,7 +125,7 @@
         Dz = Diff
         block = 'channel'
     [../]
- 
+
     #Mass conservation in washcoat kernels
       [./Cw_dot]
           type = VariableCoefTimeDerivative
@@ -149,7 +149,7 @@
           porosity = 0      #replace porosity with 0 because q is measured as mass per volume washcoat already
           block = 'washcoat'
       [../]
- 
+
     # Adsorption in the washcoat
        [./q_dot]
            type = TimeDerivative
@@ -169,7 +169,7 @@
            product_stoich = '1'
            block = 'washcoat'
        [../]
-    
+
        [./mat_bal]
            type = MaterialBalance
            variable = S
@@ -183,7 +183,7 @@
 []
 
 [DGKernels]
- 
+
     [./C_dgadv]
         type = DGPoreConcAdvection
         variable = C
@@ -202,7 +202,7 @@
         Dz = Diff
         block = 'channel'
     [../]
- 
+
     [./Cw_dgdiff]
         type = DGVarPoreDiffusion
         variable = Cw
@@ -236,9 +236,9 @@
         uy = vel_y
         uz = vel_z
     [../]
- 
+
 []
- 
+
  [InterfaceKernels]
 #This kernel is never getting invoked
     [./interface_kernel]
@@ -249,7 +249,7 @@
         transfer_rate = 2
     [../]
  [] #END InterfaceKernels
- 
+
 [Postprocessors]
 
     [./C_exit]
@@ -258,60 +258,60 @@
         variable = C
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./C_avg]
         type = ElementAverageValue
         variable = C
         block = 'channel'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Cw_avg]
         type = ElementAverageValue
         variable = Cw
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./q_avg]
         type = ElementAverageValue
         variable = q
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./S_avg]
         type = ElementAverageValue
         variable = S
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./ew_avg]
         type = ElementAverageValue
         variable = ew
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./volume_washcoat]
         type = VolumePostprocessor
         block = 'washcoat'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./volume_channel]
         type = VolumePostprocessor
         block = 'channel'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./xsec_area_channel]
         type = AreaPostprocessor
         boundary = 'outlet'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./xsec_area_washcoat]
         type = AreaPostprocessor
         boundary = 'wash_out'
@@ -336,7 +336,7 @@
   solve_type = pjfnk
   petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -ksp_gmres_restart -pc_type -sub_pc_type'
-  petsc_options_value = 'gmres 300 bjacobi lu'
+  petsc_options_value = 'gmres 300 ilu lu'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
@@ -364,4 +364,3 @@
   exodus = true
   csv = true
 []
-

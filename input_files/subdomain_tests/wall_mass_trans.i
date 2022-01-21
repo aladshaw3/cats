@@ -14,7 +14,7 @@
 
 #NOTE: The washcoat thickness is a very important parameter for this type of model
 #           [thickness must align with the stated average bulk porosity]
- 
+
    [gen] #block = 0
         type = GeneratedMeshGenerator
         dim = 2
@@ -38,7 +38,7 @@
       [./interface]
         type = SideSetsBetweenSubdomainsGenerator
         input = subdomain1
-        master_block = '0'
+        primary_block = '0'
         paired_block = '1'
         new_boundary = 'master0_interface'
       [../]
@@ -93,7 +93,7 @@
     initial_condition = 0.01
     block = 0
   [../]
-    
+
   [./Dp]
     order = FIRST
     family = LAGRANGE
@@ -107,14 +107,14 @@
       initial_condition = 0.5
       block = '0 1'
   [../]
- 
+
   [./wash_pore]
       order = FIRST
       family = LAGRANGE
       initial_condition = 0.25   #   ew * (1 - e)
       block = 1
   [../]
- 
+
   [./S_max]
     order = FIRST
     family = LAGRANGE
@@ -198,7 +198,7 @@
       porosity = pore
       block = 1
     [../]
- 
+
     [./q_dot]
         type = TimeDerivative
         variable = q
@@ -217,7 +217,7 @@
         product_stoich = '1'
         block = 1
     [../]
- 
+
     [./mat_bal]
         type = MaterialBalance
         variable = S
@@ -250,7 +250,7 @@
         Dz = Diff
         block = 0
     [../]
- 
+
     [./Cw_dgdiff]
         type = DGVarPoreDiffusion
         variable = Cw
@@ -262,7 +262,7 @@
     [../]
 
 [] #END DGKernels
- 
+
 [InterfaceKernels]
 # If I reverse C and Cw, this kernel does not get invoked
    [./interface]
@@ -299,8 +299,8 @@
       uy = vel_y
       uz = vel_z
     [../]
- 
- 
+
+
 # This will run if given C, but Segfault if given Cw
 #        [./Cw_test]
 #            type = DGFluxLimitedBC
@@ -340,7 +340,7 @@
         execute_on = 'initial timestep_end'
         block = 1
     [../]
- 
+
 #NOTE: Cw does not actually exist on master0_interface
     [./C_int]
         type = SideAverageValue
@@ -384,7 +384,7 @@
      type = ConstantDT
      dt = 0.1
   [../]
- 
+
 [] #END Executioner
 
 [Outputs]

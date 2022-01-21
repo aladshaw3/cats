@@ -69,6 +69,19 @@
   [../]
 []
 
+[AuxVariables]
+  [./vel_z]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0
+  [../]
+  [./D]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 1
+  [../]
+[]
+
 [Kernels]
   #Continuity Equ
   [./mass]
@@ -118,7 +131,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
   [./tracer_gdiff]
       type = GVarPoreDiffusion
@@ -129,9 +142,9 @@
       #   Helps to clear out material from the wall due
       #   to using the no-slip condition (which causes
       #   a lot of accumulation at the wall)
-      Dx = 1
-      Dy = 1
-      Dz = 1
+      Dx = D
+      Dy = D
+      Dz = D
   [../]
 []
 
@@ -142,7 +155,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
   [./tracer_dgdiff]
       type = DGVarPoreDiffusion
@@ -153,9 +166,9 @@
       #   Helps to clear out material from the wall due
       #   to using the no-slip condition (which causes
       #   a lot of accumulation at the wall)
-      Dx = 1
-      Dy = 1
-      Dz = 1
+      Dx = D
+      Dy = D
+      Dz = D
   [../]
 []
 
@@ -186,7 +199,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       u_input = 1
 
   [../]
@@ -197,7 +210,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
   [../]
 
 []

@@ -1,14 +1,14 @@
 [GlobalParams]
     dg_scheme = nipg
     sigma = 10
-  
+
 [] #END GlobalParams
 
 [Problem]
     #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
     coord_type = RZ
 [] #END Problem
- 
+
 [Mesh]
     type = GeneratedMesh
     dim = 2
@@ -29,18 +29,17 @@
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = 1000
-            volume_frac = 1
             density = 1
             temperature = Tf
         [../]
     [../]
- 
+
     [./Tf]
         order = FIRST
         family = MONOMIAL
         initial_condition = 298  #K
     [../]
- 
+
     # Bulk gas concentration for O2
     [./O2]
         order = FIRST
@@ -48,7 +47,7 @@
         initial_condition = 1e-9    #mol/m^3
     [../]
 []
- 
+
 [AuxVariables]
     [./vel_x]
         order = FIRST
@@ -67,11 +66,17 @@
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./Ke]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.1          #W/m/K
+    [../]
+
+    [./D]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.1
     [../]
 []
 
@@ -95,16 +100,15 @@
          Dy = Ke
          Dz = Ke
      [../]
- 
+
     [./Tf_calc]
         type = PhaseTemperature
         variable = Tf
         energy = Ef
         specific_heat = 1000
-        volume_frac = 1
         density = 1
     [../]
- 
+
     [./O2_dot]
         type = VariableCoefTimeDerivative
         variable = O2
@@ -122,12 +126,12 @@
         type = GVarPoreDiffusion
         variable = O2
         porosity = 1
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
 []
- 
+
 [DGKernels]
     [./Ef_dgadv]
         type = DGConcentrationAdvection
@@ -144,7 +148,7 @@
         Dy = Ke
         Dz = Ke
     [../]
- 
+
     [./O2_dgadv]
         type = DGPoreConcAdvection
         variable = O2
@@ -157,9 +161,9 @@
         type = DGVarPoreDiffusion
         variable = O2
         porosity = 1
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
 []
 
@@ -181,7 +185,7 @@
         uy = vel_y
         uz = vel_z
     [../]
- 
+
     [./Ef_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Ef
@@ -191,7 +195,7 @@
         temperature = Tf
         area_frac = 1
     [../]
- 
+
     [./O2_FluxIn]
         type = DGPoreConcFluxBC
         variable = O2
@@ -221,35 +225,35 @@
         variable = Ef
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Ef_in]
         type = SideAverageValue
         boundary = 'bottom'
         variable = Ef
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./T_out]
         type = SideAverageValue
         boundary = 'top'
         variable = Tf
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./T_in]
         type = SideAverageValue
         boundary = 'bottom'
         variable = Tf
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./O2_out]
         type = SideAverageValue
         boundary = 'top'
         variable = O2
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./O2_in]
         type = SideAverageValue
         boundary = 'bottom'
@@ -298,4 +302,3 @@
   exodus = true
   csv = true
 [] #END Outputs
-

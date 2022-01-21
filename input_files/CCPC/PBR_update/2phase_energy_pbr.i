@@ -1,23 +1,23 @@
 #NOTE: This result qualitatively works well, updating the parameters might fix remaining issues
-#       Then, depreciate the old heat kernels. 
+#       Then, depreciate the old heat kernels.
 
 [GlobalParams]
     dg_scheme = nipg
     sigma = 10
- 
+
     # Since there is only one reaction, we will put reaction kernel parameters as global
     forward_activation_energy = 5.0E4   #J/mol
     forward_pre_exponential = 25        #m^3/mol/s
     reverse_activation_energy = 0   #J/mol
     reverse_pre_exponential = 0     #m^3/mol/s
-  
+
 [] #END GlobalParams
 
 [Problem]
     #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
     coord_type = RZ
 [] #END Problem
- 
+
 [Mesh]
     type = GeneratedMesh
     dim = 2
@@ -43,50 +43,48 @@
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = cpg
-            volume_frac = eps
             density = rho
             temperature = Tf
         [../]
     [../]
- 
+
     [./Es]
         order = FIRST
         family = MONOMIAL
         [./InitialCondition]
             type = InitialPhaseEnergy
             specific_heat = cps
-            volume_frac = s_frac
             density = rho_s
             temperature = Ts
         [../]
     [../]
- 
+
     [./Tf]
         order = FIRST
         family = MONOMIAL
         initial_condition = 723.15  #K
     [../]
- 
+
     [./Ts]
         order = FIRST
         family = MONOMIAL
         initial_condition = 723.15  #K
     [../]
- 
+
     # Bulk gas concentration for O2
     [./O2]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1e-9    #mol/m^3
     [../]
- 
+
     # Bulk gas concentration for CO2
     [./CO2]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1e-9    #mol/m^3
     [../]
- 
+
      # Surface Carbon (mol/m^2)
      [./qc]
          order = FIRST
@@ -96,14 +94,14 @@
              function = qc_ic
          [../]
      [../]
- 
+
     # O2 in pore-spaces (mol/m^3)
     [./O2p]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1e-9    #mol/m^3
     [../]
- 
+
     # CO2 in pore-spaces (mol/m^3)
     [./CO2p]
         order = FIRST
@@ -111,7 +109,7 @@
         initial_condition = 1e-9    #mol/m^3
     [../]
 []
- 
+
 [AuxVariables]
  #Reverved for Temporary AuxVariables
     [./N2p]
@@ -119,13 +117,13 @@
         family = MONOMIAL
         initial_condition = 16.497    #mol/m^3
     [../]
- 
+
     [./N2]
         order = FIRST
         family = MONOMIAL
         initial_condition = 16.497    #mol/m^3
     [../]
- 
+
     [./vel_x]
         order = FIRST
         family = LAGRANGE
@@ -143,25 +141,25 @@
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./Kg]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.07          #W/m/K
     [../]
- 
+
     [./Ks]
         order = FIRST
         family = MONOMIAL
         initial_condition = 11.9       #W/m/K
     [../]
- 
+
     [./eps]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.4371          #volume bulk voids / total volumes
     [../]
- 
+
     [./s_frac]
         order = FIRST
         family = MONOMIAL
@@ -173,55 +171,61 @@
         family = MONOMIAL
         initial_condition = 0.5916          #volume of solid pores / solid volume
     [../]
- 
+
     [./rho]
         order = FIRST
         family = MONOMIAL
         initial_condition = 0.90       #kg/m^3
     [../]
- 
+
     [./rho_s]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1599       #kg/m^3
     [../]
- 
+
     [./cpg]
         order = FIRST
         family = MONOMIAL
         initial_condition = 1100       #J/kg/K
     [../]
- 
+
     [./cps]
         order = FIRST
         family = MONOMIAL
         initial_condition = 680       #J/kg/K
     [../]
- 
+
     [./hw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 50       #W/m^2/K
     [../]
- 
+
     [./Tw]
         order = FIRST
         family = MONOMIAL
         initial_condition = 573.15  #K
     [../]
- 
+
     [./hs]
         order = FIRST
         family = MONOMIAL
         initial_condition = 288       #W/m^2/K
     [../]
- 
+
     [./Ao]
         order = FIRST
         family = MONOMIAL
         initial_condition = 11797       #m^-1
     [../]
- 
+
+    [./D]
+        order = FIRST
+        family = MONOMIAL
+        initial_condition = 0.1
+    [../]
+
 []
 
 [Kernels]
@@ -256,7 +260,7 @@
          specific_area = Ao
          volume_frac = s_frac
      [../]
- 
+
     [./Es_dot]
         type = VariableCoefTimeDerivative
         variable = Es
@@ -293,25 +297,23 @@
         products = 'CO2p'
         product_stoich = '1'
     [../]
- 
+
     [./Tf_calc]
         type = PhaseTemperature
         variable = Tf
         energy = Ef
         specific_heat = cpg
-        volume_frac = eps
         density = rho
     [../]
- 
+
     [./Ts_calc]
         type = PhaseTemperature
         variable = Ts
         energy = Es
         specific_heat = cps
-        volume_frac = s_frac
         density = rho_s
     [../]
- 
+
     [./O2_dot]
         type = VariableCoefTimeDerivative
         variable = O2
@@ -329,18 +331,18 @@
         type = GVarPoreDiffusion
         variable = O2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
     [./O2p_trans]
         type = FilmMassTransfer
         variable = O2
         coupled = O2p
-rate_variable = 0.1
+        rate_variable = 0.1
         av_ratio = 6640.5
     [../]
- 
+
     # Kernels for surface reaction
     [./qc_dot]
         type = TimeDerivative
@@ -357,7 +359,7 @@ rate_variable = 0.1
         products = 'CO2p'
         product_stoich = '1'
     [../]
- 
+
     [./O2p_dot]
         type = VariableCoefTimeDerivative
         variable = O2p
@@ -367,7 +369,7 @@ rate_variable = 0.1
         type = FilmMassTransfer
         variable = O2p
         coupled = O2
-rate_variable = 0.1
+        rate_variable = 0.1
         av_ratio = 6640.5
     [../]
     [./O2p_rx]  #   qc + O2p --> CO2p
@@ -381,7 +383,7 @@ rate_variable = 0.1
         products = 'CO2p'
         product_stoich = '1'
     [../]
- 
+
     [./CO2_dot]
         type = VariableCoefTimeDerivative
         variable = CO2
@@ -399,18 +401,18 @@ rate_variable = 0.1
         type = GVarPoreDiffusion
         variable = CO2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
     [./CO2p_trans]
         type = FilmMassTransfer
         variable = CO2
         coupled = CO2p
-rate_variable = 0.1
+        rate_variable = 0.1
         av_ratio = 6640.5
     [../]
- 
+
     [./CO2p_dot]
         type = VariableCoefTimeDerivative
         variable = CO2p
@@ -420,7 +422,7 @@ rate_variable = 0.1
         type = FilmMassTransfer
         variable = CO2p
         coupled = CO2
-rate_variable = 0.1
+        rate_variable = 0.1
         av_ratio = 6640.5
     [../]
     [./CO2p_rx]  #   qc + O2p --> CO2p
@@ -435,9 +437,9 @@ rate_variable = 0.1
         product_stoich = '1'
     [../]
 []
- 
+
 [DGKernels]
-    [./Ef_dgadv] 
+    [./Ef_dgadv]
         type = DGPoreConcAdvection
         variable = Ef
         porosity = eps
@@ -454,7 +456,7 @@ rate_variable = 0.1
         Dy = Kg
         Dz = Kg
     [../]
- 
+
     [./Es_dgdiff]
         type = DGPhaseThermalConductivity
         variable = Es
@@ -464,7 +466,7 @@ rate_variable = 0.1
         Dy = Ks
         Dz = Ks
     [../]
- 
+
     [./O2_dgadv]
         type = DGPoreConcAdvection
         variable = O2
@@ -477,11 +479,11 @@ rate_variable = 0.1
         type = DGVarPoreDiffusion
         variable = O2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
- 
+
     [./CO2_dgadv]
         type = DGPoreConcAdvection
         variable = CO2
@@ -494,11 +496,11 @@ rate_variable = 0.1
         type = DGVarPoreDiffusion
         variable = CO2
         porosity = eps
-        Dx = 0.01
-        Dy = 0.01
-        Dz = 0.01
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
- 
+
 []
 
 [BCs]
@@ -514,7 +516,7 @@ rate_variable = 0.1
         uy = vel_y
         uz = vel_z
     [../]
- 
+
     [./Ef_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Ef
@@ -524,7 +526,7 @@ rate_variable = 0.1
         temperature = Tf
         area_frac = eps
     [../]
- 
+
     [./Es_WallFluxIn]
         type = DGWallEnergyFluxBC
         variable = Es
@@ -534,7 +536,7 @@ rate_variable = 0.1
         temperature = Ts
         area_frac = s_frac
     [../]
- 
+
     [./O2_FluxIn]
         type = DGPoreConcFluxStepwiseBC
         variable = O2
@@ -557,7 +559,7 @@ rate_variable = 0.1
         uy = vel_y
         uz = vel_z
     [../]
- 
+
     [./CO2_FluxIn]
         type = DGPoreConcFluxBC
         variable = CO2
@@ -580,14 +582,14 @@ rate_variable = 0.1
 
 []
 
-[Postprocessors] 
+[Postprocessors]
     [./T_out]
         type = SideAverageValue
         boundary = 'top'
         variable = Tf
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./T_in]
         type = SideAverageValue
         boundary = 'bottom'
@@ -600,13 +602,13 @@ rate_variable = 0.1
 #        variable = Tf
 #        execute_on = 'initial timestep_end'
 #    [../]
- 
+
 #    [./Ts_avg]
 #        type = ElementAverageValue
 #        variable = Ts
 #        execute_on = 'initial timestep_end'
 #    [../]
- 
+
 #    [./qc_avg]
 #        type = ElementAverageValue
 #        variable = qc
@@ -619,21 +621,21 @@ rate_variable = 0.1
         variable = O2
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./O2_in]
         type = SideAverageValue
         boundary = 'bottom'
         variable = O2
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./CO2_out]
         type = SideAverageValue
         boundary = 'top'
         variable = CO2
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./CO2_in]
         type = SideAverageValue
         boundary = 'bottom'
@@ -683,4 +685,3 @@ rate_variable = 0.1
     csv = true
     interval = 10   #Number of time steps to wait before writing output
 [] #END Outputs
-

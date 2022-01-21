@@ -49,6 +49,12 @@
     initial_condition = 0.0
   [../]
 
+  [./D]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.1
+  [../]
+
 [] #END AuxVariables
 
 [ICs]
@@ -145,9 +151,9 @@
         #   Helps to clear out material from the wall due
         #   to using the no-slip condition (which causes
         #   a lot of accumulation at the wall)
-        Dx = 0.1
-        Dy = 0.1
-        Dz = 0.1
+        Dx = D
+        Dy = D
+        Dz = D
     [../]
 
 [] #END Kernels
@@ -170,9 +176,9 @@
       #   Helps to clear out material from the wall due
       #   to using the no-slip condition (which causes
       #   a lot of accumulation at the wall)
-      Dx = 0.1
-      Dy = 0.1
-      Dz = 0.1
+      Dx = D
+      Dy = D
+      Dz = D
   [../]
 []
 
@@ -313,7 +319,7 @@
   scheme = implicit-euler
   petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres asm lu 100 NONZERO 2 1E-14 1E-12'
+  petsc_options_value = 'gmres ilu lu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none

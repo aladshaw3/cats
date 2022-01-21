@@ -548,7 +548,7 @@
 #petsc_options_value = 'bcgs 300 bjacobi lu'
 
 petsc_options_iname ='-ksp_type -ksp_gmres_restart -pc_type -sub_pc_type'
-petsc_options_value = 'bcgs 300 bjacobi lu'
+petsc_options_value = 'gmres 300 lu lu'
 
 # NOTE: gcr also has a -ksp_gcr_restart option (should override)
 #-ksp_type options: gcr cgs bcgs gmres

@@ -80,6 +80,12 @@
 []
 
 [AuxVariables]
+    [./vel_z]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0
+      block = 'channel solid'
+    [../]
     # Approx Diffusion for NaCl in water (0.007827 cm^2/min)
     [./Diff]
         order = FIRST
@@ -158,7 +164,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       block = 'channel'
   [../]
   [./tracer_gdiff]
@@ -203,7 +209,7 @@
       porosity = 1
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       block = 'channel'
   [../]
   [./tracer_dgdiff]
@@ -281,7 +287,7 @@
       u_dot_n = 0
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       penalty = 1e6
   [../]
   [./y_weak_no_slip]
@@ -292,7 +298,7 @@
       u_dot_n = 0
       ux = vel_x
       uy = vel_y
-      uz = 0
+      uz = vel_z
       penalty = 1e6
   [../]
 

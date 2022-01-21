@@ -95,9 +95,9 @@
         type = GVarPoreDiffusion
         variable = phi_e
         porosity = 1
-        Dx = 1
-        Dy = 1
-        Dz = 1
+        Dx = Dp
+        Dy = Dp
+        Dz = Dp
     [../]
 
     ### Conservation of mass for pos_ion ###
@@ -179,9 +179,9 @@
       type = DGVarPoreDiffusion
       variable = phi_e
       porosity = 1
-      Dx = 1
-      Dy = 1
-      Dz = 1
+      Dx = Dp
+      Dy = Dp
+      Dz = Dp
   [../]
 
   ### Conservation of mass for pos_ion ###

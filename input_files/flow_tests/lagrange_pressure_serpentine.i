@@ -63,6 +63,13 @@
     initial_condition = 0.0
     block = 'channel'
   [../]
+
+  [./D]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.1
+    block = 'solid channel'
+  [../]
 [] #END AuxVariables
 
 [ICs]
@@ -196,9 +203,9 @@
         #   Helps to clear out material from the wall due
         #   to using the no-slip condition (which causes
         #   a lot of accumulation at the wall)
-        Dx = 0.1
-        Dy = 0.1
-        Dz = 0.1
+        Dx = D
+        Dy = D
+        Dz = D
         block = 'channel'
     [../]
 
@@ -230,9 +237,9 @@
       #   Helps to clear out material from the wall due
       #   to using the no-slip condition (which causes
       #   a lot of accumulation at the wall)
-      Dx = 0.1
-      Dy = 0.1
-      Dz = 0.1
+      Dx = D
+      Dy = D
+      Dz = D
       block = 'channel'
   [../]
 []

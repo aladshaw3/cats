@@ -18,6 +18,20 @@
   [../]
 []
 
+[AuxVariables]
+  [./D]
+    order = FIRST
+    family = MONOMIAL
+    initial_condition = 1
+  [../]
+
+  [./Dp]
+    order = FIRST
+    family = MONOMIAL
+    initial_condition = 0.2
+  [../]
+[]
+
 [Kernels]
   #Mass conservation in channel kernels
     [./C_dot]
@@ -30,12 +44,12 @@
         type = GVarPoreDiffusion
         variable = C
         porosity = 1
-        Dx = 1
-        Dy = 1
-        Dz = 1
+        Dx = D
+        Dy = D
+        Dz = D
         block = 6
     [../]
- 
+
     #Mass conservation in washcoat kernels
       [./Cw_dot]
           type = VariableCoefTimeDerivative
@@ -47,33 +61,33 @@
           type = GVarPoreDiffusion
           variable = Cw
           porosity = 0.2
-          Dx = 0.2
-          Dy = 0.2
-          Dz = 0.2
+          Dx = Dp
+          Dy = Dp
+          Dz = Dp
           block = 5
       [../]
-  
+
 []
- 
+
  [DGKernels]
-  
+
      [./C_dgdiff]
          type = DGVarPoreDiffusion
          variable = C
          porosity = 1
-         Dx = 1
-         Dy = 1
-         Dz = 1
+         Dx = D
+         Dy = D
+         Dz = D
          block = 6
      [../]
-  
+
      [./Cw_dgdiff]
          type = DGVarPoreDiffusion
          variable = Cw
          porosity = 0.2
-         Dx = 0.2
-         Dy = 0.2
-         Dz = 0.2
+         Dx = Dp
+         Dy = Dp
+         Dz = Dp
          block = 5
      [../]
 
@@ -100,10 +114,10 @@
             vy = 0
             vz = 0
         [../]
-     
+
     #     [./Cw_test]
     #         type = DGFluxLimitedBC
-    #         variable = Cw        
+    #         variable = Cw
     #         boundary = 3
     #         u_input = 1.0
     #         vx = 0
@@ -113,7 +127,7 @@
 []
 
 [Postprocessors]
-  
+
 []
 
 [Preconditioning]
