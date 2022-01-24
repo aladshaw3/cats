@@ -7,12 +7,13 @@
 
 [Variables]
   [./u]
+      initial_condition = 0.5
   [../]
 []
 
 [AuxVariables]
   [./u_bc_left]
-      initial_condition = 0
+      initial_condition = 0.5
   [../]
 []
 
@@ -38,11 +39,10 @@
     #   Failure to properly setup the execute_on arg will result
     #     in errors/delays in updating the values correctly
     [./step_input]
-        type = TemporalStepFunction
+        type = AuxFirstOrderRecycleBC
         variable = u_bc_left
-        start_value = 1
-        aux_vals = '2 3 1'
-        aux_times = '1 2 4'
+        outlet_postprocessor = u_right
+        recycle_rate = 100
         execute_on = 'initial timestep_begin nonlinear'
     [../]
 []

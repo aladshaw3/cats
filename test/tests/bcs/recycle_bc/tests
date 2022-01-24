@@ -1,0 +1,8 @@
+[Tests]
+  [./test_recycle_bcs]
+    type = 'Exodiff'
+    rel_err = 1e-4
+    input = 'recycle_bc.i'
+    exodiff = 'recycle_bc_out.e'
+  [../]
+[]
