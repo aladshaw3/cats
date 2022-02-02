@@ -1,0 +1,8 @@
+[Tests]
+  [./ideal_water_rxn_test]
+    type = 'Exodiff'
+    rel_err = 1e-4
+    input = 'water_rxn_test.i'
+    exodiff = 'water_rxn_test_out.e'
+  [../]
+[]
