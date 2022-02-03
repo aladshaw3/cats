@@ -1,0 +1,7 @@
+[Tests]
+  [./ideal_activity_IC]
+    type = 'Exodiff'
+    input = 'carbonates_ideal.i'
+    exodiff = 'carbonates_ideal_out.e'
+  [../]
+[]

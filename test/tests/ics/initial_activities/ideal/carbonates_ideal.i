@@ -716,15 +716,13 @@
 
   # Time in min
   start_time = 0.0
-  end_time = 1
+  end_time = 0.04
   dtmax = 2
 
   # NOTE: Maximum step size to start is 0.01
   [./TimeStepper]
-     type = SolutionTimeAdaptiveDT
+     type = ConstantDT
      dt = 0.01
-     cutback_factor_at_failure = 0.5
-     percent_change = 0.7
   [../]
 
 [] #END Executioner
