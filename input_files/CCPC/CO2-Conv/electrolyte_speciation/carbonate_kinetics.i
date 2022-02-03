@@ -33,18 +33,18 @@
 [] # END Mesh
 
 [Variables]
-  # H+ concentration
+  # H+ concentration (assume initially pH = 7)
   [./C_H]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0 # mol/cm^3
+      initial_condition = 1e-10 # mol/cm^3
   [../]
 
-  # OH- concentration
+  # OH- concentration (assume initially pH = 7)
   [./C_OH]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0 # mol/cm^3
+      initial_condition = 1e-10 # mol/cm^3
   [../]
 
   # CO2 concentration
@@ -54,11 +54,11 @@
       initial_condition = 0 # mol/cm^3
   [../]
 
-  # HCO3 concentration
+  # HCO3 concentration (0.1 M added as CsHCO3)
   [./C_HCO3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 2.06E-6 # mol/cm^3
+      initial_condition = 1e-4 # mol/cm^3
   [../]
 
   # CO3 concentration
@@ -79,56 +79,98 @@
   [./C_HCOO]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1e-7 # mol/cm^3
+      initial_condition = 0 # mol/cm^3
   [../]
 
   # H+ activity (unitless)
   [./a_H]
       order = CONSTANT
       family = MONOMIAL
-      initial_condition = 0
+      [./InitialCondition]
+          type = InitialActivity
+
+          concentration = C_H
+          activity_coeff = gamma
+          ref_conc = C_ref
+      [../]
   [../]
 
   # OH- activity (unitless)
   [./a_OH]
       order = CONSTANT
       family = MONOMIAL
-      initial_condition = 0
+      [./InitialCondition]
+          type = InitialActivity
+
+          concentration = C_OH
+          activity_coeff = gamma
+          ref_conc = C_ref
+      [../]
   [../]
 
   # CO2 activity (unitless)
   [./a_CO2]
       order = CONSTANT
       family = MONOMIAL
-      initial_condition = 0.00
+      [./InitialCondition]
+          type = InitialActivity
+
+          concentration = C_CO2
+          activity_coeff = gamma
+          ref_conc = C_ref
+      [../]
   [../]
 
   # HCO3 activity (unitless)
   [./a_HCO3]
       order = CONSTANT
       family = MONOMIAL
-      initial_condition = 0
+      [./InitialCondition]
+          type = InitialActivity
+
+          concentration = C_HCO3
+          activity_coeff = gamma
+          ref_conc = C_ref
+      [../]
   [../]
 
   # CO3 activity (unitless)
   [./a_CO3]
       order = CONSTANT
       family = MONOMIAL
-      initial_condition = 0
+      [./InitialCondition]
+          type = InitialActivity
+
+          concentration = C_CO3
+          activity_coeff = gamma
+          ref_conc = C_ref
+      [../]
   [../]
 
   # HCOOH activity (unitless)
   [./a_HCOOH]
       order = CONSTANT
       family = MONOMIAL
-      initial_condition = 0
+      [./InitialCondition]
+          type = InitialActivity
+
+          concentration = C_HCOOH
+          activity_coeff = gamma
+          ref_conc = C_ref
+      [../]
   [../]
 
   # HCOO activity (unitless)
   [./a_HCOO]
       order = CONSTANT
       family = MONOMIAL
-      initial_condition = 0.00
+      [./InitialCondition]
+          type = InitialActivity
+
+          concentration = C_HCOO
+          activity_coeff = gamma
+          ref_conc = C_ref
+      [../]
   [../]
 
   # rate of water reaction
@@ -655,7 +697,7 @@
   # NOTE: Maximum step size to start is 0.01
   [./TimeStepper]
      type = SolutionTimeAdaptiveDT
-     dt = 0.01
+     dt = 1
      cutback_factor_at_failure = 0.5
      percent_change = 0.7
   [../]
