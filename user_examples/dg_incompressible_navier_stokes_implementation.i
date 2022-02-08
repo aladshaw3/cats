@@ -121,7 +121,7 @@
     [./mu]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.2
+        initial_condition = 1
     [../]
 
     [./rho]
@@ -329,7 +329,7 @@
         variable = vel_x
         boundary = 'inlet'
         penalty = 3e2
-        function = '0.1*t'
+        function = '1*t'
   [../]
 
   ### Momentum Flux Out of Domain ###
