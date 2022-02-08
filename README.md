@@ -1,19 +1,19 @@
 CATS
 =====
 
-Catalytic After Treatment System (CATS)  <Version 1.0>
+Catalysis And Treatment Simulations (CATS)  <Version 1.1>
 
-This MOOSE module is primarily used to simulate catalysis reactions in the exhaust systems for vehicles. Users may combine SUPG methods for exhaust gas flow around the catalyst material and uses DG methods to simulate the mass balances of all gaseous species in the gas stream, as well as perform energy balances for thermal distribution in the catalyst. This module can also be applied for fixed-bed adsorption systems or other gas-solid catalyst reaction problems.
+This MOOSE module is can be used to simulate catalysis reactions in the exhaust systems for vehicles or in electrochemical catalysis for flow batteries and chemical conversion. Combines the standard MOOSE SUPG methods for fluid flow around through the domain and uses DG methods to simulate the mass/energy balances in the fluid streams, as well as electric potential and electric current balances. This module also includes an experimental DG implementation of Navier-Stokes equations for fluid flow.
 
 Methods to resolve microscale intralayer diffusion include: (i) Dividing your full mesh into subdomains and using
 interface kernels to transfer mass between macro- and micro-scale subdomains or (ii) Using a hybrid FD/FE method
 to resolve the micro-scale for simple geometries, such as spherical/cylindrical particles or monolith walls/washcoat
 of roughly uniform thickness.
 
-Properties such as diffusivities, velocities, and mass transfer rates can be calculated using either the (i) 'GasProperties' auxiliary system or (ii) the 'SimpleGasProperties' auxilary system. The 'GasProperties' are
+Properties such as diffusivities, velocities, and mass transfer rates can be calculated using the (i) 'GasProperties' auxiliary system, (ii) the 'SimpleGasProperties' auxilary system, or (iii) the 'SimpleFluidProperties' auxilary system. The 'GasProperties' are
 calculated from the full list of gases and associated parameters for each gas species using kinetic theory of
 gases. The 'SimpleGasProperties' are easier to use, but make the assumption of an ideal gas that is primarily
-made up of non-reactive standard air.
+made up of non-reactive standard air. Similarly, the 'SimpleFluidProperties' assumes an electrolyte liquid solution made primarily of water.
 
 For more information, please read through the 'CATS-UserGuide-*.pdf' in the home directory of the source code.
 
@@ -32,7 +32,7 @@ Then, you can build CATS using the 'make' commands in the '(HOME)/projects/cats'
 pass the '-j4' argument to run make with multiple processors (in this case, using 4 processors).
 
 NOTE: MOOSE now builds using 'conda' environments. Your 'moose' conda environment MUST be active before
-attempting to build the source code. See https://mooseframework.inl.gov/getting_started/installation/conda.html. 
+attempting to build the source code. See https://mooseframework.inl.gov/getting_started/installation/conda.html.
 
 <code> make -j4 </code>
 
