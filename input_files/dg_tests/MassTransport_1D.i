@@ -1,5 +1,5 @@
 [GlobalParams]
-  Dxx = 0.1
+  Dxx = 0.0
 [] #END GlobalParams
 
 [Problem]
@@ -16,8 +16,14 @@
 
 [Variables]
 	[./dens]
-		order = FIRST
+		order = CONSTANT
 		family = MONOMIAL
+		initial_condition = 0.0  #kg/m^3
+	[../]
+
+  [./dens_lag]
+		order = FIRST
+		family = LAGRANGE
 		initial_condition = 0.0  #kg/m^3
 	[../]
 
@@ -27,7 +33,7 @@
 	[./ux]
 		order = FIRST
 		family = MONOMIAL
-		initial_condition = 2
+		initial_condition = 20
 	[../]
 
 	[./uy]
@@ -67,6 +73,23 @@
       variable = dens
     [../]
 
+    [./dens_lag_dot]
+        type = CoefTimeDerivative
+        variable = dens_lag
+        Coefficient = 1.0
+    [../]
+    [./dens_lag_gadv]
+        type = GConcentrationAdvection
+        variable = dens_lag
+		    ux = ux
+		    uy = uy
+		    uz = uz
+    [../]
+    [./u_lag_gdiff]
+      type = GAnisotropicDiffusion
+      variable = dens_lag
+    [../]
+
 [] #END Kernels
 
 [DGKernels]
@@ -103,6 +126,16 @@
 		    uz = uz
   [../]
 
+  [./dens_lag_Flux]
+        type = DGConcentrationFluxBC
+        variable = dens_lag
+        boundary = 'left right'
+		    u_input = 1.0
+		    ux = ux
+		    uy = uy
+		    uz = uz
+  [../]
+
 [] #END BCs
 
 [Materials]
@@ -112,23 +145,17 @@
 
 [Postprocessors]
 
-    [./dens_exit]
+    [./dg_exit]
         type = SideAverageValue
         boundary = 'right'
         variable = dens
         execute_on = 'initial timestep_end'
     [../]
 
-    [./dens_enter]
+    [./cg_exit]
         type = SideAverageValue
-        boundary = 'left'
-        variable = dens
-        execute_on = 'initial timestep_end'
-    [../]
-
-    [./dens_avg]
-        type = ElementAverageValue
-        variable = dens
+        boundary = 'right'
+        variable = dens_lag
         execute_on = 'initial timestep_end'
     [../]
 
@@ -136,7 +163,7 @@
 
 [Executioner]
   type = Transient
-  scheme = implicit-euler
+  scheme = bdf2
   petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
   petsc_options_value = 'gmres asm lu 100 NONZERO 2 1E-14 1E-12'
@@ -152,31 +179,23 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 10.0
+  end_time = 1.0
   dtmax = 0.5
 
     [./TimeStepper]
 		  #type = SolutionTimeAdaptiveDT
 		  type = ConstantDT
-      dt = 0.2
+      dt = 0.02
     [../]
 
 [] #END Executioner
 
 [Preconditioning]
 
-	#[./smp]
-	#	type = SMP
-	#	full = true
-	#	petsc_options = '-snes_converged_reason'
-	#	petsc_options_iname = '-pc_type -sub_pc_type -pc_hypre_type -ksp_gmres_restart  -snes_max_funcs'
-	#	petsc_options_value = 'lu ilu boomeramg 2000 20000'
-	#[../]
-
     [./SMP_PJFNK]
       type = SMP
       full = true
-      solve_type = newton   #newton solver works faster when using very good preconditioner
+      solve_type = pjfnk
     [../]
 
 [] #END Preconditioning
