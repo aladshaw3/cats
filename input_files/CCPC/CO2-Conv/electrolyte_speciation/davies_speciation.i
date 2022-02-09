@@ -229,6 +229,13 @@
 []
 
 [AuxVariables]
+  # Cs concentration (0.1 M added as CsHCO3)
+  [./C_Cs]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 1e-4 # mol/cm^3
+  [../]
+
   # activity coeff for z=0
   [./gamma0]
       order = CONSTANT
@@ -601,6 +608,15 @@
 []
 
 [AuxKernels]
+  [./calc_ions]
+    type = IonicStrength
+    variable = ion_str
+    conversion_factor = 1000 # cm^3/L
+    ion_conc = 'C_H C_OH C_HCO3 C_CO3 C_HCOO C_Cs'
+    ion_valence = '1 1 1 2 1 1'
+    execute_on = 'initial timestep_end'
+  [../]
+
   [./calc_gamma0]
     type = DaviesActivityCoeff
     variable = gamma0
@@ -717,6 +733,12 @@
   [./gamma2]
       type = ElementAverageValue
       variable = gamma2
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./ion_str]
+      type = ElementAverageValue
+      variable = ion_str
       execute_on = 'initial timestep_end'
   [../]
 []
