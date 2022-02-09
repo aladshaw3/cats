@@ -233,21 +233,36 @@
   [./gamma0]
       order = CONSTANT
       family = MONOMIAL
-      initial_condition = 1
+      [./InitialCondition]
+          type = InitialDaviesActivityCoeff
+          temperature = 298
+          ionic_strength = ion_str
+          ion_valence = 0
+      [../]
   [../]
 
   # activity coeff for z=1
   [./gamma1]
       order = CONSTANT
       family = MONOMIAL
-      initial_condition = 1
+      [./InitialCondition]
+          type = InitialDaviesActivityCoeff
+          temperature = 298
+          ionic_strength = ion_str
+          ion_valence = 1
+      [../]
   [../]
 
   # activity coeff for z=2
   [./gamma2]
       order = CONSTANT
       family = MONOMIAL
-      initial_condition = 1
+      [./InitialCondition]
+          type = InitialDaviesActivityCoeff
+          temperature = 298
+          ionic_strength = ion_str
+          ion_valence = 2
+      [../]
   [../]
 
   # ref conc
