@@ -283,7 +283,12 @@
   [./ion_str]
       order = CONSTANT
       family = MONOMIAL
-      initial_condition = 0.1 # M
+      [./InitialCondition]
+          type = InitialIonicStrength
+          conversion_factor = 1000 # cm^3/L
+          ion_conc = 'C_H C_OH C_HCO3 C_CO3 C_HCOO C_Cs'
+          ion_valence = '1 1 1 2 1 1'
+      [../]
   [../]
 []
 
