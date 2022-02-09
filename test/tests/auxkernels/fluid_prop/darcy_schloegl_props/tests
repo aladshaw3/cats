@@ -1,7 +1,7 @@
 [Tests]
   [./darcy_schloegl_flow]
-    type = 'Exodiff'
+    type = 'CSVDiff'
     input = 'darcy_schloegl.i'
-    exodiff = 'darcy_schloegl_out.e'
+    csvdiff = 'darcy_schloegl_out.csv'
   [../]
 []

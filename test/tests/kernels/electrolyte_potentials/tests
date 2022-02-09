@@ -1,7 +1,7 @@
 [Tests]
   [./coupled_electrolyte_potentials]
-    type = 'Exodiff'
+    type = 'CSVDiff'
     input = 'coupled_e_potentials_with_current.i'
-    exodiff = 'coupled_e_potentials_with_current_out.e'
+    csvdiff = 'coupled_e_potentials_with_current_out.csv'
   [../]
 []

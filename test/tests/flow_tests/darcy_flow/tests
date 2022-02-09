@@ -1,8 +1,8 @@
 [Tests]
   [./basic_darcy_flow]
-    type = Exodiff
+    type = CSVDiff
     input = darcy_flow.i
-    exodiff = darcy_flow_out.e
+    csvdiff = darcy_flow_out.csv
     rel_err = 1e-4
   [../]
 []
