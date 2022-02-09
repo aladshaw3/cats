@@ -1,0 +1,7 @@
+[Tests]
+  [./davies_activity]
+    type = 'CSVDiff'
+    input = 'davies_test.i'
+    csvdiff = 'davies_test_out.csv'
+  [../]
+[]
