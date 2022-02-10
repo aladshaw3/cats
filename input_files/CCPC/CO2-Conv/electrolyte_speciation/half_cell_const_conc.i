@@ -15,6 +15,14 @@
 #
 
 [GlobalParams]
+    # In the literature, it is not clear what the conductivity of the solution
+    # is, so I am providing a 'background' level based on different water sources.
+    # Ultimately, the only one that has any appreciable effect is the conductivity
+    # of seawater, which is also probably the least realistic for this what-if case.
+
+    #min_conductivity = 3.0E-6  # C/V/cm/min (typical background of DI water)
+    min_conductivity = 0.03    # C/V/cm/min (typical background of tap water)
+    #min_conductivity = 3       # C/V/cm/min (typical background of seawater)
 
 [] #END GlobalParams
 
@@ -26,7 +34,7 @@
     type = GeneratedMesh
     dim = 2
     nx = 5
-    ny = 10
+    ny = 25
     xmin = 0.0
     xmax = 0.4   # cm
     ymin = 0.0
@@ -38,14 +46,14 @@
   [./phi_e]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0
+      initial_condition = 1.4
   [../]
 
   # electrode potential (in V or J/C)
   [./phi_s]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0
+      initial_condition = 1.4
   [../]
 
   # -------- Butler-Volmer reaction rates ------------
@@ -96,6 +104,144 @@
           electron_transfer_coef = 0.35   # fitted param
       [../]
   [../]
+  # HCOO- + OH- <----> CO2 + H2O + 2 e-
+  [./r_HCOO]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialModifiedButlerVolmerReaction
+
+          reaction_rate_const = 2.226E-12    # mol/cm^2/min
+          equilibrium_potential = -0.02         # V
+
+          reduced_state_vars = 'a_HCOO'        # assumed
+          reduced_state_stoich = '1'         # assumed
+
+          oxidized_state_vars = 'a_H a_CO2'
+          oxidized_state_stoich = '0.6774 2'  # fitted param
+
+          electric_potential_difference = phi_diff
+
+          temperature = T_e
+          number_of_electrons = 1         # params are fitted to this standard
+          electron_transfer_coef = 0.43   # fitted param
+      [../]
+  [../]
+  # C2H4 + 8 OH- <----> CO2 + 6 H2O + 8 e-
+  [./r_C2H4]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialModifiedButlerVolmerReaction
+
+          reaction_rate_const = 3.203E-18    # mol/cm^2/min
+          equilibrium_potential = 0.07         # V
+
+          reduced_state_vars = 'a_C2H4'        # assumed
+          reduced_state_stoich = '1'         # assumed
+
+          oxidized_state_vars = 'a_CO2'
+          oxidized_state_stoich = '1.36'  # fitted param
+
+          electric_potential_difference = phi_diff
+
+          temperature = T_e
+          number_of_electrons = 1         # params are fitted to this standard
+          electron_transfer_coef = 0.41   # fitted param
+      [../]
+  [../]
+  # C2H5OH + 12 OH- <----> 2 CO2 + 9 H2O + 12 e-
+  [./r_C2H5OH]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialModifiedButlerVolmerReaction
+
+          reaction_rate_const = 5.267E-19    # mol/cm^2/min
+          equilibrium_potential = 0.08         # V
+
+          reduced_state_vars = 'a_C2H5OH'        # assumed
+          reduced_state_stoich = '1'         # assumed
+
+          oxidized_state_vars = 'a_CO2'
+          oxidized_state_stoich = '0.96'  # fitted param
+
+          electric_potential_difference = phi_diff
+
+          temperature = T_e
+          number_of_electrons = 1         # params are fitted to this standard
+          electron_transfer_coef = 0.43   # fitted param
+      [../]
+  [../]
+  # C3H7OH + 18 OH- <----> 3 CO2 + 13 H2O + 18 e-
+  [./r_C3H7OH]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialModifiedButlerVolmerReaction
+
+          reaction_rate_const = 6.048E-19    # mol/cm^2/min
+          equilibrium_potential = 0.09         # V
+
+          reduced_state_vars = 'a_C3H7OH'        # assumed
+          reduced_state_stoich = '1'         # assumed
+
+          oxidized_state_vars = 'a_CO2'
+          oxidized_state_stoich = '0.96'  # fitted param
+
+          electric_potential_difference = phi_diff
+
+          temperature = T_e
+          number_of_electrons = 1         # params are fitted to this standard
+          electron_transfer_coef = 0.40   # fitted param
+      [../]
+  [../]
+  # C3H6O + 16 OH- <----> 3 CO2 + 11 H2O + 16 e-
+  [./r_C3H6O]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialModifiedButlerVolmerReaction
+
+          reaction_rate_const = 2.089E-21    # mol/cm^2/min
+          equilibrium_potential = 0.05         # V
+
+          reduced_state_vars = 'a_C3H6O'        # assumed
+          reduced_state_stoich = '1'         # assumed
+
+          oxidized_state_vars = 'a_CO2'
+          oxidized_state_stoich = '0.96'  # fitted param
+
+          electric_potential_difference = phi_diff
+
+          temperature = T_e
+          number_of_electrons = 1         # params are fitted to this standard
+          electron_transfer_coef = 0.49   # fitted param
+      [../]
+  [../]
+  # CH4 + 8 OH- <----> CO2 + 6 H2O + 8 e-
+  [./r_CH4]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialModifiedButlerVolmerReaction
+
+          reaction_rate_const = 2.519E-24    # mol/cm^2/min
+          equilibrium_potential = 0.17         # V
+
+          reduced_state_vars = 'a_CH4'        # assumed
+          reduced_state_stoich = '1'         # assumed
+
+          oxidized_state_vars = 'a_H a_CO2'
+          oxidized_state_stoich = '0.6774 0.84'  # fitted param
+
+          electric_potential_difference = phi_diff
+
+          temperature = T_e
+          number_of_electrons = 1         # params are fitted to this standard
+          electron_transfer_coef = 0.84   # fitted param
+      [../]
+  [../]
 
   # ------------- Butler-Volmer current densities ---------
   [./J_H2]
@@ -118,6 +264,72 @@
           number_of_electrons = 1       # params are fitted to this standard
           specific_area = As
           rate_var = r_CO
+      [../]
+  [../]
+  [./J_HCOO]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialButlerVolmerCurrentDensity
+
+          number_of_electrons = 1       # params are fitted to this standard
+          specific_area = As
+          rate_var = r_HCOO
+      [../]
+  [../]
+  [./J_C2H4]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialButlerVolmerCurrentDensity
+
+          number_of_electrons = 1       # params are fitted to this standard
+          specific_area = As
+          rate_var = r_C2H4
+      [../]
+  [../]
+  [./J_C2H5OH]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialButlerVolmerCurrentDensity
+
+          number_of_electrons = 1       # params are fitted to this standard
+          specific_area = As
+          rate_var = r_C2H5OH
+      [../]
+  [../]
+  [./J_C3H7OH]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialButlerVolmerCurrentDensity
+
+          number_of_electrons = 1       # params are fitted to this standard
+          specific_area = As
+          rate_var = r_C3H7OH
+      [../]
+  [../]
+  [./J_C3H6O]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialButlerVolmerCurrentDensity
+
+          number_of_electrons = 1       # params are fitted to this standard
+          specific_area = As
+          rate_var = r_C3H6O
+      [../]
+  [../]
+  [./J_CH4]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialButlerVolmerCurrentDensity
+
+          number_of_electrons = 1       # params are fitted to this standard
+          specific_area = As
+          rate_var = r_CH4
       [../]
   [../]
 
@@ -573,6 +785,84 @@
       rate_var = r_CO
   [../]
 
+  [./J_HCOO_equ]
+      type = Reaction
+      variable = J_HCOO
+  [../]
+  [./J_HCOO_rxn]  # HCOO- + OH- <----> CO2 + H2O + 2 e-
+      type = ButlerVolmerCurrentDensity
+      variable = J_HCOO
+
+      number_of_electrons = 1  # params are fitted to this standard
+      specific_area = As
+      rate_var = r_HCOO
+  [../]
+
+  [./J_C2H4_equ]
+      type = Reaction
+      variable = J_C2H4
+  [../]
+  [./J_C2H4_rxn]  # C2H4 + 8 OH- <----> CO2 + 6 H2O + 8 e-
+      type = ButlerVolmerCurrentDensity
+      variable = J_C2H4
+
+      number_of_electrons = 1  # params are fitted to this standard
+      specific_area = As
+      rate_var = r_C2H4
+  [../]
+
+  [./J_C2H5OH_equ]
+      type = Reaction
+      variable = J_C2H5OH
+  [../]
+  [./J_C2H5OH_rxn]  # C2H5OH + 12 OH- <----> 2 CO2 + 9 H2O + 12 e-
+      type = ButlerVolmerCurrentDensity
+      variable = J_C2H5OH
+
+      number_of_electrons = 1  # params are fitted to this standard
+      specific_area = As
+      rate_var = r_C2H5OH
+  [../]
+
+  [./J_C3H7OH_equ]
+      type = Reaction
+      variable = J_C3H7OH
+  [../]
+  [./J_C3H7OH_rxn]  # C3H7OH + 18 OH- <----> 3 CO2 + 13 H2O + 18 e-
+      type = ButlerVolmerCurrentDensity
+      variable = J_C3H7OH
+
+      number_of_electrons = 1  # params are fitted to this standard
+      specific_area = As
+      rate_var = r_C3H7OH
+  [../]
+
+  [./J_C3H6O_equ]
+      type = Reaction
+      variable = J_C3H6O
+  [../]
+  [./J_C3H6O_rxn]  # C3H6O + 16 OH- <----> 3 CO2 + 11 H2O + 16 e-
+      type = ButlerVolmerCurrentDensity
+      variable = J_C3H6O
+
+      number_of_electrons = 1  # params are fitted to this standard
+      specific_area = As
+      rate_var = r_C3H6O
+  [../]
+
+  [./J_CH4_equ]
+      type = Reaction
+      variable = J_CH4
+  [../]
+  [./J_CH4_rxn]  # CH4 + 8 OH- <----> CO2 + 6 H2O + 8 e-
+      type = ButlerVolmerCurrentDensity
+      variable = J_CH4
+
+      number_of_electrons = 1  # params are fitted to this standard
+      specific_area = As
+      rate_var = r_CH4
+  [../]
+
   ## =============== Potential Difference ==================
   [./phi_diff_equ]
       type = Reaction
@@ -607,8 +897,8 @@
   [./phi_e_J_H2]
       type = ScaledWeightedCoupledSumFunction
       variable = phi_e
-      coupled_list = 'J_H2 J_CO'
-      weights = '1 1'
+      coupled_list = 'J_H2 J_CO J_HCOO J_C2H4 J_C2H5OH J_C3H7OH J_C3H6O J_CH4'
+      weights = '1 1 1 1 1 1 1 1'
   [../]
 
   ### ==================== Electrode Potentials ==========================
@@ -622,8 +912,8 @@
   [./phi_s_J_H2]
       type = ScaledWeightedCoupledSumFunction
       variable = phi_s
-      coupled_list = 'J_H2 J_CO'
-      weights = '-1 -1'
+      coupled_list = 'J_H2 J_CO J_HCOO J_C2H4 J_C2H5OH J_C3H7OH J_C3H6O J_CH4'
+      weights = '-1 -1 -1 -1 -1 -1 -1 -1'
   [../]
 
   ## =============== Butler-Volmer Kinetics ================
@@ -673,6 +963,150 @@
       temperature = T_e
       number_of_electrons = 1         # params are fitted to this standard
       electron_transfer_coef = 0.35   # fitted param
+  [../]
+
+  [./r_HCOO_equ]
+      type = Reaction
+      variable = r_HCOO
+  [../]
+  [./r_HCOO_rxn]  # HCOO- + OH- <----> CO2 + H2O + 2 e-
+      type = ModifiedButlerVolmerReaction
+      variable = r_HCOO
+
+      reaction_rate_const = 2.226E-12    # mol/cm^2/min
+      equilibrium_potential = -0.02         # V
+
+      reduced_state_vars = 'a_HCOO'        # assumed
+      reduced_state_stoich = '1'         # assumed
+
+      oxidized_state_vars = 'a_H a_CO2'
+      oxidized_state_stoich = '0.6774 2'  # fitted param
+
+      electric_potential_difference = phi_diff
+
+      temperature = T_e
+      number_of_electrons = 1         # params are fitted to this standard
+      electron_transfer_coef = 0.43   # fitted param
+  [../]
+
+  [./r_C2H4_equ]
+      type = Reaction
+      variable = r_C2H4
+  [../]
+  [./r_C2H4_rxn]  # C2H4 + 8 OH- <----> CO2 + 6 H2O + 8 e-
+      type = ModifiedButlerVolmerReaction
+      variable = r_C2H4
+
+      reaction_rate_const = 3.203E-18    # mol/cm^2/min
+      equilibrium_potential = 0.07         # V
+
+      reduced_state_vars = 'a_C2H4'        # assumed
+      reduced_state_stoich = '1'         # assumed
+
+      oxidized_state_vars = 'a_CO2'
+      oxidized_state_stoich = '1.36'  # fitted param
+
+      electric_potential_difference = phi_diff
+
+      temperature = T_e
+      number_of_electrons = 1         # params are fitted to this standard
+      electron_transfer_coef = 0.41   # fitted param
+  [../]
+
+  [./r_C2H5OH_equ]
+      type = Reaction
+      variable = r_C2H5OH
+  [../]
+  [./r_C2H5OH_rxn]  # C2H5OH + 12 OH- <----> 2 CO2 + 9 H2O + 12 e-
+      type = ModifiedButlerVolmerReaction
+      variable = r_C2H5OH
+
+      reaction_rate_const = 5.267E-19    # mol/cm^2/min
+      equilibrium_potential = 0.08         # V
+
+      reduced_state_vars = 'a_C2H5OH'        # assumed
+      reduced_state_stoich = '1'         # assumed
+
+      oxidized_state_vars = 'a_CO2'
+      oxidized_state_stoich = '0.96'  # fitted param
+
+      electric_potential_difference = phi_diff
+
+      temperature = T_e
+      number_of_electrons = 1         # params are fitted to this standard
+      electron_transfer_coef = 0.43   # fitted param
+  [../]
+
+  [./r_C3H7OH_equ]
+      type = Reaction
+      variable = r_C3H7OH
+  [../]
+  [./r_C3H7OH_rxn]  # C3H7OH + 18 OH- <----> 3 CO2 + 13 H2O + 18 e-
+      type = ModifiedButlerVolmerReaction
+      variable = r_C3H7OH
+
+      reaction_rate_const = 6.048E-19    # mol/cm^2/min
+      equilibrium_potential = 0.09         # V
+
+      reduced_state_vars = 'a_C3H7OH'        # assumed
+      reduced_state_stoich = '1'         # assumed
+
+      oxidized_state_vars = 'a_CO2'
+      oxidized_state_stoich = '0.96'  # fitted param
+
+      electric_potential_difference = phi_diff
+
+      temperature = T_e
+      number_of_electrons = 1         # params are fitted to this standard
+      electron_transfer_coef = 0.40   # fitted param
+  [../]
+
+  [./r_C3H6O_equ]
+      type = Reaction
+      variable = r_C3H6O
+  [../]
+  [./r_C3H6O_rxn]  # C3H6O + 16 OH- <----> 3 CO2 + 11 H2O + 16 e-
+      type = ModifiedButlerVolmerReaction
+      variable = r_C3H6O
+
+      reaction_rate_const = 2.089E-21    # mol/cm^2/min
+      equilibrium_potential = 0.05         # V
+
+      reduced_state_vars = 'a_C3H6O'        # assumed
+      reduced_state_stoich = '1'         # assumed
+
+      oxidized_state_vars = 'a_CO2'
+      oxidized_state_stoich = '0.96'  # fitted param
+
+      electric_potential_difference = phi_diff
+
+      temperature = T_e
+      number_of_electrons = 1         # params are fitted to this standard
+      electron_transfer_coef = 0.49   # fitted param
+  [../]
+
+  [./r_CH4_equ]
+      type = Reaction
+      variable = r_CH4
+  [../]
+  [./r_CH4_rxn]  # CH4 + 8 OH- <----> CO2 + 6 H2O + 8 e-
+      type = ModifiedButlerVolmerReaction
+      variable = r_CH4
+
+      reaction_rate_const = 2.519E-24    # mol/cm^2/min
+      equilibrium_potential = 0.17         # V
+
+      reduced_state_vars = 'a_CH4'        # assumed
+      reduced_state_stoich = '1'         # assumed
+
+      oxidized_state_vars = 'a_H a_CO2'
+      oxidized_state_stoich = '0.6774 0.84'  # fitted param
+
+      electric_potential_difference = phi_diff
+
+      temperature = T_e
+      number_of_electrons = 1         # params are fitted to this standard
+      electron_transfer_coef = 0.84   # fitted param
   [../]
 
 []
@@ -767,7 +1201,7 @@
       type = FunctionDirichletBC
       variable = phi_s
       boundary = 'left'
-      function = '-1.4'
+      function = '1.4'
   [../]
   # 'membrane side'
   [./phi_s_right]
@@ -788,6 +1222,42 @@
   [./r_CO_avg]
       type = ElementAverageValue
       variable = r_CO
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./J_H2_avg]
+      type = ElementAverageValue
+      variable = J_H2
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./r_H2_avg]
+      type = ElementAverageValue
+      variable = r_H2
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./J_HCOO_avg]
+      type = ElementAverageValue
+      variable = J_HCOO
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./r_HCOO_avg]
+      type = ElementAverageValue
+      variable = r_HCOO
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./J_C2H4_avg]
+      type = ElementAverageValue
+      variable = J_C2H4
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./r_C2H4_avg]
+      type = ElementAverageValue
+      variable = r_C2H4
       execute_on = 'initial timestep_end'
   [../]
 
@@ -910,7 +1380,7 @@
                          NONZERO
                          NONZERO
 
-                         10
+                         20
 
                          1E-12
                          1E-12
