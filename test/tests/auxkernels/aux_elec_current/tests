@@ -3,5 +3,6 @@
     type = 'CSVDiff'
     input = 'current_test.i'
     csvdiff = 'current_test_out.csv'
+    rel_err = 1e-4
   [../]
 []
