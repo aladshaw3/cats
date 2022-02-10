@@ -63,6 +63,8 @@ InputParameters ElectrolyteCurrentFromPotentialGradient::validParams()
     params.addRequiredCoupledVar("ion_conc","List of names of the ion concentration variables (mol/L^3)");
     params.addRequiredCoupledVar("diffusion","List of names of the diffusion variables (L^2/T)");
     params.addParam< std::vector<Real> >("ion_valence","List of valences for coupled ion concentrations");
+
+    params.addParam<Real>("min_conductivity",0, "Minimum/background value of conductivity of the media");
     return params;
 }
 
@@ -80,8 +82,8 @@ _temp_var(coupled("temperature")),
 _faraday(getParam<Real>("faraday_const")),
 _gas_const(getParam<Real>("gas_const")),
 
-_valence(getParam<std::vector<Real> >("ion_valence"))
-
+_valence(getParam<std::vector<Real> >("ion_valence")),
+_min_conductivity(getParam<Real>("min_conductivity"))
 {
     if (_dir > 2 || _dir < 0)
     {
@@ -128,6 +130,9 @@ _valence(getParam<std::vector<Real> >("ion_valence"))
         _diffusion_vars[i] = coupled("diffusion",i);
         _diffusion[i] = &coupledValue("diffusion",i);
     }
+
+    if (_min_conductivity < 0.0)
+        _min_conductivity = 0.0;
 }
 
 Real ElectrolyteCurrentFromPotentialGradient::sum_ion_terms()
@@ -142,7 +147,7 @@ Real ElectrolyteCurrentFromPotentialGradient::sum_ion_terms()
 
 Real ElectrolyteCurrentFromPotentialGradient::effective_ionic_conductivity()
 {
-    return (_faraday*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*sum_ion_terms();
+    return ((_faraday*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*sum_ion_terms()) + _min_conductivity;
 }
 
 Real ElectrolyteCurrentFromPotentialGradient::computeQpResidual()

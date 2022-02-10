@@ -103,6 +103,8 @@ protected:
 
   std::vector<Real> _valence;                             ///< Valence list for corresponding ions
 
+  Real _min_conductivity;                                 ///< Minimum allowable value for conductivity (based on sum of ions)
+
 private:
 
 };

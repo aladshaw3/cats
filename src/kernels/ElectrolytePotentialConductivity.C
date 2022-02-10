@@ -59,7 +59,7 @@ InputParameters ElectrolytePotentialConductivity::validParams()
     params.addRequiredCoupledVar("diffusion","List of names of the diffusion variables (L^2/T)");
     params.addParam< std::vector<Real> >("ion_valence","List of valences for coupled ion concentrations");
 
-    params.addParam<Real>("min_conductivity",1e-30, "Minimum value of conductivity to prevent zero diagonals in Jacobians");
+    params.addParam<Real>("min_conductivity",1e-30, "Minimum/background value of conductivity of the media");
 
     params.addParam<bool>("tight_coupling",true, "True = use tight coupling of ion concentrations");
     return params;
@@ -130,12 +130,12 @@ Real ElectrolytePotentialConductivity::sum_ion_terms()
     {
         sum = sum + _valence[i]*_valence[i]*(*_diffusion[i])[_qp]*(*_ion_conc[i])[_qp];
     }
-    return sum + _min_conductivity;
+    return sum;
 }
 
 Real ElectrolytePotentialConductivity::effective_ionic_conductivity()
 {
-    return (_faraday*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*sum_ion_terms();
+    return ((_faraday*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*sum_ion_terms()) + _min_conductivity;
 }
 
 Real ElectrolytePotentialConductivity::computeQpResidual()
