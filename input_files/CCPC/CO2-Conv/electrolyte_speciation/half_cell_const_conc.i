@@ -48,7 +48,7 @@
       initial_condition = 0
   [../]
 
-  # Butler-Volmer reaction rate
+  # -------- Butler-Volmer reaction rates ------------
   # reduced_state <----> oxidized_state
   # H2 + OH- <----> 2 H2O + 2 e-
   [./r_H2]
@@ -73,8 +73,31 @@
           electron_transfer_coef = 0.14   # fitted param
       [../]
   [../]
+  # CO + 2 OH- <----> CO2 + H2O + 2 e-
+  [./r_CO]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialModifiedButlerVolmerReaction
 
-  # Butler-Volmer current density
+          reaction_rate_const = 1.250E-9    # mol/cm^2/min
+          equilibrium_potential = -0.11         # V
+
+          reduced_state_vars = 'a_CO'        # assumed
+          reduced_state_stoich = '1'         # assumed
+
+          oxidized_state_vars = 'a_H a_CO2'
+          oxidized_state_stoich = '0.6774 1.5'  # fitted param
+
+          electric_potential_difference = phi_diff
+
+          temperature = T_e
+          number_of_electrons = 1         # params are fitted to this standard
+          electron_transfer_coef = 0.35   # fitted param
+      [../]
+  [../]
+
+  # ------------- Butler-Volmer current densities ---------
   [./J_H2]
       order = CONSTANT
       family = MONOMIAL
@@ -84,6 +107,17 @@
           number_of_electrons = 1       # params are fitted to this standard
           specific_area = As
           rate_var = r_H2
+      [../]
+  [../]
+  [./J_CO]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialButlerVolmerCurrentDensity
+
+          number_of_electrons = 1       # params are fitted to this standard
+          specific_area = As
+          rate_var = r_CO
       [../]
   [../]
 
@@ -526,6 +560,19 @@
       rate_var = r_H2
   [../]
 
+  [./J_CO_equ]
+      type = Reaction
+      variable = J_CO
+  [../]
+  [./J_CO_rxn]  # CO + 2 OH- <----> CO2 + H2O + 2 e-
+      type = ButlerVolmerCurrentDensity
+      variable = J_CO
+
+      number_of_electrons = 1  # params are fitted to this standard
+      specific_area = As
+      rate_var = r_CO
+  [../]
+
   ## =============== Potential Difference ==================
   [./phi_diff_equ]
       type = Reaction
@@ -560,8 +607,8 @@
   [./phi_e_J_H2]
       type = ScaledWeightedCoupledSumFunction
       variable = phi_e
-      coupled_list = 'J_H2'
-      weights = '1'
+      coupled_list = 'J_H2 J_CO'
+      weights = '1 1'
   [../]
 
   ### ==================== Electrode Potentials ==========================
@@ -575,8 +622,8 @@
   [./phi_s_J_H2]
       type = ScaledWeightedCoupledSumFunction
       variable = phi_s
-      coupled_list = 'J_H2'
-      weights = '-1'
+      coupled_list = 'J_H2 J_CO'
+      weights = '-1 -1'
   [../]
 
   ## =============== Butler-Volmer Kinetics ================
@@ -602,6 +649,30 @@
       temperature = T_e
       number_of_electrons = 1         # params are fitted to this standard
       electron_transfer_coef = 0.14   # fitted param
+  [../]
+
+  [./r_CO_equ]
+      type = Reaction
+      variable = r_CO
+  [../]
+  [./r_CO_rxn]  # CO + 2 OH- <----> CO2 + H2O + 2 e-
+      type = ModifiedButlerVolmerReaction
+      variable = r_CO
+
+      reaction_rate_const = 1.250E-9    # mol/cm^2/min
+      equilibrium_potential = -0.11         # V
+
+      reduced_state_vars = 'a_CO'        # assumed
+      reduced_state_stoich = '1'         # assumed
+
+      oxidized_state_vars = 'a_H a_CO2'
+      oxidized_state_stoich = '0.6774 1.5'  # fitted param
+
+      electric_potential_difference = phi_diff
+
+      temperature = T_e
+      number_of_electrons = 1         # params are fitted to this standard
+      electron_transfer_coef = 0.35   # fitted param
   [../]
 
 []
@@ -708,15 +779,15 @@
 []
 
 [Postprocessors]
-  [./J_H2_avg]
+  [./J_CO_avg]
       type = ElementAverageValue
-      variable = J_H2
+      variable = J_CO
       execute_on = 'initial timestep_end'
   [../]
 
-  [./r_H2_avg]
+  [./r_CO_avg]
       type = ElementAverageValue
-      variable = r_H2
+      variable = r_CO
       execute_on = 'initial timestep_end'
   [../]
 
@@ -841,8 +912,8 @@
 
                          10
 
-                         1E-8
-                         1E-8
+                         1E-12
+                         1E-12
 
                          fgmres
                          ilu
