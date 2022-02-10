@@ -1,7 +1,7 @@
 [Tests]
   [./aux_current_calc]
-    type = 'Exodiff'
+    type = 'CSVDiff'
     input = 'current_test.i'
-    exodiff = 'current_test_out.e'
+    csvdiff = 'current_test_out.csv'
   [../]
 []
