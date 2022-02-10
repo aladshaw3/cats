@@ -431,6 +431,34 @@
       [../]
   [../]
 
+  # Electrolyte current density in x (C/cm^2/min)
+  [./ie_x]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
+
+  # Electrolyte current density in y (C/cm^2/min)
+  [./ie_y]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
+
+  # electrode current density in x (C/cm^2/min)
+  [./is_x]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
+
+  # electrode current density in y (C/cm^2/min)
+  [./is_y]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
+
   # electrolyte temperature
   [./T_e]
       order = FIRST
@@ -596,6 +624,50 @@
         type = SolidsVolumeFraction
         variable = sol_vol_frac
         porosity = eps
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./ie_x_calc]
+        type = AuxElectrolyteCurrent
+        variable = ie_x
+        direction = 0         # 0=x
+        electric_potential = phi_e
+        porosity = eps
+        temperature = T_e
+        ion_conc = 'C_H C_Cs'
+        diffusion = 'D_H D_Cs'
+        ion_valence = '1 1'
+        execute_on = 'initial timestep_end'
+    [../]
+    [./ie_y_calc]
+        type = AuxElectrolyteCurrent
+        variable = ie_y
+        direction = 1         # 0=x
+        electric_potential = phi_e
+        porosity = eps
+        temperature = T_e
+        ion_conc = 'C_H C_Cs'
+        diffusion = 'D_H D_Cs'
+        ion_valence = '1 1'
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./is_x_calc]
+        type = AuxElectrodeCurrent
+        variable = is_x
+        direction = 0         # 0=x
+        electric_potential = phi_s
+        solid_frac = sol_vol_frac
+        conductivity = sigma_s
+        execute_on = 'initial timestep_end'
+    [../]
+    [./is_y_calc]
+        type = AuxElectrodeCurrent
+        variable = is_y
+        direction = 1         # 0=x
+        electric_potential = phi_s
+        solid_frac = sol_vol_frac
+        conductivity = sigma_s
         execute_on = 'initial timestep_end'
     [../]
 []
