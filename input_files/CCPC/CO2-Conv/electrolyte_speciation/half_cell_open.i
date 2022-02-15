@@ -2,11 +2,15 @@
 # -------------------------------------
 #   Simulated conversion of CO2 to other
 #   products in a closed box with no
-#   transport kernels active for concentration
+#   inlets or outlets defined for any
 #   species. The concentrations will simply
 #   vary in time according to their reaction
 #   rates and the applied potential/current
 #   into the box.
+#
+#   NOTE: Using DG methods is computationally expensive
+#         given the number of chemical species considered.
+#         Should we try to just use CG methods instead?
 #
 #
 # Literature reference for parameters:
@@ -819,6 +823,27 @@
       family = MONOMIAL
       initial_condition = 0 # C/V/cm/min
   [../]
+
+  # Darcy velocity in x (cm/min)
+  [./vel_x]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
+
+  # Darcy velocity in y (cm/min)
+  [./vel_y]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.25
+  [../]
+
+  # Darcy velocity in z (cm/min)
+  [./vel_z]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
 []
 
 [Kernels]
@@ -1325,6 +1350,36 @@
       scale = eps
   [../]
 
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./H_gadv]
+      type = GPoreConcAdvection
+      variable = C_H
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./H_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_H
+      porosity = eps
+      Dx = D_H
+      Dy = D_H
+      Dz = D_H
+  [../]
+  [./H_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_H
+      valence = 1
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_H
+      Dy = D_H
+      Dz = D_H
+  [../]
+
   ## ============= OH- balance ==============
   [./OH_dot]
       type = VariableCoefTimeDerivative
@@ -1344,6 +1399,36 @@
       coupled_list = 'r_H2 r_CO r_HCOO r_CH4 r_C2H4 r_C2H5OH r_C3H7OH r_C3H6O'
       weights = '-1 -2 -1 -8 -12 -12 -18 -16'
       scale = As
+  [../]
+
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./OH_gadv]
+      type = GPoreConcAdvection
+      variable = C_OH
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./OH_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_OH
+      porosity = eps
+      Dx = D_OH
+      Dy = D_OH
+      Dz = D_OH
+  [../]
+  [./OH_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_OH
+      valence = -1
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_OH
+      Dy = D_OH
+      Dz = D_OH
   [../]
 
   ## ============= CO2 balance ==============
@@ -1367,6 +1452,25 @@
       scale = As
   [../]
 
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./CO2_gadv]
+      type = GPoreConcAdvection
+      variable = C_CO2
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./CO2_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_CO2
+      porosity = eps
+      Dx = D_CO2
+      Dy = D_CO2
+      Dz = D_CO2
+  [../]
+
   ## ============= HCO3 balance ==============
   [./HCO3_dot]
       type = VariableCoefTimeDerivative
@@ -1379,6 +1483,36 @@
       coupled_list = 'r_1 r_2 r_3 r_4'
       weights = '1 -1 1 -1'
       scale = eps
+  [../]
+
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./HCO3_gadv]
+      type = GPoreConcAdvection
+      variable = C_HCO3
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./HCO3_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_HCO3
+      porosity = eps
+      Dx = D_HCO3
+      Dy = D_HCO3
+      Dz = D_HCO3
+  [../]
+  [./HCO3_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_HCO3
+      valence = -1
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_HCO3
+      Dy = D_HCO3
+      Dz = D_HCO3
   [../]
 
   ## ============= CO3 balance ==============
@@ -1395,6 +1529,36 @@
       scale = eps
   [../]
 
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./CO3_gadv]
+      type = GPoreConcAdvection
+      variable = C_CO3
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./CO3_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_CO3
+      porosity = eps
+      Dx = D_CO3
+      Dy = D_CO3
+      Dz = D_CO3
+  [../]
+  [./CO3_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_CO3
+      valence = -2
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_CO3
+      Dy = D_CO3
+      Dz = D_CO3
+  [../]
+
   ## ============= HCOOH balance ==============
   [./HCOOH_dot]
       type = VariableCoefTimeDerivative
@@ -1407,6 +1571,25 @@
       coupled_list = 'r_5'
       weights = '-1'
       scale = eps
+  [../]
+
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./HCOOH_gadv]
+      type = GPoreConcAdvection
+      variable = C_HCOOH
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./HCOOH_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_HCOOH
+      porosity = eps
+      Dx = D_HCOOH
+      Dy = D_HCOOH
+      Dz = D_HCOOH
   [../]
 
   ## ============= HCOO balance ==============
@@ -1430,6 +1613,36 @@
       scale = As
   [../]
 
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./HCOO_gadv]
+      type = GPoreConcAdvection
+      variable = C_HCOO
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./HCOO_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_HCOO
+      porosity = eps
+      Dx = D_HCOO
+      Dy = D_HCOO
+      Dz = D_HCOO
+  [../]
+  [./HCOO_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_HCOO
+      valence = -1
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_HCOO
+      Dy = D_HCOO
+      Dz = D_HCOO
+  [../]
+
   ## ============= Cs balance ==============
   [./Cs_dot]
       type = VariableCoefTimeDerivative
@@ -1442,6 +1655,36 @@
       coupled_list = ''
       weights = ''
       scale = eps
+  [../]
+
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./Cs_gadv]
+      type = GPoreConcAdvection
+      variable = C_Cs
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./Cs_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_Cs
+      porosity = eps
+      Dx = D_Cs
+      Dy = D_Cs
+      Dz = D_Cs
+  [../]
+  [./Cs_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_Cs
+      valence = 1
+      porosity = eps
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_Cs
+      Dy = D_Cs
+      Dz = D_Cs
   [../]
 
   ## ============= H2 balance ==============
@@ -1465,6 +1708,25 @@
       scale = As
   [../]
 
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./H2_gadv]
+      type = GPoreConcAdvection
+      variable = C_H2
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./H2_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_H2
+      porosity = eps
+      Dx = D_H2
+      Dy = D_H2
+      Dz = D_H2
+  [../]
+
   ## ============= CO balance ==============
   [./CO_dot]
       type = VariableCoefTimeDerivative
@@ -1484,6 +1746,25 @@
       coupled_list = 'r_CO'
       weights = '-1'
       scale = As
+  [../]
+
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./CO_gadv]
+      type = GPoreConcAdvection
+      variable = C_CO
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./CO_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_CO
+      porosity = eps
+      Dx = D_CO
+      Dy = D_CO
+      Dz = D_CO
   [../]
 
   ## ============= CH4 balance ==============
@@ -1507,6 +1788,25 @@
       scale = As
   [../]
 
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./CH4_gadv]
+      type = GPoreConcAdvection
+      variable = C_CH4
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./CH4_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_CH4
+      porosity = eps
+      Dx = D_CH4
+      Dy = D_CH4
+      Dz = D_CH4
+  [../]
+
   ## ============= C2H4 balance ==============
   [./C2H4_dot]
       type = VariableCoefTimeDerivative
@@ -1526,6 +1826,25 @@
       coupled_list = 'r_C2H4'
       weights = '-1'
       scale = As
+  [../]
+
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./C2H4_gadv]
+      type = GPoreConcAdvection
+      variable = C_C2H4
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./C2H4_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_C2H4
+      porosity = eps
+      Dx = D_C2H4
+      Dy = D_C2H4
+      Dz = D_C2H4
   [../]
 
   ## ============= C2H5OH balance ==============
@@ -1549,6 +1868,25 @@
       scale = As
   [../]
 
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./C2H5OH_gadv]
+      type = GPoreConcAdvection
+      variable = C_C2H5OH
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./C2H5OH_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_C2H5OH
+      porosity = eps
+      Dx = D_C2H5OH
+      Dy = D_C2H5OH
+      Dz = D_C2H5OH
+  [../]
+
   ## ============= C3H7OH balance ==============
   [./C3H7OH_dot]
       type = VariableCoefTimeDerivative
@@ -1570,6 +1908,25 @@
       scale = As
   [../]
 
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./C3H7OH_gadv]
+      type = GPoreConcAdvection
+      variable = C_C3H7OH
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./C3H7OH_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_C3H7OH
+      porosity = eps
+      Dx = D_C3H7OH
+      Dy = D_C3H7OH
+      Dz = D_C3H7OH
+  [../]
+
   ## ============= C3H6O balance ==============
   [./C3H6O_dot]
       type = VariableCoefTimeDerivative
@@ -1589,6 +1946,25 @@
       coupled_list = 'r_C3H6O'
       weights = '-1'
       scale = As
+  [../]
+
+  # Transport kernels
+  #     vel is Darcy vel so no eps correction
+  [./C3H6O_gadv]
+      type = GPoreConcAdvection
+      variable = C_C3H6O
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./C3H6O_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_C3H6O
+      porosity = eps
+      Dx = D_C3H6O
+      Dy = D_C3H6O
+      Dz = D_C3H6O
   [../]
 
   ## =============== Activity Constraints ==================
@@ -1791,6 +2167,341 @@
 []
 
 [DGKernels]
+    ### ==================== H+ Transport ==========================
+    [./H_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_H
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./H_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_H
+        porosity = eps
+        Dx = D_H
+        Dy = D_H
+        Dz = D_H
+    [../]
+    [./H_dgnpdiff]
+        type = DGNernstPlanckDiffusion
+        variable = C_H
+        valence = 1
+        porosity = eps
+        electric_potential = phi_e
+        temperature = T_e
+        Dx = D_H
+        Dy = D_H
+        Dz = D_H
+    [../]
+
+    ### ==================== OH- Transport ==========================
+    [./OH_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_OH
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./OH_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_OH
+        porosity = eps
+        Dx = D_OH
+        Dy = D_OH
+        Dz = D_OH
+    [../]
+    [./OH_dgnpdiff]
+        type = DGNernstPlanckDiffusion
+        variable = C_OH
+        valence = -1
+        porosity = eps
+        electric_potential = phi_e
+        temperature = T_e
+        Dx = D_OH
+        Dy = D_OH
+        Dz = D_OH
+    [../]
+
+    ### ==================== CO2 Transport ==========================
+    [./CO2_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_CO2
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./CO2_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_CO2
+        porosity = eps
+        Dx = D_CO2
+        Dy = D_CO2
+        Dz = D_CO2
+    [../]
+
+    ### ==================== HCO3- Transport ==========================
+    [./HCO3_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_HCO3
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./HCO3_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_HCO3
+        porosity = eps
+        Dx = D_HCO3
+        Dy = D_HCO3
+        Dz = D_HCO3
+    [../]
+    [./HCO3_dgnpdiff]
+        type = DGNernstPlanckDiffusion
+        variable = C_HCO3
+        valence = -1
+        porosity = eps
+        electric_potential = phi_e
+        temperature = T_e
+        Dx = D_HCO3
+        Dy = D_HCO3
+        Dz = D_HCO3
+    [../]
+
+    ### ==================== CO3 2- Transport ==========================
+    [./CO3_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_CO3
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./CO3_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_CO3
+        porosity = eps
+        Dx = D_CO3
+        Dy = D_CO3
+        Dz = D_CO3
+    [../]
+    [./CO3_dgnpdiff]
+        type = DGNernstPlanckDiffusion
+        variable = C_CO3
+        valence = -2
+        porosity = eps
+        electric_potential = phi_e
+        temperature = T_e
+        Dx = D_CO3
+        Dy = D_CO3
+        Dz = D_CO3
+    [../]
+
+    ### ==================== HCOOH Transport ==========================
+    [./HCOOH_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_HCOOH
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./HCOOH_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_HCOOH
+        porosity = eps
+        Dx = D_HCOOH
+        Dy = D_HCOOH
+        Dz = D_HCOOH
+    [../]
+
+    ### ==================== HCOO- Transport ==========================
+    [./HCOO_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_HCOO
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./HCOO_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_HCOO
+        porosity = eps
+        Dx = D_HCOO
+        Dy = D_HCOO
+        Dz = D_HCOO
+    [../]
+    [./HCOO_dgnpdiff]
+        type = DGNernstPlanckDiffusion
+        variable = C_HCOO
+        valence = -1
+        porosity = eps
+        electric_potential = phi_e
+        temperature = T_e
+        Dx = D_HCOO
+        Dy = D_HCOO
+        Dz = D_HCOO
+    [../]
+
+    ### ==================== Cs+ Transport ==========================
+    [./Cs_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_Cs
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./Cs_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_Cs
+        porosity = eps
+        Dx = D_Cs
+        Dy = D_Cs
+        Dz = D_Cs
+    [../]
+    [./Cs_dgnpdiff]
+        type = DGNernstPlanckDiffusion
+        variable = C_Cs
+        valence = 1
+        porosity = eps
+        electric_potential = phi_e
+        temperature = T_e
+        Dx = D_Cs
+        Dy = D_Cs
+        Dz = D_Cs
+    [../]
+
+    ### ==================== H2 Transport ==========================
+    [./H2_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_H2
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./H2_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_H2
+        porosity = eps
+        Dx = D_H2
+        Dy = D_H2
+        Dz = D_H2
+    [../]
+
+    ### ==================== CO Transport ==========================
+    [./CO_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_CO
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./CO_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_CO
+        porosity = eps
+        Dx = D_CO
+        Dy = D_CO
+        Dz = D_CO
+    [../]
+
+    ### ==================== CH4 Transport ==========================
+    [./CH4_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_CH4
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./CH4_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_CH4
+        porosity = eps
+        Dx = D_CH4
+        Dy = D_CH4
+        Dz = D_CH4
+    [../]
+
+    ### ==================== C2H4 Transport ==========================
+    [./C2H4_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_C2H4
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./C2H4_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_C2H4
+        porosity = eps
+        Dx = D_C2H4
+        Dy = D_C2H4
+        Dz = D_C2H4
+    [../]
+
+    ### ==================== C2H5OH Transport ==========================
+    [./C2H5OH_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_C2H5OH
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./C2H5OH_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_C2H5OH
+        porosity = eps
+        Dx = D_C2H5OH
+        Dy = D_C2H5OH
+        Dz = D_C2H5OH
+    [../]
+
+    ### ==================== C3H7OH Transport ==========================
+    [./C3H7OH_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_C3H7OH
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./C3H7OH_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_C3H7OH
+        porosity = eps
+        Dx = D_C3H7OH
+        Dy = D_C3H7OH
+        Dz = D_C3H7OH
+    [../]
+
+    ### ==================== C3H6O Transport ==========================
+    [./C3H6O_dgadv]
+        type = DGPoreConcAdvection
+        variable = C_C3H6O
+        porosity = 1
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+    [./C3H6O_dgdiff]
+        type = DGVarPoreDiffusion
+        variable = C_C3H6O
+        porosity = eps
+        Dx = D_C3H6O
+        Dy = D_C3H6O
+        Dz = D_C3H6O
+    [../]
 []
 
 [AuxKernels]
@@ -1889,90 +2600,432 @@
       boundary = 'right'
       function = '0'
   [../]
+
+
+  ### ==================== H+ ==========================
+  [./H_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_H
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 4.5E-12
+  [../]
+  [./H_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_H
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  # If there is a membrane on the right side
+  #[./H_MembraneFlux]
+  #    type = DGDiffuseFlowMassFluxBC
+  #    variable = C_H
+  #    boundary = 'right'
+  #    porosity = eps
+  #    Dx = D_H
+  #    Dy = D_H
+  #    Dz = D_H
+  #    input_var = 4.5E-12
+  #[../]
+
+  ### ==================== H2 ==========================
+  [./H2_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_H2
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 0
+  [../]
+  [./H2_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_H2
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== Cs ==========================
+  [./Cs_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_Cs
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 1e-4
+  [../]
+  [./Cs_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_Cs
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== OH ==========================
+  [./OH_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_OH
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 2.1E-9
+  [../]
+  [./OH_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_OH
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== HCOO ==========================
+  [./HCOO_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_HCOO
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 0
+  [../]
+  [./HCOO_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_HCOO
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== HCOOH ==========================
+  [./HCOOH_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_HCOOH
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 0
+  [../]
+  [./HCOOH_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_HCOOH
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== HCO3 ==========================
+  [./HCO3_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_HCO3
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 9.8E-5
+  [../]
+  [./HCO3_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_HCO3
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== CO3 ==========================
+  [./CO3_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_CO3
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 9.9E-7
+  [../]
+  [./CO3_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_CO3
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== CO2 ==========================
+  [./CO2_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_CO2
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 1.0E-6
+  [../]
+  [./CO2_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_CO2
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== CO ==========================
+  [./CO_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_CO
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 0
+  [../]
+  [./CO_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_CO
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== CH4 ==========================
+  [./CH4_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_CH4
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 0
+  [../]
+  [./CH4_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_CH4
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== C2H4 ==========================
+  [./C2H4_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_C2H4
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 0
+  [../]
+  [./C2H4_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_C2H4
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== C2H5OH ==========================
+  [./C2H5OH_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_C2H5OH
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 0
+  [../]
+  [./C2H5OH_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_C2H5OH
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== C3H7OH ==========================
+  [./C3H7OH_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_C3H7OH
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 0
+  [../]
+  [./C3H7OH_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_C3H7OH
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ### ==================== C3H6O ==========================
+  [./C3H6O_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_C3H6O
+      boundary = 'bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 0
+  [../]
+  [./C3H6O_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_C3H6O
+      boundary = 'top'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
 []
 
 [Postprocessors]
 
-  [./C_H_avg]
-      type = ElementAverageValue
+  [./C_H_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_H
       execute_on = 'initial timestep_end'
   [../]
 
-  [./C_OH_avg]
-      type = ElementAverageValue
+  [./C_OH_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_OH
       execute_on = 'initial timestep_end'
   [../]
 
-  [./C_HCO3_avg]
-      type = ElementAverageValue
+  [./C_HCO3_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_HCO3
       execute_on = 'initial timestep_end'
   [../]
 
-  [./C_CO3_avg]
-      type = ElementAverageValue
+  [./C_CO3_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_CO3
       execute_on = 'initial timestep_end'
   [../]
 
-  [./C_CO2_avg]
-      type = ElementAverageValue
+  [./C_CO2_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_CO2
       execute_on = 'initial timestep_end'
   [../]
 
-  [./C_HCOOH_avg]
-      type = ElementAverageValue
+  [./C_HCOOH_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_HCOOH
       execute_on = 'initial timestep_end'
   [../]
 
-  [./C_HCOO_avg]
-      type = ElementAverageValue
+  [./C_HCOO_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_HCOO
       execute_on = 'initial timestep_end'
   [../]
 
-  [./C_CO_avg]
-      type = ElementAverageValue
+  [./C_CO_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_CO
       execute_on = 'initial timestep_end'
   [../]
 
-  [./C_H2_avg]
-      type = ElementAverageValue
+  [./C_H2_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_H2
       execute_on = 'initial timestep_end'
   [../]
 
-  [./C_CH4_avg]
-      type = ElementAverageValue
+  [./C_CH4_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_CH4
       execute_on = 'initial timestep_end'
   [../]
 
-  [./C_C2H4_avg]
-      type = ElementAverageValue
+  [./C_C2H4_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_C2H4
       execute_on = 'initial timestep_end'
   [../]
 
-  [./C_C2H5OH_avg]
-      type = ElementAverageValue
+  [./C_C2H5OH_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_C2H5OH
       execute_on = 'initial timestep_end'
   [../]
 
-  [./C_C3H7OH_avg]
-      type = ElementAverageValue
+  [./C_C3H7OH_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_C3H7OH
       execute_on = 'initial timestep_end'
   [../]
 
-  [./C_C3H6O_avg]
-      type = ElementAverageValue
+  [./C_C3H6O_out]
+      type = SideAverageValue
+      boundary = 'top'
       variable = C_C3H6O
       execute_on = 'initial timestep_end'
   [../]
@@ -2076,7 +3129,16 @@
                         -ksp_ksp_gmres_restart
 
                         -ksp_max_it
-                        -ksp_ksp_max_it'
+                        -ksp_ksp_max_it
+
+                        -ksp_rtol
+                        -ksp_atol
+
+                        -ksp_pc_factor_mat_solver_type
+
+                        	-mat_mumps_cntl_1
+                          -mat_mumps_cntl_3
+                          -mat_mumps_icntl_23'
 
   ## NOTE: May be best to just use lu as pc_type instead of ksp
   petsc_options_value = 'fgmres
@@ -2096,23 +3158,28 @@
                          1E-12
 
                          fgmres
-                         ilu
+                         lu
 
                          30
                          30
 
                          30
-                         30'
+                         30
+
+                         1e-6
+                         1e-8
+
+                         mumps
+
+                          0.01
+                          0.
+                          500'
 
   #NOTE: turning off line search can help converge for high Renolds number
   line_search = none
-  nl_rel_tol = 1e-10
-  nl_abs_tol = 1e-10
-  nl_rel_step_tol = 1e-10
-  nl_abs_step_tol = 1e-10
+  nl_rel_step_tol = 1e-12
+  nl_abs_step_tol = 1e-12
   nl_max_its = 20
-  l_tol = 1e-6
-  l_max_its = 20
 
   # Time in min
   start_time = 0.0
@@ -2124,7 +3191,7 @@
      type = SolutionTimeAdaptiveDT
      dt = 0.005
      cutback_factor_at_failure = 0.5
-     percent_change = 0.7
+     percent_change = 0.5
   [../]
 
 [] #END Executioner
