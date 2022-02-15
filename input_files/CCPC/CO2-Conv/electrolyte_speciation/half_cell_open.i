@@ -12,6 +12,16 @@
 #         given the number of chemical species considered.
 #         Should we try to just use CG methods instead?
 #
+#   NOTE: Few things that helped with convergence:
+#           (1) Using the 'l2' line search (with -snes_linesearch_monitor)
+#           (2) Applying variable scaling to concentrations and potentials
+#           (3) Simulation consistently fails after 3.3 min simulation
+#                 [Very close to 'zero' concentration]
+#                 [This was at 6 mA/cm^2]
+#                 < Helped by increasing flow rate >
+#                 < May mean that it was approaching steady-state, but
+#                   that the model was becoming singular at steady-state... >
+#
 #
 # Literature reference for parameters:
 # ------------------------------------
@@ -65,6 +75,7 @@
       order = FIRST
       family = LAGRANGE
       initial_condition = 0
+      scaling = 1e1
   [../]
 
   # electrode potential (in V or J/C)
@@ -72,6 +83,7 @@
       order = FIRST
       family = LAGRANGE
       initial_condition = 0
+      scaling = 1e1
   [../]
 
   # -------- Butler-Volmer reaction rates ------------
@@ -98,6 +110,7 @@
           number_of_electrons = 1         # params are fitted to this standard
           electron_transfer_coef = 0.14   # fitted param
       [../]
+      scaling = 1e0
   [../]
   # CO + 2 OH- <----> CO2 + H2O + 2 e-
   [./r_CO]
@@ -121,6 +134,7 @@
           number_of_electrons = 1         # params are fitted to this standard
           electron_transfer_coef = 0.35   # fitted param
       [../]
+      scaling = 1e0
   [../]
   # HCOO- + OH- <----> CO2 + H2O + 2 e-
   [./r_HCOO]
@@ -144,6 +158,7 @@
           number_of_electrons = 1         # params are fitted to this standard
           electron_transfer_coef = 0.43   # fitted param
       [../]
+      scaling = 1e0
   [../]
   # C2H4 + 8 OH- <----> CO2 + 6 H2O + 8 e-
   [./r_C2H4]
@@ -167,6 +182,7 @@
           number_of_electrons = 1         # params are fitted to this standard
           electron_transfer_coef = 0.41   # fitted param
       [../]
+      scaling = 1e0
   [../]
   # C2H5OH + 12 OH- <----> 2 CO2 + 9 H2O + 12 e-
   [./r_C2H5OH]
@@ -190,6 +206,7 @@
           number_of_electrons = 1         # params are fitted to this standard
           electron_transfer_coef = 0.43   # fitted param
       [../]
+      scaling = 1e0
   [../]
   # C3H7OH + 18 OH- <----> 3 CO2 + 13 H2O + 18 e-
   [./r_C3H7OH]
@@ -213,6 +230,7 @@
           number_of_electrons = 1         # params are fitted to this standard
           electron_transfer_coef = 0.40   # fitted param
       [../]
+      scaling = 1e0
   [../]
   # C3H6O + 16 OH- <----> 3 CO2 + 11 H2O + 16 e-
   [./r_C3H6O]
@@ -236,6 +254,7 @@
           number_of_electrons = 1         # params are fitted to this standard
           electron_transfer_coef = 0.49   # fitted param
       [../]
+      scaling = 1e0
   [../]
   # CH4 + 8 OH- <----> CO2 + 6 H2O + 8 e-
   [./r_CH4]
@@ -259,6 +278,7 @@
           number_of_electrons = 1         # params are fitted to this standard
           electron_transfer_coef = 0.84   # fitted param
       [../]
+      scaling = 1e0
   [../]
 
   # ------------- Butler-Volmer current densities ---------
@@ -360,6 +380,7 @@
           electrode_potential = phi_s
           electrolyte_potential = phi_e
       [../]
+      scaling = 1e1
   [../]
 
   # Speciation reaction rates
@@ -369,6 +390,7 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 0
+      scaling = 1e0
   [../]
 
   # rate of CO2 -> HCO3 reaction
@@ -377,6 +399,7 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 0
+      scaling = 1e0
   [../]
 
   # rate of HCO3 -> CO3 reaction
@@ -385,6 +408,7 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 0
+      scaling = 1e0
   [../]
 
   # rate of alt CO2 -> HCO3 reaction
@@ -393,6 +417,7 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 0
+      scaling = 1e0
   [../]
 
   # rate of alt HCO3 -> CO3 reaction
@@ -401,6 +426,7 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 0
+      scaling = 1e0
   [../]
 
   # rate of alt HCOOH -> HCOO reaction
@@ -409,6 +435,7 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 0
+      scaling = 1e0
   [../]
 
   # Ions/species
@@ -416,76 +443,91 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 4.5E-12 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_H2]
       order = FIRST
       family = MONOMIAL
       initial_condition = 0 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_Cs]
       order = FIRST
       family = MONOMIAL
       initial_condition = 1.0E-4 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_OH]
       order = FIRST
       family = MONOMIAL
       initial_condition = 2.1E-9 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_HCOO]
       order = FIRST
       family = MONOMIAL
       initial_condition = 0 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_HCOOH]
       order = FIRST
       family = MONOMIAL
       initial_condition = 0 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_HCO3]
       order = FIRST
       family = MONOMIAL
       initial_condition = 9.8E-5 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_CO3]
       order = FIRST
       family = MONOMIAL
       initial_condition = 9.9E-7 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_CO2]
       order = FIRST
       family = MONOMIAL
       initial_condition = 1.0E-6 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_CO]
       order = FIRST
       family = MONOMIAL
       initial_condition = 0 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_CH4]
       order = FIRST
       family = MONOMIAL
       initial_condition = 0 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_C2H4]
       order = FIRST
       family = MONOMIAL
       initial_condition = 0 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_C2H5OH]
       order = FIRST
       family = MONOMIAL
       initial_condition = 0 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_C3H7OH]
       order = FIRST
       family = MONOMIAL
       initial_condition = 0 # mol/cm^3
+      scaling = 1e7
   [../]
   [./C_C3H6O]
       order = FIRST
       family = MONOMIAL
       initial_condition = 0 # mol/cm^3
+      scaling = 1e7
   [../]
 
   # activities
@@ -835,7 +877,7 @@
   [./vel_y]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.25
+      initial_condition = 1.5
   [../]
 
   # Darcy velocity in z (cm/min)
@@ -2623,18 +2665,6 @@
       uz = vel_z
   [../]
 
-  # If there is a membrane on the right side
-  #[./H_MembraneFlux]
-  #    type = DGDiffuseFlowMassFluxBC
-  #    variable = C_H
-  #    boundary = 'right'
-  #    porosity = eps
-  #    Dx = D_H
-  #    Dy = D_H
-  #    Dz = D_H
-  #    input_var = 4.5E-12
-  #[../]
-
   ### ==================== H2 ==========================
   [./H2_FluxIn]
       type = DGFlowMassFluxBC
@@ -3092,7 +3122,11 @@
   scheme = implicit-euler
 
   # NOTE: Add arg -ksp_view to get info on methods used at linear steps
+  # Other args:   -ksp_monitor_true_residual
+  #               -snes_monitor
+  #               -snes_linesearch_monitor
   petsc_options = '-snes_converged_reason
+                  -snes_linesearch_monitor
 
                     -ksp_gmres_modifiedgramschmidt
                     -ksp_ksp_gmres_modifiedgramschmidt'
@@ -3154,8 +3188,8 @@
 
                          20
 
-                         1E-12
-                         1E-12
+                         1E-10
+                         1E-8
 
                          fgmres
                          lu
@@ -3167,7 +3201,7 @@
                          30
 
                          1e-6
-                         1e-8
+                         1e-12
 
                          mumps
 
@@ -3175,8 +3209,8 @@
                           0.
                           500'
 
-  #NOTE: turning off line search can help converge for high Renolds number
-  line_search = none
+  #NOTE: 'l2' seems to be the best performing line_search
+  line_search = l2
   nl_rel_step_tol = 1e-12
   nl_abs_step_tol = 1e-12
   nl_max_its = 20
@@ -3185,11 +3219,13 @@
   start_time = 0.0
   end_time = 10
   dtmax = 1
+  dtmin = 1e-6
 
   # NOTE: Maximum step size to start is 0.01
   [./TimeStepper]
-     type = SolutionTimeAdaptiveDT
-     dt = 0.005
+     #type = SolutionTimeAdaptiveDT
+     type = ConstantDT
+     dt = 0.1
      cutback_factor_at_failure = 0.5
      percent_change = 0.5
   [../]
