@@ -1310,28 +1310,30 @@
 
   ## ============= H+ balance ==============
   [./H_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_H
+      coupled_coef = eps
   [../]
   [./H_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_H
       coupled_list = 'r_w r_1 r_2 r_5'
       weights = '1 1 1 1'
-      scale = 1
+      scale = eps
   [../]
 
   ## ============= OH- balance ==============
   [./OH_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_OH
+      coupled_coef = eps
   [../]
   [./OH_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_OH
       coupled_list = 'r_w r_3 r_4'
       weights = '1 -1 -1'
-      scale = 1
+      scale = eps
   [../]
   [./OH_surf_rate]
       type = ScaledWeightedCoupledSumFunction
@@ -1343,15 +1345,16 @@
 
   ## ============= CO2 balance ==============
   [./CO2_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_CO2
+      coupled_coef = eps
   [../]
   [./CO2_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_CO2
       coupled_list = 'r_1 r_3'
       weights = '-1 -1'
-      scale = 1
+      scale = eps
   [../]
   [./CO2_surf_rate]
       type = ScaledWeightedCoupledSumFunction
@@ -1363,54 +1366,58 @@
 
   ## ============= HCO3 balance ==============
   [./HCO3_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_HCO3
+      coupled_coef = eps
   [../]
   [./HCO3_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_HCO3
       coupled_list = 'r_1 r_2 r_3 r_4'
       weights = '1 -1 1 -1'
-      scale = 1
+      scale = eps
   [../]
 
   ## ============= CO3 balance ==============
   [./CO3_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_CO3
+      coupled_coef = eps
   [../]
   [./CO3_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_CO3
       coupled_list = 'r_2 r_4'
       weights = '1 1'
-      scale = 1
+      scale = eps
   [../]
 
   ## ============= HCOOH balance ==============
   [./HCOOH_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_HCOOH
+      coupled_coef = eps
   [../]
   [./HCOOH_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_HCOOH
       coupled_list = 'r_5'
       weights = '-1'
-      scale = 1
+      scale = eps
   [../]
 
   ## ============= HCOO balance ==============
   [./HCOO_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_HCOO
+      coupled_coef = eps
   [../]
   [./HCOO_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_HCOO
       coupled_list = 'r_5'
       weights = '1'
-      scale = 1
+      scale = eps
   [../]
   [./HCOO_surf_rate]
       type = ScaledWeightedCoupledSumFunction
@@ -1422,28 +1429,30 @@
 
   ## ============= Cs balance ==============
   [./Cs_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_Cs
+      coupled_coef = eps
   [../]
   [./Cs_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_Cs
       coupled_list = ''
       weights = ''
-      scale = 1
+      scale = eps
   [../]
 
   ## ============= H2 balance ==============
   [./H2_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_H2
+      coupled_coef = eps
   [../]
   [./H2_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_H2
       coupled_list = ''
       weights = ''
-      scale = 1
+      scale = eps
   [../]
   [./H2_surf_rate]
       type = ScaledWeightedCoupledSumFunction
@@ -1455,15 +1464,16 @@
 
   ## ============= CO balance ==============
   [./CO_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_CO
+      coupled_coef = eps
   [../]
   [./CO_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_CO
       coupled_list = ''
       weights = ''
-      scale = 1
+      scale = eps
   [../]
   [./CO_surf_rate]
       type = ScaledWeightedCoupledSumFunction
@@ -1475,15 +1485,16 @@
 
   ## ============= CH4 balance ==============
   [./CH4_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_CH4
+      coupled_coef = eps
   [../]
   [./CH4_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_CH4
       coupled_list = ''
       weights = ''
-      scale = 1
+      scale = eps
   [../]
   [./CH4_surf_rate]
       type = ScaledWeightedCoupledSumFunction
@@ -1495,15 +1506,16 @@
 
   ## ============= C2H4 balance ==============
   [./C2H4_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_C2H4
+      coupled_coef = eps
   [../]
   [./C2H4_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_C2H4
       coupled_list = ''
       weights = ''
-      scale = 1
+      scale = eps
   [../]
   [./C2H4_surf_rate]
       type = ScaledWeightedCoupledSumFunction
@@ -1515,15 +1527,16 @@
 
   ## ============= C2H5OH balance ==============
   [./C2H5OH_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_C2H5OH
+      coupled_coef = eps
   [../]
   [./C2H5OH_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_C2H5OH
       coupled_list = ''
       weights = ''
-      scale = 1
+      scale = eps
   [../]
   [./C2H5OH_surf_rate]
       type = ScaledWeightedCoupledSumFunction
@@ -1535,15 +1548,16 @@
 
   ## ============= C3H7OH balance ==============
   [./C3H7OH_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_C3H7OH
+      coupled_coef = eps
   [../]
   [./C3H7OH_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_C3H7OH
       coupled_list = ''
       weights = ''
-      scale = 1
+      scale = eps
   [../]
   [./C3H7OH_surf_rate]
       type = ScaledWeightedCoupledSumFunction
@@ -1555,15 +1569,16 @@
 
   ## ============= C3H6O balance ==============
   [./C3H6O_dot]
-      type = TimeDerivative
+      type = VariableCoefTimeDerivative
       variable = C_C3H6O
+      coupled_coef = eps
   [../]
   [./C3H6O_rate]
       type = ScaledWeightedCoupledSumFunction
       variable = C_C3H6O
       coupled_list = ''
       weights = ''
-      scale = 1
+      scale = eps
   [../]
   [./C3H6O_surf_rate]
       type = ScaledWeightedCoupledSumFunction
@@ -2099,12 +2114,12 @@
   # Time in min
   start_time = 0.0
   end_time = 10
-  dtmax = 2
+  dtmax = 1
 
   # NOTE: Maximum step size to start is 0.01
   [./TimeStepper]
      type = SolutionTimeAdaptiveDT
-     dt = 0.01
+     dt = 0.005
      cutback_factor_at_failure = 0.5
      percent_change = 0.7
   [../]
