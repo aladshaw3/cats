@@ -1,0 +1,7 @@
+[Tests]
+  [./multiple_rxns_on_surf_in_bulk]
+    type = CSVDiff
+    input = multi_rxn_bulk_and_surface.i
+    csvdiff = multi_rxn_bulk_and_surface_out.csv
+  [../]
+[]
