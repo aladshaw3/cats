@@ -27,20 +27,6 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "AuxElectrodeCurrent.h"
 
 registerMooseObject("catsApp", AuxElectrodeCurrent);
@@ -49,7 +35,6 @@ InputParameters AuxElectrodeCurrent::validParams()
 {
     InputParameters params = AuxKernel::validParams();
     params.addRequiredParam<unsigned int>("direction","Directional index for current that this kernel acts on (0 = x, 1 = y, 2 = z)");
-
     params.addRequiredCoupledVar("electric_potential","Variable for electric potential (V or J/C)");
     params.addCoupledVar("solid_frac",1,"Variable for volume fraction or porosity (default = 1)");
     params.addCoupledVar("conductivity",50,"Variable for conductivity of the electrode in units of C/V/length/time or similar (default = 50 C/V/m/s)");
@@ -59,7 +44,6 @@ InputParameters AuxElectrodeCurrent::validParams()
 AuxElectrodeCurrent::AuxElectrodeCurrent(const InputParameters & parameters) :
 AuxKernel(parameters),
 _dir(getParam<unsigned int>("direction")),
-
 _e_potential_grad(coupledGradient("electric_potential")),
 _sol_frac(coupledValue("solid_frac")),
 _conductivity(coupledValue("conductivity"))

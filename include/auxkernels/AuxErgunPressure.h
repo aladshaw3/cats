@@ -25,20 +25,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "GasPropertiesBase.h"
@@ -58,14 +44,10 @@ public:
 
 protected:
     /// Required MOOSE function override
-    /** This is the function that is called by the MOOSE framework when a calculation of the total
-        system pressure is needed. You are required to override this function for any inherited
-        AuxKernel. */
     virtual Real computeValue() override;
 
     unsigned int _dir;                              ///< Direction of the Ergun gradient for pressure (0 = x, 1 = y, 2 = z)
     const VariableValue & _porosity;                ///< Variable for the porosity
-    const unsigned int _porosity_var;               ///< Variable identification for the porosity
     Real _start;                                    ///< Distance from which pressure drop starts (m)
     Real _end;                                      ///< Distance at which pressure drop ends (m)
     bool _inlet;                                    ///< if true, then given pressure is inlet; if false, then given pressure is outlet

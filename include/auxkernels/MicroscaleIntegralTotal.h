@@ -36,8 +36,6 @@
 #include "AuxKernel.h"
 
 /// MicroscaleIntegralTotal class inherits from AuxKernel
-/** This class object creates an AuxKernel for use in the MOOSE framework. The AuxKernel will
-    calculate the integral result of all variables in the microscale. */
 class MicroscaleIntegralTotal : public AuxKernel
 {
 public:
@@ -52,9 +50,6 @@ protected:
     Real computeIntegral();
 
     /// Required MOOSE function override
-    /** This is the function that is called by the MOOSE framework when a calculation of the total
-        system pressure is needed. You are required to override this function for any inherited
-        AuxKernel. */
     virtual Real computeValue() override;
 
     Real _space_factor;                   ///< Conversion factor for space (in cartesian --> face area, in cylindrical --> length, in sphere = 1)

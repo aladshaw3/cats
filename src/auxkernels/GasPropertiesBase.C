@@ -64,17 +64,11 @@ InputParameters GasPropertiesBase::validParams()
 GasPropertiesBase::GasPropertiesBase(const InputParameters & parameters) :
 AuxKernel(parameters),
 _press(coupledValue("pressure")),
-_press_var(coupled("pressure")),
 _temp(coupledValue("temperature")),
-_temp_var(coupled("temperature")),
 _velx(coupledValue("ux")),
-_velx_var(coupled("ux")),
 _vely(coupledValue("uy")),
-_vely_var(coupled("uy")),
 _velz(coupledValue("uz")),
-_velz_var(coupled("uz")),
 _char_len(coupledValue("hydraulic_diameter")),
-_char_len_var(coupled("hydraulic_diameter")),
 
 _MW(getParam<std::vector<Real> >("molar_weights")),
 _SuthTemp(getParam<std::vector<Real> >("sutherland_temp")),
@@ -83,17 +77,14 @@ _SuthVis(getParam<std::vector<Real> >("sutherland_vis")),
 _SpecHeat(getParam<std::vector<Real> >("spec_heat")),
 
 _carrier_gas(coupledValue("carrier_gas")),
-_carrier_gas_var(coupled("carrier_gas")),
 _MW_cg(getParam< Real >("carrier_gas_mw")),
 _is_ideal_gas(getParam< bool >("is_ideal_gas"))
 {
     unsigned int n = coupledComponents("gases");
-    _gases_vars.resize(n);
     _gases.resize(n);
 
     for (unsigned int i = 0; i<_gases.size(); ++i)
     {
-        _gases_vars[i] = coupled("gases",i);
         _gases[i] = &coupledValue("gases",i);
     }
 
@@ -301,7 +292,6 @@ Real GasPropertiesBase::computeValue()
 {
     prepareEgret();
     calculateAllProperties();
-
-    //return _egret_dat.species_dat[0].molecular_diffusion;
+    // return for testing purposes only 
     return _egret_dat.total_dyn_vis/1000.0*100.0;
 }

@@ -19,20 +19,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "GasSpeciesKnudsenDiffusionCorrection.h"
 
 registerMooseObject("catsApp", GasSpeciesKnudsenDiffusionCorrection);
@@ -50,9 +36,7 @@ GasSpeciesKnudsenDiffusionCorrection::GasSpeciesKnudsenDiffusionCorrection(const
 GasPropertiesBase(parameters),
 _index(getParam< unsigned int >("species_index")),
 _porosity(coupledValue("micro_porosity")),
-_porosity_var(coupled("micro_porosity")),
-_pore_rad(coupledValue("micro_pore_radius")),
-_pore_rad_var(coupled("micro_pore_radius"))
+_pore_rad(coupledValue("micro_pore_radius"))
 {
     if (_index > _gases.size())
     {

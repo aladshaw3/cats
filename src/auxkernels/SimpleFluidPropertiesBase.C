@@ -44,20 +44,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "SimpleFluidPropertiesBase.h"
 
 registerMooseObject("catsApp", SimpleFluidPropertiesBase);
@@ -210,217 +196,217 @@ Real SimpleFluidPropertiesBase::length_conversion(Real value, std::string from, 
 
 Real SimpleFluidPropertiesBase::time_conversion(Real value, std::string from, std::string to)
 {
-  Real new_value = 0;
+    Real new_value = 0;
 
-  if (from == "hr" && to == "hr")
-    new_value = value;
-  else if (from == "hr" && to == "min")
-    new_value = 60*value;
-  else if (from == "hr" && to == "s")
-    new_value = 3600*value;
-  else if (from == "min" && to == "hr")
-    new_value = value/60;
-  else if (from == "min" && to == "min")
-    new_value = value;
-  else if (from == "min" && to == "s")
-    new_value = value*60;
-  else if (from == "s" && to == "hr")
-    new_value = value/3600;
-  else if (from == "s" && to == "min")
-    new_value = value/60;
-  else if (from == "s" && to == "s")
-    new_value = value;
-  else
-    unsupported_conversion(from,to);
+    if (from == "hr" && to == "hr")
+      new_value = value;
+    else if (from == "hr" && to == "min")
+      new_value = 60*value;
+    else if (from == "hr" && to == "s")
+      new_value = 3600*value;
+    else if (from == "min" && to == "hr")
+      new_value = value/60;
+    else if (from == "min" && to == "min")
+      new_value = value;
+    else if (from == "min" && to == "s")
+      new_value = value*60;
+    else if (from == "s" && to == "hr")
+      new_value = value/3600;
+    else if (from == "s" && to == "min")
+      new_value = value/60;
+    else if (from == "s" && to == "s")
+      new_value = value;
+    else
+      unsupported_conversion(from,to);
 
-  return new_value;
+    return new_value;
 }
 
 Real SimpleFluidPropertiesBase::mass_conversion(Real value, std::string from, std::string to)
 {
-  Real new_value = 0;
+    Real new_value = 0;
 
-  if (from == "kg" && to == "kg")
-    new_value = value;
-  else if (from == "kg" && to == "g")
-    new_value = 1000*value;
-  else if (from == "kg" && to == "mg")
-    new_value = 1000*1000*value;
-  else if (from == "g" && to == "kg")
-    new_value = value/1000;
-  else if (from == "g" && to == "g")
-    new_value = value;
-  else if (from == "g" && to == "mg")
-    new_value = value*1000;
-  else if (from == "mg" && to == "kg")
-    new_value = value/1000/1000;
-  else if (from == "mg" && to == "g")
-    new_value = value/1000;
-  else if (from == "mg" && to == "mg")
-    new_value = value;
-  else
-    unsupported_conversion(from,to);
+    if (from == "kg" && to == "kg")
+      new_value = value;
+    else if (from == "kg" && to == "g")
+      new_value = 1000*value;
+    else if (from == "kg" && to == "mg")
+      new_value = 1000*1000*value;
+    else if (from == "g" && to == "kg")
+      new_value = value/1000;
+    else if (from == "g" && to == "g")
+      new_value = value;
+    else if (from == "g" && to == "mg")
+      new_value = value*1000;
+    else if (from == "mg" && to == "kg")
+      new_value = value/1000/1000;
+    else if (from == "mg" && to == "g")
+      new_value = value/1000;
+    else if (from == "mg" && to == "mg")
+      new_value = value;
+    else
+      unsupported_conversion(from,to);
 
-  return new_value;
+    return new_value;
 }
 
 Real SimpleFluidPropertiesBase::energy_conversion(Real value, std::string from, std::string to)
 {
-  Real new_value = 0;
+    Real new_value = 0;
 
-  if (from == "kJ" && to == "kJ")
-    new_value = value;
-  else if (from == "kJ" && to == "J")
-    new_value = 1000*value;
-  else if (from == "J" && to == "kJ")
-    new_value = value/1000;
-  else if (from == "J" && to == "J")
-    new_value = value;
-  else
-    unsupported_conversion(from,to);
+    if (from == "kJ" && to == "kJ")
+      new_value = value;
+    else if (from == "kJ" && to == "J")
+      new_value = 1000*value;
+    else if (from == "J" && to == "kJ")
+      new_value = value/1000;
+    else if (from == "J" && to == "J")
+      new_value = value;
+    else
+      unsupported_conversion(from,to);
 
-  return new_value;
+    return new_value;
 }
 
 Real SimpleFluidPropertiesBase::pressure_conversion(Real value, std::string from, std::string to)
 {
-  Real new_value = 0;
+    Real new_value = 0;
 
-  if (from == "kPa" && to == "kPa")
-    new_value = value;
-  else if (from == "kPa" && to == "Pa")
-    new_value = 1000*value;
-  else if (from == "kPa" && to == "mPa")
-    new_value = 1000*1000*value;
-  else if (from == "Pa" && to == "kPa")
-    new_value = value/1000;
-  else if (from == "Pa" && to == "Pa")
-    new_value = value;
-  else if (from == "Pa" && to == "mPa")
-    new_value = value*1000;
-  else if (from == "mPa" && to == "kPa")
-    new_value = value/1000/1000;
-  else if (from == "mPa" && to == "Pa")
-    new_value = value/1000;
-  else if (from == "mPa" && to == "mPa")
-    new_value = value;
-  else
-    unsupported_conversion(from,to);
+    if (from == "kPa" && to == "kPa")
+      new_value = value;
+    else if (from == "kPa" && to == "Pa")
+      new_value = 1000*value;
+    else if (from == "kPa" && to == "mPa")
+      new_value = 1000*1000*value;
+    else if (from == "Pa" && to == "kPa")
+      new_value = value/1000;
+    else if (from == "Pa" && to == "Pa")
+      new_value = value;
+    else if (from == "Pa" && to == "mPa")
+      new_value = value*1000;
+    else if (from == "mPa" && to == "kPa")
+      new_value = value/1000/1000;
+    else if (from == "mPa" && to == "Pa")
+      new_value = value/1000;
+    else if (from == "mPa" && to == "mPa")
+      new_value = value;
+    else
+      unsupported_conversion(from,to);
 
-  return new_value;
+    return new_value;
 }
 
 Real SimpleFluidPropertiesBase::volume_conversion(Real value, std::string from, std::string to)
 {
-  Real new_value = 0;
+    Real new_value = 0;
 
-  if (from == "m^3")
-    from = "kL";
-  if (from == "cm^3")
-    from = "mL";
-  if (from == "mm^3")
-    from = "uL";
+    if (from == "m^3")
+      from = "kL";
+    if (from == "cm^3")
+      from = "mL";
+    if (from == "mm^3")
+      from = "uL";
 
-  if (to == "m^3")
-    to = "kL";
-  if (to == "cm^3")
-    to = "mL";
-  if (to == "mm^3")
-    to = "uL";
+    if (to == "m^3")
+      to = "kL";
+    if (to == "cm^3")
+      to = "mL";
+    if (to == "mm^3")
+      to = "uL";
 
-  if (from == "kL" && to == "kL")
-    new_value = value;
-  else if (from == "kL" && to == "L")
-    new_value = 1000*value;
-  else if (from == "kL" && to == "mL")
-    new_value = 1000*1000*value;
-  else if (from == "kL" && to == "uL")
-    new_value = 1000*1000*1000*value;
-  else if (from == "L" && to == "kL")
-    new_value = value/1000;
-  else if (from == "L" && to == "L")
-    new_value = value;
-  else if (from == "L" && to == "mL")
-    new_value = value*1000;
-  else if (from == "L" && to == "uL")
-    new_value = value*1000*1000;
-  else if (from == "mL" && to == "kL")
-    new_value = value/1000/1000;
-  else if (from == "mL" && to == "L")
-    new_value = value/1000;
-  else if (from == "mL" && to == "mL")
-    new_value = value;
-  else if (from == "mL" && to == "uL")
-    new_value = 1000*value;
-  else if (from == "uL" && to == "kL")
-    new_value = value/1000/1000/1000;
-  else if (from == "uL" && to == "L")
-    new_value = value/1000/1000;
-  else if (from == "uL" && to == "mL")
-    new_value = value/1000;
-  else if (from == "uL" && to == "uL")
-    new_value = value;
-  else
-    unsupported_conversion(from,to);
+    if (from == "kL" && to == "kL")
+      new_value = value;
+    else if (from == "kL" && to == "L")
+      new_value = 1000*value;
+    else if (from == "kL" && to == "mL")
+      new_value = 1000*1000*value;
+    else if (from == "kL" && to == "uL")
+      new_value = 1000*1000*1000*value;
+    else if (from == "L" && to == "kL")
+      new_value = value/1000;
+    else if (from == "L" && to == "L")
+      new_value = value;
+    else if (from == "L" && to == "mL")
+      new_value = value*1000;
+    else if (from == "L" && to == "uL")
+      new_value = value*1000*1000;
+    else if (from == "mL" && to == "kL")
+      new_value = value/1000/1000;
+    else if (from == "mL" && to == "L")
+      new_value = value/1000;
+    else if (from == "mL" && to == "mL")
+      new_value = value;
+    else if (from == "mL" && to == "uL")
+      new_value = 1000*value;
+    else if (from == "uL" && to == "kL")
+      new_value = value/1000/1000/1000;
+    else if (from == "uL" && to == "L")
+      new_value = value/1000/1000;
+    else if (from == "uL" && to == "mL")
+      new_value = value/1000;
+    else if (from == "uL" && to == "uL")
+      new_value = value;
+    else
+      unsupported_conversion(from,to);
 
-  return new_value;
+    return new_value;
 }
 
 Real SimpleFluidPropertiesBase::fluid_viscosity(Real temperature)
 {
-  return _mu_pre_exp*std::exp(_mu_B/(temperature - _mu_C));
+    return _mu_pre_exp*std::exp(_mu_B/(temperature - _mu_C));
 }
 
 Real SimpleFluidPropertiesBase::fluid_viscosity_with_ionic_strength_correction(Real temperature, Real ionic_strength)
 {
-  if (ionic_strength > 0.0)
-    ionic_strength = 1/volume_conversion(1/ionic_strength, _ion_volume_unit, "L");
-  else
-    ionic_strength = 0;
-  Real coeff = 1.0+_mu_I_A*std::sqrt(ionic_strength)+_mu_I_B*ionic_strength+_mu_I_C*ionic_strength*ionic_strength;
-  return fluid_viscosity(temperature)*coeff;
+    if (ionic_strength > 0.0)
+      ionic_strength = 1/volume_conversion(1/ionic_strength, _ion_volume_unit, "L");
+    else
+      ionic_strength = 0;
+    Real coeff = 1.0+_mu_I_A*std::sqrt(ionic_strength)+_mu_I_B*ionic_strength+_mu_I_C*ionic_strength*ionic_strength;
+    return fluid_viscosity(temperature)*coeff;
 }
 
 Real SimpleFluidPropertiesBase::fluid_density(Real temperature, Real pressure)
 {
-  pressure = pressure_conversion(pressure, _pressure_unit, "kPa");
-  Real alpha = 1.0135 + 4.9582E-7 * pressure;
-  Real coeff = _rho_A*temperature*temperature + _rho_B*temperature + _rho_C;
-  return alpha*coeff*_rho_ref;
+    pressure = pressure_conversion(pressure, _pressure_unit, "kPa");
+    Real alpha = 1.0135 + 4.9582E-7 * pressure;
+    Real coeff = _rho_A*temperature*temperature + _rho_B*temperature + _rho_C;
+    return alpha*coeff*_rho_ref;
 }
 
 Real SimpleFluidPropertiesBase::molecular_diffusion(Real temperature)
 {
-  return _ref_diffusivity*std::exp(-1991.805*((1/temperature)-(1/_ref_diff_temp)));
+    return _ref_diffusivity*std::exp(-1991.805*((1/temperature)-(1/_ref_diff_temp)));
 }
 
 Real SimpleFluidPropertiesBase::effective_molecular_diffusion(Real temperature, Real porosity)
 {
-  if (porosity > 1 || porosity < 0)
-    moose::internal::mooseErrorRaw("Variable for 'macro_porosity' must be strictly < 1 and > 0 [0 < eps < 1]");
-  return molecular_diffusion(temperature)*std::pow(porosity, _eff_diff_factor);
+    if (porosity > 1 || porosity < 0)
+      moose::internal::mooseErrorRaw("Variable for 'macro_porosity' must be strictly < 1 and > 0 [0 < eps < 1]");
+    return molecular_diffusion(temperature)*std::pow(porosity, _eff_diff_factor);
 }
 
 Real SimpleFluidPropertiesBase::dispersion(Real temperature)
 {
-  Real vel_mag = velocity_magnitude(_vel_x[_qp], _vel_y[_qp], _vel_z[_qp]);
-  vel_mag = length_conversion(vel_mag, _velocity_length_unit, _diff_length_unit);
-  vel_mag = 1/time_conversion(1/vel_mag, _velocity_time_unit, _diff_time_unit);
-  Real alpha = _dispersivity;
-  alpha = length_conversion(alpha, _disp_length_unit, _diff_length_unit);
-  return molecular_diffusion(temperature) + vel_mag*alpha;
+    Real vel_mag = velocity_magnitude(_vel_x[_qp], _vel_y[_qp], _vel_z[_qp]);
+    vel_mag = length_conversion(vel_mag, _velocity_length_unit, _diff_length_unit);
+    vel_mag = 1/time_conversion(1/vel_mag, _velocity_time_unit, _diff_time_unit);
+    Real alpha = _dispersivity;
+    alpha = length_conversion(alpha, _disp_length_unit, _diff_length_unit);
+    return molecular_diffusion(temperature) + vel_mag*alpha;
 }
 
 Real SimpleFluidPropertiesBase::effective_dispersion(Real temperature, Real porosity)
 {
-  if (porosity > 1 || porosity < 0)
-    moose::internal::mooseErrorRaw("Variable for 'macro_porosity' must be strictly < 1 and > 0 [0 < eps < 1]");
-  return dispersion(temperature)*std::pow(porosity, _eff_diff_factor);
+    if (porosity > 1 || porosity < 0)
+      moose::internal::mooseErrorRaw("Variable for 'macro_porosity' must be strictly < 1 and > 0 [0 < eps < 1]");
+    return dispersion(temperature)*std::pow(porosity, _eff_diff_factor);
 }
 
 Real SimpleFluidPropertiesBase::velocity_magnitude(Real ux, Real uy, Real uz)
 {
-  return std::sqrt(ux*ux + uy*uy + uz*uz);
+    return std::sqrt(ux*ux + uy*uy + uz*uz);
 }
 
 Real SimpleFluidPropertiesBase::computeValue()

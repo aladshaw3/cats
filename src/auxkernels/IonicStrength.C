@@ -23,20 +23,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "IonicStrength.h"
 
 registerMooseObject("catsApp", IonicStrength);
@@ -55,20 +41,20 @@ AuxKernel(parameters),
 _valence(getParam<std::vector<Real> >("ion_valence")),
 _conv_factor(getParam<Real>("conversion_factor"))
 {
-  unsigned int c = coupledComponents("ion_conc");
-  _ion_conc.resize(c);
+    unsigned int c = coupledComponents("ion_conc");
+    _ion_conc.resize(c);
 
-  //Check lists to ensure they are of same size
-  if (_ion_conc.size() != _valence.size())
-  {
-      moose::internal::mooseErrorRaw("User is required to provide list of ion concentration variables of the same length as list of ion valences.");
-  }
+    //Check lists to ensure they are of same size
+    if (_ion_conc.size() != _valence.size())
+    {
+        moose::internal::mooseErrorRaw("User is required to provide list of ion concentration variables of the same length as list of ion valences.");
+    }
 
-  //Grab the variables
-  for (unsigned int i = 0; i<_ion_conc.size(); ++i)
-  {
-      _ion_conc[i] = &coupledValue("ion_conc",i);
-  }
+    //Grab the variables
+    for (unsigned int i = 0; i<_ion_conc.size(); ++i)
+    {
+        _ion_conc[i] = &coupledValue("ion_conc",i);
+    }
 }
 
 Real IonicStrength::computeValue()

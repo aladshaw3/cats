@@ -7,7 +7,7 @@
  *              of the cylindrical reactor. Uses the Sieder-Tate correlation.
  *
  *            Ref: F.P. Incropera, D.P. DeWitt, Fundamentals of Heat and Mass
- *                    Transfer (4th ed), New York: Wiley, 2000, p. 493. 
+ *                    Transfer (4th ed), New York: Wiley, 2000, p. 493.
  *
  *
  *  \author Austin Ladshaw
@@ -22,27 +22,11 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "SimpleGasPropertiesBase.h"
 
-/// SimpleGasCylinderWallHeatTransCoef class object inherits from GasPropertiesBase object
-/** This class object inherits from the SimpleGasPropertiesBase object in the CATS framework.
-    All public and protected members of this class are required function overrides. */
+/// SimpleGasCylinderWallHeatTransCoef class object inherits from SimpleGasPropertiesBase object
 class SimpleGasCylinderWallHeatTransCoef : public SimpleGasPropertiesBase
 {
 public:
@@ -54,9 +38,6 @@ public:
 
 protected:
     /// Required MOOSE function override
-    /** This is the function that is called by the MOOSE framework when a calculation of the total
-        system pressure is needed. You are required to override this function for any inherited
-        AuxKernel. */
     virtual Real computeValue() override;
 
 private:

@@ -20,20 +20,6 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "ElectrolyteConductivity.h"
 
 registerMooseObject("catsApp", ElectrolyteConductivity);
@@ -64,40 +50,40 @@ _gas_const(getParam<Real>("gas_const")),
 _valence(getParam<std::vector<Real> >("ion_valence")),
 _min_conductivity(getParam<Real>("min_conductivity"))
 {
-  unsigned int c = coupledComponents("ion_conc");
-  _ion_conc.resize(c);
+    unsigned int c = coupledComponents("ion_conc");
+    _ion_conc.resize(c);
 
-  unsigned int d = coupledComponents("diffusion");
-  _diffusion.resize(d);
+    unsigned int d = coupledComponents("diffusion");
+    _diffusion.resize(d);
 
-  //Check lists to ensure they are of same size
-  if (c != d)
-  {
-      moose::internal::mooseErrorRaw("User is required to provide list of ion concentration variables of the same length as list of diffusion coefficients.");
-  }
-  if (_ion_conc.size() != _valence.size())
-  {
-      moose::internal::mooseErrorRaw("User is required to provide list of ion concentration variables of the same length as list of ion valences.");
-  }
+    //Check lists to ensure they are of same size
+    if (c != d)
+    {
+        moose::internal::mooseErrorRaw("User is required to provide list of ion concentration variables of the same length as list of diffusion coefficients.");
+    }
+    if (_ion_conc.size() != _valence.size())
+    {
+        moose::internal::mooseErrorRaw("User is required to provide list of ion concentration variables of the same length as list of ion valences.");
+    }
 
-  if (_diffusion.size() != _valence.size())
-  {
-      moose::internal::mooseErrorRaw("User is required to provide list of diffusion variables of the same length as list of ion valences.");
-  }
+    if (_diffusion.size() != _valence.size())
+    {
+        moose::internal::mooseErrorRaw("User is required to provide list of diffusion variables of the same length as list of ion valences.");
+    }
 
-  //Grab the variables
-  for (unsigned int i = 0; i<_ion_conc.size(); ++i)
-  {
-      _ion_conc[i] = &coupledValue("ion_conc",i);
-  }
+    //Grab the variables
+    for (unsigned int i = 0; i<_ion_conc.size(); ++i)
+    {
+        _ion_conc[i] = &coupledValue("ion_conc",i);
+    }
 
-  for (unsigned int i = 0; i<_diffusion.size(); ++i)
-  {
-      _diffusion[i] = &coupledValue("diffusion",i);
-  }
+    for (unsigned int i = 0; i<_diffusion.size(); ++i)
+    {
+        _diffusion[i] = &coupledValue("diffusion",i);
+    }
 
-  if (_min_conductivity < 1e-30)
-      _min_conductivity = 1e-30;
+    if (_min_conductivity < 1e-30)
+        _min_conductivity = 1e-30;
 }
 
 Real ElectrolyteConductivity::computeValue()

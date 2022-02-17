@@ -20,20 +20,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "AuxKernel.h"
@@ -66,21 +52,14 @@ protected:
     virtual Real computeValue() override;
 
     std::vector<const VariableValue *> _gases;     ///< Pointer list to the coupled gas concentrations (mol/L)
-    std::vector<unsigned int> _gases_vars;         ///< Indices for the coupled gas concentrations
     const VariableValue & _press;                  ///< Variable for the pressure (Pa)
-    const unsigned int _press_var;                 ///< Variable identification for the pressure
     const VariableValue & _temp;                   ///< Variable for the temperature (K)
-    const unsigned int _temp_var;                  ///< Variable identification for the temperature
 
     const VariableValue & _velx;                   ///< Variable for the x velocity (m/s)
-    const unsigned int _velx_var;                  ///< Variable identification for the x velocity
     const VariableValue & _vely;                   ///< Variable for the y velocity (m/s)
-    const unsigned int _vely_var;                  ///< Variable identification for the y velocity
     const VariableValue & _velz;                   ///< Variable for the z velocity (m/s)
-    const unsigned int _velz_var;                  ///< Variable identification for the z velocity
 
     const VariableValue & _char_len;                ///< Variable for the characteristic length (hydralic diameter) (m)
-    const unsigned int _char_len_var;               ///< Variable identification for the characteristic length (hydralic diameter)
 
     std::vector<Real> _MW;                         ///< List of molecular weights (g/mol)
     std::vector<Real> _SuthTemp;                   ///< List of Sutherland's Reference Temperatures (K)
@@ -91,7 +70,6 @@ protected:
     std::vector<double> _mole_frac;                   ///< Store calculated molefractions
 
     const VariableValue & _carrier_gas;            ///< Variable for the carrier gas concentration (mol/m^3)
-    const unsigned int _carrier_gas_var;           ///< Variable identification for the carrier gas
     Real _MW_cg;                                   ///< Molecular wieght for the carrier gas (g/mol)
 
     bool _is_ideal_gas;                            ///< Boolean to determine whether or not to consider gas ideal

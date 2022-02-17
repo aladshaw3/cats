@@ -19,27 +19,13 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "AuxKernel.h"
 
 /// DaviesActivityCoeff class object inherits from AuxKernel object
-/** This class object inherits from the Kernel object in the MOOSE framework.
-    All public and protected members of this class are required function overrides.  */
+/** This class object creates an AuxKernel for use in the MOOSE framework. The AuxKernel will
+    calculate an activity function based on Davies Model*/
 class DaviesActivityCoeff : public AuxKernel
 {
 public:
@@ -50,18 +36,14 @@ public:
     DaviesActivityCoeff(const InputParameters & parameters);
 
 protected:
-
     /// Required MOOSE function override
-    /** This is the function that is called by the MOOSE framework when a calculation of the total
-        system pressure is needed. You are required to override this function for any inherited
-        AuxKernel. */
     virtual Real computeValue() override;
 
     const VariableValue & _ionic_strength;                ///< Variable for the ionic strength (in M)
     const VariableValue & _temp;                          ///< Variable for the temperature (in K)
     Real _fitted_param;                                   ///< Value of the Davies Fitting parameter
     Real _dielec;                                         ///< Value for the dielectric constant of the media (water = 78.325)
-    Real _charge;                                         ///< Value of the valence/charge of the ion 
+    Real _charge;                                         ///< Value of the valence/charge of the ion
 
 private:
 

@@ -15,7 +15,7 @@
  *  \note This kernel calculates an effective Knudsen diffusivity which would commonly
  *        be directly applied to the MicroscaleVariableDiffusion kernels. Depending on
  *        how your volume basis for the microscale balance is defined, this will give
- *        you diffusivity on a per microscale volume basis or per total volume basis. 
+ *        you diffusivity on a per microscale volume basis or per total volume basis.
  *
  *
  *  \author Austin Ladshaw
@@ -30,27 +30,11 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "SimpleGasPropertiesBase.h"
 
 /// SimpleGasEffectiveKnudsenDiffusivity class object inherits from SimpleGasPropertiesBase object
-/** This class object inherits from the SimpleGasPropertiesBase object in the CATS framework.
-    All public and protected members of this class are required function overrides. */
 class SimpleGasEffectiveKnudsenDiffusivity : public SimpleGasPropertiesBase
 {
 public:
@@ -62,9 +46,6 @@ public:
 
 protected:
     /// Required MOOSE function override
-    /** This is the function that is called by the MOOSE framework when a calculation of the total
-        system pressure is needed. You are required to override this function for any inherited
-        AuxKernel. */
     virtual Real computeValue() override;
 
 private:

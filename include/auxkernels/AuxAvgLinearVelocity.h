@@ -23,20 +23,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "AuxKernel.h"
@@ -55,17 +41,11 @@ public:
 
 protected:
     /// Required MOOSE function override
-    /** This is the function that is called by the MOOSE framework when a calculation of the total
-        system pressure is needed. You are required to override this function for any inherited
-        AuxKernel. */
     virtual Real computeValue() override;
 
 private:
     const VariableValue & _flow_rate;                ///< Variable for the flow rate (m^3/s)
-    const unsigned int _flow_rate_var;               ///< Variable identification for the flow rate
     const VariableValue & _xsec_area;                ///< Variable for the cross-sectional area (m^2)
-    const unsigned int _xsec_area_var;               ///< Variable identification for the cross-sectional area
     const VariableValue & _porosity;                ///< Variable for the porosity
-    const unsigned int _porosity_var;               ///< Variable identification for the porosity
 
 };

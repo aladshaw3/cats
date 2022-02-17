@@ -19,20 +19,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "GasDensity.h"
 
 registerMooseObject("catsApp", GasDensity);
@@ -40,7 +26,6 @@ registerMooseObject("catsApp", GasDensity);
 InputParameters GasDensity::validParams()
 {
     InputParameters params = GasPropertiesBase::validParams();
-    
     return params;
 }
 
@@ -54,7 +39,7 @@ Real GasDensity::computeValue()
 {
     prepareEgret();
     calculateAllProperties();
-    
+
     Real total = 0.0;
     for (unsigned int i = 0; i<_gases.size(); ++i)
     {
@@ -65,8 +50,6 @@ Real GasDensity::computeValue()
     }
     if (_carrier_gas[_qp] > 0)
         total+=_carrier_gas[_qp]*_MW_cg;
-    
+
     return total/1000.0;
 }
-
-

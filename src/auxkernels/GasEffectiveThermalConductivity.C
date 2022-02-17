@@ -19,20 +19,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "GasEffectiveThermalConductivity.h"
 
 registerMooseObject("catsApp", GasEffectiveThermalConductivity);
@@ -50,9 +36,7 @@ GasEffectiveThermalConductivity::GasEffectiveThermalConductivity(const InputPara
 GasPropertiesBase(parameters),
 _Cp_Cv_ratio(getParam< Real >("heat_cap_ratio")),
 _solid_cond(coupledValue("solid_conductivity")),
-_solid_cond_var(coupled("solid_conductivity")),
-_porosity(coupledValue("porosity")),
-_porosity_var(coupled("porosity"))
+_porosity(coupledValue("porosity"))
 {
     // Check the bounds of the correction factor (typical values: 1.3 - 1.6)
     if (_Cp_Cv_ratio < 0.56)

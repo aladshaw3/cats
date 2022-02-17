@@ -20,20 +20,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "SimpleGasPropertiesBase.h"
 
 registerMooseObject("catsApp", SimpleGasPropertiesBase);
@@ -123,76 +109,76 @@ Real SimpleGasPropertiesBase::length_conversion(Real value, std::string from, st
 
 Real SimpleGasPropertiesBase::time_conversion(Real value, std::string from, std::string to)
 {
-  Real new_value = 0;
+    Real new_value = 0;
 
-  if (from == "hr" && to == "hr")
-    new_value = value;
-  else if (from == "hr" && to == "min")
-    new_value = 60*value;
-  else if (from == "hr" && to == "s")
-    new_value = 3600*value;
-  else if (from == "min" && to == "hr")
-    new_value = value/60;
-  else if (from == "min" && to == "min")
-    new_value = value;
-  else if (from == "min" && to == "s")
-    new_value = value*60;
-  else if (from == "s" && to == "hr")
-    new_value = value/3600;
-  else if (from == "s" && to == "min")
-    new_value = value/60;
-  else if (from == "s" && to == "s")
-    new_value = value;
-  else
-    unsupported_conversion(from,to);
+    if (from == "hr" && to == "hr")
+      new_value = value;
+    else if (from == "hr" && to == "min")
+      new_value = 60*value;
+    else if (from == "hr" && to == "s")
+      new_value = 3600*value;
+    else if (from == "min" && to == "hr")
+      new_value = value/60;
+    else if (from == "min" && to == "min")
+      new_value = value;
+    else if (from == "min" && to == "s")
+      new_value = value*60;
+    else if (from == "s" && to == "hr")
+      new_value = value/3600;
+    else if (from == "s" && to == "min")
+      new_value = value/60;
+    else if (from == "s" && to == "s")
+      new_value = value;
+    else
+      unsupported_conversion(from,to);
 
-  return new_value;
+    return new_value;
 }
 
 Real SimpleGasPropertiesBase::mass_conversion(Real value, std::string from, std::string to)
 {
-  Real new_value = 0;
+    Real new_value = 0;
 
-  if (from == "kg" && to == "kg")
-    new_value = value;
-  else if (from == "kg" && to == "g")
-    new_value = 1000*value;
-  else if (from == "kg" && to == "mg")
-    new_value = 1000*1000*value;
-  else if (from == "g" && to == "kg")
-    new_value = value/1000;
-  else if (from == "g" && to == "g")
-    new_value = value;
-  else if (from == "g" && to == "mg")
-    new_value = value*1000;
-  else if (from == "mg" && to == "kg")
-    new_value = value/1000/1000;
-  else if (from == "mg" && to == "g")
-    new_value = value/1000;
-  else if (from == "mg" && to == "mg")
-    new_value = value;
-  else
-    unsupported_conversion(from,to);
+    if (from == "kg" && to == "kg")
+      new_value = value;
+    else if (from == "kg" && to == "g")
+      new_value = 1000*value;
+    else if (from == "kg" && to == "mg")
+      new_value = 1000*1000*value;
+    else if (from == "g" && to == "kg")
+      new_value = value/1000;
+    else if (from == "g" && to == "g")
+      new_value = value;
+    else if (from == "g" && to == "mg")
+      new_value = value*1000;
+    else if (from == "mg" && to == "kg")
+      new_value = value/1000/1000;
+    else if (from == "mg" && to == "g")
+      new_value = value/1000;
+    else if (from == "mg" && to == "mg")
+      new_value = value;
+    else
+      unsupported_conversion(from,to);
 
-  return new_value;
+    return new_value;
 }
 
 Real SimpleGasPropertiesBase::energy_conversion(Real value, std::string from, std::string to)
 {
-  Real new_value = 0;
+    Real new_value = 0;
 
-  if (from == "kJ" && to == "kJ")
-    new_value = value;
-  else if (from == "kJ" && to == "J")
-    new_value = 1000*value;
-  else if (from == "J" && to == "kJ")
-    new_value = value/1000;
-  else if (from == "J" && to == "J")
-    new_value = value;
-  else
-    unsupported_conversion(from,to);
+    if (from == "kJ" && to == "kJ")
+      new_value = value;
+    else if (from == "kJ" && to == "J")
+      new_value = 1000*value;
+    else if (from == "J" && to == "kJ")
+      new_value = value/1000;
+    else if (from == "J" && to == "J")
+      new_value = value;
+    else
+      unsupported_conversion(from,to);
 
-  return new_value;
+    return new_value;
 }
 
 Real SimpleGasPropertiesBase::computeValue()

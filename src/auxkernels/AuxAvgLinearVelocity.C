@@ -23,20 +23,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "AuxAvgLinearVelocity.h"
 
 registerMooseObject("catsApp", AuxAvgLinearVelocity);
@@ -53,17 +39,13 @@ InputParameters AuxAvgLinearVelocity::validParams()
 AuxAvgLinearVelocity::AuxAvgLinearVelocity(const InputParameters & parameters) :
 AuxKernel(parameters),
 _flow_rate(coupledValue("flow_rate")),
-_flow_rate_var(coupled("flow_rate")),
 _xsec_area(coupledValue("xsec_area")),
-_xsec_area_var(coupled("xsec_area")),
-_porosity(coupledValue("porosity")),
-_porosity_var(coupled("porosity"))
+_porosity(coupledValue("porosity"))
 {
-    
+
 }
 
 Real AuxAvgLinearVelocity::computeValue()
 {
     return _flow_rate[_qp]/_xsec_area[_qp]/_porosity[_qp];
 }
-

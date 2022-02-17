@@ -19,20 +19,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "GasPropertiesBase.h"
@@ -52,16 +38,11 @@ public:
 
 protected:
     /// Required MOOSE function override
-    /** This is the function that is called by the MOOSE framework when a calculation of the total
-        system pressure is needed. You are required to override this function for any inherited
-        AuxKernel. */
     virtual Real computeValue() override;
 
     Real _Cp_Cv_ratio;            ///< Value for the ratio of Cp to Cv for the gas (assumed = 1.4 if not given)
     const VariableValue & _solid_cond;              ///< Variable for the solids thermal conductivity (W/m/K)
-    const unsigned int _solid_cond_var;             ///< Variable identification for the solids thermal conductivity
     const VariableValue & _porosity;                ///< Variable for the porosity
-    const unsigned int _porosity_var;               ///< Variable identification for the porosity
 
 private:
 

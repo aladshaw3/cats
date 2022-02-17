@@ -18,20 +18,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "SphericalAreaVolumeRatio.h"
 
 registerMooseObject("catsApp", SphericalAreaVolumeRatio);
@@ -56,8 +42,8 @@ _PerSolidsVolume(getParam<bool>("per_solids_volume"))
 
 Real SphericalAreaVolumeRatio::computeValue()
 {
-  if (_PerSolidsVolume == true)
-    return 6.0/_particle_diameter;
-  else
-    return (6.0/_particle_diameter)*(1.0-_bulk_porosity[_qp]);
+    if (_PerSolidsVolume == true)
+      return 6.0/_particle_diameter;
+    else
+      return (6.0/_particle_diameter)*(1.0-_bulk_porosity[_qp]);
 }

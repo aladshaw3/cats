@@ -39,8 +39,8 @@
 #include "AuxKernel.h"
 
 /// AuxPostprocessorValue class object inherits from AuxKernel object
-/** This class object inherits from the Kernel object in the MOOSE framework.
-    All public and protected members of this class are required function overrides.  */
+/** This class object creates an AuxKernel for use in the MOOSE framework. The AuxKernel will
+    set the auxillary variable value to that of the given postprocessor */
 class AuxPostprocessorValue : public AuxKernel
 {
 public:
@@ -51,14 +51,10 @@ public:
     AuxPostprocessorValue(const InputParameters & parameters);
 
 protected:
-
     /// Required MOOSE function override
-    /** This is the function that is called by the MOOSE framework when a calculation of the total
-        system pressure is needed. You are required to override this function for any inherited
-        AuxKernel. */
     virtual Real computeValue() override;
 
-    const PostprocessorValue & _post_val;     ///< Postprocessor value 
+    const PostprocessorValue & _post_val;     ///< Postprocessor value
 
 private:
 
