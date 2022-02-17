@@ -17,20 +17,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "InitialActivity.h"
 
 
@@ -59,5 +45,5 @@ _ref_conc_var(coupled("ref_conc"))
 
 Real InitialActivity::value(const Point & /*p*/)
 {
-  return _gamma[_qp] * _conc[_qp] / _ref_conc[_qp];
+    return _gamma[_qp] * _conc[_qp] / _ref_conc[_qp];
 }

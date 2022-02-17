@@ -21,20 +21,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "InitialCondition.h"
@@ -48,7 +34,7 @@ class InitialInhibitionProducts : public InitialCondition
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for BC objects in MOOSE
     InitialInhibitionProducts(const InputParameters & parameters);
 
@@ -56,7 +42,7 @@ protected:
     /// Required function override for IC objects in MOOSE
     /** This function returns the value of the variable at point p in the mesh.*/
     virtual Real value(const Point & p) override;
-    
+
     std::vector<Real> _power;                            ///< Inhibition term list powers
     std::vector<const VariableValue *> _inhibition;      ///< Pointer list to the coupled inhibitions
     std::vector<unsigned int> _inhibition_vars;          ///< Indices for the coupled reactants
@@ -64,6 +50,3 @@ protected:
 private:
 
 };
-
-
-

@@ -22,20 +22,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "InitialCondition.h"
@@ -53,9 +39,9 @@ class InitialLangmuirInhibition : public InitialCondition
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for BC objects in MOOSE
-     InitialLangmuirInhibition(const InputParameters & parameters);
+    InitialLangmuirInhibition(const InputParameters & parameters);
 
 protected:
     /// Function to compute all langmuir coefficients from temperature
@@ -63,11 +49,11 @@ protected:
 
     /// Function to compute the i-th term in the Langmuir function
     Real computeLangmuirTerm(int i);
-    
+
     /// Required function override for IC objects in MOOSE
     /** This function returns the value of the variable at point p in the mesh.*/
     virtual Real value(const Point & p) override;
-    
+
     std::vector<Real> _langmuir_coef;                   ///< Langmuir Coefficients for the coupled variables (units are inverse concentration)
     std::vector<Real> _pre_exp;                         ///< Pre-exponential factors for Langmuir coefficients
     std::vector<Real> _beta;                            ///< Beta factors for the Langmuir coefficients
@@ -80,5 +66,3 @@ protected:
 private:
 
 };
-
-

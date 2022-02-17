@@ -21,22 +21,7 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "InitialButlerVolmerCurrentDensity.h"
-
 
 registerMooseObject("catsApp", InitialButlerVolmerCurrentDensity);
 
@@ -65,5 +50,5 @@ _faraday(getParam<Real>("faraday_const"))
 
 Real InitialButlerVolmerCurrentDensity::value(const Point & /*p*/)
 {
-  return _n * _specarea[_qp] * _faraday * (-_rate[_qp]);
+    return _n * _specarea[_qp] * _faraday * (-_rate[_qp]);
 }
