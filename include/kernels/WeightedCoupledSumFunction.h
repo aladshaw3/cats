@@ -26,20 +26,6 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "Kernel.h"
@@ -52,8 +38,8 @@
 class WeightedCoupledSumFunction : public Kernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
 	/// Required constructor for objects in MOOSE
 	WeightedCoupledSumFunction(const InputParameters & parameters);
@@ -76,7 +62,7 @@ protected:
 	virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
 	std::vector<const VariableValue *> _coupled;		///< Pointer list to the coupled variables
-  std::vector<Real> _weight;		                  ///< Pointer list to the weights of variables 
+  std::vector<Real> _weight;		                  ///< Pointer list to the weights of variables
 	std::vector<unsigned int> _coupled_vars;			  ///< Indices for the variables in the system
 
 private:

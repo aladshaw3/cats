@@ -25,20 +25,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "PhaseEnergyTransfer.h"
 
 registerMooseObject("catsApp", PhaseEnergyTransfer);
@@ -67,7 +53,7 @@ _volfrac_var(coupled("volume_frac")),
 _specarea(coupledValue("specific_area")),
 _specarea_var(coupled("specific_area"))
 {
-    
+
 }
 
 Real PhaseEnergyTransfer::computeQpResidual()
@@ -86,26 +72,26 @@ Real PhaseEnergyTransfer::computeQpOffDiagJacobian(unsigned int jvar)
     {
         return _test[_i][_qp] * _hs[_qp] * _specarea[_qp] * _volfrac[_qp] * _phi[_j][_qp];
     }
-    
+
     if (jvar == _other_temp_var)
     {
         return -_test[_i][_qp] * _hs[_qp] * _specarea[_qp] * _volfrac[_qp] * _phi[_j][_qp];
     }
-    
+
     if (jvar == _hs_var)
     {
         return _test[_i][_qp] * _phi[_j][_qp] * _specarea[_qp] * _volfrac[_qp] * (_this_temp[_qp] - _other_temp[_qp]);
     }
-    
+
     if (jvar == _volfrac_var)
     {
         return _test[_i][_qp] * _hs[_qp] * _specarea[_qp] * _phi[_j][_qp] * (_this_temp[_qp] - _other_temp[_qp]);
     }
-    
+
     if (jvar == _specarea_var)
     {
         return _test[_i][_qp] * _hs[_qp] * _phi[_j][_qp]* _volfrac[_qp] * (_this_temp[_qp] - _other_temp[_qp]);
     }
-    
+
     return 0.0;
 }

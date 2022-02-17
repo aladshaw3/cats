@@ -21,22 +21,7 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "MaterialBalance.h"
-
 
 registerMooseObject("catsApp", MaterialBalance);
 
@@ -93,8 +78,7 @@ Real MaterialBalance::computeQpResidual()
     Real sum = 0.0;
     for (unsigned int i = 0; i<_coupled.size(); ++i)
     {
-        //if (((*_coupled[i])[_qp]) > 0.0)
-            sum += _weights[i] * ((*_coupled[i])[_qp]);
+        sum += _weights[i] * ((*_coupled[i])[_qp]);
     }
     return (_coupled_total[_qp] - sum) * _test[_i][_qp];
 }

@@ -17,20 +17,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "MicroscaleVariableCoefTimeDerivative.h"
 
 registerMooseObject("catsApp", MicroscaleVariableCoefTimeDerivative);
@@ -47,7 +33,7 @@ MicroscaleVariableCoefTimeDerivative::MicroscaleVariableCoefTimeDerivative(const
 _coupled_coef(coupledValue("nodal_time_var")),
 _coupled_coef_var(coupled("nodal_time_var"))
 {
-    
+
 }
 
 Real MicroscaleVariableCoefTimeDerivative::computeQpResidual()
@@ -65,11 +51,10 @@ Real MicroscaleVariableCoefTimeDerivative::computeQpJacobian()
 Real MicroscaleVariableCoefTimeDerivative::computeQpOffDiagJacobian(unsigned int jvar)
 {
     _nodal_time_coef = _coupled_coef[_qp];
-    
+
     if (jvar == _coupled_coef_var)
     {
         return _rd_l*_phi[_j][_qp]*_test[_i][_qp] * _u_dot[_qp];
     }
     return 0.0;
 }
-

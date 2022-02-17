@@ -18,34 +18,17 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "Kernel.h"
 
 /// PhaseTemperature class object inherits from Kernel object
-/** This class object inherits from the Kernel object in the MOOSE framework.
-    All public and protected members of this class are required function overrides.
-    The kernel interfaces the set of non-linear variables to solve a material balance.  */
 class PhaseTemperature : public Kernel
 {
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     PhaseTemperature(const InputParameters & parameters);
 
@@ -72,7 +55,7 @@ protected:
     const unsigned int _density_var;             ///< Variable identification for the density
     const VariableValue & _specheat;              ///< Variable for the specific heat (J/kg/K)
     const unsigned int _specheat_var;             ///< Variable identification for the specific heat
-    
+
 private:
 
 };

@@ -25,20 +25,6 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "ExtendedLangmuirFunction.h"
@@ -53,15 +39,11 @@
 #endif
 
 /// ExtendedLangmuirModel class object inherits from ExtendedLangmuirFunction object
-/** This class object inherits from the CoupledExtendedLangmuirFunction object in the MOOSE framework.
-	All public and protected members of this class are required function overrides.
-	The kernel interfaces the set of non-linear variables to couple an extended Langmuir
-	forcing function between given objects. */
 class ExtendedLangmuirModel : public ExtendedLangmuirFunction
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
 	/// Required constructor for objects in MOOSE
 	ExtendedLangmuirModel(const InputParameters & parameters);

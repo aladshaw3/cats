@@ -23,34 +23,16 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "CoupledCoeffTimeDerivative.h"
 
 /// CoupledCoeffTimeDerivative class object inherits from CoupledCoeffTimeDerivative object
-/** This class object inherits from the Kernel object in the MOOSE framework.
-	All public and protected members of this class are required function overrides.
-	The kernel interfaces the two non-linear variables to couple a time derivative
-	function between given objects. */
 class CoupledPorePhaseTransfer : public CoupledCoeffTimeDerivative
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
 	/// Required constructor for objects in MOOSE
 	CoupledPorePhaseTransfer(const InputParameters & parameters);
@@ -71,7 +53,7 @@ protected:
 		cross coupling of the variables. */
 	virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-    const VariableValue & _porosity;			///< Porosity variable
+  const VariableValue & _porosity;			///< Porosity variable
 	const unsigned int _porosity_var;				///< Variable identification for porosity
 
 private:

@@ -32,22 +32,7 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "ModifiedButlerVolmerReaction.h"
-
 
 registerMooseObject("catsApp", ModifiedButlerVolmerReaction);
 
@@ -117,21 +102,21 @@ _pot_diff_var(coupled("electric_potential_difference"))
 
     if (r == 0)
     {
-      moose::internal::mooseErrorRaw("Must have at least 1 reduced-state variable");
+        moose::internal::mooseErrorRaw("Must have at least 1 reduced-state variable");
     }
     if (p == 0)
     {
-      moose::internal::mooseErrorRaw("Must have at least 1 oxidized-state variable");
+        moose::internal::mooseErrorRaw("Must have at least 1 oxidized-state variable");
     }
 
     if (_reduced.size() != _reduced_stoich.size())
     {
-      moose::internal::mooseErrorRaw("User is required to provide list of reduced-state reactant variables of the same length as list of reduced-state reactant stoichiometry.");
+        moose::internal::mooseErrorRaw("User is required to provide list of reduced-state reactant variables of the same length as list of reduced-state reactant stoichiometry.");
     }
 
     if (_oxidized.size() != _oxidized_stoich.size())
     {
-      moose::internal::mooseErrorRaw("User is required to provide list of oxidized-state product variables of the same length as list of oxidized-state product stoichiometry.");
+        moose::internal::mooseErrorRaw("User is required to provide list of oxidized-state product variables of the same length as list of oxidized-state product stoichiometry.");
     }
 
     for (unsigned int i = 0; i<_reduced.size(); ++i)
@@ -149,24 +134,24 @@ _pot_diff_var(coupled("electric_potential_difference"))
     // Check the inputs for errors
     if (_n < 0.0)
     {
-      moose::internal::mooseErrorRaw("Number of electrons transferred must be strictly > 0");
+        moose::internal::mooseErrorRaw("Number of electrons transferred must be strictly > 0");
     }
     if (_alpha > 1.0 || _alpha < 0.0)
     {
-      moose::internal::mooseErrorRaw("Electron transfer coefficient must be strictly > 0 and < 1. Default = 0.5 for symmetric electron transfer.");
+        moose::internal::mooseErrorRaw("Electron transfer coefficient must be strictly > 0 and < 1. Default = 0.5 for symmetric electron transfer.");
     }
     for (unsigned int i = 0; i<_oxidized.size(); ++i)
     {
       if (_oxidized_stoich[i] <= 0.0)
       {
-        moose::internal::mooseErrorRaw("All stoichiometric coefficients should be strictly > 0");
+          moose::internal::mooseErrorRaw("All stoichiometric coefficients should be strictly > 0");
       }
     }
     for (unsigned int i = 0; i<_reduced.size(); ++i)
     {
       if (_reduced_stoich[i] <= 0.0)
       {
-        moose::internal::mooseErrorRaw("All stoichiometric coefficients should be strictly > 0");
+          moose::internal::mooseErrorRaw("All stoichiometric coefficients should be strictly > 0");
       }
     }
 
@@ -177,11 +162,11 @@ Real ModifiedButlerVolmerReaction::oxidation_rate_fun()
 {
     if (useEquilibriumPotential == true)
     {
-      return _reaction_rate * std::exp(-(1.0-_alpha)*_equ_pot*_n*_faraday/_gas_const/_temp[_qp]);
+        return _reaction_rate * std::exp(-(1.0-_alpha)*_equ_pot*_n*_faraday/_gas_const/_temp[_qp]);
     }
     else
     {
-      return _oxidation_rate;
+        return _oxidation_rate;
     }
 }
 
@@ -190,11 +175,11 @@ Real ModifiedButlerVolmerReaction::reduction_rate_fun()
 {
     if (useEquilibriumPotential == true)
     {
-      return _reaction_rate * std::exp(_alpha*_equ_pot*_n*_faraday/_gas_const/_temp[_qp]);
+        return _reaction_rate * std::exp(_alpha*_equ_pot*_n*_faraday/_gas_const/_temp[_qp]);
     }
     else
     {
-      return _reduction_rate;
+        return _reduction_rate;
     }
 }
 
@@ -203,11 +188,11 @@ Real ModifiedButlerVolmerReaction::oxidation_rate_fun_derivative_with_temp()
 {
     if (useEquilibriumPotential == true)
     {
-      return _reaction_rate * std::exp(-(1.0-_alpha)*_equ_pot*_n*_faraday/_gas_const/_temp[_qp]) * ((1.0-_alpha)*_equ_pot*_n*_faraday/_gas_const/_temp[_qp]/_temp[_qp]);
+        return _reaction_rate * std::exp(-(1.0-_alpha)*_equ_pot*_n*_faraday/_gas_const/_temp[_qp]) * ((1.0-_alpha)*_equ_pot*_n*_faraday/_gas_const/_temp[_qp]/_temp[_qp]);
     }
     else
     {
-      return 0.0;
+        return 0.0;
     }
 }
 
@@ -216,11 +201,11 @@ Real ModifiedButlerVolmerReaction::reduction_rate_fun_derivative_with_temp()
 {
     if (useEquilibriumPotential == true)
     {
-      return _reaction_rate * std::exp(_alpha*_equ_pot*_n*_faraday/_gas_const/_temp[_qp]) * (-_alpha*_equ_pot*_n*_faraday/_gas_const/_temp[_qp]/_temp[_qp]);
+        return _reaction_rate * std::exp(_alpha*_equ_pot*_n*_faraday/_gas_const/_temp[_qp]) * (-_alpha*_equ_pot*_n*_faraday/_gas_const/_temp[_qp]/_temp[_qp]);
     }
     else
     {
-      return 0.0;
+        return 0.0;
     }
 }
 

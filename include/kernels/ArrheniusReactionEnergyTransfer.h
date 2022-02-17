@@ -31,35 +31,17 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "ArrheniusReaction.h"
 
 /// ArrheniusReactionEnergyTransfer class object inherits from ArrheniusReaction object
-/** This class object inherits from the Kernel object in the MOOSE framework.
-    All public and protected members of this class are required function overrides.
-    The kernel interfaces the set of non-linear variables to create a kernel for an
-    Arrhenius reaction with equilibrium parameters to establish correct end values. */
 class ArrheniusReactionEnergyTransfer : public ArrheniusReaction
 {
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     ArrheniusReactionEnergyTransfer(const InputParameters & parameters);
 
@@ -81,7 +63,7 @@ protected:
     virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
     Real _enthalpy;                                ///< Reaction enthalpy (J/mol)
-    
+
     const VariableValue & _volfrac;      ///< Variable for volume fraction (-)
     const unsigned int _volfrac_var;     ///< Variable identification for volume fraction
     const VariableValue & _specarea;      ///< Variable for specific area (m^-1) [optional]
@@ -90,9 +72,3 @@ protected:
 private:
 
 };
-
-
-
-
-
-

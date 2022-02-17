@@ -31,20 +31,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "ArrheniusEquilibriumReactionEnergyTransfer.h"
 
 registerMooseObject("catsApp", ArrheniusEquilibriumReactionEnergyTransfer);
@@ -62,12 +48,12 @@ _entropy(getParam< Real >("entropy"))
 {
     _beta_for = 0.0;
     _beta_rev = 0.0;
-    
+
     if (_reactants.size() == 0)
          moose::internal::mooseErrorRaw("EquilibriumReaction requires at least 1 reactant!");
     if (_products.size() == 0)
          moose::internal::mooseErrorRaw("EquilibriumReaction requires at least 1 product!");
-    
+
     //Calculate the reverse parameters here based on the forward parameters and site energies
     _act_energy_rev = _act_energy_for - _enthalpy;
     _pre_exp_rev = _pre_exp_for * std::exp(-_entropy/Rstd);

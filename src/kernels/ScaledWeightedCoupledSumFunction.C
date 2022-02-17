@@ -32,22 +32,7 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "ScaledWeightedCoupledSumFunction.h"
-
 
 registerMooseObject("catsApp", ScaledWeightedCoupledSumFunction);
 
@@ -80,11 +65,11 @@ Real ScaledWeightedCoupledSumFunction::computeQpOffDiagJacobian(unsigned int jva
 {
   if (jvar == _scale_var)
   {
-    return WeightedCoupledSumFunction::computeQpResidual()*_phi[_j][_qp];
+      return WeightedCoupledSumFunction::computeQpResidual()*_phi[_j][_qp];
   }
   else
   {
-    return WeightedCoupledSumFunction::computeQpOffDiagJacobian(jvar)*_scale[_qp];
+      return WeightedCoupledSumFunction::computeQpOffDiagJacobian(jvar)*_scale[_qp];
   }
 
 }

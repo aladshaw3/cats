@@ -17,20 +17,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "MicroscaleCoefTimeDerivative.h"
@@ -46,10 +32,10 @@ class MicroscaleVariableCoefTimeDerivative : public MicroscaleCoefTimeDerivative
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     MicroscaleVariableCoefTimeDerivative(const InputParameters & parameters);
-    
+
 protected:
     /// Required residual function for standard kernels in MOOSE
     /** This function returns a residual contribution for this object.*/
@@ -64,12 +50,10 @@ protected:
         returning a non-zero value we will hopefully improve the convergence rate for the
         cross coupling of the variables. */
     virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
-    
+
     const VariableValue & _coupled_coef;            ///< Coupled coefficient variable
     const unsigned int _coupled_coef_var;           ///< Variable identification for coupled coefficient
-    
+
 private:
 
 };
-
-

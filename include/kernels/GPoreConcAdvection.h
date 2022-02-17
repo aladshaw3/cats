@@ -18,38 +18,24 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "GConcentrationAdvection.h"
 
-/// GConcentrationAdvection class object inherits from Kernel object
-/** This class object inherits from the Kernel object in the MOOSE framework.
+/// GConcentrationAdvection class object inherits from GConcentrationAdvection object
+/** This class object inherits from the GConcentrationAdvection object in the MOOSE framework.
 	All public and protected members of this class are required function overrides.
 	The kernel has a velocity vector whose components can be set piecewise in an
 	input file.
 
-	\note To create a specific GAdvection kernel, inherit from this class and override
+	\note To create a specific GConcentrationAdvection kernel, inherit from this class and override
 	the components of the velocity vector, then call the residual and Jacobian functions
 	for this object. */
 class GPoreConcAdvection : public GConcentrationAdvection
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
 	/// Required constructor for objects in MOOSE
 	GPoreConcAdvection(const InputParameters & parameters);

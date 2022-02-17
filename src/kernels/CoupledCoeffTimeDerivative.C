@@ -20,20 +20,6 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "CoupledCoeffTimeDerivative.h"
 
 registerMooseObject("catsApp", CoupledCoeffTimeDerivative);
@@ -55,24 +41,24 @@ CoupledCoeffTimeDerivative::CoupledCoeffTimeDerivative(const InputParameters & p
 	_coupled_ddot(coupledDotDu("coupled")),
 	_coupled_var(coupled("coupled"))
 {
-	if (_gaining == true)
-		_time_coef = -_time_coef;
+  	if (_gaining == true)
+  		_time_coef = -_time_coef;
 }
 
 Real CoupledCoeffTimeDerivative::computeQpResidual()
 {
-	return _time_coef*_coupled_dot[_qp]*_test[_i][_qp];
+  	return _time_coef*_coupled_dot[_qp]*_test[_i][_qp];
 }
 
 Real CoupledCoeffTimeDerivative::computeQpJacobian()
 {
-	return 0.0;
+  	return 0.0;
 }
 
 Real CoupledCoeffTimeDerivative::computeQpOffDiagJacobian(unsigned int jvar)
 {
-	if (jvar == _coupled_var)
-		return _time_coef*_test[_i][_qp] * _phi[_j][_qp] * _coupled_ddot[_qp];
+  	if (jvar == _coupled_var)
+  		return _time_coef*_test[_i][_qp] * _phi[_j][_qp] * _coupled_ddot[_qp];
 
-	return 0.0;
+  	return 0.0;
 }

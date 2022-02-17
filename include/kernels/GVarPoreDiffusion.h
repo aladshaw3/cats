@@ -21,38 +21,24 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "GVariableDiffusion.h"
 
-/// GVarPoreDiffusion class object inherits from Kernel object
-/** This class object inherits from the Kernel object in the MOOSE framework.
+/// GVarPoreDiffusion class object inherits from GVariableDiffusion object
+/** This class object inherits from the GVariableDiffusion object in the MOOSE framework.
 	All public and protected members of this class are required function overrides.
 	The kernel has a diffusion tensor whose components can be set piecewise in an
 	input file.
 
-	\note To create a specific GVariableDiffusion kernel, inherit from this class and override
+	\note To create a specific GVarPoreDiffusion kernel, inherit from this class and override
 	the components of the diffusion tensor, then call the residual and Jacobian functions
 	for this object. */
 class GVarPoreDiffusion : public GVariableDiffusion
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
 	/// Required constructor for objects in MOOSE
 	GVarPoreDiffusion(const InputParameters & parameters);

@@ -31,20 +31,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "ArrheniusReactionEnergyTransfer.h"
 
 registerMooseObject("catsApp", ArrheniusReactionEnergyTransfer);
@@ -66,7 +52,7 @@ _volfrac_var(coupled("volume_frac")),
 _specarea(coupledValue("specific_area")),
 _specarea_var(coupled("specific_area"))
 {
-   
+
 }
 
 Real ArrheniusReactionEnergyTransfer::computeQpResidual()
@@ -99,4 +85,3 @@ Real ArrheniusReactionEnergyTransfer::computeQpOffDiagJacobian(unsigned int jvar
     }
     return 0.0;
 }
-

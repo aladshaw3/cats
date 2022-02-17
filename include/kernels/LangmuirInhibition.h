@@ -28,20 +28,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "Kernel.h"
@@ -51,16 +37,12 @@
 #endif
 
 /// LangmuirInhibition class object inherits from Kernel object
-/** This class object inherits from the Kernel object in the MOOSE framework.
-    All public and protected members of this class are required function overrides.
-    The kernel interfaces the set of non-linear variables to couple an extended Langmuir
-    forcing function between given objects. */
 class LangmuirInhibition : public Kernel
 {
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     LangmuirInhibition(const InputParameters & parameters);
 
@@ -73,10 +55,10 @@ protected:
 
     /// Function to compute the off-diagonal Jacobi for the coupled concentrations
     Real computeLangmuirConcJacobi(int i);
-    
+
     /// Function to compute the i-th term in the Langmuir function's temperature Jacobi
     Real computeLangmuirTempJacobiTerm(int i);
-    
+
     /// Function to compute the Jacobi for the coupled temperature
     Real computeLangmuirTempJacobi();
 
@@ -99,7 +81,7 @@ protected:
     std::vector<Real> _langmuir_coef;                   ///< Langmuir Coefficients for the coupled variables (units are inverse concentration)
     std::vector<Real> _pre_exp;                         ///< Pre-exponential factors for Langmuir coefficients
     std::vector<Real> _beta;                            ///< Beta factors for the Langmuir coefficients
-    std::vector<Real> _act_energy;                      ///< Activation energies for Langmuir coefficients 
+    std::vector<Real> _act_energy;                      ///< Activation energies for Langmuir coefficients
     std::vector<const VariableValue *> _coupled;        ///< Pointer list to the coupled gases (concentration units)
     std::vector<unsigned int> _coupled_vars;            ///< Indices for the concentration species in the system
     const VariableValue & _temp;                        ///< Coupled variable for temperature
@@ -108,4 +90,3 @@ protected:
 private:
 
 };
-

@@ -28,22 +28,7 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "PairedLangmuirInhibition.h"
-
 
 registerMooseObject("catsApp", PairedLangmuirInhibition);
 
@@ -57,7 +42,7 @@ InputParameters PairedLangmuirInhibition::validParams()
     params.addRequiredCoupledVar("coupled_j_list","List of names of the j-th variables being paired to the i-th variables");
     return params;
 }
- 
+
 PairedLangmuirInhibition::PairedLangmuirInhibition(const InputParameters & parameters)
 : LangmuirInhibition(parameters),
 _binary_pre_exp(getParam<std::vector<Real> >("binary_pre_exp")),
@@ -66,29 +51,29 @@ _binary_act_energy(getParam<std::vector<Real> >("binary_energies"))
 {
     unsigned int n = coupledComponents("coupled_i_list");
     unsigned int m = coupledComponents("coupled_j_list");
-    
+
     if (n != m)
     {
         moose::internal::mooseErrorRaw("User is required to provide list of paired variables of the same length (i.e., length of coupled_i_list must be same as coupled_j_list).");
     }
-    
+
     _coupled_i_vars.resize(n);
     _coupled_i.resize(n);
     _coupled_j_vars.resize(n);
     _coupled_j.resize(n);
     _binary_coef.resize(n);
-    
+
     if (_binary_pre_exp.size() != _binary_coef.size())
     {
         moose::internal::mooseErrorRaw("User is required to provide (at minimum) a list of binary pre-exponential factors equal to the number of coupled concentrations in the coupled_i_list and/or coupled_j_list.");
     }
-    
+
     for (int i=0; i<_binary_pre_exp.size(); i++)
     {
         if (_binary_pre_exp[i] < 0)
             moose::internal::mooseErrorRaw("Pre-exponentials can NOT be negative numbers!");
     }
-    
+
     if (_binary_beta.size() != _binary_coef.size())
     {
         _binary_beta.resize(n);
@@ -97,7 +82,7 @@ _binary_act_energy(getParam<std::vector<Real> >("binary_energies"))
             _binary_beta[i] = 0.0;
         }
     }
-    
+
     if (_binary_act_energy.size() != _binary_coef.size())
     {
         _binary_act_energy.resize(n);
@@ -106,13 +91,13 @@ _binary_act_energy(getParam<std::vector<Real> >("binary_energies"))
             _binary_act_energy[i] = 0.0;
         }
     }
-    
+
     for (unsigned int n = 0; n<_coupled_i.size(); ++n)
     {
         _coupled_i_vars[n] = coupled("coupled_i_list",n);
         _coupled_i[n] = &coupledValue("coupled_i_list",n);
     }
-    
+
     for (unsigned int n = 0; n<_coupled_j.size(); ++n)
     {
         _coupled_j_vars[n] = coupled("coupled_j_list",n);
@@ -198,14 +183,14 @@ Real PairedLangmuirInhibition::computeQpJacobian()
 Real PairedLangmuirInhibition::computeQpOffDiagJacobian(unsigned int jvar)
 {
     computeAllLangmuirCoeffs();
-    
+
     if (jvar == _temp_var)
     {
         return -_test[_i][_qp]*(LangmuirInhibition::computeLangmuirTempJacobi()+computePairedLangmuirTempJacobi());
     }
-    
+
     Real jac = LangmuirInhibition::computeQpOffDiagJacobian(jvar);
     jac += -_test[_i][_qp]*computePairedLangmuirConcJacobi(jvar);
-    
+
     return jac;
 }

@@ -29,20 +29,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "ArrheniusReaction.h"
@@ -61,14 +47,14 @@ class InhibitedArrheniusReaction : public ArrheniusReaction
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
-     InhibitedArrheniusReaction(const InputParameters & parameters);
+    InhibitedArrheniusReaction(const InputParameters & parameters);
 
 protected:
     ///  Function to compute the rate constants
     void calculateInhibitedRateConstants();
-    
+
     /// Required residual function for standard kernels in MOOSE
     /** This function returns a residual contribution for this object.*/
     virtual Real computeQpResidual();
@@ -89,7 +75,7 @@ protected:
     const unsigned int _Rf_var;                             ///< Variable identification for Rf
     const VariableValue & _reverse_inhibition;              ///< Coupled reverse inhibition variable (-)
     const unsigned int _Rr_var;                             ///< Variable identification for Rr
-   
+
 private:
 
 };

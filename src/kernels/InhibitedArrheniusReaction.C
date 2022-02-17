@@ -29,20 +29,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "InhibitedArrheniusReaction.h"
 
 registerMooseObject("catsApp", InhibitedArrheniusReaction);
@@ -120,7 +106,7 @@ Real InhibitedArrheniusReaction::computeQpOffDiagJacobian(unsigned int jvar)
             react_prod = react_prod * std::pow( (*_reactants[i])[_qp], _react_stoich[i] );
         }
         jac = _scale*_forward_rate*react_prod*_test[_i][_qp]*_phi[_j][_qp]/_forward_inhibition[_qp];
-        
+
         return jac;
     }
     else if (jvar == _Rr_var)
@@ -135,7 +121,7 @@ Real InhibitedArrheniusReaction::computeQpOffDiagJacobian(unsigned int jvar)
             prod_prod = prod_prod * std::pow( (*_products[i])[_qp], _prod_stoich[i] );
         }
         jac = -_scale*_reverse_rate*prod_prod*_test[_i][_qp]*_phi[_j][_qp]/_reverse_inhibition[_qp];
-        
+
         return jac;
     }
     else

@@ -25,20 +25,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "Kernel.h"
@@ -53,7 +39,7 @@ class PhaseEnergyTransfer : public Kernel
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     PhaseEnergyTransfer(const InputParameters & parameters);
 
@@ -84,8 +70,7 @@ protected:
     const unsigned int _volfrac_var;     ///< Variable identification for volume fraction
     const VariableValue & _specarea;      ///< Variable for specific area (m^-1)
     const unsigned int _specarea_var;     ///< Variable identification for specific area
-    
+
 private:
 
 };
-

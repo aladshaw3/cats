@@ -28,22 +28,7 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "LangmuirInhibition.h"
-
 
 registerMooseObject("catsApp", LangmuirInhibition);
 
@@ -57,7 +42,7 @@ InputParameters LangmuirInhibition::validParams()
     params.addRequiredCoupledVar("temperature","Name of the coupled temperature variable (K)");
     return params;
 }
- 
+
 LangmuirInhibition::LangmuirInhibition(const InputParameters & parameters)
 : Kernel(parameters),
 _pre_exp(getParam<std::vector<Real> >("pre_exponentials")),
@@ -70,18 +55,18 @@ _temp_var(coupled("temperature"))
     _coupled_vars.resize(n);
     _coupled.resize(n);
     _langmuir_coef.resize(n);
-    
+
     if (_pre_exp.size() != _langmuir_coef.size())
     {
         moose::internal::mooseErrorRaw("User is required to provide (at minimum) a list of pre-exponential factors equal to the number of coupled concentrations.");
     }
-    
+
     for (int i=0; i<_pre_exp.size(); i++)
     {
         if (_pre_exp[i] < 0)
             moose::internal::mooseErrorRaw("Pre-exponentials can NOT be negative numbers!");
     }
-    
+
     if (_beta.size() != _langmuir_coef.size())
     {
         _beta.resize(n);
@@ -90,7 +75,7 @@ _temp_var(coupled("temperature"))
             _beta[i] = 0.0;
         }
     }
-    
+
     if (_act_energy.size() != _langmuir_coef.size())
     {
         _act_energy.resize(n);
@@ -170,17 +155,17 @@ Real LangmuirInhibition::computeQpJacobian()
 Real LangmuirInhibition::computeQpOffDiagJacobian(unsigned int jvar)
 {
     computeAllLangmuirCoeffs();
-    
+
     if (jvar == _temp_var)
     {
         return -_test[_i][_qp]*computeLangmuirTempJacobi();
     }
-    
+
     for (unsigned int i = 0; i<_coupled.size(); ++i)
     {
         if (jvar == _coupled_vars[i])
             return -_test[_i][_qp]*computeLangmuirConcJacobi(i);
     }
-    
+
     return 0.0;
 }

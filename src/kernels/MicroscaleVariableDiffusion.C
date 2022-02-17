@@ -17,20 +17,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "MicroscaleVariableDiffusion.h"
 
 registerMooseObject("catsApp", MicroscaleVariableDiffusion);
@@ -41,7 +27,7 @@ InputParameters MicroscaleVariableDiffusion::validParams()
     params.addRequiredCoupledVar("current_diff","Variable for this diffusion coefficient");
     params.addRequiredCoupledVar("upper_diff","Variable for upper diffusion coefficient");
     params.addRequiredCoupledVar("lower_diff","Variable for lower diffusion coefficient");
-    
+
     return params;
 }
 
@@ -57,7 +43,7 @@ _upper_diff_var(coupled("upper_diff")),
 _lower_diffusion(coupledValue("lower_diff")),
 _lower_diff_var(coupled("lower_diff"))
 {
-    
+
 }
 
 Real MicroscaleVariableDiffusion::computeQpResidual()
@@ -65,7 +51,7 @@ Real MicroscaleVariableDiffusion::computeQpResidual()
     _current_diff = _current_diffusion[_qp];
     _upper_diff = _upper_diffusion[_qp];
     _lower_diff = _lower_diffusion[_qp];
-    
+
     return MicroscaleDiffusion::computeQpResidual();
 }
 
@@ -74,7 +60,7 @@ Real MicroscaleVariableDiffusion::computeQpJacobian()
     _current_diff = _current_diffusion[_qp];
     _upper_diff = _upper_diffusion[_qp];
     _lower_diff = _lower_diffusion[_qp];
-    
+
     return MicroscaleDiffusion::computeQpJacobian();
 }
 
@@ -83,7 +69,7 @@ Real MicroscaleVariableDiffusion::computeQpOffDiagJacobian(unsigned int jvar)
     _current_diff = _current_diffusion[_qp];
     _upper_diff = _upper_diffusion[_qp];
     _lower_diff = _lower_diffusion[_qp];
-    
+
     if (jvar == _upper_var)
     {
         return MicroscaleDiffusion::computeQpOffDiagJacobian(jvar);
@@ -92,7 +78,7 @@ Real MicroscaleVariableDiffusion::computeQpOffDiagJacobian(unsigned int jvar)
     {
         return MicroscaleDiffusion::computeQpOffDiagJacobian(jvar);
     }
-    
+
     if (jvar == _current_diff_var)
     {
         return _test[_i][_qp]*( (_rd_lp1/_dr/_dr/2.0) )*_phi[_j][_qp]*(_u[_qp] - _upper_neighbor[_qp]) + _test[_i][_qp]*( (_rd_lm1/_dr/_dr/2.0) )*_phi[_j][_qp]*(_u[_qp] - _lower_neighbor[_qp]);
@@ -105,6 +91,6 @@ Real MicroscaleVariableDiffusion::computeQpOffDiagJacobian(unsigned int jvar)
     {
         return _test[_i][_qp]*( (_rd_lm1/_dr/_dr/2.0) )*_phi[_j][_qp]*(_u[_qp] - _lower_neighbor[_qp]);
     }
-    
+
     return 0.0;
 }

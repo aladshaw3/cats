@@ -9,7 +9,7 @@
  *            field, unless we are strictly only concerned with laminar flow and/or Darcy flow.
  *
  *  \note The vectors are allowed to just be unit vectors in a specific direction. This is particularly
- *        useful when enforcing the Divergence of velocity to be zero in a piecewise manner. 
+ *        useful when enforcing the Divergence of velocity to be zero in a piecewise manner.
  *
  *
  *  \author Austin Ladshaw
@@ -24,27 +24,8 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "VectorCoupledGradient.h"
 
-/**
- * All MOOSE based object classes you create must be registered using this macro.  The first
- * argument is the name of the App with an "App" suffix (i.e., "fennecApp"). The second
- * argument is the name of the C++ class you created.
- */
 registerMooseObject("catsApp", VectorCoupledGradient);
 
 InputParameters VectorCoupledGradient::validParams()
@@ -82,9 +63,9 @@ Real VectorCoupledGradient::computeQpJacobian()
 
 Real VectorCoupledGradient::computeQpOffDiagJacobian(unsigned int jvar)
 {
-  if (jvar == _coupled_var)
-  {
+    if (jvar == _coupled_var)
+    {
       return _test[_i][_qp]*(_vec*_grad_phi[_j][_qp]);
-  }
-  return 0.0;
+    }
+    return 0.0;
 }

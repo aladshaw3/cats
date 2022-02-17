@@ -28,22 +28,7 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "InhibitionProducts.h"
-
 
 registerMooseObject("catsApp", InhibitionProducts);
 
@@ -62,7 +47,7 @@ _power(getParam<std::vector<Real> >("power_list"))
     unsigned int r = coupledComponents("coupled_list");
     _inhibition_vars.resize(r);
     _inhibition.resize(r);
-    
+
     if (_inhibition.size() != _power.size())
     {
         moose::internal::mooseErrorRaw("User is required to provide (at minimum) a list of power factors equal to the number of coupled inhibition terms.");
@@ -74,8 +59,6 @@ _power(getParam<std::vector<Real> >("power_list"))
         _inhibition[i] = &coupledValue("coupled_list",i);
     }
     
-    
-
 }
 
 Real InhibitionProducts::computeQpResidual()
@@ -116,7 +99,7 @@ Real InhibitionProducts::computeQpOffDiagJacobian(unsigned int jvar)
             prod = prod * std::pow( (*_inhibition[i])[_qp], _power[i] - 1.0 ) * _power[i] * _phi[_j][_qp];
         }
     }
-    
+
     if (exists == true)
         return -prod*_test[_i][_qp];
     else

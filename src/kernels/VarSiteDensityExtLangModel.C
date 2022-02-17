@@ -25,20 +25,6 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "VarSiteDensityExtLangModel.h"
 
 registerMooseObject("catsApp", VarSiteDensityExtLangModel);
@@ -74,10 +60,10 @@ Real VarSiteDensityExtLangModel::computeExtLangmuirSiteJacobi()
   double sum = 0.0;
 	for (unsigned int i = 0; i<_coupled.size(); ++i)
 	{
-        if ((*_coupled[i])[_qp] > 0.0)
-            sum = sum + _langmuir_coef[i] * (*_coupled[i])[_qp];
+      if ((*_coupled[i])[_qp] > 0.0)
+          sum = sum + _langmuir_coef[i] * (*_coupled[i])[_qp];
 	}
-    return _phi[_j][_qp]*((_langmuir_coef[_lang_index]*_coupled_i[_qp])/(1.0+sum));
+  return _phi[_j][_qp]*((_langmuir_coef[_lang_index]*_coupled_i[_qp])/(1.0+sum));
 }
 
 Real VarSiteDensityExtLangModel::computeQpResidual()
