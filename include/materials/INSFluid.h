@@ -25,20 +25,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "Material.h"
@@ -51,7 +37,7 @@ class INSFluid : public Material
 public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
-  
+
   /// Required constructor for BC objects in MOOSE
   INSFluid(const InputParameters & parameters);
 
@@ -61,10 +47,10 @@ protected:
 
   const VariableValue & _rho;                   /// CATS density variable in kg/m^3
   const VariableValue & _mu;                    /// CATS viscosity variable in kg/m/s
-  
+
   MaterialProperty<Real> & _density;            /// INS material for density in kg/m/s
   MaterialProperty<Real> & _dynamic_viscosity;  /// INS material for viscosity in kg/m/s
 
 private:
-  
+
 };
