@@ -27,25 +27,11 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "DGFluxBC.h"
 
-/// DGConcentrationFluxBC class object inherits from IntegratedBC object
+/// DGConcentrationFluxBC class object inherits from DGFluxBC object
 /** This class object inherits from the IntegratedBC object.
 	All public and protected members of this class are required function overrides.
 	The flux BC uses the velocity in the system to apply a boundary
@@ -53,8 +39,8 @@
 class DGConcentrationFluxBC : public DGFluxBC
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
 	/// Required constructor for BC objects in MOOSE
 	DGConcentrationFluxBC(const InputParameters & parameters);

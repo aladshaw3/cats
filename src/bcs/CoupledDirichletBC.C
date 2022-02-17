@@ -20,29 +20,15 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "CoupledDirichletBC.h"
 
 registerMooseObject("MooseApp", CoupledDirichletBC);
 
 InputParameters CoupledDirichletBC::validParams()
 {
-  InputParameters params = NodalBC::validParams();
-  params.addCoupledVar("coupled",0, "The variable whose value we are coupling to.");
-  return params;
+    InputParameters params = NodalBC::validParams();
+    params.addCoupledVar("coupled",0, "The variable whose value we are coupling to.");
+    return params;
 }
 
 CoupledDirichletBC::CoupledDirichletBC(const InputParameters & parameters)
@@ -52,21 +38,21 @@ _coupled_var(coupled("coupled"))
 {
 }
 
-// NOTE: There is NO test function or phi function associated with Nodal BCs 
+// NOTE: There is NO test function or phi function associated with Nodal BCs
 Real CoupledDirichletBC::computeQpResidual()
 {
-  return _u[_qp] - _coupled[_qp];
+    return _u[_qp] - _coupled[_qp];
 }
 
 Real CoupledDirichletBC::computeQpJacobian()
 {
-  return 1.;
+    return 1.;
 }
 
 Real CoupledDirichletBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
-  if (jvar == _coupled_var)
-    return -1.;
-  else
-    return 0.;
+    if (jvar == _coupled_var)
+      return -1.;
+    else
+      return 0.;
 }

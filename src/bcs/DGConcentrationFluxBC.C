@@ -27,36 +27,17 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "DGConcentrationFluxBC.h"
 
-/**
- * All MOOSE based object classes you create must be registered using this macro.  The first
- * argument is the name of the App with an "App" suffix (i.e., "fennecApp"). The second
- * argument is the name of the C++ class you created.
- */
 registerMooseObject("catsApp", DGConcentrationFluxBC);
 
 InputParameters DGConcentrationFluxBC::validParams()
 {
-    InputParameters params = DGFluxBC::validParams();
-    params.addCoupledVar("ux",0,"Variable for velocity in x-direction");
-    params.addCoupledVar("uy",0,"Variable for velocity in y-direction");
-    params.addCoupledVar("uz",0,"Variable for velocity in z-direction");
-    return params;
+  InputParameters params = DGFluxBC::validParams();
+  params.addCoupledVar("ux",0,"Variable for velocity in x-direction");
+  params.addCoupledVar("uy",0,"Variable for velocity in y-direction");
+  params.addCoupledVar("uz",0,"Variable for velocity in z-direction");
+  return params;
 }
 
 DGConcentrationFluxBC::DGConcentrationFluxBC(const InputParameters & parameters) :

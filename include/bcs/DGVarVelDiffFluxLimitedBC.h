@@ -49,32 +49,18 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "DGConcentrationFluxLimitedBC.h"
 
-/// DGVarVelDiffFluxLimitedBC class object inherits from IntegratedBC object
-/** This class object inherits from the IntegratedBC object.
+/// DGVarVelDiffFluxLimitedBC class object inherits from DGConcentrationFluxLimitedBC object
+/** This class object inherits from the DGConcentrationFluxLimitedBC object.
 	All public and protected members of this class are required function overrides.  */
 class DGVarVelDiffFluxLimitedBC : public DGConcentrationFluxLimitedBC
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
 	/// Required constructor for BC objects in MOOSE
 	DGVarVelDiffFluxLimitedBC(const InputParameters & parameters);
@@ -96,7 +82,7 @@ protected:
   main coupled variable itself. */
   virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-    const VariableValue & _Dx;			///< Diffusion in the x-direction
+  const VariableValue & _Dx;			///< Diffusion in the x-direction
 	const VariableValue & _Dy;			///< Diffusion in the y-direction
 	const VariableValue & _Dz;			///< Diffusion in the z-direction
 

@@ -3,7 +3,7 @@
  *    \brief Boundary Condition kernel for usage with INS module to specify the flow normal to the boundary
  *    \details This file creates a boundary condition kernel to produce residuals and jacobians for a flow
  *              that is normal to a given boundary. Can be used for outflow or inflow. User must given this
- *              condition for all velocity components that apply at that boundary. 
+ *              condition for all velocity components that apply at that boundary.
  *    \author Austin Ladshaw
  *    \date 06/01/2020
  *    \copyright This kernel was designed and built at the Georgia Institute
@@ -19,20 +19,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "IntegratedBC.h"
@@ -45,7 +31,7 @@ class INSNormalFlowBC : public IntegratedBC
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for BC objects in MOOSE
     INSNormalFlowBC(const InputParameters & parameters);
 
@@ -65,11 +51,11 @@ protected:
      being computed will be associated with the variables coupled to this object and not the
      main coupled variable itself. */
     virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
-    
+
     Real _u_dot_n;                        ///< Value of the dot product of velocity and the normals at the boundary
     Real _penalty;                        ///< Penalty value for the weak form of the residuals
     unsigned int _dir;                    ///< Direction that this velocity variable applies to (0 = x, 1 = y, 2 = z)
-    
+
     const VariableValue & _ux;            ///< Velocity in the x-direction
     const VariableValue & _uy;            ///< Velocity in the y-direction
     const VariableValue & _uz;            ///< Velocity in the z-direction
@@ -77,13 +63,10 @@ protected:
     const unsigned int _ux_var;           ///< Variable identification for ux
     const unsigned int _uy_var;           ///< Variable identification for uy
     const unsigned int _uz_var;           ///< Variable identification for uz
-    
+
     /// Velocity vector in the system or at the boundary
     RealVectorValue _velocity;
 
 private:
 
 };
-
-
-

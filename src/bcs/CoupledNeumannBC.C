@@ -19,29 +19,15 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "CoupledNeumannBC.h"
 
 registerMooseObject("MooseApp", CoupledNeumannBC);
 
 InputParameters CoupledNeumannBC::validParams()
 {
-  InputParameters params = IntegratedBC::validParams();
-  params.addCoupledVar("coupled",0, "The variable whose value we are coupling to.");
-  return params;
+    InputParameters params = IntegratedBC::validParams();
+    params.addCoupledVar("coupled",0, "The variable whose value we are coupling to.");
+    return params;
 }
 
 CoupledNeumannBC::CoupledNeumannBC(const InputParameters & parameters)
@@ -53,18 +39,18 @@ _coupled_var(coupled("coupled"))
 
 Real CoupledNeumannBC::computeQpResidual()
 {
-  return -_test[_i][_qp] * _coupled[_qp];
+    return -_test[_i][_qp] * _coupled[_qp];
 }
 
 Real CoupledNeumannBC::computeQpJacobian()
 {
-  return 0.;
+    return 0.;
 }
 
 Real CoupledNeumannBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
-  if (jvar == _coupled_var)
-    return -_test[_i][_qp] * _phi[_j][_qp];
-  else
-    return 0.;
+    if (jvar == _coupled_var)
+      return -_test[_i][_qp] * _phi[_j][_qp];
+    else
+      return 0.;
 }

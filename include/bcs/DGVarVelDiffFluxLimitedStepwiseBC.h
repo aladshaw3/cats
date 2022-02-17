@@ -53,20 +53,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "DGVarVelDiffFluxLimitedBC.h"
@@ -77,25 +63,25 @@
 class DGVarVelDiffFluxLimitedStepwiseBC : public DGVarVelDiffFluxLimitedBC
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for BC objects in MOOSE
-    DGVarVelDiffFluxLimitedStepwiseBC(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  DGVarVelDiffFluxLimitedStepwiseBC(const InputParameters & parameters);
 
 protected:
-    /// Function  to update the _u_input value based on given time
-    Real newInputValue(Real time);
+  /// Function  to update the _u_input value based on given time
+  Real newInputValue(Real time);
 
-    /// Required function override for BC objects in MOOSE
-    /** This function returns a residual contribution for this object.*/
-    virtual Real computeQpResidual() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual() override;
 
-    /// Required function override for BC objects in MOOSE
-    /** This function returns a Jacobian contribution for this object. The Jacobian being
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
         computed is the associated diagonal element in the overall Jacobian matrix for the
         system and is used in preconditioning of the linear sub-problem. */
-    virtual Real computeQpJacobian() override;
+  virtual Real computeQpJacobian() override;
 
   /// Not required, but recomended function for DG kernels in MOOSE
   /** This function returns an off-diagonal jacobian contribution for this object. The jacobian
