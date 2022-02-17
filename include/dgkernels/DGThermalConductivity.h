@@ -43,20 +43,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #pragma once
 
 #include "DGVariableDiffusion.h"
@@ -75,7 +61,7 @@ class DGThermalConductivity : public DGVariableDiffusion
 public:
     /// Required new syntax for InputParameters
     static InputParameters validParams();
-    
+
     /// Required constructor for objects in MOOSE
     DGThermalConductivity(const InputParameters & parameters);
 
@@ -83,13 +69,13 @@ protected:
     /// Required residual function for DG kernels in MOOSE
     /** This function returns a residual contribution for this object.*/
     virtual Real computeQpResidual(Moose::DGResidualType type) override;
-    
+
     /// Required Jacobian function for DG kernels in MOOSE
     /** This function returns a Jacobian contribution for this object. The Jacobian being
         computed is the associated diagonal element in the overall Jacobian matrix for the
         system and is used in preconditioning of the linear sub-problem. */
     virtual Real computeQpJacobian(Moose::DGJacobianType type) override;
-    
+
     /// Not required, but recomended function for DG kernels in MOOSE
     /** This function returns an off-diagonal jacobian contribution for this object. The jacobian
      being computed will be associated with the variables coupled to this object and not the
@@ -106,4 +92,3 @@ protected:
 private:
 
 };
-
