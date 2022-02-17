@@ -26,20 +26,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "InterfaceEnergyTransfer.h"
 
 registerMooseObject("catsApp", InterfaceEnergyTransfer);
@@ -76,15 +62,15 @@ Real InterfaceEnergyTransfer::computeQpResidual(Moose::DGResidualType type)
     Real r = 0;
     switch (type)
     {
-            // Move all the terms to the LHS to get residual, for master domain
-            // Residual = km*(u - v)
-            // Weak form for master domain is: (test, h*fa*(Tu - Tv) )
+        // Move all the terms to the LHS to get residual, for master domain
+        // Residual = km*(u - v)
+        // Weak form for master domain is: (test, h*fa*(Tu - Tv) )
         case Moose::Element:
             r = _test[_i][_qp] * _h[_qp] * _areafrac[_qp] * (_Tu[_qp] - _Tv[_qp]);
             break;
 
-            // Similarly, weak form for slave domain is: -(test, h*fa*(Tu - Tv)),
-            // flip the sign because the direction is opposite.
+        // Similarly, weak form for slave domain is: -(test, h*fa*(Tu - Tv)),
+        // flip the sign because the direction is opposite.
         case Moose::Neighbor:
             r = -_test_neighbor[_i][_qp] * _h[_qp] * _areafrac[_qp] * (_Tu[_qp] - _Tv[_qp]);
             break;
