@@ -41,7 +41,8 @@ _output_mass_unit(getParam<std::string >("output_mass_unit"))
 Real SimpleGasDensity::computeValue()
 {
     // rho [g/cm^3]
-    Real rho = _pressure[_qp]*1000/287.058/_temperature[_qp]*1000;
+    Real press = SimpleGasPropertiesBase::pressure_conversion(_pressure[_qp], _pressure_unit, "kPa");
+    Real rho = press*1000/287.058/_temperature[_qp]*1000;
     rho = rho/100/100/100;
     rho = 1/SimpleGasPropertiesBase::length_conversion(1/rho, "cm", _output_length_unit);
     rho = 1/SimpleGasPropertiesBase::length_conversion(1/rho, "cm", _output_length_unit);

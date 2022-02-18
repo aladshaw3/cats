@@ -50,11 +50,21 @@ protected:
     /// Helper function to formulate a conversion
     Real energy_conversion(Real value, std::string from, std::string to);
 
+    /// Helper function to formulate a conversion
+    Real pressure_conversion(Real value, std::string from, std::string to);
+
+    /// Helper function to formulate a conversion
+    Real volume_conversion(Real value, std::string from, std::string to);
+
+    /// Helper function to formulate a conversion
+    Real volume_fraction_conversion(Real value, std::string from, std::string to);
+
     /// Required MOOSE function override
     virtual Real computeValue() override;
 
     /// NOTE: This aux system is under development. List of members likely to change
-    const VariableValue & _pressure;                  ///< Variable for the pressure (kPa)
+    const VariableValue & _pressure;                  ///< Variable for the pressure (default = kPa)
+    std::string _pressure_unit;                       ///< Units of the length term in velocity (kPa, Pa, mPa)
     const VariableValue & _temperature;               ///< Variable for the temperature (K)
     const VariableValue & _micro_pore;                ///< Variable for the micro porosity
     const VariableValue & _macro_pore;                ///< Variable for the macro porosity

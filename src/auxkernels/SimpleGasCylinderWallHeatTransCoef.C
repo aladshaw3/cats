@@ -47,8 +47,9 @@ _output_time_unit(getParam<std::string >("output_time_unit"))
 Real SimpleGasCylinderWallHeatTransCoef::computeValue()
 {
     //Calculate Re = rho*v*dh/mu
+    Real press = SimpleGasPropertiesBase::pressure_conversion(_pressure[_qp], _pressure_unit, "kPa");
     // rho [g/cm^3]
-    Real rho = _pressure[_qp]*1000/287.058/_temperature[_qp]*1000;
+    Real rho = press*1000/287.058/_temperature[_qp]*1000;
     rho = rho/100/100/100;
     // mu [g/cm/s]
     Real mu = 0.1458*pow(_temperature[_qp],1.5)/(110.4+_temperature[_qp])/10000;

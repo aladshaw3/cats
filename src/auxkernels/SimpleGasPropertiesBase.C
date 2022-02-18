@@ -27,7 +27,8 @@ registerMooseObject("catsApp", SimpleGasPropertiesBase);
 InputParameters SimpleGasPropertiesBase::validParams()
 {
     InputParameters params = AuxKernel::validParams();
-    params.addRequiredCoupledVar("pressure","Pressure variable for the domain (kPa)");
+    params.addRequiredCoupledVar("pressure","Pressure variable for the domain (default = kPa)");
+    params.addParam< std::string >("pressure_unit","kPa","Pressure units for pressure variable");
     params.addRequiredCoupledVar("temperature","Temperature variable for the domain (K)");
     params.addCoupledVar("micro_porosity",1.0,"Name of the micro porosity variable");
     params.addCoupledVar("macro_porosity",1.0,"Name of the macro porosity variable");
@@ -52,6 +53,7 @@ InputParameters SimpleGasPropertiesBase::validParams()
 SimpleGasPropertiesBase::SimpleGasPropertiesBase(const InputParameters & parameters) :
 AuxKernel(parameters),
 _pressure(coupledValue("pressure")),
+_pressure_unit(getParam<std::string >("pressure_unit")),
 _temperature(coupledValue("temperature")),
 _micro_pore(coupledValue("micro_porosity")),
 _macro_pore(coupledValue("macro_porosity")),
@@ -174,6 +176,118 @@ Real SimpleGasPropertiesBase::energy_conversion(Real value, std::string from, st
     else if (from == "J" && to == "kJ")
       new_value = value/1000;
     else if (from == "J" && to == "J")
+      new_value = value;
+    else
+      unsupported_conversion(from,to);
+
+    return new_value;
+}
+
+Real SimpleGasPropertiesBase::pressure_conversion(Real value, std::string from, std::string to)
+{
+    Real new_value = 0;
+
+    if (from == "kPa" && to == "kPa")
+      new_value = value;
+    else if (from == "kPa" && to == "Pa")
+      new_value = 1000*value;
+    else if (from == "kPa" && to == "mPa")
+      new_value = 1000*1000*value;
+    else if (from == "Pa" && to == "kPa")
+      new_value = value/1000;
+    else if (from == "Pa" && to == "Pa")
+      new_value = value;
+    else if (from == "Pa" && to == "mPa")
+      new_value = value*1000;
+    else if (from == "mPa" && to == "kPa")
+      new_value = value/1000/1000;
+    else if (from == "mPa" && to == "Pa")
+      new_value = value/1000;
+    else if (from == "mPa" && to == "mPa")
+      new_value = value;
+    else
+      unsupported_conversion(from,to);
+
+    return new_value;
+}
+
+Real SimpleGasPropertiesBase::volume_conversion(Real value, std::string from, std::string to)
+{
+    Real new_value = 0;
+
+    if (from == "m^3")
+      from = "kL";
+    if (from == "cm^3")
+      from = "mL";
+    if (from == "mm^3")
+      from = "uL";
+
+    if (to == "m^3")
+      to = "kL";
+    if (to == "cm^3")
+      to = "mL";
+    if (to == "mm^3")
+      to = "uL";
+
+    if (from == "kL" && to == "kL")
+      new_value = value;
+    else if (from == "kL" && to == "L")
+      new_value = 1000*value;
+    else if (from == "kL" && to == "mL")
+      new_value = 1000*1000*value;
+    else if (from == "kL" && to == "uL")
+      new_value = 1000*1000*1000*value;
+    else if (from == "L" && to == "kL")
+      new_value = value/1000;
+    else if (from == "L" && to == "L")
+      new_value = value;
+    else if (from == "L" && to == "mL")
+      new_value = value*1000;
+    else if (from == "L" && to == "uL")
+      new_value = value*1000*1000;
+    else if (from == "mL" && to == "kL")
+      new_value = value/1000/1000;
+    else if (from == "mL" && to == "L")
+      new_value = value/1000;
+    else if (from == "mL" && to == "mL")
+      new_value = value;
+    else if (from == "mL" && to == "uL")
+      new_value = 1000*value;
+    else if (from == "uL" && to == "kL")
+      new_value = value/1000/1000/1000;
+    else if (from == "uL" && to == "L")
+      new_value = value/1000/1000;
+    else if (from == "uL" && to == "mL")
+      new_value = value/1000;
+    else if (from == "uL" && to == "uL")
+      new_value = value;
+    else
+      unsupported_conversion(from,to);
+
+    return new_value;
+}
+
+Real SimpleGasPropertiesBase::volume_fraction_conversion(Real value, std::string from, std::string to)
+{
+    Real new_value = 0;
+
+    if (from == "%" && to == "%")
+      new_value = value;
+    else if (from == "%" && to == "ppm")
+      new_value = 10000*value;
+    else if (from == "%" && to == "ppb")
+      new_value = 10000*1000*value;
+    else if (from == "ppm" && to == "%")
+      new_value = value/10000;
+    else if (from == "ppm" && to == "ppm")
+      new_value = value;
+    else if (from == "ppm" && to == "ppb")
+      new_value = value/1000;
+    else if (from == "ppb" && to == "%")
+      new_value = value/1000/10000;
+    else if (from == "ppb" && to == "ppm")
+      new_value = 1000*value;
+    else if (from == "ppb" && to == "ppb")
       new_value = value;
     else
       unsupported_conversion(from,to);
