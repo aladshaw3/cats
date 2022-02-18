@@ -1,0 +1,8 @@
+[Tests]
+  [./bc_converter]
+    type = 'Exodiff'
+    input = 'test_step_input_with_conversion.i'
+    exodiff = 'test_step_input_with_conversion_out.e'
+    rel_err = 1e-5
+  [../]
+[]

@@ -24,6 +24,10 @@
 
 #include "AuxKernel.h"
 
+#ifndef Rstd
+#define Rstd 8.3144621						///< Gas Constant in J/K/mol (or) L*kPa/K/mol (Standard Units)
+#endif
+
 /// SimpleGasPropertiesBase class object inherits from AuxKernel object
 class SimpleGasPropertiesBase : public AuxKernel
 {
