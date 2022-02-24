@@ -1,0 +1,8 @@
+[Tests]
+  [./ergun_pressure]
+    type = 'Exodiff'
+    input = 'ergun_equ_test.i'
+    exodiff = 'ergun_equ_test_out.e'
+    rel_err = 1e-4
+  [../]
+[]

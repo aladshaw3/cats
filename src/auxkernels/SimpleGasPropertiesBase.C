@@ -29,6 +29,11 @@ InputParameters SimpleGasPropertiesBase::validParams()
     InputParameters params = AuxKernel::validParams();
     params.addRequiredCoupledVar("pressure","Pressure variable for the domain (default = kPa)");
     params.addParam< std::string >("pressure_unit","kPa","Pressure units for pressure variable");
+    params.addParam< bool >("use_pressure_units",true,"If true, the 'pressure_unit' is used for pressure, else the base SI units are used");
+    params.addParam< std::string >("pressure_mass_unit","kg","Mass units for pressure");
+    params.addParam< std::string >("pressure_length_unit","m","Length units for pressure");
+    params.addParam< std::string >("pressure_time_unit","s","Time units for pressure");
+
     params.addRequiredCoupledVar("temperature","Temperature variable for the domain (K)");
     params.addCoupledVar("micro_porosity",1.0,"Name of the micro porosity variable");
     params.addCoupledVar("macro_porosity",1.0,"Name of the macro porosity variable");
@@ -54,6 +59,11 @@ SimpleGasPropertiesBase::SimpleGasPropertiesBase(const InputParameters & paramet
 AuxKernel(parameters),
 _pressure(coupledValue("pressure")),
 _pressure_unit(getParam<std::string >("pressure_unit")),
+_use_pressure_unit(getParam<bool >("use_pressure_units")),
+_pressure_mass_unit(getParam<std::string >("pressure_mass_unit")),
+_pressure_length_unit(getParam<std::string >("pressure_length_unit")),
+_pressure_time_unit(getParam<std::string >("pressure_time_unit")),
+
 _temperature(coupledValue("temperature")),
 _micro_pore(coupledValue("micro_porosity")),
 _macro_pore(coupledValue("macro_porosity")),
@@ -186,6 +196,16 @@ Real SimpleGasPropertiesBase::energy_conversion(Real value, std::string from, st
 Real SimpleGasPropertiesBase::pressure_conversion(Real value, std::string from, std::string to)
 {
     Real new_value = 0;
+
+    // First convert to Pa units
+    if (_use_pressure_unit == false)
+    {
+      value = mass_conversion(value, _pressure_mass_unit, "kg");
+      value = 1/length_conversion(1/value, _pressure_length_unit, "m");
+      value = 1/time_conversion(1/value, _pressure_time_unit, "s");
+      value = 1/time_conversion(1/value, _pressure_time_unit, "s");
+      from = "Pa";
+    }
 
     if (from == "kPa" && to == "kPa")
       new_value = value;

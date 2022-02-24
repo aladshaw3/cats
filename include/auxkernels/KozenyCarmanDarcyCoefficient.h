@@ -45,7 +45,7 @@ protected:
 private:
     const VariableValue & _viscosity;                 ///< Variable for the viscosity of the fluid (typical units: Pressure * Time)
     const VariableValue & _macro_pore;                ///< Variable for the macro porosity
-    Real _particle_dia;                              ///< Particle diameter in the porous media
+    const VariableValue & _particle_dia;              ///< Particle diameter in the porous media (length)
     Real _K;                                         ///< Kozeny-Carman constant of the porous media
 
 };

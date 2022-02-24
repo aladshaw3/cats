@@ -68,7 +68,11 @@ protected:
 
     /// NOTE: This aux system is under development. List of members likely to change
     const VariableValue & _pressure;                  ///< Variable for the pressure (default = kPa)
-    std::string _pressure_unit;                       ///< Units of the length term in velocity (kPa, Pa, mPa)
+    std::string _pressure_unit;                       ///< Units of the pressure term (kPa, Pa, mPa)
+    bool _use_pressure_unit;                          ///< Boolean that tells whether or not we use the above pressure unit
+    std::string _pressure_mass_unit;                  ///< Units of the mass term in pressure (kg, g, mg)
+    std::string _pressure_length_unit;                ///< Units of the length term in pressure (m, cm, mm)
+    std::string _pressure_time_unit;                  ///< Units of the time term in pressure (hr, min, s)
     const VariableValue & _temperature;               ///< Variable for the temperature (K)
     const VariableValue & _micro_pore;                ///< Variable for the micro porosity
     const VariableValue & _macro_pore;                ///< Variable for the macro porosity
