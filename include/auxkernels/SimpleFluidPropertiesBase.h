@@ -105,6 +105,12 @@ protected:
     /// Calculation of the magnitude of velocity
     Real velocity_magnitude(Real ux, Real uy, Real uz);
 
+    /// Calculation of the Reynolds numnber
+    Real reynolds_number();
+
+    /// Calculation of the Schmidt numnber
+    Real schmidt_number();
+
     /// Required MOOSE function override
     virtual Real computeValue() override;
 
@@ -122,6 +128,9 @@ protected:
     const VariableValue & _vel_z;                     ///< Variable for the linear velocity in z (m, cm, mm) & (hr, min, s)
     std::string _velocity_length_unit;                ///< Units of the length term in velocity (m, cm, mm)
     std::string _velocity_time_unit;                  ///< Units of the time term in velocity (hr, min, s)
+
+    const VariableValue & _char_len;                  ///< Variable for the characteristic length
+    std::string _char_len_unit;                       ///< Units of characteristic length (m, cm, mm)
 
     Real _ref_diffusivity;                            ///< Value of reference diffusivity
     std::string _diff_length_unit;                    ///< Units of the length term in reference diffusivity (m, cm, mm)

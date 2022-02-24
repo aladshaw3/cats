@@ -1,0 +1,8 @@
+[Tests]
+  [./mass_transfer_calc]
+    type = 'Exodiff'
+    input = 'mt_tests.i'
+    exodiff = 'mt_tests_out.e'
+    rel_err = 1e-5
+  [../]
+[]

@@ -67,6 +67,9 @@ InputParameters SimpleFluidPropertiesBase::validParams()
     params.addParam< std::string >("vel_length_unit","m","Length units for velocity");
     params.addParam< std::string >("vel_time_unit","s","Time units for velocity");
 
+    params.addCoupledVar("characteristic_length",1.0,"Name of the length variable (e.g., hydraulic diameter)");
+    params.addParam< std::string >("char_length_unit","m","Length units for characteristic length");
+
     params.addParam< Real >("ref_diffusivity",2.296E-5,"Reference diffusivity value (e.g., molecular fluid-phase diffusion constant)");
     params.addParam< std::string >("diff_length_unit","cm","Length units for diffusivity");
     params.addParam< std::string >("diff_time_unit","s","Time units for diffusivity");
@@ -116,6 +119,9 @@ _vel_y(coupledValue("uy")),
 _vel_z(coupledValue("uz")),
 _velocity_length_unit(getParam<std::string >("vel_length_unit")),
 _velocity_time_unit(getParam<std::string >("vel_time_unit")),
+
+_char_len(coupledValue("characteristic_length")),
+_char_len_unit(getParam<std::string >("char_length_unit")),
 
 _ref_diffusivity(getParam< Real >("ref_diffusivity")),
 _diff_length_unit(getParam<std::string >("diff_length_unit")),
@@ -425,6 +431,51 @@ Real SimpleFluidPropertiesBase::effective_dispersion(Real temperature, Real poro
 Real SimpleFluidPropertiesBase::velocity_magnitude(Real ux, Real uy, Real uz)
 {
     return std::sqrt(ux*ux + uy*uy + uz*uz);
+}
+
+Real SimpleFluidPropertiesBase::reynolds_number()
+{
+    Real rho = fluid_density(_temperature[_qp], _pressure[_qp]);
+    rho = mass_conversion(rho, _rho_mass_unit, "kg");
+    rho = 1/volume_conversion(1/rho, _rho_volume_unit, "m^3");
+
+    Real vel_mag = velocity_magnitude(_vel_x[_qp], _vel_y[_qp], _vel_z[_qp]);
+    vel_mag = length_conversion(vel_mag, _velocity_length_unit, "m");
+    vel_mag = 1/time_conversion(1/vel_mag, _velocity_time_unit, "s");
+
+    Real mu = fluid_viscosity(_temperature[_qp]);
+    mu = pressure_conversion(mu, _mu_pressure_unit, "mPa");
+    mu = time_conversion(mu, _mu_time_unit, "s");
+    // 1 mPa*s = 1 g/m/s
+    mu = 1/length_conversion(1/mu, "m", "m");
+    mu = 1/time_conversion(1/mu, "s", "s");
+    mu = mass_conversion(mu, "g", "kg");
+
+    Real L = length_conversion(_char_len[_qp], _char_len_unit, "m");
+
+    return rho*vel_mag*L/mu;
+}
+
+Real SimpleFluidPropertiesBase::schmidt_number()
+{
+    Real Dm = molecular_diffusion(_temperature[_qp]);
+    Dm = length_conversion(Dm, _diff_length_unit, "m");
+    Dm = length_conversion(Dm, _diff_length_unit, "m");
+    Dm = 1/time_conversion(1/Dm, _diff_time_unit, "s");
+
+    Real rho = fluid_density(_temperature[_qp], _pressure[_qp]);
+    rho = mass_conversion(rho, _rho_mass_unit, "kg");
+    rho = 1/volume_conversion(1/rho, _rho_volume_unit, "m^3");
+
+    Real mu = fluid_viscosity(_temperature[_qp]);
+    mu = pressure_conversion(mu, _mu_pressure_unit, "mPa");
+    mu = time_conversion(mu, _mu_time_unit, "s");
+    // 1 mPa*s = 1 g/m/s
+    mu = 1/length_conversion(1/mu, "m", "m");
+    mu = 1/time_conversion(1/mu, "s", "s");
+    mu = mass_conversion(mu, "g", "kg");
+
+    return mu/rho/Dm;
 }
 
 Real SimpleFluidPropertiesBase::computeValue()
