@@ -1,0 +1,8 @@
+[Tests]
+  [./darcy_weisbach_pressure]
+    type = 'Exodiff'
+    input = 'darcy_weisbach_equ_test.i'
+    exodiff = 'darcy_weisbach_equ_test_out.e'
+    rel_err = 1e-4
+  [../]
+[]
