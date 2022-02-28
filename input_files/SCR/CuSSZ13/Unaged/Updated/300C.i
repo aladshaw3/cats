@@ -369,19 +369,19 @@
     [./S1]
         order = FIRST
         family = MONOMIAL
-	      initial_condition = 0.04968
+	      initial_condition = 0.052619
     [../]
 
     [./S2]
         order = FIRST
         family = MONOMIAL
-	      initial_condition = 0.026925
+	      initial_condition = 0.0231257
     [../]
 
     [./S3]
         order = FIRST
         family = MONOMIAL
-      	initial_condition = 0.0144814
+      	initial_condition = 0.026252
     [../]
 
 [] #END Variables
@@ -393,28 +393,28 @@
   [./w1]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.04968
+      initial_condition = 0.052619
   [../]
 
   # Z2Cu sites
   [./w2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.026925
+      initial_condition = 0.0231257
   [../]
 
   # ZH sites
   [./w3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.0144814
+      initial_condition = 0.026252
   [../]
 
   # CuO sites
   [./CuO]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 7.85352E-7
+      initial_condition = 0.001147378
   [../]
   #=====================================
 
@@ -2351,7 +2351,7 @@
 
         start_value = 10
         aux_vals = '0.2 10'
-        aux_times = '2.091 20.591'
+        aux_times = '2.258 20.925'
         time_spans = '0.5 0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2408,7 +2408,7 @@
 
         start_value = 1E-15
         aux_vals = '300 1E-15 300 1E-15 300 1E-15'
-        aux_times = '2.091   29.758    38.258    61.758    77.591    104.925'
+        aux_times = '2.258   37.591    49.758    76.925    99.258    120.258'
         time_spans = '0.5      0.5    0.5    0.5    0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2437,7 +2437,7 @@
 
         start_value = 1E-15
         aux_vals = '300 150 300'
-        aux_times = '29.758    70.091    113.258'
+        aux_times = '37.591    86.758    129.425'
         time_spans = '0.5      0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2466,7 +2466,7 @@
 
         start_value = 1E-15
         aux_vals = '150 1E-15'
-        aux_times = '70.091    113.258'
+        aux_times = '86.758    129.425'
         time_spans = '0.5      0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2775,7 +2775,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 120.0
+  end_time = 137.0
   dtmax = 0.25
 
   [./TimeStepper]
