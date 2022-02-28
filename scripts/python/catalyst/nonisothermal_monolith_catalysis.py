@@ -754,7 +754,7 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
         Isothermal_Monolith_Simulator.finalize_auto_scaling(self, scale_to, obj_scale_to)
 
         # # TODO: FIX THIS LINE
-        if self.model.find_component('obj'):
+        if self.isObjectiveSet == True:
             if self.rescaleConstraint == False:
                 return
 

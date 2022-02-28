@@ -2453,7 +2453,7 @@ class Isothermal_Monolith_Simulator(object):
             self.model.scaling_factor = Suffix(direction=Suffix.EXPORT)
 
         # set scaling for objective function
-        if self.model.find_component('obj'):
+        if self.isObjectiveSet == True:
             maxobj = value(self.model.obj)
             if maxobj >= 100:
                 self.model.scaling_factor.set_value(self.model.obj, obj_scale_to )
