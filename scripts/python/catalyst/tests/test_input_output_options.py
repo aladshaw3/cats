@@ -638,17 +638,17 @@ class TestIsothermalCatalystInputOutputOptions():
         test3.load_model_state_as_IC('output/sample_model.json', new_time_window=(17.75,27.75), tstep=10)
 
         assert len(test3.model.t) == 11
-        assert test3.model.t[1] == 17.75
-        assert test3.model.t[2] == 18.75
-        assert test3.model.t[3] == 19.75
-        assert test3.model.t[4] == 20.75
-        assert test3.model.t[5] == 21.75
-        assert test3.model.t[6] == 22.75
-        assert test3.model.t[7] == 23.75
-        assert test3.model.t[8] == 24.75
-        assert test3.model.t[9] == 25.75
-        assert test3.model.t[10] == 26.75
-        assert test3.model.t[11] == 27.75
+        assert test3.model.t.at(1) == 17.75
+        assert test3.model.t.at(2) == 18.75
+        assert test3.model.t.at(3) == 19.75
+        assert test3.model.t.at(4) == 20.75
+        assert test3.model.t.at(5) == 21.75
+        assert test3.model.t.at(6) == 22.75
+        assert test3.model.t.at(7) == 23.75
+        assert test3.model.t.at(8) == 24.75
+        assert test3.model.t.at(9) == 25.75
+        assert test3.model.t.at(10) == 26.75
+        assert test3.model.t.at(11) == 27.75
 
         # Check to make sure the correct values were put into correct places
         assert pytest.approx(test3.model.Cb["NH3","Unaged","250C",0,17.75].value, 1e-3) == 6.60E-06
