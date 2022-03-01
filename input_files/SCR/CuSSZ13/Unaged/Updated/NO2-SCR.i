@@ -549,7 +549,7 @@
   [./NOx_ppm]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 300
+      initial_condition = 1E-15
   [../]
 
   [./NOx_inlet]
@@ -560,7 +560,7 @@
   [./NO2_ppm]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1E-15
+      initial_condition = 225
   [../]
 
   [./NO2_inlet]
@@ -2236,7 +2236,7 @@
 [Functions]
   [./data_fun]
     type = PiecewiseMultilinear
-    data_file = NO-SCR_temp.txt
+    data_file = NO2-SCR_temp.txt
   [../]
 []
 
@@ -2745,7 +2745,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 360.0
+  end_time = 570.0
   dtmax = 1
 
   [./TimeStepper]
