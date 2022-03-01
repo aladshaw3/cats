@@ -30,12 +30,6 @@
         initial_condition = 3648600  # equals 101.35 kPa
     [../]
 
-    [./vel_x]
-        order = FIRST
-        family = MONOMIAL
-        initial_condition = 0
-    [../]
-
     [./vel_y]
         order = FIRST
         family = MONOMIAL
@@ -45,6 +39,12 @@
 [] #END Variables
 
 [AuxVariables]
+
+  [./vel_x]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0
+  [../]
 
   [./temp]
       order = FIRST
@@ -110,17 +110,6 @@
     type = VariableLaplacian
     variable = pressure
     coupled_coef = ergun_coeff
-  [../]
-
-  [./v_x_equ]
-      type = Reaction
-      variable = vel_x
-  [../]
-  [./x_ergun]
-    type = VariableVectorCoupledGradient
-    variable = vel_x
-    coupled = pressure
-    ux = ergun_coeff
   [../]
 
   [./v_y_equ]
