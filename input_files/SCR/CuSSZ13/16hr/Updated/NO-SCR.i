@@ -369,19 +369,19 @@
     [./S1]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.052619
+	      initial_condition = 0.05036
     [../]
 
     [./S2]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.0231257
+	      initial_condition = 0.02518
     [../]
 
     [./S3]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.026252
+      	initial_condition = 0.009914
     [../]
 
 [] #END Variables
@@ -393,28 +393,28 @@
   [./w1]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.052619
+      initial_condition = 0.05036
   [../]
 
   # Z2Cu sites
   [./w2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.0231257
+      initial_condition = 0.02518
   [../]
 
   # ZH sites
   [./w3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.026252
+      initial_condition = 0.009914
   [../]
 
   # CuO sites
   [./CuO]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.001147378
+      initial_condition = 2.33028E-12
   [../]
   #=====================================
 

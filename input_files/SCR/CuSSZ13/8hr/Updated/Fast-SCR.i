@@ -369,19 +369,19 @@
     [./S1]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.052619
+        initial_condition = 0.048389
     [../]
 
     [./S2]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.0231257
+        initial_condition = 0.026649
     [../]
 
     [./S3]
         order = FIRST
         family = MONOMIAL
-        initial_condition = 0.026252
+        initial_condition = 0.011299951
     [../]
 
 [] #END Variables
@@ -393,28 +393,28 @@
   [./w1]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.052619
+      initial_condition = 0.048389
   [../]
 
   # Z2Cu sites
   [./w2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.0231257
+      initial_condition = 0.026649
   [../]
 
   # ZH sites
   [./w3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.026252
+      initial_condition = 0.011299951
   [../]
 
   # CuO sites
   [./CuO]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.001147378
+      initial_condition = 4.54455E-9
   [../]
   #=====================================
 
@@ -549,7 +549,7 @@
   [./NOx_ppm]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 300
+      initial_condition = 150
   [../]
 
   [./NOx_inlet]
@@ -560,7 +560,7 @@
   [./NO2_ppm]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1E-15
+      initial_condition = 150
   [../]
 
   [./NO2_inlet]
@@ -2236,7 +2236,7 @@
 [Functions]
   [./data_fun]
     type = PiecewiseMultilinear
-    data_file = NO-SCR_temp.txt
+    data_file = Fast-SCR_temp.txt
   [../]
 []
 
@@ -2745,12 +2745,12 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 360.0
+  end_time = 500.0
   dtmax = 1
 
   [./TimeStepper]
-    type = SolutionTimeAdaptiveDT
-    dt = 0.125
+     type = SolutionTimeAdaptiveDT
+     dt = 0.125
   [../]
 [] #END Executioner
 
