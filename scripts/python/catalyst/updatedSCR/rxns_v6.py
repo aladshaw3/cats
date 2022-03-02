@@ -1,3 +1,6 @@
+
+# NOTE: This set is no good. Use rxns_v5 set 
+
 # This script will just hold the reactions for future runs. These reactions will
 #   store both the activation energy and pre-exponential terms such that these
 #   dictionaries will be valid at all temperatures. Multi-temperature runs will

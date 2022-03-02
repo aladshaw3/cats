@@ -284,6 +284,7 @@ sim.initialize_simulator()
 sim.finalize_auto_scaling()
 sim.run_solver()
 
+'''
 #NOTE: For some reason, IPOPT is pushing values outside of the bounds I set
 sim.unfix_all_reactions()
 
@@ -334,6 +335,7 @@ sim.fix_reaction("r20")
 
 
 sim.run_solver()
+'''
 
 sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
                                         "Unaged", Tstr, file_name="Unaged_FastSCR_lowtemp_breakthrough.txt")

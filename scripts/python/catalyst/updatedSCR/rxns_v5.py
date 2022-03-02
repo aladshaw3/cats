@@ -1,3 +1,5 @@
+# Use this set as a starting point
+
 # This script will just hold the reactions for future runs. These reactions will
 #   store both the activation energy and pre-exponential terms such that these
 #   dictionaries will be valid at all temperatures. Multi-temperature runs will
