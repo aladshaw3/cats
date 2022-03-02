@@ -2318,7 +2318,7 @@
         vel_length_unit = "cm"
         vel_time_unit = "min"
 
-        ref_diffusivity = 0.561
+        ref_diffusivity = 0.826
         diff_length_unit = "cm"
         diff_time_unit = "s"
         ref_diff_temp = 473
@@ -2346,7 +2346,7 @@
         vel_length_unit = "cm"
         vel_time_unit = "min"
 
-        ref_diffusivity = 0.561
+        ref_diffusivity = 0.826
         diff_length_unit = "cm"
         diff_time_unit = "s"
         ref_diff_temp = 473
