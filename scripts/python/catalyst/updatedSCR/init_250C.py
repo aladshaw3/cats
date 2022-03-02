@@ -4,7 +4,7 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 #Importing all reaction dictionaries
-from rxns_v5 import *
+from rxns_v6 import *
 
 # Create dict to iterate through
 rxn_list = {"r5f": r5f,"r5r": r5r,"r6f": r6f,"r6r": r6r,"r7": r7,"r8": r8,"r9": r9,
