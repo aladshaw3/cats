@@ -57,7 +57,7 @@ sim.fix_reaction("r39")
 
 sim.finalize_auto_scaling()
 options={'print_user_options': 'yes',
-        'linear_solver': LinearSolverMethod.MA97,
+        'linear_solver': LinearSolverMethod.MA27,
         'tol': 1e-6,
         'acceptable_tol': 1e-6,
         'compl_inf_tol': 1e-6,
