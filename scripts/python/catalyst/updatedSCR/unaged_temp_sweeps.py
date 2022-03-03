@@ -394,7 +394,7 @@ sim.ignore_weight_factor("N2O","Unaged",Tstr,time_window=(0,2))
 
 
 sim.initialize_auto_scaling()
-sim.initialize_simulator()
+sim.initialize_simulator(restart_on_warning=True,restart_on_error=True,use_old_times=True)
 
 sim.finalize_auto_scaling()
 sim.run_solver()
