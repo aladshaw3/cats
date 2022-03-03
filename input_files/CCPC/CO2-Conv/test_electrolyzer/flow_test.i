@@ -52,14 +52,14 @@
   # velocity in x
   [./vel_x]
       order = FIRST
-      family = LAGRANGE
+      family = MONOMIAL
       initial_condition = 0.0
   [../]
 
   # velocity in y
   [./vel_y]
       order = FIRST
-      family = LAGRANGE
+      family = MONOMIAL
       initial_condition = 0.0
   [../]
 
@@ -75,44 +75,67 @@
   # velocity in z
   [./vel_z]
     order = FIRST
-    family = LAGRANGE
+    family = MONOMIAL
     initial_condition = 0.0
   [../]
 
   [./Dp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1
+      initial_condition = 0.1
   [../]
 []
 
 [Kernels]
-  [./pressure_laplace_electrodes]
+  [./pressure_laplace_channels]
       type = VariableLaplacian
       variable = pressure
       coupled_coef = 1
+      block = 'cathode_fluid_channel anode_fluid_channel'
+  [../]
+  [./pressure_laplace_darcy]
+      type = VariableLaplacian
+      variable = pressure
+      coupled_coef = 0.01
+      block = 'cathode anode membrane'
   [../]
 
   [./v_x_equ]
       type = Reaction
       variable = vel_x
   [../]
-  [./x_darcy]
+  [./x_channel]
       type = VariableVectorCoupledGradient
       variable = vel_x
       coupled = pressure
       ux = 1
+      block = 'cathode_fluid_channel anode_fluid_channel'
+  [../]
+  [./x_darcy]
+      type = VariableVectorCoupledGradient
+      variable = vel_x
+      coupled = pressure
+      ux = 0.01
+      block = 'cathode anode membrane'
   [../]
 
   [./v_y_equ]
       type = Reaction
       variable = vel_y
   [../]
-  [./y_darcy]
+  [./y_channel]
       type = VariableVectorCoupledGradient
       variable = vel_y
       coupled = pressure
       uy = 1
+      block = 'cathode_fluid_channel anode_fluid_channel'
+  [../]
+  [./y_darcy]
+      type = VariableVectorCoupledGradient
+      variable = vel_y
+      coupled = pressure
+      uy = 0.01
+      block = 'cathode anode membrane'
   [../]
 
   [./H2O_dot]
@@ -177,7 +200,7 @@
       type = NeumannBC
       variable = pressure
       boundary = 'cathode_fluid_channel_bottom anode_fluid_channel_bottom'
-      value = 66   # vel in mm/min
+      value = 660   # vel in mm/min
   [../]
 
   # zero pressure grad at non-exits
@@ -187,6 +210,22 @@
       boundary = 'cathode_bottom cathode_top anode_bottom anode_top membrane_bottom membrane_top'
       value = 0   # vel in mm/min
   [../]
+
+  # zero vel non-exits (may not be needed)
+  #[./vel_y_at_non_exits]
+  #    type = PenaltyDirichletBC
+  #    variable = vel_y
+  #    boundary = 'cathode_bottom cathode_top anode_bottom anode_top membrane_bottom membrane_top'
+  #    value = 0   # vel in mm/min
+  #    penalty = 1000
+  #[../]
+  #[./vel_x_at_non_exits]
+  #    type = PenaltyDirichletBC
+  #    variable = vel_x
+  #    boundary = 'cathode_bottom cathode_top anode_bottom anode_top membrane_bottom membrane_top'
+  #    value = 0   # vel in mm/min
+  #    penalty = 1000
+  #[../]
 
 
   [./H2O_FluxIn_pos]
@@ -212,7 +251,7 @@
   [./H2O_FluxOut]
       type = DGPoreConcFluxBC
       variable = H2O
-      boundary = 'cathode_fluid_channel_top anode_fluid_channel_top cathode_top membrane_top anode_top'
+      boundary = 'cathode_fluid_channel_top anode_fluid_channel_top'
       porosity = 1
       ux = vel_x
       uy = vel_y
@@ -330,7 +369,7 @@
   l_max_its = 20
 
   start_time = 0.0
-  end_time = 1.0
+  end_time = 0.5
   dtmax = 0.025
 
   [./TimeStepper]
