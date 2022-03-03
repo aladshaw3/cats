@@ -42,11 +42,11 @@
 [] # END Mesh
 
 [Variables]
-  # relative pressure
+  # relative pressure (units = g/mm/s^2 == Pa)
   [./pressure]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0
+      initial_condition = 0.0
   [../]
 
   # velocity in x
@@ -67,7 +67,7 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 1.2E-6 #mol/mm^3
-      scaling = 1e3
+      scaling = 1e6
   [../]
 []
 
@@ -79,10 +79,40 @@
     initial_condition = 0.0
   [../]
 
-  [./Dp]
+  # velocity magnitude
+  [./vel_mag]
+    order = FIRST
+    family = MONOMIAL
+    initial_condition = 40.0  #mm^2/s based on inlet condition
+  [../]
+
+  [./D_H2O]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.1
+      initial_condition = 0.0017  #mm^2/s
+  [../]
+
+  [./eps]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.80
+  [../]
+
+  [./density]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.001 # g/mm^3
+  [../]
+  [./viscosity]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.001 # Pa*s = kg/m/s = g/mm/s
+  [../]
+
+  # coefficient for all domains
+  [./press_coef]
+      order = FIRST
+      family = MONOMIAL
   [../]
 []
 
@@ -90,14 +120,20 @@
   [./pressure_laplace_channels]
       type = VariableLaplacian
       variable = pressure
-      coupled_coef = 1
+      coupled_coef = press_coef
       block = 'cathode_fluid_channel anode_fluid_channel'
   [../]
   [./pressure_laplace_darcy]
       type = VariableLaplacian
       variable = pressure
-      coupled_coef = 0.01
-      block = 'cathode anode membrane'
+      coupled_coef = press_coef
+      block = 'cathode anode'
+  [../]
+  [./pressure_laplace_mem]
+      type = VariableLaplacian
+      variable = pressure
+      coupled_coef = press_coef
+      block = 'membrane'
   [../]
 
   [./v_x_equ]
@@ -108,15 +144,22 @@
       type = VariableVectorCoupledGradient
       variable = vel_x
       coupled = pressure
-      ux = 1
+      ux = press_coef
       block = 'cathode_fluid_channel anode_fluid_channel'
   [../]
   [./x_darcy]
       type = VariableVectorCoupledGradient
       variable = vel_x
       coupled = pressure
-      ux = 0.01
-      block = 'cathode anode membrane'
+      ux = press_coef
+      block = 'cathode anode'
+  [../]
+  [./x_mem]
+      type = VariableVectorCoupledGradient
+      variable = vel_x
+      coupled = pressure
+      ux = press_coef
+      block = 'membrane'
   [../]
 
   [./v_y_equ]
@@ -127,21 +170,28 @@
       type = VariableVectorCoupledGradient
       variable = vel_y
       coupled = pressure
-      uy = 1
+      uy = press_coef
       block = 'cathode_fluid_channel anode_fluid_channel'
   [../]
   [./y_darcy]
       type = VariableVectorCoupledGradient
       variable = vel_y
       coupled = pressure
-      uy = 0.01
-      block = 'cathode anode membrane'
+      uy = press_coef
+      block = 'cathode anode'
+  [../]
+  [./y_mem]
+      type = VariableVectorCoupledGradient
+      variable = vel_y
+      coupled = pressure
+      uy = press_coef
+      block = 'membrane'
   [../]
 
   [./H2O_dot]
       type = VariableCoefTimeDerivative
       variable = H2O
-      coupled_coef = 1
+      coupled_coef = eps
   [../]
   [./H2O_gadv]
       type = GPoreConcAdvection
@@ -154,10 +204,10 @@
   [./H2O_gdiff]
       type = GVarPoreDiffusion
       variable = H2O
-      porosity = 1
-      Dx = Dp
-      Dy = Dp
-      Dz = Dp
+      porosity = eps
+      Dx = D_H2O
+      Dy = D_H2O
+      Dz = D_H2O
   [../]
 []
 
@@ -173,10 +223,10 @@
   [./H2O_dgdiff]
       type = DGVarPoreDiffusion
       variable = H2O
-      porosity = 1
-      Dx = Dp
-      Dy = Dp
-      Dz = Dp
+      porosity = eps
+      Dx = D_H2O
+      Dy = D_H2O
+      Dz = D_H2O
   [../]
 []
 
@@ -184,6 +234,169 @@
 [] #END InterfaceKernels
 
 [AuxKernels]
+  [./vel_calc]
+      type = VectorMagnitude
+      variable = vel_mag
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      execute_on = 'timestep_end'
+  [../]
+
+  [./eps_calc_one]
+      type = ConstantAux
+      variable = eps
+      value = 0.999
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode_fluid_channel membrane anode_fluid_channel'
+  [../]
+  [./eps_calc_two]
+      type = ConstantAux
+      variable = eps
+      value = 0.80
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode anode'
+  [../]
+
+  [./Disp_calc_channels]
+      type = SimpleFluidDispersion
+      variable = D_H2O
+      temperature = 298
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      vel_length_unit = "mm"
+      vel_time_unit = "s"
+
+      ref_diffusivity = 0.0017
+      diff_length_unit = "mm"
+      diff_time_unit = "s"
+
+      include_dispersivity_correction = true
+      include_porosity_correction = false
+
+      output_length_unit = "mm"
+      output_time_unit = "s"
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode_fluid_channel anode_fluid_channel'
+  [../]
+
+  [./Disp_calc_elec]
+      type = SimpleFluidDispersion
+      variable = D_H2O
+      temperature = 298
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      vel_length_unit = "mm"
+      vel_time_unit = "s"
+
+      ref_diffusivity = 0.0017
+      diff_length_unit = "mm"
+      diff_time_unit = "s"
+
+      include_dispersivity_correction = true
+      include_porosity_correction = true
+
+      output_length_unit = "mm"
+      output_time_unit = "s"
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode anode'
+  [../]
+
+  [./Disp_calc_mem]
+      type = SimpleFluidDispersion
+      variable = D_H2O
+      temperature = 298
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      vel_length_unit = "mm"
+      vel_time_unit = "s"
+
+      ref_diffusivity = 0.0017
+      diff_length_unit = "mm"
+      diff_time_unit = "s"
+
+      include_dispersivity_correction = false
+      include_porosity_correction = false
+
+      output_length_unit = "mm"
+      output_time_unit = "s"
+
+      execute_on = 'initial timestep_end'
+      block = 'membrane'
+  [../]
+
+  [./dens_calc]
+      type = SimpleFluidDensity
+      variable = density
+      temperature = 298
+
+      output_volume_unit = "mm^3"
+      output_mass_unit = "g"
+
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./visc_calc]
+      type = SimpleFluidViscosity
+      variable = viscosity
+      temperature = 298
+
+      output_length_unit = "mm"
+      output_mass_unit = "g"
+      output_time_unit = "s"
+
+      unit_basis = "mass"
+
+      execute_on = 'initial timestep_end'
+  [../]
+
+
+  [./coef_calc_channels]
+      type = DarcyWeisbachCoefficient
+      variable = press_coef
+
+      friction_factor = 0.05
+      density = density          #g/mm^3
+      velocity = vel_mag         #mm/s
+      hydraulic_diameter = 1.6   #mm
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode_fluid_channel anode_fluid_channel'
+  [../]
+
+  [./coef_calc_elec]
+      type = KozenyCarmanDarcyCoefficient
+      variable = press_coef
+
+      porosity = eps
+      viscosity = viscosity   #g/mm/s
+      particle_diameter = 0.1 #mm
+      kozeny_carman_const = 5.55
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode anode'
+  [../]
+
+  [./coef_calc_mem]
+      type = SchloeglDarcyCoefficient
+      variable = press_coef
+
+      hydraulic_permeability = 1.58E-12  #mm^2
+      viscosity = viscosity  #g/mm/s
+
+      execute_on = 'initial timestep_end'
+      block = 'membrane'
+  [../]
 []
 
 [BCs]
@@ -200,7 +413,7 @@
       type = NeumannBC
       variable = pressure
       boundary = 'cathode_fluid_channel_bottom anode_fluid_channel_bottom'
-      value = 660   # vel in mm/min
+      value = 40   # vel in mm/s
   [../]
 
   # zero pressure grad at non-exits
@@ -208,25 +421,8 @@
       type = NeumannBC
       variable = pressure
       boundary = 'cathode_bottom cathode_top anode_bottom anode_top membrane_bottom membrane_top'
-      value = 0   # vel in mm/min
+      value = 0
   [../]
-
-  # zero vel non-exits (may not be needed)
-  #[./vel_y_at_non_exits]
-  #    type = PenaltyDirichletBC
-  #    variable = vel_y
-  #    boundary = 'cathode_bottom cathode_top anode_bottom anode_top membrane_bottom membrane_top'
-  #    value = 0   # vel in mm/min
-  #    penalty = 1000
-  #[../]
-  #[./vel_x_at_non_exits]
-  #    type = PenaltyDirichletBC
-  #    variable = vel_x
-  #    boundary = 'cathode_bottom cathode_top anode_bottom anode_top membrane_bottom membrane_top'
-  #    value = 0   # vel in mm/min
-  #    penalty = 1000
-  #[../]
-
 
   [./H2O_FluxIn_pos]
       type = DGPoreConcFluxBC
@@ -359,7 +555,7 @@
                          lu'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = none
+  line_search = l2
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-10
   nl_rel_step_tol = 1e-10
