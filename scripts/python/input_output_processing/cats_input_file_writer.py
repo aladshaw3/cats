@@ -50,6 +50,7 @@ class CATS_InputFile(object):
         self.data = user_dict   #Dictionary of data
         self.stream = ""        #String stream to output as file
         self.level = 0          #tracker for the level of dict
+        self.stream_built = False
 
         if validate:
             self.validate_dict(raise_error=raise_error)
@@ -88,8 +89,10 @@ class CATS_InputFile(object):
             for item in data:
                 if type(data[item]) == dict:
                     level +=1
-                    for i in range(0,level):
-                        spacing += " "
+                    if first:
+                        for i in range(0,level):
+                            spacing += " "
+                        first = False
                     substream += spacing + "[./" + item + "]"
                     substream += _sub_dict_loop(data[item], level)
                     substream += spacing + "[../]\n"
@@ -143,7 +146,11 @@ class CATS_InputFile(object):
             self.level -=1
             self.stream += "[]\n\n"
 
+        # end of stream
+        self.stream_built = True
+
     # checks the dictionary for invalid user options
+    # # TODO: Complete validation of dict
     def validate_dict(self, raise_error=False):
         for key in self.data:
             if key not in valid_blocks:
@@ -157,6 +164,24 @@ class CATS_InputFile(object):
 
             if type(self.data[key]) != dict:
                 raise TypeError("The data stored at the key (" + key + ") is not a dict!")
+
+    # method to write the stream to an file for MOOSE/CATS to read
+    def write_stream_to_file(self, file_name="", folder=""):
+        if self.stream_built == False:
+            self.build_stream()
+        if file_name == "":
+            file_name+="input"
+        file_name+=".i"
+
+        if folder != "":
+            if folder[-1] != "/":
+                folder += "/"
+            if not os.path.exists(folder):
+                os.makedirs(folder)
+
+        file = open(folder+file_name,"w")
+        file.write(self.stream)
+        file.close()
 
 
 if __name__ == "__main__":
@@ -199,4 +224,4 @@ if __name__ == "__main__":
                 {"exodus": True}
             }
     obj = CATS_InputFile(data, validate=True, raise_error=True, build_stream=True)
-    print(obj.stream)
+    #obj.write_stream_to_file(file_name="test", folder="output")
