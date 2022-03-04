@@ -62,7 +62,7 @@ options={'print_user_options': 'yes',
         'acceptable_tol': 1e-6,
         'compl_inf_tol': 1e-6,
         'constr_viol_tol': 1e-6,
-        'max_iter': 3000,
+        'max_iter': 88,
         'obj_scaling_factor': 1,
         'diverging_iterates_tol': 1e50}
 sim.run_solver(options=options)
