@@ -16,7 +16,7 @@ sim.unfix_all_reactions()
 
 #  ============= Modify parameter bounds =================
 #   Specify modifications to parameter boundaries (default = +/- 20%)
-upper = 1+0.05
+upper = 1+0.25
 lower = 1-0.05
 for rxn in sim.model.arrhenius_rxns:
     sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
@@ -62,7 +62,7 @@ options={'print_user_options': 'yes',
         'acceptable_tol': 1e-6,
         'compl_inf_tol': 1e-6,
         'constr_viol_tol': 1e-6,
-        'max_iter': 88,
+        'max_iter': 3000,
         'obj_scaling_factor': 1,
         'diverging_iterates_tol': 1e50}
 sim.run_solver(options=options)
