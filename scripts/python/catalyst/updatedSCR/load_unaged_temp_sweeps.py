@@ -2,8 +2,8 @@ import sys
 sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
-run = "01"
-oldrun=""
+run = "02"
+oldrun="01"
 
 readfile = 'output/full_lowtemp_model'+oldrun+'.json'
 writefile = "full_lowtemp_model"+run+".json"
