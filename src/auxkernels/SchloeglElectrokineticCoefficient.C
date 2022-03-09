@@ -60,9 +60,9 @@
 
             Rearrage: (cm^2/(kPa*min)) * (1/cm) * (J/cm^3)  ==>  J/cm^3 is a unit of pressure
 
-            1 kPa = 1000 J/m^3 * 1 m^3/100^3 cm^3 == 0.001 J/cm^3   ==> Thus, _conv_factor = 0.001 kPa*cm^3/J
+            1 kPa = 1000 J/m^3 * 1 m^3/100^3 cm^3 == 0.001 J/cm^3   ==> Thus, _conv_factor = 1000 kPa*cm^3/J
 
-            (cm^2/(kPa*min)) * (1/cm) * (J/cm^3) * (0.001 kPa*cm^3/J) ==> cm/min
+            (cm^2/(kPa*min)) * (1/cm) * (J/cm^3) * (1000 kPa*cm^3/J) ==> cm/min
 
         Thus, if you are following this basic unit convention for all variables, then the unit conversion
             term should always have units of (Pressure * Volume / Energy)
