@@ -1,4 +1,4 @@
-# Test the pressure driven flow in the domain
+# Test the potential gradients and bcs in domain 
 
 [GlobalParams]
     min_conductivity = 2.26E-3
