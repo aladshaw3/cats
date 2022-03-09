@@ -1,7 +1,7 @@
 # Test the pressure driven flow in the domain
 
 [GlobalParams]
-
+    min_conductivity = 2.26E-3
 [] #END GlobalParams
 
 [Problem]
@@ -42,6 +42,36 @@
 [] # END Mesh
 
 [Variables]
+  # electrolyte potential (in V or J/C)
+  [./phi_e]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0
+      scaling = 1
+  [../]
+
+  # electrode potential (in V or J/C)
+  [./phi_s]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0
+      block = 'cathode anode'
+      scaling = 1
+  [../]
+
+  # Variable for potential difference
+  [./phi_diff]
+      order = FIRST
+      family = LAGRANGE
+      block = 'cathode anode'
+      [./InitialCondition]
+          type = InitialPotentialDifference
+          electrode_potential = phi_s
+          electrolyte_potential = phi_e
+      [../]
+      scaling = 1
+  [../]
+
   # relative pressure (units = g/mm/s^2 == Pa)
   [./pressure]
       order = FIRST
@@ -74,19 +104,19 @@
 [AuxVariables]
   # velocity in z
   [./vel_z]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 0.0
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0
   [../]
 
   # velocity magnitude
   #   NOTE: We MUST set an initial condition here because the
   #         DarcyWeisbachCoefficient requires a non-zero velocity
-  #         magnitude in order to estimate the pressure drop. 
+  #         magnitude in order to estimate the pressure drop.
   [./vel_mag]
-    order = FIRST
-    family = MONOMIAL
-    initial_condition = 40.0  #mm^2/s based on inlet condition
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 40.0  #mm^2/s based on inlet condition
   [../]
 
   [./D_H2O]
@@ -99,6 +129,12 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 0.80
+  [../]
+
+  [./sol_vol_frac]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.20
   [../]
 
   [./density]
@@ -117,9 +153,91 @@
       order = FIRST
       family = MONOMIAL
   [../]
+
+  # Electrolyte temperature
+  [./T_e]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 300 #K
+  [../]
+
+  # Electrode temperature
+  [./T_s]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 300 #K
+  [../]
+
+  # Solids avg conductivity
+  [./sigma_s]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 1.476E4 #C/V/s/mm == 1.476E7 S/m
+      block = 'cathode anode'
+  [../]
+
+  # Electrode avg conductivity
+  #       ~2.26 S/M (for 0.1 M ionic strength)
+  #       ~10.7 S/M (for 0.5 M ionic strength)
+  #       ~20.1 S/M (for 1.0 M ionic strength)
+  #       ~35.2 S/M (for 2.0 M ionic strength)
+  [./sigma_e]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 2.26E-3 #C/V/s/mm == 2.26 S/m (for 0.1 M solution)
+  [../]
 []
 
 [Kernels]
+  ## =============== Potential Difference ==================
+  [./phi_diff_equ]
+      type = Reaction
+      variable = phi_diff
+  [../]
+  [./phi_diff_sum]
+      type = WeightedCoupledSumFunction
+      variable = phi_diff
+      coupled_list = 'phi_s phi_e'
+      weights = '1 -1'
+  [../]
+
+  ### ==================== Electrolyte Potentials ==========================
+  # Calculate potential from gradients in system
+  [./phi_e_potential_conductivity]
+      type = ElectrolytePotentialConductivity
+      variable = phi_e
+      porosity = eps
+      temperature = T_e
+      ion_conc = ''
+      diffusion = ''
+      ion_valence = ''
+  [../]
+  [./phi_e_J]
+      type = ScaledWeightedCoupledSumFunction
+      variable = phi_e
+      coupled_list = 'phi_diff'
+      weights = '1'
+      block = 'cathode anode'
+  [../]
+
+  ### ==================== Electrode Potentials ==========================
+  # Calculate potential from conductivity
+  [./phi_s_pot_cond]
+      type = ElectrodePotentialConductivity
+      variable = phi_s
+      solid_frac = sol_vol_frac
+      conductivity = sigma_s
+      block = 'cathode anode'
+  [../]
+  [./phi_s_J]
+      type = ScaledWeightedCoupledSumFunction
+      variable = phi_s
+      coupled_list = 'phi_diff'
+      weights = '-1'
+      block = 'cathode anode'
+  [../]
+
+  ## =============== Pressure ========================
   [./pressure_laplace_channels]
       type = VariableLaplacian
       variable = pressure
@@ -139,6 +257,7 @@
       block = 'membrane'
   [../]
 
+  ## =================== vel in x ==========================
   [./v_x_equ]
       type = Reaction
       variable = vel_x
@@ -165,6 +284,7 @@
       block = 'membrane'
   [../]
 
+  ## ================== vel in y =========================
   [./v_y_equ]
       type = Reaction
       variable = vel_y
@@ -191,6 +311,7 @@
       block = 'membrane'
   [../]
 
+  ## ===================== H2O balance ====================
   [./H2O_dot]
       type = VariableCoefTimeDerivative
       variable = H2O
@@ -215,6 +336,7 @@
 []
 
 [DGKernels]
+  ## ===================== H2O balance ====================
   [./H2O_dgadv]
       type = DGPoreConcAdvection
       variable = H2O
@@ -400,6 +522,23 @@
       execute_on = 'initial timestep_end'
       block = 'membrane'
   [../]
+
+  [./sigma_e_calc]
+      type = ElectrolyteConductivity
+      variable = sigma_e
+      temperature = T_e
+      ion_conc = ''
+      diffusion = ''
+      ion_valence = ''
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./sol_vol_calc]
+      type = SolidsVolumeFraction
+      variable = sol_vol_frac
+      porosity = eps
+      execute_on = 'initial timestep_end'
+  [../]
 []
 
 [BCs]
@@ -427,6 +566,43 @@
       value = 0
   [../]
 
+  # Ground state
+  [./phi_s_ground_side]
+      type = CoupledDirichletBC
+      variable = phi_s
+      boundary = 'cathode_fluid_channel_interface_cathode'
+      #
+      ## edge value was defined at 0 V
+      coupled = 0 # in V
+  [../]
+  [./phi_e_ground_side]
+      type = CoupledDirichletBC
+      variable = phi_e
+      boundary = 'cathode_fluid_channel_left'
+      #
+      ## edge value was defined at 0 V
+      coupled = 0 # in V
+  [../]
+
+  # Applied Voltage
+  [./phi_s_applied_side]
+      type = CoupledDirichletBC
+      variable = phi_s
+      boundary = 'anode_interface_anode_fluid_channel'
+      #
+      ## edge value was defined at 0 V
+      coupled = 1 # in V
+  [../]
+  [./phi_e_applied_side]
+      type = CoupledDirichletBC
+      variable = phi_e
+      boundary = 'anode_fluid_channel_right'
+      #
+      ## edge value was defined at 0 V
+      coupled = 0 # in V
+  [../]
+
+  ## =============== H2O fluxes ================
   [./H2O_FluxIn_pos]
       type = DGPoreConcFluxBC
       variable = H2O
