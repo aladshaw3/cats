@@ -4,7 +4,12 @@
 #         for numerical stability.
 
 [GlobalParams]
-    min_conductivity = 2.26E-3
+#       ~2.26 S/M (for 0.1 M ionic strength)
+#       ~10.7 S/M (for 0.5 M ionic strength)
+#       ~20.1 S/M (for 1.0 M ionic strength)
+#       ~35.2 S/M (for 2.0 M ionic strength)
+    min_conductivity = 10.7E-3
+    tight_coupling = false
 [] #END GlobalParams
 
 [Problem]
@@ -16,9 +21,9 @@
     type = FileMeshGenerator
 
 
-    #file = 2D_Electrolyzer_mm.msh    #coarse mesh
+    file = 2D_Electrolyzer_mm.msh    #coarse mesh
 
-    file = 2D_Electrolyzer_mm_split.msh     #fine mesh
+    #file = 2D_Electrolyzer_mm_split.msh     #fine mesh
 
     ### ========= boundary_name ==========
     # "cathode_fluid_channel_left"
@@ -53,7 +58,6 @@
   [./phi_e]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0
       scaling = 1
   [../]
 
@@ -61,7 +65,6 @@
   [./phi_s]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0
       block = 'cathode anode'
       scaling = 1
   [../]
@@ -174,7 +177,7 @@
 
   # activities
   [./a_H]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       [./InitialCondition]
           type = InitialActivity
@@ -186,7 +189,7 @@
       scaling = 1e2
   [../]
   [./a_H2]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       [./InitialCondition]
           type = InitialActivity
@@ -198,7 +201,7 @@
       scaling = 1e2
   [../]
   [./a_O2]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       [./InitialCondition]
           type = InitialActivity
@@ -210,7 +213,7 @@
       scaling = 1e2
   [../]
   [./a_Na]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       [./InitialCondition]
           type = InitialActivity
@@ -222,7 +225,7 @@
       scaling = 1e2
   [../]
   [./a_OH]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       [./InitialCondition]
           type = InitialActivity
@@ -234,7 +237,7 @@
       scaling = 1e2
   [../]
   [./a_HCO3]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       [./InitialCondition]
           type = InitialActivity
@@ -246,7 +249,7 @@
       scaling = 1e2
   [../]
   [./a_CO3]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       [./InitialCondition]
           type = InitialActivity
@@ -258,7 +261,7 @@
       scaling = 1e2
   [../]
   [./a_CO2]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       [./InitialCondition]
           type = InitialActivity
@@ -270,7 +273,7 @@
       scaling = 1e2
   [../]
   [./a_CO]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       [./InitialCondition]
           type = InitialActivity
@@ -287,7 +290,7 @@
   # rate of water reaction
   # 1/min ==> convert to mol/mm^3/s via scale = C_ref
   [./r_w]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       initial_condition = 0
       scaling = 1e2
@@ -297,7 +300,7 @@
   # rate of CO2 -> HCO3 reaction
   # 1/min ==> convert to mol/mm^3/s via scale = C_ref
   [./r_1]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       initial_condition = 0
       scaling = 1e2
@@ -307,7 +310,7 @@
   # rate of HCO3 -> CO3 reaction
   # 1/min ==> convert to mol/mm^3/s via scale = C_ref
   [./r_2]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       initial_condition = 0
       scaling = 1e2
@@ -317,7 +320,7 @@
   # rate of alt CO2 -> HCO3 reaction
   # 1/min ==> convert to mol/mm^3/s via scale = C_ref
   [./r_3]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       initial_condition = 0
       scaling = 1e2
@@ -327,11 +330,130 @@
   # rate of alt HCO3 -> CO3 reaction
   # 1/min ==> convert to mol/mm^3/s via scale = C_ref
   [./r_4]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       initial_condition = 0
       scaling = 1e2
       block = 'cathode_fluid_channel cathode'
+  [../]
+
+  # -------- Butler-Volmer reaction rates ------------
+  # reduced_state <----> oxidized_state
+  # H2 + OH- <----> 2 H2O + 2 e-
+  [./r_H2]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialModifiedButlerVolmerReaction
+
+          reaction_rate_const = 6.59167E-12    # mol/mm^2/s
+          equilibrium_potential = 0         # V
+
+          reduced_state_vars = 'a_H2'       # assumed
+          reduced_state_stoich = '1'        # assumed
+
+          oxidized_state_vars = 'a_H'
+          oxidized_state_stoich = '0.1737'  # fitted param
+
+          electric_potential_difference = phi_diff
+
+          temperature = T_e
+          number_of_electrons = 1         # params are fitted to this standard
+          electron_transfer_coef = 0.14   # fitted param
+      [../]
+      scaling = 1e0
+      block = 'cathode'
+  [../]
+  # 2 H2O <----> 2 O2 + 4 H+ + 4 e-
+  [./r_O2]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialModifiedButlerVolmerReaction
+
+          reaction_rate_const = 1.0E-14   # mol/mm^2/s  (unknown)
+          equilibrium_potential = -0.81         # V      (unknown)
+
+          reduced_state_vars = 'H2O'          # assumed    (unknown)
+          reduced_state_stoich = '1'        # assumed    (unknown)
+
+          oxidized_state_vars = 'a_H a_O2'
+          oxidized_state_stoich = '1 1'  # fitted param     (unknown)
+
+          electric_potential_difference = phi_diff
+
+          temperature = T_e
+          number_of_electrons = 1         # unknown
+          electron_transfer_coef = 0.5    # unknown
+      [../]
+      scaling = 1e0
+      block = 'anode'
+  [../]
+  # CO + 2 OH- <----> CO2 + H2O + 2 e-
+  [./r_CO]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialModifiedButlerVolmerReaction
+
+          reaction_rate_const = 2.0833E-13    # mol/mm^2/s
+          equilibrium_potential = -0.11         # V
+
+          reduced_state_vars = 'a_CO'        # assumed
+          reduced_state_stoich = '1'         # assumed
+
+          oxidized_state_vars = 'a_H a_CO2'
+          oxidized_state_stoich = '0.6774 1.5'  # fitted param
+
+          electric_potential_difference = phi_diff
+
+          temperature = T_e
+          number_of_electrons = 1         # params are fitted to this standard
+          electron_transfer_coef = 0.35   # fitted param
+      [../]
+      scaling = 1e0
+      block = 'cathode'
+  [../]
+
+  # ------------- Butler-Volmer current densities ---------
+  [./J_H2]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialButlerVolmerCurrentDensity
+
+          number_of_electrons = 1       # params are fitted to this standard
+          specific_area = As
+          rate_var = r_H2
+      [../]
+      block = 'cathode'
+      scaling = 1e0
+  [../]
+  [./J_O2]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialButlerVolmerCurrentDensity
+
+          number_of_electrons = 1       # unknown
+          specific_area = As
+          rate_var = r_O2
+      [../]
+      block = 'anode'
+      scaling = 1e0
+  [../]
+  [./J_CO]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialButlerVolmerCurrentDensity
+
+          number_of_electrons = 1       # params are fitted to this standard
+          specific_area = As
+          rate_var = r_CO
+      [../]
+      block = 'cathode'
+      scaling = 1e0
   [../]
 []
 
@@ -377,6 +499,33 @@
       ion_conc = 'H OH'
       ion_valence = '1 1'
       block = 'anode anode_fluid_channel'
+  [../]
+
+
+  [./phi_s_cat]
+      type = ConstantIC
+      variable = phi_s
+      value = 0 # V
+      block = 'cathode'
+  [../]
+  [./phi_s_an]
+      type = ConstantIC
+      variable = phi_s
+      value = 0  # V
+      block = 'anode'
+  [../]
+
+  [./phi_e_cat]
+      type = ConstantIC
+      variable = phi_e
+      value = 0 # V
+      block = 'cathode'
+  [../]
+  [./phi_e_an]
+      type = ConstantIC
+      variable = phi_e
+      value = 0  # V
+      block = 'anode'
   [../]
 
 []
@@ -453,6 +602,61 @@
       initial_condition = 0.00191 #mm^2/s
   [../]
 
+
+  [./D_H2O_e]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0017  #mm^2/s
+  [../]
+
+  # Diffusivities
+  [./D_H_e]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.00695 #mm^2/s
+  [../]
+  [./D_H2_e]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.00695 #mm^2/s
+  [../]
+  [./D_O2_e]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.00695 #mm^2/s
+  [../]
+  [./D_Na_e]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.00217 #mm^2/s
+  [../]
+  [./D_OH_e]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.00493 #mm^2/s
+  [../]
+  [./D_HCO3_e]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0011 #mm^2/s
+  [../]
+  [./D_CO3_e]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.0008017 #mm^2/s
+  [../]
+  [./D_CO2_e]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.00191 #mm^2/s
+  [../]
+  # ---------- below are all assumed ----------
+  [./D_CO_e]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.00191 #mm^2/s
+  [../]
+
   [./eps]
       order = FIRST
       family = MONOMIAL
@@ -469,7 +673,7 @@
   [./As]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 2E4  # cm^-1
+      initial_condition = 2.0E3  # mm^-1
   [../]
 
   [./density]
@@ -607,6 +811,121 @@
 []
 
 [Kernels]
+  ## =============== Butler-Volmer Current ================
+  [./J_H2_equ]
+      type = Reaction
+      variable = J_H2
+  [../]
+  [./J_H2_rxn]  # H2 + OH- <----> 2 H2O + 2 e-
+      type = ButlerVolmerCurrentDensity
+      variable = J_H2
+
+      number_of_electrons = 1  # params are fitted to this standard
+      specific_area = As
+      rate_var = r_H2
+  [../]
+
+  [./J_O2_equ]
+      type = Reaction
+      variable = J_O2
+  [../]
+  [./J_O2_rxn]  # 2 H2O <----> 2 O2 + 4 H+ + 4 e-
+      type = ButlerVolmerCurrentDensity
+      variable = J_O2
+
+      number_of_electrons = 1  # unknown
+      specific_area = As
+      rate_var = r_O2
+  [../]
+
+  [./J_CO_equ]
+      type = Reaction
+      variable = J_CO
+  [../]
+  [./J_CO_rxn]  # CO + 2 OH- <----> CO2 + H2O + 2 e-
+      type = ButlerVolmerCurrentDensity
+      variable = J_CO
+
+      number_of_electrons = 1  # params are fitted to this standard
+      specific_area = As
+      rate_var = r_CO
+  [../]
+
+
+  ## =============== Butler-Volmer Kinetics ================
+  [./r_H2_equ]
+      type = Reaction
+      variable = r_H2
+  [../]
+  [./r_H2_rxn]  # H2 + OH- <----> 2 H2O + 2 e-
+      type = ModifiedButlerVolmerReaction
+      variable = r_H2
+
+      reaction_rate_const = 6.59167E-12    # mol/mm^2/s
+      equilibrium_potential = 0         # V
+
+      reduced_state_vars = 'a_H2'       # assumed
+      reduced_state_stoich = '1'        # assumed
+
+      oxidized_state_vars = 'a_H'
+      oxidized_state_stoich = '0.1737'  # fitted param
+
+      electric_potential_difference = phi_diff
+
+      temperature = T_e
+      number_of_electrons = 1         # params are fitted to this standard
+      electron_transfer_coef = 0.14   # fitted param
+  [../]
+
+  [./r_O2_equ]
+      type = Reaction
+      variable = r_O2
+  [../]
+  [./r_O2_rxn]  # 2 H2O <----> 2 O2 + 4 H+ + 4 e-
+      type = ModifiedButlerVolmerReaction
+      variable = r_O2
+
+      reaction_rate_const = 1.0E-14    # mol/mm^2/s  (unknown)
+      equilibrium_potential = -0.81         # V      (unknown)
+
+      reduced_state_vars = 'H2O'          # assumed    (unknown)
+      reduced_state_stoich = '1'        # assumed    (unknown)
+
+      oxidized_state_vars = 'a_H a_O2'
+      oxidized_state_stoich = '1 1'  # fitted param     (unknown)
+
+      electric_potential_difference = phi_diff
+
+      temperature = T_e
+      number_of_electrons = 1         # unknown
+      electron_transfer_coef = 0.5    # unknown
+  [../]
+
+  [./r_CO_equ]
+      type = Reaction
+      variable = r_CO
+  [../]
+  [./r_CO_rxn]  # CO + 2 OH- <----> CO2 + H2O + 2 e-
+      type = ModifiedButlerVolmerReaction
+      variable = r_CO
+
+      reaction_rate_const = 2.0833E-13    # mol/mm^2/s
+      equilibrium_potential = -0.11         # V
+
+      reduced_state_vars = 'a_CO'        # assumed
+      reduced_state_stoich = '1'         # assumed
+
+      oxidized_state_vars = 'a_H a_CO2'
+      oxidized_state_stoich = '0.6774 1.5'  # fitted param
+
+      electric_potential_difference = phi_diff
+
+      temperature = T_e
+      number_of_electrons = 1         # params are fitted to this standard
+      electron_transfer_coef = 0.35   # fitted param
+  [../]
+
+
   ## =============== Potential Difference ==================
   [./phi_diff_equ]
       type = Reaction
@@ -627,7 +946,7 @@
       porosity = eps
       temperature = T_e
       ion_conc = 'OH HCO3 CO3'
-      diffusion = 'D_OH D_HCO3 D_CO3'
+      diffusion = 'D_OH_e D_HCO3_e D_CO3_e'
       ion_valence = '-1 -1 -2'
       block = 'cathode cathode_fluid_channel'
   [../]
@@ -636,7 +955,7 @@
       variable = phi_e
       porosity = eps
       ion_conc = 'OH HCO3 CO3'
-      diffusion = 'D_OH D_HCO3 D_CO3'
+      diffusion = 'D_OH_e D_HCO3_e D_CO3_e'
       ion_valence = '-1 -1 -2'
       block = 'cathode cathode_fluid_channel'
   [../]
@@ -646,7 +965,7 @@
       porosity = eps
       temperature = T_e
       ion_conc = 'OH'
-      diffusion = 'D_OH'
+      diffusion = 'D_OH_e'
       ion_valence = '-1'
       block = 'anode anode_fluid_channel'
   [../]
@@ -655,7 +974,7 @@
       variable = phi_e
       porosity = eps
       ion_conc = 'OH'
-      diffusion = 'D_OH'
+      diffusion = 'D_OH_e'
       ion_valence = '-1'
       block = 'anode anode_fluid_channel'
   [../]
@@ -665,7 +984,7 @@
       porosity = eps
       temperature = T_e
       ion_conc = 'OH'
-      diffusion = 'D_OH'
+      diffusion = 'D_OH_e'
       ion_valence = '-1'
       block = 'membrane'
   [../]
@@ -674,21 +993,22 @@
       variable = phi_e
       porosity = eps
       ion_conc = 'OH'
-      diffusion = 'D_OH'
+      diffusion = 'D_OH_e'
       ion_valence = '-1'
       block = 'membrane'
   [../]
+
   [./phi_e_J_cat]
       type = ScaledWeightedCoupledSumFunction
       variable = phi_e
-      coupled_list = '0'
-      weights = '1'
+      coupled_list = 'J_H2 J_CO'
+      weights = '1 1'
       block = 'cathode'
   [../]
   [./phi_e_J_an]
       type = ScaledWeightedCoupledSumFunction
       variable = phi_e
-      coupled_list = '0'
+      coupled_list = 'J_O2'
       weights = '1'
       block = 'anode'
   [../]
@@ -702,17 +1022,18 @@
       conductivity = sigma_s
       block = 'cathode anode'
   [../]
+
   [./phi_s_J_cat]
       type = ScaledWeightedCoupledSumFunction
       variable = phi_s
-      coupled_list = '0'
-      weights = '-1'
+      coupled_list = 'J_H2 J_CO'
+      weights = '-1 -1'
       block = 'cathode'
   [../]
   [./phi_s_J_an]
       type = ScaledWeightedCoupledSumFunction
       variable = phi_s
-      coupled_list = '0'
+      coupled_list = 'J_O2'
       weights = '-1'
       block = 'anode'
   [../]
@@ -858,19 +1179,19 @@
       porosity = eps
       electric_potential = phi_e
       temperature = T_e
-      Dx = D_H
-      Dy = D_H
-      Dz = D_H
+      Dx = D_H_e
+      Dy = D_H_e
+      Dz = D_H_e
   [../]
 
-  [./H_rate_all]
-      type = ScaledWeightedCoupledSumFunction
-      variable = H
-      coupled_list = 'r_w'
-      weights = '1'
-      scale = eps
-      block = 'cathode_fluid_channel cathode anode anode_fluid_channel'
-  [../]
+  #[./H_rate_all]
+  #    type = ScaledWeightedCoupledSumFunction
+  #    variable = H
+  #    coupled_list = 'r_w'
+  #    weights = '1'
+  #    scale = eps
+  #    block = 'cathode_fluid_channel cathode anode anode_fluid_channel'
+  #[../]
   [./H_rate_cat]
       type = ScaledWeightedCoupledSumFunction
       variable = H
@@ -878,6 +1199,15 @@
       weights = '1 1'
       scale = eps
       block = 'cathode_fluid_channel cathode'
+  [../]
+
+  [./H_surf_rate_an]
+      type = ScaledWeightedCoupledSumFunction
+      variable = H
+      coupled_list = 'r_O2'
+      weights = '4'
+      scale = As
+      block = 'anode'
   [../]
 
   ## ===================== H2 balance ====================
@@ -903,6 +1233,15 @@
       Dz = D_H2
   [../]
 
+  [./H2_surf_rate_cat]
+      type = ScaledWeightedCoupledSumFunction
+      variable = H2
+      coupled_list = 'r_H2'
+      weights = '-1'
+      scale = As
+      block = 'cathode'
+  [../]
+
   ## ===================== O2 balance ====================
   [./O2_dot]
       type = VariableCoefTimeDerivative
@@ -924,6 +1263,15 @@
       Dx = D_O2
       Dy = D_O2
       Dz = D_O2
+  [../]
+
+  [./O2_surf_rate_an]
+      type = ScaledWeightedCoupledSumFunction
+      variable = O2
+      coupled_list = 'r_O2'
+      weights = '2'
+      scale = As
+      block = 'anode'
   [../]
 
 
@@ -956,9 +1304,9 @@
       porosity = eps
       electric_potential = phi_e
       temperature = T_e
-      Dx = D_Na
-      Dy = D_Na
-      Dz = D_Na
+      Dx = D_Na_e
+      Dy = D_Na_e
+      Dz = D_Na_e
   [../]
 
 
@@ -991,19 +1339,19 @@
       porosity = eps
       electric_potential = phi_e
       temperature = T_e
-      Dx = D_OH
-      Dy = D_OH
-      Dz = D_OH
+      Dx = D_OH_e
+      Dy = D_OH_e
+      Dz = D_OH_e
   [../]
 
-  [./OH_rate_all]
-      type = ScaledWeightedCoupledSumFunction
-      variable = OH
-      coupled_list = 'r_w'
-      weights = '1'
-      scale = eps
-      block = 'cathode_fluid_channel cathode anode anode_fluid_channel'
-  [../]
+  #[./OH_rate_all]
+  #    type = ScaledWeightedCoupledSumFunction
+  #    variable = OH
+  #    coupled_list = 'r_w'
+  #    weights = '1'
+  #    scale = eps
+  #    block = 'cathode_fluid_channel cathode anode anode_fluid_channel'
+  #[../]
   [./OH_rate_cat]
       type = ScaledWeightedCoupledSumFunction
       variable = OH
@@ -1011,6 +1359,15 @@
       weights = '-1 -1'
       scale = eps
       block = 'cathode_fluid_channel cathode'
+  [../]
+
+  [./OH_surf_rate_cat]
+      type = ScaledWeightedCoupledSumFunction
+      variable = OH
+      coupled_list = 'r_H2 r_CO'
+      weights = '-1 -2'
+      scale = As
+      block = 'cathode'
   [../]
 
 
@@ -1043,9 +1400,9 @@
       porosity = eps
       electric_potential = phi_e
       temperature = T_e
-      Dx = D_HCO3
-      Dy = D_HCO3
-      Dz = D_HCO3
+      Dx = D_HCO3_e
+      Dy = D_HCO3_e
+      Dz = D_HCO3_e
   [../]
 
   [./HCO3_rate_cat]
@@ -1087,9 +1444,9 @@
       porosity = eps
       electric_potential = phi_e
       temperature = T_e
-      Dx = D_CO3
-      Dy = D_CO3
-      Dz = D_CO3
+      Dx = D_CO3_e
+      Dy = D_CO3_e
+      Dz = D_CO3_e
   [../]
 
   [./CO3_rate]
@@ -1134,6 +1491,15 @@
       block = 'cathode_fluid_channel cathode'
   [../]
 
+  [./CO2_surf_rate]
+      type = ScaledWeightedCoupledSumFunction
+      variable = CO2
+      coupled_list = 'r_CO'
+      weights = '1'
+      scale = As
+      block = 'cathode'
+  [../]
+
 
   ## ===================== CO balance ====================
   [./CO_dot]
@@ -1156,6 +1522,15 @@
       Dx = D_CO
       Dy = D_CO
       Dz = D_CO
+  [../]
+
+  [./CO_surf_rate]
+      type = ScaledWeightedCoupledSumFunction
+      variable = CO
+      coupled_list = 'r_CO'
+      weights = '-1'
+      scale = As
+      block = 'cathode'
   [../]
 
 
@@ -1433,9 +1808,9 @@
       porosity = eps
       electric_potential = phi_e
       temperature = T_e
-      Dx = D_H
-      Dy = D_H
-      Dz = D_H
+      Dx = D_H_e
+      Dy = D_H_e
+      Dz = D_H_e
   [../]
 
   ## ===================== H2 balance ====================
@@ -1499,9 +1874,9 @@
       porosity = eps
       electric_potential = phi_e
       temperature = T_e
-      Dx = D_Na
-      Dy = D_Na
-      Dz = D_Na
+      Dx = D_Na_e
+      Dy = D_Na_e
+      Dz = D_Na_e
   [../]
 
 
@@ -1529,9 +1904,9 @@
       porosity = eps
       electric_potential = phi_e
       temperature = T_e
-      Dx = D_OH
-      Dy = D_OH
-      Dz = D_OH
+      Dx = D_OH_e
+      Dy = D_OH_e
+      Dz = D_OH_e
   [../]
 
 
@@ -1559,9 +1934,9 @@
       porosity = eps
       electric_potential = phi_e
       temperature = T_e
-      Dx = D_HCO3
-      Dy = D_HCO3
-      Dz = D_HCO3
+      Dx = D_HCO3_e
+      Dy = D_HCO3_e
+      Dz = D_HCO3_e
   [../]
 
 
@@ -1589,9 +1964,9 @@
       porosity = eps
       electric_potential = phi_e
       temperature = T_e
-      Dx = D_CO3
-      Dy = D_CO3
-      Dz = D_CO3
+      Dx = D_CO3_e
+      Dy = D_CO3_e
+      Dz = D_CO3_e
   [../]
 
 
@@ -1700,7 +2075,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.0017
+      ref_diffusivity = 0.17
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -1725,7 +2100,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.0017
+      ref_diffusivity = 0.17
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -1776,7 +2151,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00695
+      ref_diffusivity = 0.695
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -1801,7 +2176,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00695
+      ref_diffusivity = 0.695
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -1853,7 +2228,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00695
+      ref_diffusivity = 0.695
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -1878,7 +2253,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00695
+      ref_diffusivity = 0.695
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -1931,7 +2306,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00695
+      ref_diffusivity = 0.695
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -1956,7 +2331,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00695
+      ref_diffusivity = 0.695
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -2009,7 +2384,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00217
+      ref_diffusivity = 0.217
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -2034,7 +2409,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00217
+      ref_diffusivity = 0.217
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -2086,7 +2461,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00493
+      ref_diffusivity = 0.493
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -2111,7 +2486,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00493
+      ref_diffusivity = 0.493
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -2163,7 +2538,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.0011
+      ref_diffusivity = 0.11
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -2188,7 +2563,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.0011
+      ref_diffusivity = 0.11
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -2240,7 +2615,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.0008017
+      ref_diffusivity = 0.08017
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -2265,7 +2640,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.0008017
+      ref_diffusivity = 0.08017
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -2318,7 +2693,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00191
+      ref_diffusivity = 0.191
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -2343,7 +2718,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00191
+      ref_diffusivity = 0.191
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -2396,7 +2771,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00191
+      ref_diffusivity = 0.191
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -2421,7 +2796,7 @@
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
-      ref_diffusivity = 0.00191
+      ref_diffusivity = 0.191
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
@@ -2604,7 +2979,7 @@
       porosity = eps
       temperature = T_e
       ion_conc = 'OH HCO3 CO3'
-      diffusion = 'D_OH D_HCO3 D_CO3'
+      diffusion = 'D_OH_e D_HCO3_e D_CO3_e'
       ion_valence = '-1 -1 -2'
       execute_on = 'initial timestep_end'
       block = 'cathode_fluid_channel cathode'
@@ -2617,7 +2992,7 @@
       porosity = eps
       temperature = T_e
       ion_conc = 'OH HCO3 CO3'
-      diffusion = 'D_OH D_HCO3 D_CO3'
+      diffusion = 'D_OH_e D_HCO3_e D_CO3_e'
       ion_valence = '-1 -1 -2'
       execute_on = 'initial timestep_end'
       block = 'cathode_fluid_channel cathode'
@@ -2631,7 +3006,7 @@
       porosity = eps
       temperature = T_e
       ion_conc = 'OH'
-      diffusion = 'D_OH'
+      diffusion = 'D_OH_e'
       ion_valence = '-1'
       execute_on = 'initial timestep_end'
       block = 'anode_fluid_channel anode'
@@ -2644,7 +3019,7 @@
       porosity = eps
       temperature = T_e
       ion_conc = 'OH'
-      diffusion = 'D_OH'
+      diffusion = 'D_OH_e'
       ion_valence = '-1'
       execute_on = 'initial timestep_end'
       block = 'anode_fluid_channel anode'
@@ -2659,7 +3034,7 @@
       porosity = eps
       temperature = T_e
       ion_conc = 'OH'
-      diffusion = 'D_OH'
+      diffusion = 'D_OH_e'
       ion_valence = '-1'
       execute_on = 'initial timestep_end'
       block = 'membrane'
@@ -2672,7 +3047,7 @@
       porosity = eps
       temperature = T_e
       ion_conc = 'OH'
-      diffusion = 'D_OH'
+      diffusion = 'D_OH_e'
       ion_valence = '-1'
       execute_on = 'initial timestep_end'
       block = 'membrane'
@@ -2724,15 +3099,17 @@
       value = 0
   [../]
 
-  # Ground state
+  # Ground state solid
   [./phi_s_ground_side]
       type = CoupledDirichletBC
       variable = phi_s
       boundary = 'cathode_fluid_channel_interface_cathode'
       #
       ## edge value was defined at 0 V
-      coupled = 0 # in V
+      coupled = -0.1 # in V
   [../]
+
+  # electrolyte
   [./phi_e_ground_side]
       type = CoupledDirichletBC
       variable = phi_e
@@ -2757,8 +3134,13 @@
       boundary = 'anode_interface_anode_fluid_channel'
       #
       ## edge value was defined at 0 V
-      coupled = 0 # in V
+      coupled = 0.1 # in V
+
+      #type = FunctionDirichletBC
+      #function = '1*t' # in V
   [../]
+
+  # electrolyte
   [./phi_e_applied_side]
       type = CoupledNeumannBC
       variable = phi_e
@@ -2885,7 +3267,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = 1E-6
+      input_var = 1E-7
   [../]
   [./Na_FluxOut]
       type = DGFlowMassFluxBC
@@ -2983,7 +3365,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = 1E-8
+      input_var = 1E-9
   [../]
   [./CO2_FluxOut]
       type = DGFlowMassFluxBC
@@ -3082,16 +3464,58 @@
       execute_on = 'initial timestep_end'
   [../]
 
+  [./ie_x_cathode]
+      type = ElementAverageValue
+      block = 'cathode'
+      variable = ie_x
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./ie_x_anode]
+      type = ElementAverageValue
+      block = 'anode'
+      variable = ie_x
+      execute_on = 'initial timestep_end'
+  [../]
+
+
   [./V_e_cathode]
       type = ElementAverageValue
       block = 'cathode'
       variable = phi_e
       execute_on = 'initial timestep_end'
   [../]
+  [./V_e_anode]
+      type = ElementAverageValue
+      block = 'anode'
+      variable = phi_e
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./is_x_cathode]
+      type = ElementAverageValue
+      block = 'cathode'
+      variable = is_x
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./is_x_anode]
+      type = ElementAverageValue
+      block = 'anode'
+      variable = is_x
+      execute_on = 'initial timestep_end'
+  [../]
+
 
   [./V_s_cathode]
       type = ElementAverageValue
       block = 'cathode'
+      variable = phi_s
+      execute_on = 'initial timestep_end'
+  [../]
+  [./V_s_anode]
+      type = ElementAverageValue
+      block = 'anode'
       variable = phi_s
       execute_on = 'initial timestep_end'
   [../]
@@ -3175,7 +3599,7 @@
                          50
                          50
 
-                         1e-6
+                         1e-16
                          1e-6
 
                          mumps
@@ -3184,7 +3608,7 @@
                           0.
                           500'
 
-  #NOTE: turning off line search can help converge for high Renolds number
+
   line_search = l2
   nl_rel_step_tol = 1e-10
   nl_abs_step_tol = 1e-10
@@ -3195,7 +3619,7 @@
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
-      dt = 0.05
+      dt = 0.01
   [../]
 
 [] #END Executioner
