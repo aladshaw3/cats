@@ -21,9 +21,9 @@
     type = FileMeshGenerator
 
 
-    file = 2D_Electrolyzer_mm.msh    #coarse mesh
+    #file = 2D_Electrolyzer_mm.msh    #coarse mesh
 
-    #file = 2D_Electrolyzer_mm_split.msh     #fine mesh
+    file = 2D_Electrolyzer_mm_split.msh     #fine mesh
 
     ### ========= boundary_name ==========
     # "cathode_fluid_channel_left"
@@ -107,7 +107,7 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 1.2E-6 #mol/mm^3
-      scaling = 1e6
+      scaling = 1
   [../]
 
   # Ions/species
@@ -115,62 +115,62 @@
   [./H]
       order = FIRST
       family = MONOMIAL
-      scaling = 1e10
+      scaling = 1
       block = 'cathode_fluid_channel cathode anode anode_fluid_channel'
   [../]
   [./H2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0 # mol/mm^3
-      scaling = 1e7
+      initial_condition = 1e-25 # mol/mm^3
+      scaling = 1
       block = 'cathode_fluid_channel cathode'
   [../]
   [./O2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0 # mol/mm^3
-      scaling = 1e7
+      initial_condition = 1e-25  # mol/mm^3
+      scaling = 1
       block = 'anode anode_fluid_channel'
   [../]
   [./Na]
       order = FIRST
       family = MONOMIAL
       initial_condition = 1E-7 # 1E-7 # mol/mm^3
-      scaling = 1e7
+      scaling = 1
       block = 'cathode_fluid_channel cathode'
   [../]
   [./OH]
       order = FIRST
       family = MONOMIAL
-      scaling = 1e10
+      scaling = 1
       block = 'cathode_fluid_channel cathode membrane anode anode_fluid_channel'
   [../]
   [./HCO3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 9.8E-8 # 9.8E-8 # mol/mm^3
-      scaling = 1e9
-      block = 'cathode_fluid_channel cathode'
+      ##initial_condition = 9.8E-8 # 9.8E-8 # mol/mm^3
+      scaling = 1
+      block = 'cathode_fluid_channel cathode membrane anode anode_fluid_channel'
   [../]
   [./CO3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 9.9E-10 # 9.9E-10 # mol/mm^3
-      scaling = 1e9
-      block = 'cathode_fluid_channel cathode'
+      ##initial_condition = 9.9E-10 # 9.9E-10 # mol/mm^3
+      scaling = 1
+      block = 'cathode_fluid_channel cathode membrane anode anode_fluid_channel'
   [../]
   [./CO2]
       order = FIRST
       family = MONOMIAL
       initial_condition = 1E-9 # 1E-9 # mol/mm^3
-      scaling = 1e8
+      scaling = 1
       block = 'cathode_fluid_channel cathode'
   [../]
   [./CO]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0 # mol/cm^3
-      scaling = 1e8
+      initial_condition = 1e-25  # mol/cm^3
+      scaling = 1E10
       block = 'cathode_fluid_channel cathode'
   [../]
 
@@ -186,7 +186,7 @@
           ref_conc = C_ref
       [../]
       block = 'cathode_fluid_channel cathode anode anode_fluid_channel'
-      scaling = 1e2
+      scaling = 1
   [../]
   [./a_H2]
       order = CONSTANT
@@ -198,7 +198,7 @@
           ref_conc = C_ref
       [../]
       block = 'cathode_fluid_channel cathode'
-      scaling = 1e2
+      scaling = 1
   [../]
   [./a_O2]
       order = CONSTANT
@@ -210,7 +210,7 @@
           ref_conc = C_ref
       [../]
       block = 'anode anode_fluid_channel'
-      scaling = 1e2
+      scaling = 1
   [../]
   [./a_Na]
       order = CONSTANT
@@ -222,7 +222,7 @@
           ref_conc = C_ref
       [../]
       block = 'cathode_fluid_channel cathode'
-      scaling = 1e2
+      scaling = 1
   [../]
   [./a_OH]
       order = CONSTANT
@@ -234,7 +234,7 @@
           ref_conc = C_ref
       [../]
       block = 'cathode_fluid_channel cathode anode anode_fluid_channel'
-      scaling = 1e2
+      scaling = 1
   [../]
   [./a_HCO3]
       order = CONSTANT
@@ -246,7 +246,7 @@
           ref_conc = C_ref
       [../]
       block = 'cathode_fluid_channel cathode'
-      scaling = 1e2
+      scaling = 1
   [../]
   [./a_CO3]
       order = CONSTANT
@@ -258,7 +258,7 @@
           ref_conc = C_ref
       [../]
       block = 'cathode_fluid_channel cathode'
-      scaling = 1e2
+      scaling = 1
   [../]
   [./a_CO2]
       order = CONSTANT
@@ -270,7 +270,7 @@
           ref_conc = C_ref
       [../]
       block = 'cathode_fluid_channel cathode'
-      scaling = 1e2
+      scaling = 1
   [../]
   [./a_CO]
       order = CONSTANT
@@ -282,7 +282,7 @@
           ref_conc = C_ref
       [../]
       block = 'cathode_fluid_channel cathode'
-      scaling = 1e2
+      scaling = 1
   [../]
 
 
@@ -293,7 +293,7 @@
       order = CONSTANT
       family = MONOMIAL
       initial_condition = 0
-      scaling = 1e2
+      scaling = 1
       block = 'cathode_fluid_channel cathode anode anode_fluid_channel'
   [../]
 
@@ -303,7 +303,7 @@
       order = CONSTANT
       family = MONOMIAL
       initial_condition = 0
-      scaling = 1e2
+      scaling = 1
       block = 'cathode_fluid_channel cathode'
   [../]
 
@@ -313,7 +313,7 @@
       order = CONSTANT
       family = MONOMIAL
       initial_condition = 0
-      scaling = 1e2
+      scaling = 1
       block = 'cathode_fluid_channel cathode'
   [../]
 
@@ -323,7 +323,7 @@
       order = CONSTANT
       family = MONOMIAL
       initial_condition = 0
-      scaling = 1e2
+      scaling = 1
       block = 'cathode_fluid_channel cathode'
   [../]
 
@@ -333,7 +333,7 @@
       order = CONSTANT
       family = MONOMIAL
       initial_condition = 0
-      scaling = 1e2
+      scaling = 1
       block = 'cathode_fluid_channel cathode'
   [../]
 
@@ -361,7 +361,7 @@
           number_of_electrons = 1         # params are fitted to this standard
           electron_transfer_coef = 0.14   # fitted param
       [../]
-      scaling = 1e0
+      scaling = 1
       block = 'cathode'
   [../]
   # 2 H2O <----> 2 O2 + 4 H+ + 4 e-
@@ -386,7 +386,7 @@
           number_of_electrons = 1         # unknown
           electron_transfer_coef = 0.5    # unknown
       [../]
-      scaling = 1e0
+      scaling = 1
       block = 'anode'
   [../]
   # CO + 2 OH- <----> CO2 + H2O + 2 e-
@@ -411,7 +411,7 @@
           number_of_electrons = 1         # params are fitted to this standard
           electron_transfer_coef = 0.35   # fitted param
       [../]
-      scaling = 1e0
+      scaling = 1
       block = 'cathode'
   [../]
 
@@ -427,7 +427,7 @@
           rate_var = r_H2
       [../]
       block = 'cathode'
-      scaling = 1e0
+      scaling = 1
   [../]
   [./J_O2]
       order = CONSTANT
@@ -440,7 +440,7 @@
           rate_var = r_O2
       [../]
       block = 'anode'
-      scaling = 1e0
+      scaling = 1
   [../]
   [./J_CO]
       order = CONSTANT
@@ -453,7 +453,7 @@
           rate_var = r_CO
       [../]
       block = 'cathode'
-      scaling = 1e0
+      scaling = 1
   [../]
 []
 
@@ -474,13 +474,40 @@
   [./OH_cat]
       type = ConstantIC
       variable = OH
-      value = 2.1E-12 # 2.1E-12
+      value = 1.4E-12 # 2.1E-12
       block = 'cathode_fluid_channel cathode membrane'
   [../]
   [./OH_an]
       type = ConstantIC
       variable = OH
       value = 1E-13
+      block = 'anode anode_fluid_channel'
+  [../]
+
+
+  [./HCO3_cat]
+      type = ConstantIC
+      variable = HCO3
+      value = 9.8E-8 # 9.8E-8
+      block = 'cathode_fluid_channel cathode membrane'
+  [../]
+  [./HCO3_an]
+      type = ConstantIC
+      variable = HCO3
+      value = 1E-25
+      block = 'anode anode_fluid_channel'
+  [../]
+
+  [./CO3_cat]
+      type = ConstantIC
+      variable = CO3
+      value = 9.8E-10 # 9.8E-10
+      block = 'cathode_fluid_channel cathode membrane'
+  [../]
+  [./CO3_an]
+      type = ConstantIC
+      variable = CO3
+      value = 1E-25
       block = 'anode anode_fluid_channel'
   [../]
 
@@ -1184,14 +1211,14 @@
       Dz = D_H_e
   [../]
 
-  #[./H_rate_all]
-  #    type = ScaledWeightedCoupledSumFunction
-  #    variable = H
-  #    coupled_list = 'r_w'
-  #    weights = '1'
-  #    scale = eps
-  #    block = 'cathode_fluid_channel cathode anode anode_fluid_channel'
-  #[../]
+  [./H_rate_all]
+      type = ScaledWeightedCoupledSumFunction
+      variable = H
+      coupled_list = 'r_w'
+      weights = '1'
+      scale = eps
+      block = 'cathode_fluid_channel'
+  [../]
   [./H_rate_cat]
       type = ScaledWeightedCoupledSumFunction
       variable = H
@@ -1344,14 +1371,14 @@
       Dz = D_OH_e
   [../]
 
-  #[./OH_rate_all]
-  #    type = ScaledWeightedCoupledSumFunction
-  #    variable = OH
-  #    coupled_list = 'r_w'
-  #    weights = '1'
-  #    scale = eps
-  #    block = 'cathode_fluid_channel cathode anode anode_fluid_channel'
-  #[../]
+  [./OH_rate_all]
+      type = ScaledWeightedCoupledSumFunction
+      variable = OH
+      coupled_list = 'r_w'
+      weights = '1'
+      scale = eps
+      block = 'cathode_fluid_channel'
+  [../]
   [./OH_rate_cat]
       type = ScaledWeightedCoupledSumFunction
       variable = OH
@@ -1662,8 +1689,8 @@
       variable = r_w
       this_variable = r_w
 
-      forward_rate = 0.0016
-      reverse_rate = 1.6E11
+      forward_rate = 1.6E-4
+      reverse_rate = 1.6E10
 
       # Apply the 'scale' as the C_ref value for simplicity
       scale = 1e-6 # mol/mm^3
@@ -3106,7 +3133,7 @@
       boundary = 'cathode_fluid_channel_interface_cathode'
       #
       ## edge value was defined at 0 V
-      coupled = -0.1 # in V
+      coupled = 0 # in V
   [../]
 
   # electrolyte
@@ -3129,19 +3156,21 @@
 
   # Applied Voltage
   [./phi_s_applied_side]
-      type = CoupledDirichletBC
+
       variable = phi_s
       boundary = 'anode_interface_anode_fluid_channel'
       #
       ## edge value was defined at 0 V
+
+      type = CoupledDirichletBC
       coupled = 0.1 # in V
 
       #type = FunctionDirichletBC
-      #function = '1*t' # in V
+      #function = '0.1*t' # in V
   [../]
 
   # electrolyte
-  [./phi_e_applied_side]
+  [./phi_e_applied_side_flux]
       type = CoupledNeumannBC
       variable = phi_e
       boundary = 'anode_fluid_channel_right'
@@ -3149,6 +3178,14 @@
       ## edge value was defined at 0 V
       coupled = 0
   [../]
+  #[./phi_e_applied_side]
+  #    type = CoupledDirichletBC
+  #    variable = phi_e
+  #    boundary = 'anode_fluid_channel_right'
+  #    #
+  #    ## edge value was defined at 0 V
+  #    coupled = 0 # in V
+  #[../]
 
   ## =============== H2O fluxes ================
   [./H2O_FluxIn_pos]
@@ -3223,7 +3260,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = 0
+      input_var = 1e-25
   [../]
   [./H2_FluxOut]
       type = DGFlowMassFluxBC
@@ -3245,7 +3282,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = 0
+      input_var = 1e-25
   [../]
   [./O2_FluxOut]
       type = DGFlowMassFluxBC
@@ -3289,7 +3326,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = 2.1E-12
+      input_var = 1.4E-12
   [../]
   [./OH_FluxIn_neg]
       type = DGFlowMassFluxBC
@@ -3323,10 +3360,20 @@
       uz = vel_z
       input_var = 9.8E-8
   [../]
+  [./HCO3_FluxIn_neg]
+      type = DGFlowMassFluxBC
+      variable = HCO3
+      boundary = 'anode_fluid_channel_bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 1E-25
+  [../]
   [./HCO3_FluxOut]
       type = DGFlowMassFluxBC
       variable = HCO3
-      boundary = 'cathode_fluid_channel_top'
+      boundary = 'cathode_fluid_channel_top anode_fluid_channel_top'
       porosity = 1
       ux = vel_x
       uy = vel_y
@@ -3345,10 +3392,20 @@
       uz = vel_z
       input_var = 9.9E-10
   [../]
+  [./CO3_FluxIn_neg]
+      type = DGFlowMassFluxBC
+      variable = CO3
+      boundary = 'anode_fluid_channel_bottom'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 1E-25
+  [../]
   [./CO3_FluxOut]
       type = DGFlowMassFluxBC
       variable = CO3
-      boundary = 'cathode_fluid_channel_top'
+      boundary = 'cathode_fluid_channel_top anode_fluid_channel_top'
       porosity = 1
       ux = vel_x
       uy = vel_y
@@ -3387,7 +3444,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = 0
+      input_var = 1e-25
   [../]
   [./CO_FluxOut]
       type = DGFlowMassFluxBC
@@ -3443,10 +3500,31 @@
       execute_on = 'initial timestep_end'
   [../]
 
-  [./CO2_cathode]
-      type = ElementAverageValue
-      block = 'cathode'
+  [./CO2_outlet]
+      type = SideAverageValue
+      boundary = 'cathode_fluid_channel_top'
       variable = CO2
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./CO_outlet]
+      type = SideAverageValue
+      boundary = 'cathode_fluid_channel_top'
+      variable = CO
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./H2_outlet]
+      type = SideAverageValue
+      boundary = 'cathode_fluid_channel_top'
+      variable = H2
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./O2_outlet]
+      type = SideAverageValue
+      boundary = 'anode_fluid_channel_top'
+      variable = O2
       execute_on = 'initial timestep_end'
   [../]
 
@@ -3614,8 +3692,8 @@
   nl_abs_step_tol = 1e-10
 
   start_time = 0.0
-  end_time = 2.5
-  dtmax = 60
+  end_time = 25000
+  dtmax = 600
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
@@ -3638,5 +3716,6 @@
     exodus = true
     csv = true
     print_linear_residuals = true
+    interval = 10
 
 [] #END Outputs
