@@ -835,6 +835,13 @@
       initial_condition = 0
       block = 'cathode anode'
   [../]
+
+  # applied voltage
+  [./voltage]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0.1
+  [../]
 []
 
 [Kernels]
@@ -3099,6 +3106,18 @@
       conductivity = sigma_s
       execute_on = 'initial timestep_end'
   [../]
+
+  #[./voltage_step_input]
+  #    type = TemporalStepFunction
+  #    variable = voltage
+
+  #    start_value = 0.1
+  #    aux_vals = '0.2 0.4 0.8 1.0 2.0 4.0'
+  #    aux_times = '120   480    1000    2000   5000    10000'
+  #    time_spans = '60      120    180    360    720    1000'
+
+  #    execute_on = 'initial timestep_begin nonlinear'
+  #[../]
 []
 
 [BCs]
@@ -3115,7 +3134,7 @@
       type = NeumannBC
       variable = pressure
       boundary = 'cathode_fluid_channel_bottom anode_fluid_channel_bottom'
-      value = 4   # vel in mm/s
+      value = 0.4   # vel in mm/s
   [../]
 
   # zero pressure grad at non-exits
@@ -3163,7 +3182,7 @@
       ## edge value was defined at 0 V
 
       type = CoupledDirichletBC
-      coupled = 0.1 # in V
+      coupled = voltage # in V
 
       #type = FunctionDirichletBC
       #function = '0.1*t' # in V
@@ -3692,8 +3711,8 @@
   nl_abs_step_tol = 1e-10
 
   start_time = 0.0
-  end_time = 25000
-  dtmax = 600
+  end_time = 2500
+  dtmax = 180
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
@@ -3716,6 +3735,6 @@
     exodus = true
     csv = true
     print_linear_residuals = true
-    interval = 10
+    interval = 3
 
 [] #END Outputs
