@@ -335,12 +335,22 @@
         family = MONOMIAL
     [../]
 
-    [./r5_per_cat_vol]
+    [./r5f_per_cat_vol]
         order = FIRST
         family = MONOMIAL
     [../]
 
-    [./r6_per_cat_vol]
+    [./r5r_per_cat_vol]
+        order = FIRST
+        family = MONOMIAL
+    [../]
+
+    [./r6f_per_cat_vol]
+        order = FIRST
+        family = MONOMIAL
+    [../]
+
+    [./r6r_per_cat_vol]
         order = FIRST
         family = MONOMIAL
     [../]
@@ -2420,30 +2430,95 @@
 
 
     # cat volume
-    [./r5_val_cat]
+    [./r5f_val_cat]
         type = Reaction
-        variable = r5_per_cat_vol
+        variable = r5f_per_cat_vol
     [../]
-    [./r5_rx_cat]
-      type = ScaledWeightedCoupledSumFunction
-      variable = r5_per_cat_vol
-      coupled_list = 'r5'
-      weights = '16.66667'
-      scale = 1
+    [./r5f_rx_cat]
+      type = ArrheniusReaction
+      variable = r5f_per_cat_vol
+      this_variable = r5f_per_cat_vol
+
+      forward_activation_energy = 47276.5598305903
+
+      forward_pre_exponential = 11695552804.8967
+
+
+      temperature = temp
+      scale = 16.66667
+      reactants = 'S1 NOxw O2w'
+      reactant_stoich = '1 1 1'
+      products = ' '
+      product_stoich = ''
+    [../]
+
+
+    [./r5r_val_cat]
+        type = Reaction
+        variable = r5r_per_cat_vol
+    [../]
+    [./r5r_rx_cat]
+      type = ArrheniusReaction
+      variable = r5r_per_cat_vol
+      this_variable = r5r_per_cat_vol
+
+      forward_activation_energy = 83661.4960321029
+
+      forward_pre_exponential = 15221221335.6318
+
+
+      temperature = temp
+      scale = 16.66667
+      reactants = 'S1 NO2w'
+      reactant_stoich = '1 1'
+      products = ''
+      product_stoich = ''
     [../]
 
 
     # cat volume
-    [./r6_val_cat]
+    [./r6f_val_cat]
         type = Reaction
-        variable = r6_per_cat_vol
+        variable = r6f_per_cat_vol
     [../]
-    [./r6_rx_cat]
-      type = ScaledWeightedCoupledSumFunction
-      variable = r6_per_cat_vol
-      coupled_list = 'r6'
-      weights = '16.66667'
-      scale = 1
+    [./r6f_rx_cat]
+      type = ArrheniusReaction
+      variable = r6f_per_cat_vol
+      this_variable = r6f_per_cat_vol
+
+      forward_activation_energy = 40292.573419771
+
+      forward_pre_exponential = 1764591354.12529
+
+
+      temperature = temp
+      scale = 16.66667
+      reactants = 'S2 NOxw O2w'
+      reactant_stoich = '1 1 1'
+      products = ''
+      product_stoich = ''
+    [../]
+
+    [./r6r_val_cat]
+        type = Reaction
+        variable = r6r_per_cat_vol
+    [../]
+    [./r6r_rx_cat]
+      type = ArrheniusReaction
+      variable = r6r_per_cat_vol
+      this_variable = r6r_per_cat_vol
+
+      forward_activation_energy = 66133.7226681343
+
+      forward_pre_exponential = 445004565.411014
+
+
+      temperature = temp
+      scale = 16.66667
+      reactants = 'S2 NO2w'
+      reactant_stoich = '1 1'
+      products = ''
+      product_stoich = ''
     [../]
 
 
@@ -3439,134 +3514,119 @@
 
 [Postprocessors]
 
-    [./r1_v00]
+    [./r01_v00]
         type = ElementalVariableValue
         variable = r1_per_cat_vol
         elementid = 0
         execute_on = 'initial timestep_end'
     [../]
-    [./r1_v05]
-        type = ElementalVariableValue
-        variable = r1_per_cat_vol
-        elementid = 5
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r1_v10]
-        type = ElementalVariableValue
-        variable = r1_per_cat_vol
-        elementid = 10
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r1_v15]
-        type = ElementalVariableValue
-        variable = r1_per_cat_vol
-        elementid = 15
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r1_v20]
-        type = ElementalVariableValue
-        variable = r1_per_cat_vol
-        elementid = 20
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r1_v25]
+    [./r01_v25]
         type = ElementalVariableValue
         variable = r1_per_cat_vol
         elementid = 25
         execute_on = 'initial timestep_end'
     [../]
-    [./r1_v30]
-        type = ElementalVariableValue
-        variable = r1_per_cat_vol
-        elementid = 30
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r1_v35]
-        type = ElementalVariableValue
-        variable = r1_per_cat_vol
-        elementid = 35
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r1_v40]
-        type = ElementalVariableValue
-        variable = r1_per_cat_vol
-        elementid = 40
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r1_v45]
-        type = ElementalVariableValue
-        variable = r1_per_cat_vol
-        elementid = 45
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r1_v50]
+    [./r01_v50]
         type = ElementalVariableValue
         variable = r1_per_cat_vol
         elementid = 50
         execute_on = 'initial timestep_end'
     [../]
 
-    [./r7_v00]
+    [./r05f_v00]
+        type = ElementalVariableValue
+        variable = r5f_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r05f_v25]
+        type = ElementalVariableValue
+        variable = r5f_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r05f_v50]
+        type = ElementalVariableValue
+        variable = r5f_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r05r_v00]
+        type = ElementalVariableValue
+        variable = r5r_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r05r_v25]
+        type = ElementalVariableValue
+        variable = r5r_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r05r_v50]
+        type = ElementalVariableValue
+        variable = r5r_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r06f_v00]
+        type = ElementalVariableValue
+        variable = r6f_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r06f_v25]
+        type = ElementalVariableValue
+        variable = r6f_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r06f_v50]
+        type = ElementalVariableValue
+        variable = r6f_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r06r_v00]
+        type = ElementalVariableValue
+        variable = r6r_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r06r_v25]
+        type = ElementalVariableValue
+        variable = r6r_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r06r_v50]
+        type = ElementalVariableValue
+        variable = r6r_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r07_v00]
         type = ElementalVariableValue
         variable = r7_per_cat_vol
         elementid = 0
         execute_on = 'initial timestep_end'
     [../]
-    [./r7_v05]
-        type = ElementalVariableValue
-        variable = r7_per_cat_vol
-        elementid = 5
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r7_v10]
-        type = ElementalVariableValue
-        variable = r7_per_cat_vol
-        elementid = 10
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r7_v15]
-        type = ElementalVariableValue
-        variable = r7_per_cat_vol
-        elementid = 15
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r7_v20]
-        type = ElementalVariableValue
-        variable = r7_per_cat_vol
-        elementid = 20
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r7_v25]
+    [./r07_v25]
         type = ElementalVariableValue
         variable = r7_per_cat_vol
         elementid = 25
         execute_on = 'initial timestep_end'
     [../]
-    [./r7_v30]
-        type = ElementalVariableValue
-        variable = r7_per_cat_vol
-        elementid = 30
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r7_v35]
-        type = ElementalVariableValue
-        variable = r7_per_cat_vol
-        elementid = 35
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r7_v40]
-        type = ElementalVariableValue
-        variable = r7_per_cat_vol
-        elementid = 40
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r7_v45]
-        type = ElementalVariableValue
-        variable = r7_per_cat_vol
-        elementid = 45
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r7_v50]
+    [./r07_v50]
         type = ElementalVariableValue
         variable = r7_per_cat_vol
         elementid = 50
@@ -3574,72 +3634,660 @@
     [../]
 
 
-    [./r8_v00]
+    [./r08_v00]
         type = ElementalVariableValue
         variable = r8_per_cat_vol
         elementid = 0
         execute_on = 'initial timestep_end'
     [../]
-    [./r8_v05]
-        type = ElementalVariableValue
-        variable = r8_per_cat_vol
-        elementid = 5
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r8_v10]
-        type = ElementalVariableValue
-        variable = r8_per_cat_vol
-        elementid = 10
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r8_v15]
-        type = ElementalVariableValue
-        variable = r8_per_cat_vol
-        elementid = 15
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r8_v20]
-        type = ElementalVariableValue
-        variable = r8_per_cat_vol
-        elementid = 20
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r8_v25]
+    [./r08_v25]
         type = ElementalVariableValue
         variable = r8_per_cat_vol
         elementid = 25
         execute_on = 'initial timestep_end'
     [../]
-    [./r8_v30]
-        type = ElementalVariableValue
-        variable = r8_per_cat_vol
-        elementid = 30
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r8_v35]
-        type = ElementalVariableValue
-        variable = r8_per_cat_vol
-        elementid = 35
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r8_v40]
-        type = ElementalVariableValue
-        variable = r8_per_cat_vol
-        elementid = 40
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r8_v45]
-        type = ElementalVariableValue
-        variable = r8_per_cat_vol
-        elementid = 45
-        execute_on = 'initial timestep_end'
-    [../]
-    [./r8_v50]
+    [./r08_v50]
         type = ElementalVariableValue
         variable = r8_per_cat_vol
         elementid = 50
         execute_on = 'initial timestep_end'
     [../]
+
+
+    [./r09_v00]
+        type = ElementalVariableValue
+        variable = r9_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r09_v25]
+        type = ElementalVariableValue
+        variable = r9_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r09_v50]
+        type = ElementalVariableValue
+        variable = r9_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r10_v00]
+        type = ElementalVariableValue
+        variable = r10_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r10_v25]
+        type = ElementalVariableValue
+        variable = r10_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r10_v50]
+        type = ElementalVariableValue
+        variable = r10_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r11_v00]
+        type = ElementalVariableValue
+        variable = r11_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r11_v25]
+        type = ElementalVariableValue
+        variable = r11_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r11_v50]
+        type = ElementalVariableValue
+        variable = r11_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r12_v00]
+        type = ElementalVariableValue
+        variable = r12_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r12_v25]
+        type = ElementalVariableValue
+        variable = r12_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r12_v50]
+        type = ElementalVariableValue
+        variable = r12_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r13_v00]
+        type = ElementalVariableValue
+        variable = r13_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r13_v25]
+        type = ElementalVariableValue
+        variable = r13_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r13_v50]
+        type = ElementalVariableValue
+        variable = r13_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r14_v00]
+        type = ElementalVariableValue
+        variable = r14_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r14_v25]
+        type = ElementalVariableValue
+        variable = r14_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r14_v50]
+        type = ElementalVariableValue
+        variable = r14_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r15_v00]
+        type = ElementalVariableValue
+        variable = r15_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r15_v25]
+        type = ElementalVariableValue
+        variable = r15_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r15_v50]
+        type = ElementalVariableValue
+        variable = r15_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r16_v00]
+        type = ElementalVariableValue
+        variable = r16_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r16_v25]
+        type = ElementalVariableValue
+        variable = r16_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r16_v50]
+        type = ElementalVariableValue
+        variable = r16_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r17_v00]
+        type = ElementalVariableValue
+        variable = r17_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r17_v25]
+        type = ElementalVariableValue
+        variable = r17_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r17_v50]
+        type = ElementalVariableValue
+        variable = r17_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r18_v00]
+        type = ElementalVariableValue
+        variable = r18_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r18_v25]
+        type = ElementalVariableValue
+        variable = r18_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r18_v50]
+        type = ElementalVariableValue
+        variable = r18_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r19_v00]
+        type = ElementalVariableValue
+        variable = r19_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r19_v25]
+        type = ElementalVariableValue
+        variable = r19_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r19_v50]
+        type = ElementalVariableValue
+        variable = r19_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r20_v00]
+        type = ElementalVariableValue
+        variable = r20_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r20_v25]
+        type = ElementalVariableValue
+        variable = r20_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r20_v50]
+        type = ElementalVariableValue
+        variable = r20_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r21_v00]
+        type = ElementalVariableValue
+        variable = r21_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r21_v25]
+        type = ElementalVariableValue
+        variable = r21_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r21_v50]
+        type = ElementalVariableValue
+        variable = r21_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r22_v00]
+        type = ElementalVariableValue
+        variable = r22_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r22_v25]
+        type = ElementalVariableValue
+        variable = r22_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r22_v50]
+        type = ElementalVariableValue
+        variable = r22_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r23_v00]
+        type = ElementalVariableValue
+        variable = r23_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r23_v25]
+        type = ElementalVariableValue
+        variable = r23_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r23_v50]
+        type = ElementalVariableValue
+        variable = r23_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r24_v00]
+        type = ElementalVariableValue
+        variable = r24_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r24_v25]
+        type = ElementalVariableValue
+        variable = r24_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r24_v50]
+        type = ElementalVariableValue
+        variable = r24_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r25_v00]
+        type = ElementalVariableValue
+        variable = r25_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r25_v25]
+        type = ElementalVariableValue
+        variable = r25_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r25_v50]
+        type = ElementalVariableValue
+        variable = r25_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r26_v00]
+        type = ElementalVariableValue
+        variable = r26_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r26_v25]
+        type = ElementalVariableValue
+        variable = r26_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r26_v50]
+        type = ElementalVariableValue
+        variable = r26_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r27_v00]
+        type = ElementalVariableValue
+        variable = r27_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r27_v25]
+        type = ElementalVariableValue
+        variable = r27_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r27_v50]
+        type = ElementalVariableValue
+        variable = r27_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r28_v00]
+        type = ElementalVariableValue
+        variable = r28_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r28_v25]
+        type = ElementalVariableValue
+        variable = r28_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r28_v50]
+        type = ElementalVariableValue
+        variable = r28_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r29_v00]
+        type = ElementalVariableValue
+        variable = r29_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r29_v25]
+        type = ElementalVariableValue
+        variable = r29_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r29_v50]
+        type = ElementalVariableValue
+        variable = r29_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r30_v00]
+        type = ElementalVariableValue
+        variable = r30_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r30_v25]
+        type = ElementalVariableValue
+        variable = r30_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r30_v50]
+        type = ElementalVariableValue
+        variable = r30_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+    [./r31_v00]
+        type = ElementalVariableValue
+        variable = r31_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r31_v25]
+        type = ElementalVariableValue
+        variable = r31_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r31_v50]
+        type = ElementalVariableValue
+        variable = r31_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r32_v00]
+        type = ElementalVariableValue
+        variable = r32_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r32_v25]
+        type = ElementalVariableValue
+        variable = r32_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r32_v50]
+        type = ElementalVariableValue
+        variable = r32_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r33_v00]
+        type = ElementalVariableValue
+        variable = r33_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r33_v25]
+        type = ElementalVariableValue
+        variable = r33_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r33_v50]
+        type = ElementalVariableValue
+        variable = r33_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r34_v00]
+        type = ElementalVariableValue
+        variable = r34_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r34_v25]
+        type = ElementalVariableValue
+        variable = r34_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r34_v50]
+        type = ElementalVariableValue
+        variable = r34_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r35_v00]
+        type = ElementalVariableValue
+        variable = r35_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r35_v25]
+        type = ElementalVariableValue
+        variable = r35_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r35_v50]
+        type = ElementalVariableValue
+        variable = r35_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r36_v00]
+        type = ElementalVariableValue
+        variable = r36_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r36_v25]
+        type = ElementalVariableValue
+        variable = r36_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r36_v50]
+        type = ElementalVariableValue
+        variable = r36_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r37_v00]
+        type = ElementalVariableValue
+        variable = r37_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r37_v25]
+        type = ElementalVariableValue
+        variable = r37_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r37_v50]
+        type = ElementalVariableValue
+        variable = r37_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+    [./r38_v00]
+        type = ElementalVariableValue
+        variable = r38_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r38_v25]
+        type = ElementalVariableValue
+        variable = r38_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r38_v50]
+        type = ElementalVariableValue
+        variable = r38_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
+
+
+
+    [./r39_v00]
+        type = ElementalVariableValue
+        variable = r39_per_cat_vol
+        elementid = 0
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r39_v25]
+        type = ElementalVariableValue
+        variable = r39_per_cat_vol
+        elementid = 25
+        execute_on = 'initial timestep_end'
+    [../]
+    [./r39_v50]
+        type = ElementalVariableValue
+        variable = r39_per_cat_vol
+        elementid = 50
+        execute_on = 'initial timestep_end'
+    [../]
+
 
 
 [] #END Postprocessors
