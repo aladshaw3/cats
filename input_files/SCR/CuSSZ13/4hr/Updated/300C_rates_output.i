@@ -660,7 +660,7 @@
   [./pore]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.3309
+      initial_condition = 0.6691
   [../]
 
   # non_pore = (1 - pore)
@@ -3127,7 +3127,7 @@
         # NOTE: velocity must use same shape function type as temperature and space-velocity
         type = GasVelocityCylindricalReactor
         variable = vel_y
-        porosity = 0.3309
+        porosity = pore
         space_velocity = 1000   #volumes per min
         inlet_temperature = temp
         ref_pressure = 101.35
