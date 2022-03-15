@@ -91,3 +91,47 @@ class TestBasicFunctionality():
         obj.write_stream_to_file(file_name="test", folder="test_output")
 
         assert path.exists("test_output/test.i") == True
+
+# Start test class for file reading functionality
+class TestBasicFileReadingFunctionality():
+    @pytest.fixture(scope="class")
+    def file_obj(self):
+        obj = CATS_InputFile()
+        obj.construct_from_file("test_input/input_file.i")
+        return obj
+
+    @pytest.mark.unit
+    def test_dict_container(self, file_obj):
+        obj = file_obj
+        assert hasattr(obj, 'data')
+
+        assert 'GlobalParams' in obj.data
+        assert type(obj.data['GlobalParams']) == dict
+        assert 'sigma' in obj.data['GlobalParams']
+        assert type(obj.data['GlobalParams']['sigma']) == int
+
+        assert 'BCs' in obj.data
+        assert type(obj.data['BCs']) == dict
+        assert 'press_at_exit' in obj.data['BCs']
+        assert type(obj.data['BCs']['press_at_exit']) == dict
+        assert 'boundary' in obj.data['BCs']['press_at_exit']
+        assert type(obj.data['BCs']['press_at_exit']['boundary']) == list
+        assert len(obj.data['BCs']['press_at_exit']['boundary']) == 1
+        assert 'value' in obj.data['BCs']['press_at_exit']
+        assert type(obj.data['BCs']['press_at_exit']['value']) == float
+
+        assert 'Executioner' in obj.data
+        assert type(obj.data['Executioner']) == dict
+        assert 'petsc_options_iname' in obj.data['Executioner']
+        assert 'petsc_options_value' in obj.data['Executioner']
+        assert type(obj.data['Executioner']['petsc_options_iname']) == list
+        assert type(obj.data['Executioner']['petsc_options_value']) == list
+        assert len(obj.data['Executioner']['petsc_options_iname']) == \
+            len(obj.data['Executioner']['petsc_options_value']) == 12
+
+    @pytest.mark.unit
+    def test_output_again(self, file_obj):
+        obj = file_obj
+        obj.write_stream_to_file(file_name="test_in_to_out", folder="test_output")
+
+        assert path.exists("test_output/test_in_to_out.i") == True
