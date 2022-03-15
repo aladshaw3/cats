@@ -45,6 +45,23 @@ end_block_sym = ["[]", "[../]"]
 
 start_block_sym = ["[*]", "[./*]"]
 
+def is_valid_integer(str_val):
+    result = re.match("[-+]?\d+$", str_val)
+    return result
+
+def is_valid_float(str_val):
+    try:
+        num = float(str_val)
+        return True
+    except ValueError:
+        return False
+
+def is_valid_bool(str_val):
+    return str_val.lower() in ("true", "false")
+
+def str_to_bool(str_val):
+    return str_val.lower() in ("true")
+
 # Object to handle the data associated with CATS input files
 class CATS_InputFile(object):
     # Default constructor
@@ -73,12 +90,26 @@ class CATS_InputFile(object):
 
     def construct_from_file(self, file_name):
 
+        # Helper function to convert string to non-string type
+        def _convert_type(str_val):
+            if is_valid_integer(str_val):
+                return int(str_val)
+            if is_valid_float(str_val):
+                return float(str_val)
+            if is_valid_bool(str_val):
+                return str_to_bool(str_val)
+            return str_val
+
         # Helper function to read a list
-        def _read_list(data_file):
-            list = []
+        def _read_list(data_file, list):
             for line in data_file:
-                break
-            return list
+                readable, sep, tail = line.partition('#')
+
+                if len(readable.strip()) > 0:
+                    for item in readable.strip().partition("'")[0].split():
+                        list.append(item)
+                    if readable.strip()[-1] == "'":
+                        break
 
         # Helper function to read a block
         def _read_block(data_file, block_data):
@@ -114,12 +145,32 @@ class CATS_InputFile(object):
                     if len(key.split()) > 0:
                         key_name = key.split()[0]
 
-                    # Check to see if 'value' is a list or just a single piece of data 
+                    # Check to see if 'value' is a list or just a single piece of data
                     value = value.partition("=")[2].strip()
+                    value_list = []
+                    is_list = False
+                    value_res = re.findall(r'\'.*', value)
+                    # indicates a list has opened
+                    if len(value_res) > 0:
+                        value_list = re.sub(r"[\'\']", "", value_res[0]).split()
+                        is_list = True
+
+                        if value_res[0][-1] != "'":
+                            _read_list(data_file, value_list)
+
+                        i=0
+                        for item in value_list:
+                            new_val = _convert_type(value_list[i])
+                            value_list[i] = new_val
+                            i+=1
+
 
                     # add value to data set
-                    if key_name != "":
-                        block_data[key_name] = value
+                    if key_name != "" and is_list == False:
+                        new_val = _convert_type(value)
+                        block_data[key_name] = new_val
+                    if key_name != "" and is_list == True:
+                        block_data[key_name] = value_list
 
         # Helper function to read in data
         def _read_file(data_file, data):
@@ -140,26 +191,21 @@ class CATS_InputFile(object):
         if path.exists(file_name):
             data_file = open(file_name,"r")
             _read_file(data_file, self.data)
-            #print(self.data)
             data_file.close()
-
-            # for testing
-            self.build_stream()
-            print(self.stream)
         else:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_name)
 
     # builds the stream that will be printed
-    def build_stream(self):
+    def build_stream(self, list_length=4):
         self.stream = ""
         # helper function for dealing with lists
-        def _list_loop(data, level, max_length=5):
+        def _list_loop(data, level, max_length=4):
             liststream = "'"
             first = True
             len = 0
             for item in data:
                 if first:
-                    liststream += item
+                    liststream += str(item)
                     first = False
                 else:
                     if len >= max_length:
@@ -167,7 +213,7 @@ class CATS_InputFile(object):
                         for i in range(0,10*level):
                             liststream += " "
                         len = 0
-                    liststream += " " + item
+                    liststream += " " + str(item)
                 len +=1
             return liststream+"'"
 
@@ -196,9 +242,9 @@ class CATS_InputFile(object):
                             spacing += " "
                         first = False
                     if isinstance(data[item], list):
-                        substream += spacing + item + " = " + _list_loop(data[item], level) +"\n"
+                        substream += spacing + str(item) + " = " + _list_loop(data[item], level, max_length=list_length) +"\n"
                     else:
-                        substream += spacing + item + " = " + str(data[item]) +"\n"
+                        substream += spacing + str(item) + " = " + str(data[item]) +"\n"
                     level -=1
 
             return substream+""
@@ -229,9 +275,9 @@ class CATS_InputFile(object):
                             space += " "
                         first = False
                     if isinstance(self.data[key][item], list):
-                        self.stream += space + item + " = " + _list_loop(self.data[key][item], self.level) + "\n"
+                        self.stream += space + str(item) + " = " + _list_loop(self.data[key][item], self.level, max_length=list_length) + "\n"
                     else:
-                        self.stream += space + item + " = " + str(self.data[key][item]) + "\n"
+                        self.stream += space + str(item) + " = " + str(self.data[key][item]) + "\n"
                     self.level -=1
 
             # end of block
@@ -277,50 +323,12 @@ class CATS_InputFile(object):
 
 
 if __name__ == "__main__":
-    data = {"Mesh":
-                {"type": "GeneratedMesh",
-                 "dim": 2,
-                 "nx": 10,
-                 "ny": 10},
-            "Variables":
-                {"u":
-                    {"InitialCondition":
-                        {"type": "ConstantIC",
-                         "value": 0}
-                    }
-                },
-            "Kernels":
-                {"diff":
-                    {"type": "Diffusion",
-                     "variable": "u"}
-                },
-            "BCs":
-                {"left":
-                    {"type": "DirichletBC",
-                     "variable": "u",
-                     "boundary": "left",
-                     "value": 0},
-                "right":
-                    {"type": "DirichletBC",
-                     "variable": "u",
-                     "boundary": "right",
-                     "value": 1}
-                },
-            "Executioner":
-                {"type": "Steady",
-                 "solve_type": "pjfnk",
-                 "petsc_options_iname": ['-pc_type', '-pc_hypre_type'],
-                 "petsc_options_value": ['hypre', 'boomeramg'],
-                },
-            "Outputs":
-                {"exodus": True}
-            }
     obj = CATS_InputFile()
 
-    #obj.construct_from_dict(data, validate=True, raise_error=True, build_stream=True)
-    #data["InterfaceKernels"]={}
-    #obj.data["ICs"]={}
-    #obj.build_stream()
-    #print(obj.stream)
-
     obj.construct_from_file("tests/test_input/input_file.i")
+    print(obj.data["GlobalParams"])
+    print(obj.data["Executioner"]["petsc_options_value"])
+    print(obj.data["Outputs"]["print_linear_residuals"])
+    obj.build_stream()
+    print(obj.stream)
+    obj.write_stream_to_file(file_name="test_in_to_out", folder="tests/test_output")

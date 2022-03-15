@@ -333,7 +333,7 @@
   # NOTE: Add arg -ksp_view to get info on methods used at linear steps
   petsc_options = '-snes_converged_reason
 
-                    -ksp_gmres_modifiedgramschmidt'
+                    -ksp_gmres_modifiedgramschmidt'   # This comment should be ignored
 
   # NOTE: The sub_pc_type arg not used if pc_type is ksp,
   #       Instead, set the ksp_ksp_type to the pc method
@@ -343,9 +343,7 @@
   # Good terminal precon options: lu, ilu, asm, gasm, pbjacobi
   #                               bjacobi, redundant, telescope
   petsc_options_iname ='-ksp_type
-                        -pc_type
-
-                        -sub_pc_type
+                        -pc_type -sub_pc_type
 
                         -snes_max_it
 
@@ -364,7 +362,6 @@
   # snes_max_it = maximum non-linear steps
   petsc_options_value = 'fgmres
                          ksp
-
                          lu
 
                          20
