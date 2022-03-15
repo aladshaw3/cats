@@ -11,20 +11,23 @@ from input_output_processing.cats_input_file_writer import *
 @pytest.mark.unit
 def test_build_error():
     with pytest.raises(TypeError):
-        data =5
-        obj = CATS_InputFile(data)
+        data = 5
+        obj = CATS_InputFile()
+        obj.construct_from_dict(data)
 
 @pytest.mark.unit
 def test_validation_of_blocks_error():
     with pytest.raises(TypeError):
         data = {"BadKey": "blah"}
-        obj = CATS_InputFile(data, validate=True, raise_error=True)
+        obj = CATS_InputFile()
+        obj.construct_from_dict(data, validate=True, raise_error=True)
 
 @pytest.mark.unit
 def test_validation_of_data_in_blocks():
     with pytest.raises(TypeError):
         data = {"Outputs": "bad-data"}
-        obj = CATS_InputFile(data, validate=True, raise_error=True)
+        obj = CATS_InputFile()
+        obj.construct_from_dict(data, validate=True, raise_error=True)
 
 # Start test class for functionality
 class TestBasicFunctionality():
@@ -68,7 +71,8 @@ class TestBasicFunctionality():
                 "Outputs":
                     {"exodus": True}
                 }
-        obj = CATS_InputFile(data, validate=True, raise_error=True, build_stream=False)
+        obj = CATS_InputFile()
+        obj.construct_from_dict(data, validate=True, raise_error=True, build_stream=False)
         return obj
 
     @pytest.mark.unit

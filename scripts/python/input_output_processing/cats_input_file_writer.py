@@ -14,6 +14,10 @@
 '''
 # import statements
 import sys, os
+import os.path
+from os import path
+import errno
+import re
 
 valid_blocks = ["GlobalParams"
                 "Problem",
@@ -37,17 +41,26 @@ valid_blocks = ["GlobalParams"
                 "Modules",
                 "Constraints"]
 
+end_block_sym = ["[]", "[../]"]
+
+start_block_sym = ["[*]", "[./*]"]
+
 # Object to handle the data associated with CATS input files
 class CATS_InputFile(object):
     # Default constructor
-    #   User MUST provide a dictionary object that contains the
-    #   MOOSE control file inputs
-    def __init__(self, user_dict, validate=False,
+    def __init__(self):
+        self.data = {}          #Dictionary of data (empty by default)
+        self.stream = ""        #String stream to output as file
+        self.level = 0          #tracker for the level of dict
+        self.stream_built = False
+
+
+    def construct_from_dict(self, user_dict, validate=False,
                                   raise_error=False,
                                   build_stream=False):
         if type(user_dict) != dict:
             raise TypeError("Given arg 'user_dict' is not a dict object!")
-        self.data = user_dict   #Dictionary of data
+        self.data = user_dict   #Dictionary of data (shallow copy, just a pointer)
         self.stream = ""        #String stream to output as file
         self.level = 0          #tracker for the level of dict
         self.stream_built = False
@@ -58,8 +71,87 @@ class CATS_InputFile(object):
         if build_stream:
             self.build_stream()
 
+    def construct_from_file(self, file_name):
+
+        # Helper function to read a list
+        def _read_list(data_file):
+            list = []
+            for line in data_file:
+                break
+            return list
+
+        # Helper function to read a block
+        def _read_block(data_file, block_data):
+
+            for line in data_file:
+                readable, sep, tail = line.partition('#')
+
+                # Ends the block, return to _read_file
+                if "[]" in readable or "[../]" in readable:
+                    break
+
+                # This would start a sub-block
+                if "[" in readable:
+                    # grab first result of all text in brackets
+                    res = re.findall(r'\[.*?\]', readable)[0]
+                    # remove brackets (and other symbols) from result
+                    key = re.sub(r"[\[\]\.\/]", "", res)
+                    block_data[key] = {}
+                    _read_block(data_file, block_data[key])
+                # Read in key-value pairs
+                else:
+                    k = re.findall(r'.*\=', readable)
+                    res = re.findall(r'\=.*', readable)
+
+                    key = ""
+                    value = ""
+                    if len(k) > 0:
+                        key = k[0]
+                    if len(res) > 0:
+                        value = res[0]
+
+                    key_name = ""
+                    if len(key.split()) > 0:
+                        key_name = key.split()[0]
+
+                    # Check to see if 'value' is a list or just a single piece of data 
+                    value = value.partition("=")[2].strip()
+
+                    # add value to data set
+                    if key_name != "":
+                        block_data[key_name] = value
+
+        # Helper function to read in data
+        def _read_file(data_file, data):
+            for line in data_file:
+                readable, sep, tail = line.partition('#')
+
+                # If this character is present, it means
+                #   we are starting a block
+                if "[" in readable:
+                    # grab first result of all text in brackets
+                    res = re.findall(r'\[.*?\]', readable)[0]
+                    # remove brackets (and other symbols) from result
+                    key = re.sub(r"[\[\]\.\/]", "", res)
+                    data[key] = {}
+                    _read_block(data_file, data[key])
+                # End if
+
+        if path.exists(file_name):
+            data_file = open(file_name,"r")
+            _read_file(data_file, self.data)
+            #print(self.data)
+            data_file.close()
+
+            # for testing
+            self.build_stream()
+            print(self.stream)
+        else:
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_name)
+
     # builds the stream that will be printed
     def build_stream(self):
+        self.stream = ""
         # helper function for dealing with lists
         def _list_loop(data, level, max_length=5):
             liststream = "'"
@@ -223,5 +315,12 @@ if __name__ == "__main__":
             "Outputs":
                 {"exodus": True}
             }
-    obj = CATS_InputFile(data, validate=True, raise_error=True, build_stream=True)
-    #obj.write_stream_to_file(file_name="test", folder="output")
+    obj = CATS_InputFile()
+
+    #obj.construct_from_dict(data, validate=True, raise_error=True, build_stream=True)
+    #data["InterfaceKernels"]={}
+    #obj.data["ICs"]={}
+    #obj.build_stream()
+    #print(obj.stream)
+
+    obj.construct_from_file("tests/test_input/input_file.i")
