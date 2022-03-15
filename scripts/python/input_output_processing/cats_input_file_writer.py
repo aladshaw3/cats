@@ -332,3 +332,5 @@ if __name__ == "__main__":
     obj.build_stream()
     print(obj.stream)
     obj.write_stream_to_file(file_name="test_in_to_out", folder="tests/test_output")
+
+    os.system("mpiexec --n 12 ../../../cats-opt -i tests/test_input/input_file.i")
