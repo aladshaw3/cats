@@ -1,8 +1,3 @@
-# In this example, the reactions are now based on total volume and the
-#   space velocity is also based on total volume. Prior work did both
-#   on a catalyst/solids volume basis. This demonstrates that the same
-#   set of kinetic parameters works with each, just the interpretation
-#   of the model and results is different.
 
 [GlobalParams]
   # 'dg_scheme' and 'sigma' are parameters for the DG kernels
@@ -427,7 +422,7 @@
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 573.15
+      initial_condition = 523.15
   [../]
   #=====================================
 
@@ -2364,7 +2359,7 @@
 
         start_value = 10
         aux_vals = '0.2 10'
-        aux_times = '2.091 20.591'
+        aux_times = '2.0917 30.7583'
         time_spans = '0.5 0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2421,7 +2416,7 @@
 
         start_value = 1E-15
         aux_vals = '300 1E-15 300 1E-15 300 1E-15'
-        aux_times = '2.091   29.758    38.258    61.758    77.591    104.925'
+        aux_times = '2.0917   41.425    54.2583    91.2583    110.5917   158.0917'
         time_spans = '0.5      0.5    0.5    0.5    0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2450,7 +2445,7 @@
 
         start_value = 1E-15
         aux_vals = '300 150 300'
-        aux_times = '29.758    70.091    113.258'
+        aux_times = '41.425    103.425    168.7583'
         time_spans = '0.5      0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2479,7 +2474,7 @@
 
         start_value = 1E-15
         aux_vals = '150 1E-15'
-        aux_times = '70.091    113.258'
+        aux_times = '103.425    168.7583'
         time_spans = '0.5      0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2788,7 +2783,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 120.0
+  end_time = 177.0
   dtmax = 0.25
 
   [./TimeStepper]

@@ -1,8 +1,3 @@
-# In this example, the reactions are now based on total volume and the
-#   space velocity is also based on total volume. Prior work did both
-#   on a catalyst/solids volume basis. This demonstrates that the same
-#   set of kinetic parameters works with each, just the interpretation
-#   of the model and results is different.
 
 [GlobalParams]
   # 'dg_scheme' and 'sigma' are parameters for the DG kernels
@@ -427,7 +422,7 @@
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 573.15
+      initial_condition = 773.15
   [../]
   #=====================================
 
@@ -1118,125 +1113,125 @@
 
 # ------------------- Start Reaction Balances ----------------------
 # -------------------------------------------------------------
-    [./r1_val]
-        type = Reaction
-        variable = r1
-    [../]
-    [./r1_rx]  #   NH3w + S1 <-- --> q1
-      type = ArrheniusEquilibriumReaction
-      variable = r1
-      this_variable = r1
-      forward_activation_energy = 0
-      forward_pre_exponential = 198500
-      enthalpy = -54547.9
-      entropy = -29.9943
-      temperature = temp
-      scale = 1.0
-      reactants = 'NH3w S1'
-      reactant_stoich = '1 1'
-      products = 'q1'
-      product_stoich = '1'
-    [../]
+[./r1_val]
+    type = Reaction
+    variable = r1
+[../]
+[./r1_rx]  #   NH3w + S1 <-- --> q1
+  type = ArrheniusEquilibriumReaction
+  variable = r1
+  this_variable = r1
+  forward_activation_energy = 0
+  forward_pre_exponential = 198500
+  enthalpy = -54547.9
+  entropy = -29.9943
+  temperature = temp
+  scale = 1.0
+  reactants = 'NH3w S1'
+  reactant_stoich = '1 1'
+  products = 'q1'
+  product_stoich = '1'
+[../]
 
-    [./r2a_val]
-        type = Reaction
-        variable = r2a
-    [../]
-    [./r2a_rx]  #   NH3w + S2 <-- --> q2a
-      type = ArrheniusEquilibriumReaction
-      variable = r2a
-      this_variable = r2a
-      forward_activation_energy = 0
-      forward_pre_exponential = 278200
-      enthalpy = -78073.843
-      entropy = -35.311574
-      temperature = temp
-      scale = 1.0
-      reactants = 'NH3w S2'
-      reactant_stoich = '1 1'
-      products = 'q2a'
-      product_stoich = '1'
-    [../]
+[./r2a_val]
+    type = Reaction
+    variable = r2a
+[../]
+[./r2a_rx]  #   NH3w + S2 <-- --> q2a
+  type = ArrheniusEquilibriumReaction
+  variable = r2a
+  this_variable = r2a
+  forward_activation_energy = 0
+  forward_pre_exponential = 278200
+  enthalpy = -78073.843
+  entropy = -35.311574
+  temperature = temp
+  scale = 1.0
+  reactants = 'NH3w S2'
+  reactant_stoich = '1 1'
+  products = 'q2a'
+  product_stoich = '1'
+[../]
 
-    [./r2b_val]
-        type = Reaction
-        variable = r2b
-    [../]
-    [./r2b_rx_a]  #   NH3w + q2a <-- --> q2b
-      type = ArrheniusEquilibriumReaction
-      variable = r2b
-      this_variable = r2b
-      forward_activation_energy = 0
-      forward_pre_exponential = 139100
-      enthalpy = -78064.167
-      entropy = -46.821878
-      temperature = temp
-      scale = 1.0
-      reactants = 'NH3w q2a'
-      reactant_stoich = '1 1'
-      products = 'q2b'
-      product_stoich = '1'
-    [../]
+[./r2b_val]
+    type = Reaction
+    variable = r2b
+[../]
+[./r2b_rx_a]  #   NH3w + q2a <-- --> q2b
+  type = ArrheniusEquilibriumReaction
+  variable = r2b
+  this_variable = r2b
+  forward_activation_energy = 0
+  forward_pre_exponential = 139100
+  enthalpy = -78064.167
+  entropy = -46.821878
+  temperature = temp
+  scale = 1.0
+  reactants = 'NH3w q2a'
+  reactant_stoich = '1 1'
+  products = 'q2b'
+  product_stoich = '1'
+[../]
 
-    [./r3_dot]
-        type = Reaction
-        variable = r3
-    [../]
-    [./r3_rx]  #   NH3w + S3 <-- --> q3
-      type = ArrheniusEquilibriumReaction
-      variable = r3
-      this_variable = r3
-      forward_activation_energy = 0
-      forward_pre_exponential = 1346000
-      enthalpy = -91860.8
-      entropy = -28.9292
-      temperature = temp
-      scale = 1.0
-      reactants = 'NH3w S3'
-      reactant_stoich = '1 1'
-      products = 'q3'
-      product_stoich = '1'
-    [../]
+[./r3_dot]
+    type = Reaction
+    variable = r3
+[../]
+[./r3_rx]  #   NH3w + S3 <-- --> q3
+  type = ArrheniusEquilibriumReaction
+  variable = r3
+  this_variable = r3
+  forward_activation_energy = 0
+  forward_pre_exponential = 1346000
+  enthalpy = -91860.8
+  entropy = -28.9292
+  temperature = temp
+  scale = 1.0
+  reactants = 'NH3w S3'
+  reactant_stoich = '1 1'
+  products = 'q3'
+  product_stoich = '1'
+[../]
 
-    [./r4a_val]
-        type = Reaction
-        variable = r4a
-    [../]
-    [./r4a_rx]  #   H2Ow + S1 <-- --> q4a
-      type = ArrheniusEquilibriumReaction
-      variable = r4a
-      this_variable = r4a
-      forward_activation_energy = 0
-      forward_pre_exponential = 50136
-      enthalpy = -32099.1
-      entropy = -24.2494
-      temperature = temp
-      scale = 1.0
-      reactants = 'H2Ow S1'
-      reactant_stoich = '1 1'
-      products = 'q4a'
-      product_stoich = '1'
-    [../]
+[./r4a_val]
+    type = Reaction
+    variable = r4a
+[../]
+[./r4a_rx]  #   H2Ow + S1 <-- --> q4a
+  type = ArrheniusEquilibriumReaction
+  variable = r4a
+  this_variable = r4a
+  forward_activation_energy = 0
+  forward_pre_exponential = 50136
+  enthalpy = -32099.1
+  entropy = -24.2494
+  temperature = temp
+  scale = 1.0
+  reactants = 'H2Ow S1'
+  reactant_stoich = '1 1'
+  products = 'q4a'
+  product_stoich = '1'
+[../]
 
-    [./r4b_val]
-        type = Reaction
-        variable = r4b
-    [../]
-    [./r4b_rx]  #   H2Ow + S2 <-- --> q4b
-      type = ArrheniusEquilibriumReaction
-      variable = r4b
-      this_variable = r4b
-      forward_activation_energy = 0
-      forward_pre_exponential = 61580
-      enthalpy = -28889.23
-      entropy = -26.674
-      temperature = temp
-      scale = 1.0
-      reactants = 'H2Ow S2'
-      reactant_stoich = '1 1'
-      products = 'q4b'
-      product_stoich = '1'
-    [../]
+[./r4b_val]
+    type = Reaction
+    variable = r4b
+[../]
+[./r4b_rx]  #   H2Ow + S2 <-- --> q4b
+  type = ArrheniusEquilibriumReaction
+  variable = r4b
+  this_variable = r4b
+  forward_activation_energy = 0
+  forward_pre_exponential = 61580
+  enthalpy = -28889.23
+  entropy = -26.674
+  temperature = temp
+  scale = 1.0
+  reactants = 'H2Ow S2'
+  reactant_stoich = '1 1'
+  products = 'q4b'
+  product_stoich = '1'
+[../]
 
     ## ======= NO Oxidation ======
         [./r5_val]
@@ -2252,8 +2247,8 @@
         type = GasVelocityCylindricalReactor
         variable = vel_y
         porosity = pore
-        by_total_reactor_volume = true
         space_velocity = 1000   #volumes per min
+        by_total_reactor_volume = true
         inlet_temperature = temp
         ref_pressure = 101.35
         ref_temperature = 273.15
@@ -2298,7 +2293,7 @@
         type = MicroscalePoreVolumePerTotalVolume
         variable = total_pore
         porosity = pore
-        microscale_porosity = vol_avg_micro_pore   #Volume avg porosity for all solids
+        microscale_porosity = vol_avg_micro_pore
         execute_on = 'initial timestep_end'
     [../]
 
@@ -2364,7 +2359,7 @@
 
         start_value = 10
         aux_vals = '0.2 10'
-        aux_times = '2.091 20.591'
+        aux_times = '2.091 17.59'
         time_spans = '0.5 0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2421,7 +2416,7 @@
 
         start_value = 1E-15
         aux_vals = '300 1E-15 300 1E-15 300 1E-15'
-        aux_times = '2.091   29.758    38.258    61.758    77.591    104.925'
+        aux_times = '2.091   44.75    64.42    70.59   110.42   116.59'
         time_spans = '0.5      0.5    0.5    0.5    0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2450,7 +2445,7 @@
 
         start_value = 1E-15
         aux_vals = '300 150 300'
-        aux_times = '29.758    70.091    113.258'
+        aux_times = '44.75   86.75   137.25'
         time_spans = '0.5      0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2479,7 +2474,7 @@
 
         start_value = 1E-15
         aux_vals = '150 1E-15'
-        aux_times = '70.091    113.258'
+        aux_times = '86.75   137.25'
         time_spans = '0.5      0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2778,7 +2773,7 @@
   petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = bt
+  line_search = l2
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-4
   nl_rel_step_tol = 1e-10
@@ -2788,12 +2783,12 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 120.0
-  dtmax = 0.25
+  end_time = 144.0
+  dtmax = 0.125
 
   [./TimeStepper]
      type = ConstantDT
-     dt = 0.25
+     dt = 0.125
   [../]
 [] #END Executioner
 
