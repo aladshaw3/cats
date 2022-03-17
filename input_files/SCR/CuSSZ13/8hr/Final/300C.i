@@ -369,19 +369,19 @@
     [./S1]
         order = FIRST
         family = MONOMIAL
-	      initial_condition = 0.052619
+	      initial_condition = 0.048389
     [../]
 
     [./S2]
         order = FIRST
         family = MONOMIAL
-	      initial_condition = 0.0231257
+	      initial_condition = 0.026649
     [../]
 
     [./S3]
         order = FIRST
         family = MONOMIAL
-      	initial_condition = 0.026252
+      	initial_condition = 0.011299951
     [../]
 
 [] #END Variables
@@ -393,28 +393,28 @@
   [./w1]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.052619
+      initial_condition = 0.048389
   [../]
 
   # Z2Cu sites
   [./w2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.0231257
+      initial_condition = 0.026649
   [../]
 
   # ZH sites
   [./w3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.026252
+      initial_condition = 0.011299951
   [../]
 
   # CuO sites
   [./CuO]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.001147378
+      initial_condition = 4.54455E-9
   [../]
   #=====================================
 
@@ -2125,6 +2125,7 @@
           product_stoich = ''
         [../]
 
+
 [] #END Kernels
 
 [DGKernels]
@@ -2358,7 +2359,7 @@
 
         start_value = 10
         aux_vals = '0.2 10'
-        aux_times = '2.258 20.925'
+        aux_times = '2.091 19.591'
         time_spans = '0.5 0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2415,7 +2416,7 @@
 
         start_value = 1E-15
         aux_vals = '300 1E-15 300 1E-15 300 1E-15'
-        aux_times = '2.258   37.591    49.758    76.925    99.258    120.258'
+        aux_times = '2.091   29.591    37.591    58.591    74.925    99.591'
         time_spans = '0.5      0.5    0.5    0.5    0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2444,7 +2445,7 @@
 
         start_value = 1E-15
         aux_vals = '300 150 300'
-        aux_times = '37.591    86.758    129.425'
+        aux_times = '29.591    67.091    108.091'
         time_spans = '0.5      0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2473,7 +2474,7 @@
 
         start_value = 1E-15
         aux_vals = '150 1E-15'
-        aux_times = '86.758    129.425'
+        aux_times = '67.091    108.091'
         time_spans = '0.5      0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2772,7 +2773,7 @@
   petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = bt
+  line_search = l2
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-4
   nl_rel_step_tol = 1e-10
@@ -2782,7 +2783,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 137.0
+  end_time = 115.0
   dtmax = 0.25
 
   [./TimeStepper]

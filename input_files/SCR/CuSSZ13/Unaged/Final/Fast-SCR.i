@@ -369,19 +369,19 @@
     [./S1]
         order = FIRST
         family = MONOMIAL
-	      initial_condition = 0.052619
+        initial_condition = 0.052619
     [../]
 
     [./S2]
         order = FIRST
         family = MONOMIAL
-	      initial_condition = 0.0231257
+        initial_condition = 0.0231257
     [../]
 
     [./S3]
         order = FIRST
         family = MONOMIAL
-      	initial_condition = 0.026252
+        initial_condition = 0.026252
     [../]
 
 [] #END Variables
@@ -422,7 +422,7 @@
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 573.15
+      initial_condition = 523.15
   [../]
   #=====================================
 
@@ -544,7 +544,7 @@
   [./NH3_ppm]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1E-15
+      initial_condition = 300
   [../]
 
   [./NH3_inlet]
@@ -555,7 +555,7 @@
   [./NOx_ppm]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1E-15
+      initial_condition = 150
   [../]
 
   [./NOx_inlet]
@@ -566,7 +566,7 @@
   [./NO2_ppm]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1E-15
+      initial_condition = 150
   [../]
 
   [./NO2_inlet]
@@ -2125,6 +2125,8 @@
           product_stoich = ''
         [../]
 
+
+
 [] #END Kernels
 
 [DGKernels]
@@ -2239,7 +2241,21 @@
 
 [] #END DGKernels
 
+[Functions]
+  [./data_fun]
+    type = PiecewiseMultilinear
+    data_file = Fast-SCR_temp.txt
+  [../]
+[]
+
 [AuxKernels]
+
+    [./temp_AuxK]
+      type = FunctionAux
+      variable = temp
+      function = data_fun
+      execute_on = 'initial timestep_end'
+    [../]
 
     [./velocity]
         # NOTE: velocity must use same shape function type as temperature and space-velocity
@@ -2352,17 +2368,6 @@
 
 
     # ==== Setting the time variant inlet conditions ======
-    [./O2_step_input]
-        type = TemporalStepFunction
-        variable = O2_percent
-
-        start_value = 10
-        aux_vals = '0.2 10'
-        aux_times = '2.258 20.925'
-        time_spans = '0.5 0.5'
-
-        execute_on = 'initial timestep_begin nonlinear'
-    [../]
 
     [./O2_convert_to_molar]
         type = SimpleGasVolumeFractionToConcentration
@@ -2378,18 +2383,6 @@
         input_volfrac_unit = "%"
 
         execute_on = 'initial timestep_end'
-    [../]
-
-    [./H2O_step_input]
-        type = TemporalStepFunction
-        variable = H2O_percent
-
-        start_value = 5
-        aux_vals = '5'
-        aux_times = '3'
-        time_spans = '0.5'
-
-        execute_on = 'initial timestep_begin nonlinear'
     [../]
 
     [./H2O_convert_to_molar]
@@ -2408,19 +2401,6 @@
         execute_on = 'initial timestep_end'
     [../]
 
-
-    [./NH3_step_input]
-        type = TemporalStepFunction
-        variable = NH3_ppm
-
-        start_value = 1E-15
-        aux_vals = '300 1E-15 300 1E-15 300 1E-15'
-        aux_times = '2.258   37.591    49.758    76.925    99.258    120.258'
-        time_spans = '0.5      0.5    0.5    0.5    0.5    0.5'
-
-        execute_on = 'initial timestep_begin nonlinear'
-    [../]
-
     [./NH3_convert_to_molar]
         type = SimpleGasVolumeFractionToConcentration
         variable = NH3_inlet
@@ -2437,19 +2417,6 @@
         execute_on = 'initial timestep_end'
     [../]
 
-
-    [./NO_step_input]
-        type = TemporalStepFunction
-        variable = NOx_ppm
-
-        start_value = 1E-15
-        aux_vals = '300 150 300'
-        aux_times = '37.591    86.758    129.425'
-        time_spans = '0.5      0.5    0.5'
-
-        execute_on = 'initial timestep_begin nonlinear'
-    [../]
-
     [./NO_convert_to_molar]
         type = SimpleGasVolumeFractionToConcentration
         variable = NOx_inlet
@@ -2464,19 +2431,6 @@
         input_volfrac_unit = "ppm"
 
         execute_on = 'initial timestep_end'
-    [../]
-
-
-    [./NO2_step_input]
-        type = TemporalStepFunction
-        variable = NO2_ppm
-
-        start_value = 1E-15
-        aux_vals = '150 1E-15'
-        aux_times = '86.758    129.425'
-        time_spans = '0.5      0.5'
-
-        execute_on = 'initial timestep_begin nonlinear'
     [../]
 
     [./NO2_convert_to_molar]
@@ -2753,6 +2707,24 @@
         execute_on = 'initial timestep_end'
     [../]
 
+    [./q1_NH4NO3]
+        type = ElementAverageValue
+        variable = q1_NH4NO3
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./q2_NH4NO3]
+        type = ElementAverageValue
+        variable = q2_NH4NO3
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./q3_NH4NO3]
+        type = ElementAverageValue
+        variable = q3_NH4NO3
+        execute_on = 'initial timestep_end'
+    [../]
+
 
 [] #END Postprocessors
 
@@ -2772,7 +2744,7 @@
   petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = bt
+  line_search = l2
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-4
   nl_rel_step_tol = 1e-10
@@ -2782,12 +2754,12 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 137.0
-  dtmax = 0.25
+  end_time = 500.0
+  dtmax = 1
 
   [./TimeStepper]
-     type = ConstantDT
-     dt = 0.25
+     type = SolutionTimeAdaptiveDT
+     dt = 0.125
   [../]
 [] #END Executioner
 

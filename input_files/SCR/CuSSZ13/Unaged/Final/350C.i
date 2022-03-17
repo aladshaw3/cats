@@ -422,7 +422,7 @@
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 573.15
+      initial_condition = 623.15
   [../]
   #=====================================
 
@@ -2125,6 +2125,7 @@
           product_stoich = ''
         [../]
 
+
 [] #END Kernels
 
 [DGKernels]
@@ -2358,7 +2359,7 @@
 
         start_value = 10
         aux_vals = '0.2 10'
-        aux_times = '2.258 20.925'
+        aux_times = '2.091 18.25'
         time_spans = '0.5 0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2415,7 +2416,7 @@
 
         start_value = 1E-15
         aux_vals = '300 1E-15 300 1E-15 300 1E-15'
-        aux_times = '2.258   37.591    49.758    76.925    99.258    120.258'
+        aux_times = '2.091   27.591    36.75    52.25    68.59    82.42'
         time_spans = '0.5      0.5    0.5    0.5    0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2444,7 +2445,7 @@
 
         start_value = 1E-15
         aux_vals = '300 150 300'
-        aux_times = '37.591    86.758    129.425'
+        aux_times = '27.591   60.42   89.92'
         time_spans = '0.5      0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2473,7 +2474,7 @@
 
         start_value = 1E-15
         aux_vals = '150 1E-15'
-        aux_times = '86.758    129.425'
+        aux_times = '60.42   89.92'
         time_spans = '0.5      0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2782,7 +2783,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 137.0
+  end_time = 97.0
   dtmax = 0.25
 
   [./TimeStepper]
