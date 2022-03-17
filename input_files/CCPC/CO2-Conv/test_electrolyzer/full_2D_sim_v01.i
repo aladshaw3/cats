@@ -3143,14 +3143,14 @@
   #    ## edge value was defined at 0 V
   #    coupled = 0
   #[../]
-  [./phi_e_applied_side]
-      type = CoupledDirichletBC
-      variable = phi_e
-      boundary = 'anode_fluid_channel_right'
-      #
-      ## edge value was defined at 0 V
-      coupled = 0 # in V
-  [../]
+  #[./phi_e_applied_side]
+  #    type = CoupledDirichletBC
+  #    variable = phi_e
+  #    boundary = 'anode_fluid_channel_right'
+  #    #
+  #    ## edge value was defined at 0 V
+  #    coupled = 0 # in V
+  #[../]
 
   ## =============== H2O fluxes ================
   [./H2O_FluxIn_pos]
@@ -3630,7 +3630,7 @@
 
                          20
 
-                         1E-6
+                         1E-8
                          1E-8
 
                          fgmres

@@ -125,14 +125,14 @@
   [./H2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1e-19 # umol/mm^3
+      initial_condition = 1e-15 # umol/mm^3
       scaling = 1
       block = 'cathode_fluid_channel cathode'
   [../]
   [./O2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1e-19  # umol/mm^3
+      initial_condition = 1e-15  # umol/mm^3
       scaling = 1
       block = 'anode anode_fluid_channel'
   [../]
@@ -173,7 +173,7 @@
   [./CO]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1e-19  # umol/cm^3
+      initial_condition = 1e-15  # umol/cm^3
       scaling = 1E10
       block = 'cathode_fluid_channel cathode'
   [../]
@@ -498,7 +498,7 @@
   [./HCO3_an]
       type = ConstantIC
       variable = HCO3
-      value = 1e-19
+      value = 1e-15
       block = 'anode anode_fluid_channel'
   [../]
 
@@ -511,7 +511,7 @@
   [./CO3_an]
       type = ConstantIC
       variable = CO3
-      value = 1e-19
+      value = 1e-15
       block = 'anode anode_fluid_channel'
   [../]
 
@@ -3057,17 +3057,17 @@
       execute_on = 'initial timestep_end'
   [../]
 
-  #[./voltage_step_input]
-  #    type = TemporalStepFunction
-  #    variable = voltage
+  [./voltage_step_input]
+      type = TemporalStepFunction
+      variable = voltage
 
-  #    start_value = 0.1
-  #    aux_vals = '0.2 0.4 0.8 1.0 2.0 4.0'
-  #    aux_times = '120   480    1000    2000   5000    10000'
-  #    time_spans = '60      120    180    360    720    1000'
+      start_value = 0.1
+      aux_vals = '0.2 0.4 0.8 1.0 2.0 4.0'
+      aux_times = '120   480    1000    2000   5000    10000'
+      time_spans = '60      120    180    360    720    1000'
 
-  #    execute_on = 'initial timestep_begin nonlinear'
-  #[../]
+      execute_on = 'initial timestep_begin nonlinear'
+  [../]
 []
 
 [BCs]
@@ -3147,14 +3147,14 @@
   #    ## edge value was defined at 0 V
   #    coupled = 0
   #[../]
-  [./phi_e_applied_side]
-      type = CoupledDirichletBC
-      variable = phi_e
-      boundary = 'anode_fluid_channel_right'
-      #
-      ## edge value was defined at 0 V
-      coupled = 0 # in V
-  [../]
+  #[./phi_e_applied_side]
+  #    type = CoupledDirichletBC
+  #    variable = phi_e
+  #    boundary = 'anode_fluid_channel_right'
+  #    #
+  #    ## edge value was defined at 0 V
+  #    coupled = 0 # in V
+  #[../]
 
   ## =============== H2O fluxes ================
   [./H2O_FluxIn_pos]
@@ -3229,7 +3229,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = 1e-19
+      input_var = 1e-15
   [../]
   [./H2_FluxOut]
       type = DGFlowMassFluxBC
@@ -3251,7 +3251,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = 1e-19
+      input_var = 1e-15
   [../]
   [./O2_FluxOut]
       type = DGFlowMassFluxBC
@@ -3337,7 +3337,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = 1e-19
+      input_var = 1e-15
   [../]
   [./HCO3_FluxOut]
       type = DGFlowMassFluxBC
@@ -3369,7 +3369,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = 1e-19
+      input_var = 1e-15
   [../]
   [./CO3_FluxOut]
       type = DGFlowMassFluxBC
@@ -3413,7 +3413,7 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-      input_var = 1e-19
+      input_var = 1e-15
   [../]
   [./CO_FluxOut]
       type = DGFlowMassFluxBC

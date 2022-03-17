@@ -61,5 +61,6 @@ private:
     const VariableValue & _pressure_in;             ///< Variable for inlet pressure (in kPa)
     Real _temperature_ref;                          ///< Value of the reference temperature (in K)
     Real _pressure_ref;                             ///< Value of the reference pressure (in kPa)
+    bool _total_vol_basis;                          ///< Boolean used to determine whether or not to use a total volume basis for flow 
 
 };
