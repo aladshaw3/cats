@@ -8,7 +8,7 @@ Isothermal_Monolith_Simulator Equations
 
 &epsilon;<sub>b</sub> &part;C<sub>b,i</sub>/&part;t + &epsilon;<sub>b</sub> v &part;C<sub>b,i</sub>/&part;z = -(1-&epsilon;<sub>b</sub>) G<sub>a</sub> k<sub>m,i</sub> (C<sub>b,i</sub> - C<sub>i</sub>)
 
-&epsilon;<sub>w</sub> (1-&epsilon;<sub>b</sub>) dC<sub>i</sub>/dt = (1-&epsilon;<sub>b</sub>) G<sub>a</sub> k<sub>m,i</sub> (C<sub>b,i</sub> - C<sub>i</sub>) + (1-&epsilon;<sub>b</sub>) <span>&sum;</span><sub>&forall;j</sub> (u<sub>C<sub>i,j</sub></sub> r<sub>j</sub>)
+&epsilon;<sub>w</sub> (1-&epsilon;<sub>b</sub>) dC<sub>i</sub>/dt = (1-&epsilon;<sub>b</sub>) G<sub>a</sub> k<sub>m,i</sub> (C<sub>b,i</sub> - C<sub>i</sub>) + f <span>&sum;</span><sub>&forall;j</sub> (u<sub>C<sub>i,j</sub></sub> r<sub>j</sub>)
 
 &ast; dq<sub>i</sub>/dt = <span>&sum;</span><sub>&forall;j</sub> (u<sub>q<sub>i,j</sub></sub> r<sub>j</sub>)
 
@@ -34,9 +34,10 @@ u<sub>C<sub>i,j</sub></sub> | molar contribution of reaction j to change in pore
 u<sub>q<sub>i,j</sub></sub> | molar contribution of reaction j to change in surface concentration of species i | (unitless)
 u<sub>s<sub>i,j</sub></sub> | molar contribution of surface species j to mass balance of site i | (unitless)
 r<sub>j</sub> | rate of reaction j | mol/L-solids/min
-q<sub>i</sub> | surface concentration of species i | mol/L-solids
-S<sub>i</sub> | open-site concentration of site i | mol/L-solids
-S<sub>max,i</sub> | maximum number of available sites for site i | mol/L-solids
+q<sub>i</sub> | surface concentration of species i | mol/L-solids or mol/L-total
+S<sub>i</sub> | open-site concentration of site i | mol/L-solids or mol/L-total
+S<sub>max,i</sub> | maximum number of available sites for site i | mol/L-solids or mol/L-total
+f | fractional term that == 1 if reactions are in total volume units or == (1-&epsilon;<sub>b</sub>) if reactions are in solids volume units | (dimensionless)
 
 Nonisothermal_Monolith_Simulator Equations
 -----
@@ -45,7 +46,7 @@ Nonisothermal_Monolith_Simulator Equations
 
 &epsilon;<sub>b</sub> &rho; c<sub>pg</sub> &part;T/&part;t + &epsilon;<sub>b</sub> &rho; c<sub>pg</sub> v &part;T/&part;z = -(1-&epsilon;<sub>b</sub>) G<sub>a</sub> h<sub>c</sub> (T - T<sub>c</sub>) - &epsilon;<sub>b</sub> &alpha; h<sub>wg</sub> (T - T<sub>w</sub>)
 
-(1-&epsilon;<sub>b</sub>) &rho;<sub>c</sub> c<sub>pc</sub> &part;T<sub>c</sub>/&part;t = (1-&epsilon;<sub>b</sub>) K<sub>c</sub> &part;<sup>2</sup>T<sub>c</sub>/&part;z<sup>2</sup> + (1-&epsilon;<sub>b</sub>) G<sub>a</sub> h<sub>c</sub> (T - T<sub>c</sub>) - (1-&epsilon;<sub>b</sub>) &alpha; h<sub>wc</sub> (T<sub>c</sub> - T<sub>w</sub>) + [(1-&epsilon;<sub>b</sub>)/1000]  <span>&sum;</span><sub>&forall;j</sub> ((-&Delta;H<sub>rxn<sub>j</sub></sub>) d<sub>j</sub> r<sub>j</sub>)
+(1-&epsilon;<sub>b</sub>) &rho;<sub>c</sub> c<sub>pc</sub> &part;T<sub>c</sub>/&part;t = (1-&epsilon;<sub>b</sub>) K<sub>c</sub> &part;<sup>2</sup>T<sub>c</sub>/&part;z<sup>2</sup> + (1-&epsilon;<sub>b</sub>) G<sub>a</sub> h<sub>c</sub> (T - T<sub>c</sub>) - (1-&epsilon;<sub>b</sub>) &alpha; h<sub>wc</sub> (T<sub>c</sub> - T<sub>w</sub>) + [f/1000]  <span>&sum;</span><sub>&forall;j</sub> ((-&Delta;H<sub>rxn<sub>j</sub></sub>) d<sub>j</sub> r<sub>j</sub>)
 
 &rho;<sub>w</sub> c<sub>pw</sub> &part;T<sub>w</sub>/&part;t = K<sub>w</sub> &part;<sup>2</sup>T<sub>w</sub>/&part;z<sup>2</sup> - &epsilon;<sub>b</sub> &alpha; h<sub>wg</sub> (T<sub>w</sub> - T) - (1-&epsilon;<sub>b</sub>) &alpha; h<sub>wc</sub> (T<sub>w</sub> - T<sub>c</sub>) - &alpha;<sub>w</sub> h<sub>wg</sub> (T<sub>w</sub> - T<sub>a</sub>)
 
