@@ -796,18 +796,20 @@ class Isothermal_Monolith_Simulator(object):
     #   Assumes same value for all times (can be reset later)
     #       User may also provide reference pressure and temperature
     #       associated with this space velocity
-    def set_space_velocity(self,age,temp,value,Pref=101.15,Tref=273.15):
+    def set_space_velocity(self,age,temp,value,Pref=101.15,Tref=273.15, byTotalVolume=True):
         self.model.space_velocity[age,temp,:].set_value(value)
         self.model.Pref[age,temp].set_value(Pref)
         self.model.Tref[age,temp].set_value(Tref)
+        self.isSpaceVelocityByTotalVolume = byTotalVolume
 
     # Set a space velocity that is common to all runs
     #       User may also provide reference pressure and temperature
     #       associated with this space velocity
-    def set_space_velocity_all_runs(self,value,Pref=101.15,Tref=273.15):
+    def set_space_velocity_all_runs(self,value,Pref=101.15,Tref=273.15, byTotalVolume=True):
         self.model.space_velocity[:,:,:].set_value(value)
         self.model.Pref[:,:].set_value(Pref)
         self.model.Tref[:,:].set_value(Tref)
+        self.isSpaceVelocityByTotalVolume = byTotalVolume
 
     # Set the monolith cell density
     #       User is responsible for ensuring the units work out. If
