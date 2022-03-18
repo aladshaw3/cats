@@ -192,7 +192,7 @@ sim.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
                     "r39": ReactionType.Arrhenius
                     })
 
-sim.set_bulk_porosity(0.3309)
+sim.set_bulk_porosity(0.8)
 sim.set_washcoat_porosity(0.4)
 sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(1000)      #volumes/min
@@ -1118,7 +1118,7 @@ sim.print_results_of_location(["NH3","NO","NO2","N2O","O2","N2","H2O"],
 sim.print_results_of_integral_average(["Z1CuOH-NH3","Z2Cu-NH3","Z2Cu-(NH3)2","ZNH4",
                                         "Z1CuOH-NH4NO3", "Z2Cu-NH4NO3", "ZH-NH4NO3"],
                                         "16hr", "400C", file_name="16hr_SCR_400C_average_ads.txt")
-                                        
+
 # ========================================== 500C ============================================================
 sim.print_results_of_breakthrough(["NH3","NO","NO2","N2O","O2","N2","H2O"],
                                         "Unaged", "500C", file_name="Unaged_SCR_500C_breakthrough.txt")

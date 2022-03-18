@@ -197,6 +197,8 @@ class Isothermal_Monolith_Simulator(object):
         self.isDataSurfSpecSet = False
         self.isDataValuesSet = {}
         self.isIsothermalTempSet = False
+        self.isSpaceVelocityByTotalVolume = True
+        self.isReactionSetByTotalVolume = True
 
         self.DiscType = "DiscretizationMethod.FiniteDifference"
         self.colpoints = 2
@@ -1371,7 +1373,10 @@ class Isothermal_Monolith_Simulator(object):
     # Washcoat mass balance constraint
     def pore_mb_constraint(self, m, gas, age, temp, z, t):
         rxn_sum=self.reaction_sum_gas(gas, m, age, temp, z, t)
-        return m.ew*(1-m.eb)*m.dC_dt[gas, age, temp, z, t] == (1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t]) + (1-m.eb)*rxn_sum
+        if self.isReactionSetByTotalVolume == False:
+            return m.ew*(1-m.eb)*m.dC_dt[gas, age, temp, z, t] == (1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t]) + (1-m.eb)*rxn_sum
+        else:
+            return m.ew*(1-m.eb)*m.dC_dt[gas, age, temp, z, t] == (1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t]) + rxn_sum
 
     # Adsorption/surface mass balance constraint
     def surf_mb_constraint(self, m, surf, age, temp, z, t):
@@ -1480,7 +1485,11 @@ class Isothermal_Monolith_Simulator(object):
         self.model.space_velocity[:,:,:].fix()
         self.model.v[:,:,:,:].fix()
         self.model.P[:,:,:,:].fix()
-        volume = self.full_length*3.14159*value(self.model.r)**2*(1-self.model.eb.value)
+        volume = 0
+        if self.isSpaceVelocityByTotalVolume == False:
+            volume = self.full_length*3.14159*value(self.model.r)**2*(1-self.model.eb.value)
+        else:
+            volume = self.full_length*3.14159*value(self.model.r)**2
         for age in self.model.age_set:
             for temp in self.model.T_set:
                 flow_rate_ref = volume*value(self.model.space_velocity[age,temp,self.model.t.first()])
@@ -2137,7 +2146,11 @@ class Isothermal_Monolith_Simulator(object):
     #                       then it notes that this doesn't need to be called again
     def recalculate_linear_velocities(self, interally_called=False, isMonolith=True):
         full_area = 3.14159*value(self.model.r)**2
-        volume = self.full_length*full_area*(1-self.model.eb.value)
+        volume = 0
+        if self.isSpaceVelocityByTotalVolume == False:
+            volume = self.full_length*full_area*(1-self.model.eb.value)
+        else:
+            volume = self.full_length*full_area
         open_area = full_area*value(self.model.eb)
         for age in self.model.age_set:
             for temp in self.model.T_set:

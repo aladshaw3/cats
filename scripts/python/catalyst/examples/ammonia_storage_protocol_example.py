@@ -24,7 +24,7 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
                     "r4b": ReactionType.EquilibriumArrhenius
                     })
 
-test.set_bulk_porosity(0.3309)
+test.set_bulk_porosity(0.8)
 test.set_washcoat_porosity(0.4)
 test.set_reactor_radius(1)
 # # TODO: Fix the reference temperature and the space velocity calculations
@@ -159,6 +159,6 @@ test.run_solver()
 test.print_results_of_breakthrough(["NH3"], "Unaged", "150C", file_name="new-D.txt")
 test.print_results_of_integral_average(["q1","q2a","q2b","q3a","q3b","q3c"],
                                         "Unaged", "150C", file_name="")
-test.plot_at_locations(["NH3"], ["Unaged"], ["150C"], [5], display_live=False)
+test.plot_at_locations(["NH3"], ["Unaged"], ["150C"], [5], display_live=True)
 
-test.model.km.pprint()
+#test.model.km.pprint()

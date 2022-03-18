@@ -278,7 +278,10 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     # Washcoat mass balance constraint
     def pore_mb_constraint(self, m, gas, age, temp, z, t):
         rxn_sum=self.reaction_sum_gas(gas, m, age, temp, z, t)
-        return m.ew*(1-m.eb)*m.dC_dt[gas, age, temp, z, t] == (1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t]) + (1-m.eb)*rxn_sum
+        if self.isReactionSetByTotalVolume == False:
+            return m.ew*(1-m.eb)*m.dC_dt[gas, age, temp, z, t] == (1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t]) + (1-m.eb)*rxn_sum
+        else:
+            return m.ew*(1-m.eb)*m.dC_dt[gas, age, temp, z, t] == (1-m.eb)*m.Ga*m.km[gas, age, temp, z, t]*(m.Cb[gas, age, temp, z, t] - m.C[gas, age, temp, z, t]) + rxn_sum
 
     # Adsorption/surface mass balance constraint
     def surf_mb_constraint(self, m, surf, age, temp, z, t):
@@ -300,8 +303,12 @@ class Nonisothermal_Monolith_Simulator(Isothermal_Monolith_Simulator):
     #                           - (1-eb)*a*hwc*(Tc - Tw) + (1-eb)/1000*SUM(all rj, (-dHrxnj)*d_rxnj*rj)
     def solid_eb_constraint(self, m, age, temp, z, t):
         rxn_sum=self.reaction_sum_heats(m, age, temp, z, t)
-        return (1-m.eb)*m.rhoc*m.cpc*m.dTc_dt[age,temp,z,t] == (1-m.eb)*m.Kc*m.d2Tc_dz2[age,temp,z,t] + (1-m.eb)*m.Ga*m.hc*(m.T[age,temp,z,t]-m.Tc[age,temp,z,t]) \
-                -(1-m.eb)*m.a*m.hwc*(m.Tc[age,temp,z,t]-m.Tw[age,temp,z,t]) + ((1-m.eb)/1000)*rxn_sum
+        if self.isReactionSetByTotalVolume == False:
+            return (1-m.eb)*m.rhoc*m.cpc*m.dTc_dt[age,temp,z,t] == (1-m.eb)*m.Kc*m.d2Tc_dz2[age,temp,z,t] + (1-m.eb)*m.Ga*m.hc*(m.T[age,temp,z,t]-m.Tc[age,temp,z,t]) \
+                    -(1-m.eb)*m.a*m.hwc*(m.Tc[age,temp,z,t]-m.Tw[age,temp,z,t]) + ((1-m.eb)/1000)*rxn_sum
+        else:
+            return (1-m.eb)*m.rhoc*m.cpc*m.dTc_dt[age,temp,z,t] == (1-m.eb)*m.Kc*m.d2Tc_dz2[age,temp,z,t] + (1-m.eb)*m.Ga*m.hc*(m.T[age,temp,z,t]-m.Tc[age,temp,z,t]) \
+                    -(1-m.eb)*m.a*m.hwc*(m.Tc[age,temp,z,t]-m.Tw[age,temp,z,t]) + (1/1000)*rxn_sum
 
     # Energy balance in wall phase
     #                   rhow*cpw*dTw/dt = Kw*d^2Tw/dz^2 - eb*a*hwg*(Tw - T) - (1-eb)*a*hwc*(Tw - Tc)

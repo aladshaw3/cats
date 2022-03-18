@@ -156,7 +156,7 @@ sim.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
                     "r39": ReactionType.Arrhenius
                     })
 
-sim.set_bulk_porosity(0.3309)
+sim.set_bulk_porosity(0.8)
 sim.set_washcoat_porosity(0.4)
 sim.set_reactor_radius(1)
 sim.set_space_velocity_all_runs(1000)      #volumes/min

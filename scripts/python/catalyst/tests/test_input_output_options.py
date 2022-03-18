@@ -652,9 +652,9 @@ class TestIsothermalCatalystInputOutputOptions():
 
         # Check to make sure the correct values were put into correct places
         assert pytest.approx(test3.model.Cb["NH3","Unaged","250C",0,17.75].value, 1e-3) == 6.60E-06
-        assert pytest.approx(test3.model.C["NH3","Unaged","250C",4.5,17.75].value, 1e-3) == 6.5459e-06
+        assert pytest.approx(test3.model.C["NH3","Unaged","250C",4.5,17.75].value, 1e-3) == 6.53038e-06
         assert pytest.approx(test3.model.q["q1","Unaged","250C",4,17.75].value, 1e-3) == 0.108787366
-        assert pytest.approx(test3.model.S["S1","Unaged","250C",2,17.75].value, 1e-3) == 2.4074412829e-08
+        assert pytest.approx(test3.model.S["S1","Unaged","250C",2,17.75].value, 1e-3) == 2.93497636821e-08
 
         # Now we will test loading a specific state in the middle of the json file
         #       NOTE: The 'state' arg must always match the first item in the time window
@@ -663,15 +663,15 @@ class TestIsothermalCatalystInputOutputOptions():
         test4.load_model_state_as_IC('output/sample_model.json', new_time_window=[7.75,8.75,9.75,10.75], state=7.75)
 
         assert len(test4.model.t) == 4
-        assert test4.model.t[1] == 7.75
-        assert test4.model.t[2] == 8.75
-        assert test4.model.t[3] == 9.75
-        assert test4.model.t[4] == 10.75
+        assert test4.model.t.at(1) == 7.75
+        assert test4.model.t.at(2) == 8.75
+        assert test4.model.t.at(3) == 9.75
+        assert test4.model.t.at(4) == 10.75
 
         assert pytest.approx(test4.model.Cb["NH3","Unaged","250C",0,7.75].value, 1e-3) == 5.90E-06
-        assert pytest.approx(test4.model.C["NH3","Unaged","250C",4.5,7.75].value, 1e-3) == 5.72817e-13
-        assert pytest.approx(test4.model.q["q1","Unaged","250C",4,7.75].value, 1e-3) == 1.99899912e-06
-        assert pytest.approx(test4.model.S["S1","Unaged","250C",2,7.75].value, 1e-3) == 0.10655
+        assert pytest.approx(test4.model.C["NH3","Unaged","250C",4.5,7.75].value, 1e-3) == 6.0050979794743536e-12
+        assert pytest.approx(test4.model.q["q1","Unaged","250C",4,7.75].value, 1e-3) == 1.3559411569936318e-05
+        assert pytest.approx(test4.model.S["S1","Unaged","250C",2,7.75].value, 1e-3) == 0.10485043893178377
 
         # Now we will test loading in another model with surface data
         test5 = Isothermal_Monolith_Simulator()
@@ -680,7 +680,7 @@ class TestIsothermalCatalystInputOutputOptions():
         test5.plot_vs_data("q1", "Unaged", "250C", 0.05, display_live=False,
                             file_name="surface_plot_v_data_mid")
         assert path.exists("output/surface_plot_v_data_midComparisonPlots.png") == True
-        assert pytest.approx(test5.model.q["q1","Unaged","250C",0.05,9].value, 1e-3) == 0.056039725571447034
+        assert pytest.approx(test5.model.q["q1","Unaged","250C",0.05,9].value, 1e-3) == 0.054099103442522944
 
         # Test loading of a model state
         test6 = Isothermal_Monolith_Simulator()

@@ -97,7 +97,7 @@ test.add_reactions({"r1": ReactionType.EquilibriumArrhenius,
                     "r44": ReactionType.Arrhenius
                     })
 
-test.set_bulk_porosity(0.3309)
+test.set_bulk_porosity(0.8)
 test.set_washcoat_porosity(0.4)
 test.set_reactor_radius(1)
 test.set_space_velocity_all_runs(1000)      #volumes/min

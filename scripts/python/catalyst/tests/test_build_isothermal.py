@@ -770,7 +770,7 @@ class TestBasicIsothermalCatalystBuild():
         assert cond2 == TerminationCondition.optimal
         assert stat2 == SolverStatus.ok
 
-        assert pytest.approx(19325.530565938127, rel=1e-3) == \
+        assert pytest.approx(28882.87336113903, rel=1e-3) == \
             value(obj.model.v["Unaged","250C",obj.model.z.first(),obj.model.t.first()])
 
         assert pytest.approx(value(obj_with_lists.model.v["Unaged","250C",obj.model.z.first(),obj.model.t.first()]), rel=1e-3) == \
