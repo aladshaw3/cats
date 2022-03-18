@@ -217,7 +217,7 @@
         variable = O2w
         coupled_list = 'r1'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase CO ===============
@@ -272,7 +272,7 @@
         variable = COw
         coupled_list = 'r1'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase CO2 ===============
@@ -327,7 +327,7 @@
         variable = CO2w
         coupled_list = 'r1'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
 # ------------------- Start Reaction Balances ----------------------
