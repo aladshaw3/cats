@@ -365,7 +365,7 @@
         #   Every time this occurs, 1 mole of H2O is removed
         #   Thus, the 'weight' for r is -1.
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -394,7 +394,7 @@
         #   Every time this occurs, 1 mole of H2O is removed
         #   Thus, the 'weight' for r is -1.
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -423,7 +423,7 @@
         #   Every time this occurs, 1 mole of H2O is removed
         #   Thus, the 'weight' for r is -1.
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -452,7 +452,7 @@
         #   Every time this occurs, 1 mole of H2O is removed
         #   Thus, the 'weight' for r is -1.
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -479,7 +479,7 @@
         #   Every time this occurs, 1 mole of H2O is removed
         #   Thus, the 'weight' for r is -1.
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
 # ------------------- Start Reactions ----------------------

@@ -455,7 +455,7 @@
         #   actually be (or that we aren't tracking density
         #   changes yet.)
         weights = '283 242 41.2'   #og value
-        scale = s_frac
+        scale = 1
     [../]
 
     # ============== Fluid Temperature Calculation =============
@@ -530,7 +530,7 @@
         variable = COw
         coupled_list = 'r1 r11'
         weights = '-1 -1'
-        scale = s_frac
+        scale = 1
     [../]
 
     # ================ Bulk fluid mass balance ===============
@@ -587,7 +587,7 @@
         variable = O2w
         coupled_list = 'r1 r2'
         weights = '-0.5 -0.5'
-        scale = s_frac
+        scale = 1
     [../]
 
     # ================ Bulk fluid mass balance ===============
@@ -644,7 +644,7 @@
         variable = CO2w
         coupled_list = 'r1 r11'
         weights = '1 1'
-        scale = s_frac
+        scale = 1
     [../]
 
     # ================ Bulk fluid mass balance ===============
@@ -701,7 +701,7 @@
         variable = H2w
         coupled_list = 'r2 r11'
         weights = '-1 1'
-        scale = s_frac
+        scale = 1
     [../]
 
     # ================ Bulk fluid mass balance ===============
@@ -758,7 +758,7 @@
         variable = H2Ow
         coupled_list = 'r2 r11'
         weights = '1 -1'
-        scale = s_frac
+        scale = 1
     [../]
 
     ### +++++++++++++++++++++ Reaction Kernels +++++++++++++++++++

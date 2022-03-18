@@ -251,6 +251,15 @@
       initial_condition = 0.26764
   [../]
 
+  # The rates of reactions are originally in moles per total volume per time
+  #   but the washcoat mass balance is in moles per solids volume per time,
+  #   thus, this acts as a conversion factor for the rates.
+  [./non_pore_inverse]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 1.5  ## = 1/(1-eps_b) [volume solids / total volume]
+  [../]
+
   # Mass transfer coefficient - auto calculated in properties
   [./km]
       order = FIRST
@@ -332,7 +341,7 @@
       variable = NH3w
       coupled_list = 'r1 r2a r2b r3'
       weights = '-1 -1 -1 -1'
-      scale = non_pore
+      scale = non_pore_inverse
   [../]
 
   # ======================== H2O balance ======================
@@ -383,7 +392,7 @@
       variable = H2Ow
       coupled_list = 'r4a r4b'
       weights = '-1 -1'
-      scale = non_pore
+      scale = non_pore_inverse
   [../]
 
   # =========== Surface Balances ==================
@@ -717,7 +726,7 @@
         space_velocity = 500   #volumes per min
         inlet_temperature = temp
         ref_pressure = 101.35
-        ref_temperature = 423.15
+        ref_temperature = 273.15
         radius = 1  #cm
         length = 5  #cm
         execute_on = 'initial timestep_end'
@@ -829,7 +838,7 @@
         vel_time_unit = "min"
 
         # artifically reduced diffusion coefficient for the
-        #   what-if scenario 
+        #   what-if scenario
         ref_diffusivity = 0.0561
         diff_length_unit = "cm"
         diff_time_unit = "s"

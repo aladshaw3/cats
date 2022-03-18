@@ -377,7 +377,7 @@
         node_id = 4
         coupled_list = 'r1_4'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -403,7 +403,7 @@
         node_id = 3
         coupled_list = 'r1_3'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -429,7 +429,7 @@
         node_id = 2
         coupled_list = 'r1_2'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -455,7 +455,7 @@
         node_id = 1
         coupled_list = 'r1_1'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -479,7 +479,7 @@
         node_id = 0
         coupled_list = 'r1_0'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase CO ===============
@@ -538,7 +538,7 @@
         coupled_list = 'r1_4'
         weights = '-1'
         node_id = 4
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -564,7 +564,7 @@
         node_id = 3
         coupled_list = 'r1_3'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -590,7 +590,7 @@
         node_id = 2
         coupled_list = 'r1_2'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -616,7 +616,7 @@
         node_id = 1
         coupled_list = 'r1_1'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -640,7 +640,7 @@
         node_id = 0
         coupled_list = 'r1_0'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase CO2 ===============
@@ -699,7 +699,7 @@
         coupled_list = 'r1_4'
         weights = '1'
         node_id = 4
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -725,7 +725,7 @@
         node_id = 3
         coupled_list = 'r1_3'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -751,7 +751,7 @@
         node_id = 2
         coupled_list = 'r1_2'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -777,7 +777,7 @@
         node_id = 1
         coupled_list = 'r1_1'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -801,7 +801,7 @@
         node_id = 0
         coupled_list = 'r1_0'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
 # ------------------- Start Reactions ----------------------

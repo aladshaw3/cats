@@ -1,7 +1,7 @@
 [GlobalParams]
   dg_scheme = nipg
   sigma = 10
-  transfer_rate = 5757.541  #min^-1
+  transfer_rate = 7712  #min^-1 (Ga*km) Ga = 1928, km = 4
 [] #END GlobalParams
 
 [Problem]
@@ -158,7 +158,7 @@
   [./pore]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.3309
+      initial_condition = 0.8
   [../]
 
    [./total_pore]
@@ -168,7 +168,7 @@
  # assume ew = 0.2
        order = FIRST
        family = MONOMIAL
-       initial_condition = 0.13382
+       initial_condition = 0.04
    [../]
 
   [./vel_x]
@@ -459,7 +459,7 @@
         # NOTE: velocity must use same shape function type as temperature and space-velocity
         type = GasVelocityCylindricalReactor
         variable = vel_y
-        porosity = 0.3309
+        porosity = pore
         space_velocity = 500   #volumes per min
         inlet_temperature = temp
         ref_temperature = 273.15

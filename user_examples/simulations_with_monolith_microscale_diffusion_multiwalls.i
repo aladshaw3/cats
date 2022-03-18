@@ -743,7 +743,7 @@
         node_id = 4
         coupled_list = 'r1_n4_w0'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -769,7 +769,7 @@
         node_id = 3
         coupled_list = 'r1_n3_w0'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -795,7 +795,7 @@
         node_id = 2
         coupled_list = 'r1_n2_w0'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -821,7 +821,7 @@
         node_id = 1
         coupled_list = 'r1_n1_w0'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -845,7 +845,7 @@
         node_id = 0
         coupled_list = 'r1_n0_w0'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Washcoat phase O2 (wall 1) ===============
@@ -872,7 +872,7 @@
         node_id = 4
         coupled_list = 'r1_n4_w1'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -898,7 +898,7 @@
         node_id = 3
         coupled_list = 'r1_n3_w1'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -924,7 +924,7 @@
         node_id = 2
         coupled_list = 'r1_n2_w1'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -950,7 +950,7 @@
         node_id = 1
         coupled_list = 'r1_n1_w1'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -974,7 +974,7 @@
         node_id = 0
         coupled_list = 'r1_n0_w1'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Washcoat phase O2 (wall 2) ===============
@@ -1001,7 +1001,7 @@
         node_id = 4
         coupled_list = 'r1_n4_w2'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -1027,7 +1027,7 @@
         node_id = 3
         coupled_list = 'r1_n3_w2'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -1053,7 +1053,7 @@
         node_id = 2
         coupled_list = 'r1_n2_w2'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -1079,7 +1079,7 @@
         node_id = 1
         coupled_list = 'r1_n1_w2'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -1103,7 +1103,7 @@
         node_id = 0
         coupled_list = 'r1_n0_w2'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Washcoat phase O2 (wall 3) ===============
@@ -1130,7 +1130,7 @@
         node_id = 4
         coupled_list = 'r1_n4_w3'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -1156,7 +1156,7 @@
         node_id = 3
         coupled_list = 'r1_n3_w3'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -1182,7 +1182,7 @@
         node_id = 2
         coupled_list = 'r1_n2_w3'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -1208,7 +1208,7 @@
         node_id = 1
         coupled_list = 'r1_n1_w3'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -1232,7 +1232,7 @@
         node_id = 0
         coupled_list = 'r1_n0_w3'
         weights = '-0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase CO ===============
@@ -1318,7 +1318,7 @@
         coupled_list = 'r1_n4_w0'
         weights = '-1'
         node_id = 4
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -1344,7 +1344,7 @@
         node_id = 3
         coupled_list = 'r1_n3_w0'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -1370,7 +1370,7 @@
         node_id = 2
         coupled_list = 'r1_n2_w0'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -1396,7 +1396,7 @@
         node_id = 1
         coupled_list = 'r1_n1_w0'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -1420,7 +1420,7 @@
         node_id = 0
         coupled_list = 'r1_n0_w0'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Washcoat phase CO (wall 1) ===============
@@ -1447,7 +1447,7 @@
         coupled_list = 'r1_n4_w1'
         weights = '-1'
         node_id = 4
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -1473,7 +1473,7 @@
         node_id = 3
         coupled_list = 'r1_n3_w1'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -1499,7 +1499,7 @@
         node_id = 2
         coupled_list = 'r1_n2_w1'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -1525,7 +1525,7 @@
         node_id = 1
         coupled_list = 'r1_n1_w1'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -1549,7 +1549,7 @@
         node_id = 0
         coupled_list = 'r1_n0_w1'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Washcoat phase CO (wall 2) ===============
@@ -1576,7 +1576,7 @@
         coupled_list = 'r1_n4_w2'
         weights = '-1'
         node_id = 4
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -1602,7 +1602,7 @@
         node_id = 3
         coupled_list = 'r1_n3_w2'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -1628,7 +1628,7 @@
         node_id = 2
         coupled_list = 'r1_n2_w2'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -1654,7 +1654,7 @@
         node_id = 1
         coupled_list = 'r1_n1_w2'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -1678,7 +1678,7 @@
         node_id = 0
         coupled_list = 'r1_n0_w2'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Washcoat phase CO (wall 3) ===============
@@ -1705,7 +1705,7 @@
         coupled_list = 'r1_n4_w3'
         weights = '-1'
         node_id = 4
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -1731,7 +1731,7 @@
         node_id = 3
         coupled_list = 'r1_n3_w3'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -1757,7 +1757,7 @@
         node_id = 2
         coupled_list = 'r1_n2_w3'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -1783,7 +1783,7 @@
         node_id = 1
         coupled_list = 'r1_n1_w3'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -1807,7 +1807,7 @@
         node_id = 0
         coupled_list = 'r1_n0_w3'
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase CO2 ===============
@@ -1893,7 +1893,7 @@
         coupled_list = 'r1_n4_w0'
         weights = '1'
         node_id = 4
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -1919,7 +1919,7 @@
         node_id = 3
         coupled_list = 'r1_n3_w0'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -1945,7 +1945,7 @@
         node_id = 2
         coupled_list = 'r1_n2_w0'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -1971,7 +1971,7 @@
         node_id = 1
         coupled_list = 'r1_n1_w0'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -1995,7 +1995,7 @@
         node_id = 0
         coupled_list = 'r1_n0_w0'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Washcoat phase CO2 (wall 1) ===============
@@ -2022,7 +2022,7 @@
         coupled_list = 'r1_n4_w1'
         weights = '1'
         node_id = 4
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -2048,7 +2048,7 @@
         node_id = 3
         coupled_list = 'r1_n3_w1'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -2074,7 +2074,7 @@
         node_id = 2
         coupled_list = 'r1_n2_w1'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -2100,7 +2100,7 @@
         node_id = 1
         coupled_list = 'r1_n1_w1'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -2124,7 +2124,7 @@
         node_id = 0
         coupled_list = 'r1_n0_w1'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Washcoat phase CO2 (wall 2) ===============
@@ -2151,7 +2151,7 @@
         coupled_list = 'r1_n4_w2'
         weights = '1'
         node_id = 4
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -2177,7 +2177,7 @@
         node_id = 3
         coupled_list = 'r1_n3_w2'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -2203,7 +2203,7 @@
         node_id = 2
         coupled_list = 'r1_n2_w2'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -2229,7 +2229,7 @@
         node_id = 1
         coupled_list = 'r1_n1_w2'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -2253,7 +2253,7 @@
         node_id = 0
         coupled_list = 'r1_n0_w2'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Washcoat phase CO2 (wall 3) ===============
@@ -2280,7 +2280,7 @@
         coupled_list = 'r1_n4_w3'
         weights = '1'
         node_id = 4
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 3
@@ -2306,7 +2306,7 @@
         node_id = 3
         coupled_list = 'r1_n3_w3'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 2
@@ -2332,7 +2332,7 @@
         node_id = 2
         coupled_list = 'r1_n2_w3'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 1
@@ -2358,7 +2358,7 @@
         node_id = 1
         coupled_list = 'r1_n1_w3'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # Interior node 0 : BC
@@ -2382,7 +2382,7 @@
         node_id = 0
         coupled_list = 'r1_n0_w3'
         weights = '1'
-        scale = non_pore
+        scale = 1
     [../]
 
 # ------------------- Start Reactions ----------------------

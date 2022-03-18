@@ -47,7 +47,7 @@ InputParameters GasVelocityCylindricalReactor::validParams()
     params.addParam< Real >("ref_pressure",101.35,"Reference pressure for the space-velocity (in kPa)");
     params.addRequiredParam< Real >("radius","Radius of the cylindrical reactor");
     params.addRequiredParam< Real >("length","Length of the cylindrical reactor");
-    params.addParam< bool >("by_total_reactor_volume",false,"If true, then the space-velocity will be assume total volume. If false, it will be assumed by catalyst volume.");
+    params.addParam< bool >("by_total_reactor_volume",true,"If true, then the space-velocity will be assume total volume. If false, it will be assumed by catalyst volume.");
     return params;
 }
 

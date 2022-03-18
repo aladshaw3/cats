@@ -222,7 +222,7 @@
         #   Every time this occurs, 1 mole of H2O is removed
         #   Thus, the 'weight' for r is -1.
         weights = '-1'
-        scale = non_pore
+        scale = 1
     [../]
 
 # ------------------- Start Reactions ----------------------
