@@ -1011,7 +1011,7 @@
         node_id = 4
         coupled_list = 'r1_n4 r2_n4 r15_n4 r3_n4 r12_n4'
         weights = '-0.5 -0.5 -0.25 -9 0'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 3
@@ -1042,7 +1042,7 @@
         node_id = 3
         coupled_list = 'r1_n3 r2_n3 r15_n3 r3_n3 r12_n3'
         weights = '-0.5 -0.5 -0.25 -9 0'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 2
@@ -1073,7 +1073,7 @@
         node_id = 2
         coupled_list = 'r1_n2 r2_n2 r15_n2 r3_n2 r12_n2'
         weights = '-0.5 -0.5 -0.25 -9 0'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 1
@@ -1104,7 +1104,7 @@
         node_id = 1
         coupled_list = 'r1_n1 r2_n1 r15_n1 r3_n1 r12_n1'
         weights = '-0.5 -0.5 -0.25 -9 0'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 0
@@ -1133,7 +1133,7 @@
         node_id = 0
         coupled_list = 'r1_n0 r2_n0 r15_n0 r3_n0 r12_n0'
         weights = '-0.5 -0.5 -0.25 -9 0'
-        scale = non_pore
+        scale = 1
     [../]
 
 
@@ -1198,7 +1198,7 @@
         node_id = 4
         coupled_list = 'r2_n4 r8_n4 r11_n4 r6_n4 r7_n4 r14_n4 r15_n4 r3_n4 r10_n4 r12_n4'
         weights = '1 -1.5 -1 1 1 1 1.5 4 4 -7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 3
@@ -1229,7 +1229,7 @@
         node_id = 3
         coupled_list = 'r2_n3 r8_n3 r11_n3 r6_n3 r7_n3 r14_n3 r15_n3 r3_n3 r10_n3 r12_n3'
         weights = '1 -1.5 -1 1 1 1 1.5 4 4 -7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 2
@@ -1260,7 +1260,7 @@
         node_id = 2
         coupled_list = 'r2_n2 r8_n2 r11_n2 r6_n2 r7_n2 r14_n2 r15_n2 r3_n2 r10_n2 r12_n2'
         weights = '1 -1.5 -1 1 1 1 1.5 4 4 -7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 1
@@ -1291,7 +1291,7 @@
         node_id = 1
         coupled_list = 'r2_n1 r8_n1 r11_n1 r6_n1 r7_n1 r14_n1 r15_n1 r3_n1 r10_n1 r12_n1'
         weights = '1 -1.5 -1 1 1 1 1.5 4 4 -7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 0
@@ -1320,7 +1320,7 @@
         node_id = 0
         coupled_list = 'r2_n0 r8_n0 r11_n0 r6_n0 r7_n0 r14_n0 r15_n0 r3_n0 r10_n0 r12_n0'
         weights = '1 -1.5 -1 1 1 1 1.5 4 4 -7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase NH3 ===============
@@ -1379,7 +1379,7 @@
         node_id = 4
         coupled_list = 'r8_n4 r6_n4 r15_n4'
         weights = '1 1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 3
@@ -1405,7 +1405,7 @@
         node_id = 3
         coupled_list = 'r8_n3 r6_n3 r15_n3'
         weights = '1 1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 2
@@ -1431,7 +1431,7 @@
         node_id = 2
         coupled_list = 'r8_n2 r6_n2 r15_n2'
         weights = '1 1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 1
@@ -1457,7 +1457,7 @@
         node_id = 1
         coupled_list = 'r8_n1 r6_n1 r15_n1'
         weights = '1 1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 0
@@ -1481,7 +1481,7 @@
         node_id = 0
         coupled_list = 'r8_n0 r6_n0 r15_n0'
         weights = '1 1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase NO ===============
@@ -1545,7 +1545,7 @@
         node_id = 4
         coupled_list = 'r4_n4 r5_n4 r8_n4 r6_n4 r7_n4 r14_n4 r15_n4 r10_n4'
         weights = '-1 -2 -1 -1 -1 -2 -1 -18'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 3
@@ -1576,7 +1576,7 @@
         node_id = 3
         coupled_list = 'r4_n3 r5_n3 r8_n3 r6_n3 r7_n3 r14_n3 r15_n3 r10_n3'
         weights = '-1 -2 -1 -1 -1 -2 -1 -18'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 2
@@ -1607,7 +1607,7 @@
         node_id = 2
         coupled_list = 'r4_n2 r5_n2 r8_n2 r6_n2 r7_n2 r14_n2 r15_n2 r10_n2'
         weights = '-1 -2 -1 -1 -1 -2 -1 -18'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 1
@@ -1638,7 +1638,7 @@
         node_id = 1
         coupled_list = 'r4_n1 r5_n1 r8_n1 r6_n1 r7_n1 r14_n1 r15_n1 r10_n1'
         weights = '-1 -2 -1 -1 -1 -2 -1 -18'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 0
@@ -1667,7 +1667,7 @@
         node_id = 0
         coupled_list = 'r4_n0 r5_n0 r8_n0 r6_n0 r7_n0 r14_n0 r15_n0 r10_n0'
         weights = '-1 -2 -1 -1 -1 -2 -1 -18'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase N2O ===============
@@ -1726,7 +1726,7 @@
         node_id = 4
         coupled_list = 'r5_n4 r14_n4'
         weights = '1 1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 3
@@ -1752,7 +1752,7 @@
         node_id = 3
         coupled_list = 'r5_n3 r14_n3'
         weights = '1 1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 2
@@ -1778,7 +1778,7 @@
         node_id = 2
         coupled_list = 'r5_n2 r14_n2'
         weights = '1 1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 1
@@ -1804,7 +1804,7 @@
         node_id = 1
         coupled_list = 'r5_n1 r14_n1'
         weights = '1 1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 0
@@ -1828,7 +1828,7 @@
         node_id = 0
         coupled_list = 'r5_n0 r14_n0'
         weights = '1 1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase CO ===============
@@ -1892,7 +1892,7 @@
         node_id = 4
         coupled_list = 'r1_n4 r4_n4 r5_n4 r8_n4 r11_n4 r12_n4'
         weights = '-1 -1 -1 -2.5 -1 7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 3
@@ -1923,7 +1923,7 @@
         node_id = 3
         coupled_list = 'r1_n3 r4_n3 r5_n3 r8_n3 r11_n3 r12_n3'
         weights = '-1 -1 -1 -2.5 -1 7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 2
@@ -1954,7 +1954,7 @@
         node_id = 2
         coupled_list = 'r1_n2 r4_n2 r5_n2 r8_n2 r11_n2 r12_n2'
         weights = '-1 -1 -1 -2.5 -1 7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 1
@@ -1985,7 +1985,7 @@
         node_id = 1
         coupled_list = 'r1_n1 r4_n1 r5_n1 r8_n1 r11_n1 r12_n1'
         weights = '-1 -1 -1 -2.5 -1 7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 0
@@ -2014,7 +2014,7 @@
         node_id = 0
         coupled_list = 'r1_n0 r4_n0 r5_n0 r8_n0 r11_n0 r12_n0'
         weights = '-1 -1 -1 -2.5 -1 7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase CO2 ===============
@@ -2078,7 +2078,7 @@
         node_id = 4
         coupled_list = 'r1_n4 r4_n4 r5_n4 r8_n4 r11_n4 r3_n4 r10_n4'
         weights = '1 1 1 2.5 1 7 7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 3
@@ -2109,7 +2109,7 @@
         node_id = 3
         coupled_list = 'r1_n3 r4_n3 r5_n3 r8_n3 r11_n3 r3_n3 r10_n3'
         weights = '1 1 1 2.5 1 7 7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 2
@@ -2140,7 +2140,7 @@
         node_id = 2
         coupled_list = 'r1_n2 r4_n2 r5_n2 r8_n2 r11_n2 r3_n2 r10_n2'
         weights = '1 1 1 2.5 1 7 7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 1
@@ -2171,7 +2171,7 @@
         node_id = 1
         coupled_list = 'r1_n1 r4_n1 r5_n1 r8_n1 r11_n1 r3_n1 r10_n1'
         weights = '1 1 1 2.5 1 7 7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 0
@@ -2200,7 +2200,7 @@
         node_id = 0
         coupled_list = 'r1_n0 r4_n0 r5_n0 r8_n0 r11_n0 r3_n0 r10_n0'
         weights = '1 1 1 2.5 1 7 7'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase N2 ===============
@@ -2264,7 +2264,7 @@
         node_id = 4
         coupled_list = 'r4_n4 r7_n4 r15_n4 r10_n4'
         weights = '0.5 0.5 1 9'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 3
@@ -2295,7 +2295,7 @@
         node_id = 3
         coupled_list = 'r4_n3 r7_n3 r15_n3 r10_n3'
         weights = '0.5 0.5 1 9'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 2
@@ -2326,7 +2326,7 @@
         node_id = 2
         coupled_list = 'r4_n2 r7_n2 r15_n2 r10_n2'
         weights = '0.5 0.5 1 9'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 1
@@ -2357,7 +2357,7 @@
         node_id = 1
         coupled_list = 'r4_n1 r7_n1 r15_n1 r10_n1'
         weights = '0.5 0.5 1 9'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 0
@@ -2386,7 +2386,7 @@
         node_id = 0
         coupled_list = 'r4_n0 r7_n0 r15_n0 r10_n0'
         weights = '0.5 0.5 1 9'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase H2 ===============
@@ -2450,7 +2450,7 @@
         node_id = 4
         coupled_list = 'r2_n4 r11_n4 r6_n4 r7_n4 r14_n4 r12_n4'
         weights = '-1 1 -2.5 -1 -1 11'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 3
@@ -2481,7 +2481,7 @@
         node_id = 3
         coupled_list = 'r2_n3 r11_n3 r6_n3 r7_n3 r14_n3 r12_n3'
         weights = '-1 1 -2.5 -1 -1 11'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 2
@@ -2512,7 +2512,7 @@
         node_id = 2
         coupled_list = 'r2_n2 r11_n2 r6_n2 r7_n2 r14_n2 r12_n2'
         weights = '-1 1 -2.5 -1 -1 11'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 1
@@ -2543,7 +2543,7 @@
         node_id = 1
         coupled_list = 'r2_n1 r11_n1 r6_n1 r7_n1 r14_n1 r12_n1'
         weights = '-1 1 -2.5 -1 -1 11'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 0
@@ -2572,7 +2572,7 @@
         node_id = 0
         coupled_list = 'r2_n0 r11_n0 r6_n0 r7_n0 r14_n0 r12_n0'
         weights = '-1 1 -2.5 -1 -1 11'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase HC ===============
@@ -2636,7 +2636,7 @@
         node_id = 4
         coupled_list = 'r3_n4 r10_n4 r12_n4'
         weights = '-1 -1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 3
@@ -2667,7 +2667,7 @@
         node_id = 3
         coupled_list = 'r3_n3 r10_n3 r12_n3'
         weights = '-1 -1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 2
@@ -2698,7 +2698,7 @@
         node_id = 2
         coupled_list = 'r3_n2 r10_n2 r12_n2'
         weights = '-1 -1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 1
@@ -2729,7 +2729,7 @@
         node_id = 1
         coupled_list = 'r3_n1 r10_n1 r12_n1'
         weights = '-1 -1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # node 0
@@ -2758,7 +2758,7 @@
         node_id = 0
         coupled_list = 'r3_n0 r10_n0 r12_n0'
         weights = '-1 -1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
 # ------------------- Start Reaction Balances ----------------------
@@ -4712,6 +4712,7 @@
         variable = vel_y
         porosity = 0.775
         space_velocity = 500   #volumes per min
+        by_total_reactor_volume = true
         inlet_temperature = temp
         ref_pressure = 101.35
         ref_temperature = 273.15

@@ -300,7 +300,7 @@
         variable = O2w
         coupled_list = 'r1 r2'
         weights = '-0.5 -0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase H2O ===============
@@ -347,7 +347,7 @@
         variable = H2Ow
         coupled_list = 'r2 r8 r11 r6 r7 r14'
         weights = '1 -1.5 -1 1 1 1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase NH3 ===============
@@ -394,7 +394,7 @@
         variable = NH3w
         coupled_list = 'r8 r6'
         weights = '1 1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase NO ===============
@@ -441,7 +441,7 @@
         variable = NOxw
         coupled_list = 'r4 r5 r8 r6 r7 r14'
         weights = '-1 -2 -1 -1 -1 -2'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase N2O ===============
@@ -488,7 +488,7 @@
         variable = N2Ow
         coupled_list = 'r5 r14'
         weights = '1 1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase CO ===============
@@ -535,7 +535,7 @@
         variable = COw
         coupled_list = 'r1 r4 r5 r8 r11'
         weights = '-1 -1 -1 -2.5 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase CO2 ===============
@@ -582,7 +582,7 @@
         variable = CO2w
         coupled_list = 'r1 r4 r5 r8 r11'
         weights = '1 1 1 2.5 1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase N2 ===============
@@ -629,7 +629,7 @@
         variable = N2w
         coupled_list = 'r4 r7'
         weights = '0.5 0.5'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase H2 ===============
@@ -676,7 +676,7 @@
         variable = H2w
         coupled_list = 'r2 r11 r6 r7 r14'
         weights = '-1 1 -2.5 -1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
 # ------------------- Start Reaction Balances ----------------------

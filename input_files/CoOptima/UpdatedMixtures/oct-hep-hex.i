@@ -453,7 +453,7 @@
         variable = O2w
         coupled_list = 'r1 r2 r15 r3_isooctane r3_heptane r3_hexene'
         weights = '-0.5 -0.5 -0.25 -12.5 -11 -9'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase H2O ===============
@@ -515,7 +515,7 @@
         variable = H2Ow
         coupled_list = 'r2 r8 r11 r6 r7 r14 r15 r3_isooctane r10_isooctane r12_isooctane r3_heptane r10_heptane r12_heptane r3_hexene r10_hexene r12_hexene'
         weights = '1 -1.5 -1 1 1 1 1.5 9 9 -8 8 8 -7 6 6 -6'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase NH3 ===============
@@ -570,7 +570,7 @@
         variable = NH3w
         coupled_list = 'r8 r6 r15'
         weights = '1 1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase NO ===============
@@ -632,7 +632,7 @@
         variable = NOxw
         coupled_list = 'r4 r5 r8 r6 r7 r14 r15 r10_isooctane r10_heptane r10_hexene'
         weights = '-1 -2 -1 -1 -1 -2 -1 -25 -22 -18'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase N2O ===============
@@ -687,7 +687,7 @@
         variable = N2Ow
         coupled_list = 'r5 r14'
         weights = '1 1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase CO ===============
@@ -749,7 +749,7 @@
         variable = COw
         coupled_list = 'r1 r4 r5 r8 r11 r12_isooctane r12_heptane r12_hexene'
         weights = '-1 -1 -1 -2.5 -1 8 7 6'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase CO2 ===============
@@ -811,7 +811,7 @@
         variable = CO2w
         coupled_list = 'r1 r4 r5 r8 r11 r3_isooctane r10_isooctane r3_heptane r10_heptane r3_hexene r10_hexene'
         weights = '1 1 1 2.5 1 8 8 7 7 6 6'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase N2 ===============
@@ -873,7 +873,7 @@
         variable = N2w
         coupled_list = 'r4 r7 r15 r10_isooctane r10_heptane r10_hexene'
         weights = '0.5 0.5 1 12.5 11 9'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase H2 ===============
@@ -935,7 +935,7 @@
         variable = H2w
         coupled_list = 'r2 r11 r6 r7 r14 r12_isooctane r12_heptane r12_hexene'
         weights = '-1 1 -2.5 -1 -1 17 15 12'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase HC_isooctane ===============
@@ -995,7 +995,7 @@
         variable = HCw_isooctane
         coupled_list = 'r3_isooctane r10_isooctane r12_isooctane'
         weights = '-1 -1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase HC_heptane ===============
@@ -1055,7 +1055,7 @@
         variable = HCw_heptane
         coupled_list = 'r3_heptane r10_heptane r12_heptane'
         weights = '-1 -1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
     # =============== Bulk phase HC_hexene ===============
@@ -1115,7 +1115,7 @@
         variable = HCw_hexene
         coupled_list = 'r3_hexene r10_hexene r12_hexene'
         weights = '-1 -1 -1'
-        scale = non_pore
+        scale = 1
     [../]
 
 # ------------------- Start Reaction Balances ----------------------
