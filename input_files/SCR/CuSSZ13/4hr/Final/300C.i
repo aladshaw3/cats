@@ -517,7 +517,27 @@
   [../]
 
   # Mass transfer coefficient - auto calculated in properties
-  [./km]
+  [./km_O2]
+      order = FIRST
+      family = MONOMIAL
+  [../]
+  [./km_NH3]
+      order = FIRST
+      family = MONOMIAL
+  [../]
+  [./km_NOx]
+      order = FIRST
+      family = MONOMIAL
+  [../]
+  [./km_NO2]
+      order = FIRST
+      family = MONOMIAL
+  [../]
+  [./km_H2O]
+      order = FIRST
+      family = MONOMIAL
+  [../]
+  [./km_N2O]
       order = FIRST
       family = MONOMIAL
   [../]
@@ -627,7 +647,7 @@
         coupled = O2w
 
         av_ratio = Ga
-        rate_variable = km
+        rate_variable = km_O2
         volume_frac = non_pore
     [../]
 
@@ -643,7 +663,7 @@
         coupled = O2
 
         av_ratio = Ga
-        rate_variable = km
+        rate_variable = km_O2
         volume_frac = non_pore
     [../]
     [./O2w_rxns]
@@ -696,7 +716,7 @@
         coupled = H2Ow
 
         av_ratio = Ga
-        rate_variable = km
+        rate_variable = km_H2O
         volume_frac = non_pore
     [../]
 
@@ -712,7 +732,7 @@
         coupled = H2O
 
         av_ratio = Ga
-        rate_variable = km
+        rate_variable = km_H2O
         volume_frac = non_pore
     [../]
     [./H2Ow_rxns]
@@ -769,7 +789,7 @@
         coupled = NH3w
 
         av_ratio = Ga
-        rate_variable = km
+        rate_variable = km_NH3
         volume_frac = non_pore
     [../]
 
@@ -785,7 +805,7 @@
         coupled = NH3
 
         av_ratio = Ga
-        rate_variable = km
+        rate_variable = km_NH3
         volume_frac = non_pore
     [../]
     [./NH3w_rxns]
@@ -824,7 +844,7 @@
         coupled = NOxw
 
         av_ratio = Ga
-        rate_variable = km
+        rate_variable = km_NOx
         volume_frac = non_pore
     [../]
 
@@ -840,7 +860,7 @@
         coupled = NOx
 
         av_ratio = Ga
-        rate_variable = km
+        rate_variable = km_NOx
         volume_frac = non_pore
     [../]
     [./NOxw_rxns]
@@ -887,7 +907,7 @@
         coupled = NO2w
 
         av_ratio = Ga
-        rate_variable = km
+        rate_variable = km_NO2
         volume_frac = non_pore
     [../]
 
@@ -903,7 +923,7 @@
         coupled = NO2
 
         av_ratio = Ga
-        rate_variable = km
+        rate_variable = km_NO2
         volume_frac = non_pore
     [../]
     [./NO2w_rxns]
@@ -948,7 +968,7 @@
         coupled = N2Ow
 
         av_ratio = Ga
-        rate_variable = km
+        rate_variable = km_N2O
         volume_frac = non_pore
     [../]
 
@@ -964,7 +984,7 @@
         coupled = N2O
 
         av_ratio = Ga
-        rate_variable = km
+        rate_variable = km_N2O
         volume_frac = non_pore
     [../]
     [./N2Ow_rxns]
@@ -2302,9 +2322,9 @@
         execute_on = 'initial timestep_end'
     [../]
 
-    [./km_calc]
+    [./km_NH3_calc]
         type = SimpleGasMonolithMassTransCoef
-        variable = km
+        variable = km_NH3
 
         pressure = press
         temperature = temp
@@ -2318,6 +2338,136 @@
         vel_time_unit = "min"
 
         ref_diffusivity = 0.826
+        diff_length_unit = "cm"
+        diff_time_unit = "s"
+        ref_diff_temp = 473
+
+        output_length_unit = "cm"
+        output_time_unit = "min"
+
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./km_H2O_calc]
+        type = SimpleGasMonolithMassTransCoef
+        variable = km_H2O
+
+        pressure = press
+        temperature = temp
+        micro_porosity = micro_pore
+        macro_porosity = pore
+        characteristic_length = dh
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        ref_diffusivity = 0.638
+        diff_length_unit = "cm"
+        diff_time_unit = "s"
+        ref_diff_temp = 473
+
+        output_length_unit = "cm"
+        output_time_unit = "min"
+
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./km_O2_calc]
+        type = SimpleGasMonolithMassTransCoef
+        variable = km_O2
+
+        pressure = press
+        temperature = temp
+        micro_porosity = micro_pore
+        macro_porosity = pore
+        characteristic_length = dh
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        ref_diffusivity = 0.561
+        diff_length_unit = "cm"
+        diff_time_unit = "s"
+        ref_diff_temp = 473
+
+        output_length_unit = "cm"
+        output_time_unit = "min"
+
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./km_NOx_calc]
+        type = SimpleGasMonolithMassTransCoef
+        variable = km_NOx
+
+        pressure = press
+        temperature = temp
+        micro_porosity = micro_pore
+        macro_porosity = pore
+        characteristic_length = dh
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        ref_diffusivity = 0.485
+        diff_length_unit = "cm"
+        diff_time_unit = "s"
+        ref_diff_temp = 473
+
+        output_length_unit = "cm"
+        output_time_unit = "min"
+
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./km_NO2_calc]
+        type = SimpleGasMonolithMassTransCoef
+        variable = km_NO2
+
+        pressure = press
+        temperature = temp
+        micro_porosity = micro_pore
+        macro_porosity = pore
+        characteristic_length = dh
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        ref_diffusivity = 0.485
+        diff_length_unit = "cm"
+        diff_time_unit = "s"
+        ref_diff_temp = 473
+
+        output_length_unit = "cm"
+        output_time_unit = "min"2
+
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./km_N2O_calc]
+        type = SimpleGasMonolithMassTransCoef
+        variable = km_N2O
+
+        pressure = press
+        temperature = temp
+        micro_porosity = micro_pore
+        macro_porosity = pore
+        characteristic_length = dh
+        char_length_unit = "cm"
+
+        velocity = vel_y
+        vel_length_unit = "cm"
+        vel_time_unit = "min"
+
+        ref_diffusivity = 0.485
         diff_length_unit = "cm"
         diff_time_unit = "s"
         ref_diff_temp = 473
