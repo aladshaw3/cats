@@ -647,10 +647,14 @@
   [../]
 
   #Specific surface area
+  # Some calculations put the specific_area of the catalyst layer
+  #   at ~ 4.57E+4 mm^-1. In our case, the catalyst layer is roughly
+  #   0.01 times the size of the full electrode, thus, the area of
+  #   active catalyst would be ~ 4.57E+2 mm^-1
   [./As]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 2.0E3  # mm^-1
+      initial_condition = 4.57E2  # mm^-1
   [../]
 
   [./density]
@@ -3061,8 +3065,8 @@
       type = TemporalStepFunction
       variable = voltage
 
-      start_value = 0.1
-      aux_vals = '0.2 0.4 0.8 1.0 2.0 4.0'
+      start_value = -0.1
+      aux_vals = '-0.2 -0.4 -0.8 -1.0 -2.0 -4.0'
       aux_times = '120   480    1000    2000   5000    10000'
       time_spans = '60      120    180    360    720    1000'
 
@@ -3102,7 +3106,7 @@
       boundary = 'cathode_fluid_channel_interface_cathode'
       #
       ## edge value was defined at 0 V
-      coupled = -1 # in V
+      coupled = voltage # in V
   [../]
 
   # electrolyte
