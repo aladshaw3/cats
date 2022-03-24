@@ -3066,9 +3066,9 @@
       variable = voltage
 
       start_value = -0.1
-      aux_vals = '-0.2 -0.4 -0.8 -1.0 -2.0 -4.0'
-      aux_times = '120   480    1000    2000   5000    10000'
-      time_spans = '60      120    180    360    720    1000'
+      aux_vals = '-0.2 -0.4 -0.8 -1.0 -2.0'
+      aux_times = '120   480    1000    2000   5000'
+      time_spans = '60      120    180    360    720'
 
       execute_on = 'initial timestep_begin nonlinear'
   [../]
@@ -3650,8 +3650,8 @@
   nl_abs_step_tol = 1e-10
 
   start_time = 0.0
-  end_time = 25000
-  dtmax = 360
+  end_time = 10000
+  dtmax = 180
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
@@ -3674,6 +3674,6 @@
     exodus = true
     csv = true
     print_linear_residuals = true
-    interval = 1
+    interval = 3
 
 [] #END Outputs
