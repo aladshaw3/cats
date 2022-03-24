@@ -25,9 +25,9 @@
     type = FileMeshGenerator
 
 
-    #file = 2D_Electrolyzer_mm.msh    #coarse mesh
+    file = 2D_Electrolyzer_mm.msh    #coarse mesh
 
-    file = 2D_Electrolyzer_mm_split.msh     #fine mesh
+    #file = 2D_Electrolyzer_mm_split.msh     #fine mesh
 
     ### ========= boundary_name ==========
     # "cathode_fluid_channel_left"
@@ -350,14 +350,14 @@
       [./InitialCondition]
           type = InitialModifiedButlerVolmerReaction
 
-          reaction_rate_const = 6.59167E-6    # umol/mm^2/s
+          reaction_rate_const = 6.59167E-1    # umol/mm^2/s  fitted param 6.59167E-6
           equilibrium_potential = 0         # V
 
           reduced_state_vars = 'a_H2'       # assumed
           reduced_state_stoich = '1'        # assumed
 
           oxidized_state_vars = 'a_H'
-          oxidized_state_stoich = '0.1737'  # fitted param
+          oxidized_state_stoich = '1'  # fitted param 0.1737
 
           electric_potential_difference = phi_diff
 
@@ -400,14 +400,14 @@
       [./InitialCondition]
           type = InitialModifiedButlerVolmerReaction
 
-          reaction_rate_const = 2.0833E-7    # umol/mm^2/s
+          reaction_rate_const = 2.0833E-6    # umol/mm^2/s fitted param 2.0833E-7
           equilibrium_potential = -0.11         # V
 
           reduced_state_vars = 'a_CO'        # assumed
           reduced_state_stoich = '1'         # assumed
 
           oxidized_state_vars = 'a_H a_CO2'
-          oxidized_state_stoich = '0.6774 1.5'  # fitted param
+          oxidized_state_stoich = '1 1'  # fitted param 0.6774 1.5
 
           electric_potential_difference = phi_diff
 
@@ -849,14 +849,14 @@
       type = ModifiedButlerVolmerReaction
       variable = r_H2
 
-      reaction_rate_const = 6.59167E-6    # umol/mm^2/s
+      reaction_rate_const = 6.59167E-1    # umol/mm^2/s  fitted param 6.59167E-6
       equilibrium_potential = 0         # V
 
       reduced_state_vars = 'a_H2'       # assumed
       reduced_state_stoich = '1'        # assumed
 
       oxidized_state_vars = 'a_H'
-      oxidized_state_stoich = '0.1737'  # fitted param
+      oxidized_state_stoich = '1'  # fitted param 0.1737
 
       electric_potential_difference = phi_diff
 
@@ -897,14 +897,14 @@
       type = ModifiedButlerVolmerReaction
       variable = r_CO
 
-      reaction_rate_const = 2.0833E-7    # umol/mm^2/s
+      reaction_rate_const = 2.0833E-6    # umol/mm^2/s fitted param 2.0833E-7
       equilibrium_potential = -0.11         # V
 
       reduced_state_vars = 'a_CO'        # assumed
       reduced_state_stoich = '1'         # assumed
 
       oxidized_state_vars = 'a_H a_CO2'
-      oxidized_state_stoich = '0.6774 1.5'  # fitted param
+      oxidized_state_stoich = '1 1'  # fitted param 0.6774 1.5
 
       electric_potential_difference = phi_diff
 
@@ -3110,14 +3110,14 @@
   [../]
 
   # electrolyte
-  #[./phi_e_ground_side]
-  #    type = CoupledDirichletBC
-  #    variable = phi_e
-  #    boundary = 'cathode_fluid_channel_left'
-  #    #
-  #    ## edge value was defined at 0 V
-  #    coupled = 0 # in V
-  #[../]
+  [./phi_e_ground_side]
+      type = CoupledDirichletBC
+      variable = phi_e
+      boundary = 'cathode_fluid_channel_left'
+      #
+      ## edge value was defined at 0 V
+      coupled = 0 # in V
+  [../]
 
 
   # Applied Voltage
@@ -3650,8 +3650,8 @@
   nl_abs_step_tol = 1e-10
 
   start_time = 0.0
-  end_time = 2500
-  dtmax = 180
+  end_time = 25000
+  dtmax = 360
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
