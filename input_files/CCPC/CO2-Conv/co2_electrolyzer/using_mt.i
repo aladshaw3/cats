@@ -16,7 +16,7 @@
   [file]
     type = FileMeshGenerator
     file = CO2_electrolyzer_half_cell_coarse.msh
-    #file = CO2_electrolyzer_half_cell_fine.msh  #issue with this mesh
+    ##file = CO2_electrolyzer_half_cell_fine.msh  #issue with this mesh
 
     ### ========= boundary_name ==========
     # "channel_exit"
@@ -55,12 +55,20 @@
       block = 'plate'
   [../]
 
+  [./tracer_p]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 1.0e-20
+      scaling = 1
+      block = 'cathode catex_membrane'
+  [../]
+
   [./tracer]
       order = FIRST
       family = MONOMIAL
       scaling = 1
-      initial_condition = 1.0
-      block = 'channel cathode catex_membrane'
+      initial_condition = 1.0e-20
+      block = 'channel'
   [../]
 
   # fluid pressure
@@ -69,7 +77,7 @@
       family = LAGRANGE
       scaling = 1
       initial_condition = 0.0
-      block = 'channel cathode catex_membrane'
+      block = 'channel'
   [../]
 
   # velocity in x
@@ -77,7 +85,7 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 0.0
-      block = 'channel cathode catex_membrane'
+      block = 'channel'
   [../]
 
   # velocity in y
@@ -85,7 +93,7 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 0.0
-      block = 'channel cathode catex_membrane'
+      block = 'channel'
   [../]
 
   # velocity in z
@@ -93,7 +101,7 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 0.0
-      block = 'channel cathode catex_membrane'
+      block = 'channel'
   [../]
 []
 
@@ -103,13 +111,13 @@
 
 [AuxVariables]
   [./vel_mag]
-      order = CONSTANT
+      order = FIRST
       family = MONOMIAL
-      block = 'channel cathode catex_membrane'
+      block = 'channel'
   [../]
 
   [./eps]
-      order = CONSTANT
+      order = FIRST
       family = MONOMIAL
       block = 'channel cathode catex_membrane'
   [../]
@@ -121,13 +129,13 @@
   [../]
 
   [./density]
-      order = CONSTANT
+      order = FIRST
       family = MONOMIAL
       initial_condition = 0.001 # g/mm^3
       block = 'channel cathode catex_membrane'
   [../]
   [./viscosity]
-      order = CONSTANT
+      order = FIRST
       family = MONOMIAL
       initial_condition = 0.001 # Pa*s = kg/m/s = g/mm/s
       block = 'channel cathode catex_membrane'
@@ -135,7 +143,7 @@
 
   # coefficient for all domains
   [./press_coef]
-      order = CONSTANT
+      order = FIRST
       family = MONOMIAL
       initial_condition = 1
       block = 'channel cathode catex_membrane'
@@ -159,10 +167,10 @@
 
   # velocity inlet
   [./vel_in]
-      order = CONSTANT
+      order = FIRST
       family = MONOMIAL
       initial_condition = 0.1
-      block = 'channel cathode catex_membrane'
+      block = 'channel'
   [../]
 []
 
@@ -172,6 +180,13 @@
       type = VariableLaplacian
       variable = dummy
       coupled_coef = 1
+  [../]
+
+  ## =============== test ========================
+  [./tracer_p_dot]
+      type = VariableCoefTimeDerivative
+      variable = tracer_p
+      coupled_coef = eps
   [../]
 
   ## ===================== tracer balance ====================
@@ -204,18 +219,6 @@
       coupled_coef = press_coef
       block = 'channel'
   [../]
-  [./pressure_laplace_cathode]
-      type = VariableLaplacian
-      variable = pressure
-      coupled_coef = press_coef
-      block = 'cathode'
-  [../]
-  [./pressure_laplace_membrane]
-      type = VariableLaplacian
-      variable = pressure
-      coupled_coef = press_coef
-      block = 'catex_membrane'
-  [../]
 
   ## =================== vel in x ==========================
   [./v_x_equ]
@@ -228,20 +231,6 @@
       coupled = pressure
       ux = press_coef
       block = 'channel'
-  [../]
-  [./x_cathode]
-      type = VariableVectorCoupledGradient
-      variable = vel_x
-      coupled = pressure
-      ux = press_coef
-      block = 'cathode'
-  [../]
-  [./x_membrane]
-      type = VariableVectorCoupledGradient
-      variable = vel_x
-      coupled = pressure
-      ux = press_coef
-      block = 'catex_membrane'
   [../]
 
   ## =================== vel in y ==========================
@@ -256,20 +245,6 @@
       uy = press_coef
       block = 'channel'
   [../]
-  [./y_cathode]
-      type = VariableVectorCoupledGradient
-      variable = vel_y
-      coupled = pressure
-      uy = press_coef
-      block = 'cathode'
-  [../]
-  [./y_membrane]
-      type = VariableVectorCoupledGradient
-      variable = vel_y
-      coupled = pressure
-      uy = press_coef
-      block = 'catex_membrane'
-  [../]
 
   ## =================== vel in z ==========================
   [./v_z_equ]
@@ -282,20 +257,6 @@
       coupled = pressure
       uz = press_coef
       block = 'channel'
-  [../]
-  [./z_cathode]
-      type = VariableVectorCoupledGradient
-      variable = vel_z
-      coupled = pressure
-      uz = press_coef
-      block = 'cathode'
-  [../]
-  [./z_membrane]
-      type = VariableVectorCoupledGradient
-      variable = vel_z
-      coupled = pressure
-      uz = press_coef
-      block = 'catex_membrane'
   [../]
 []
 
@@ -355,9 +316,9 @@
       variable = D
       temperature = T_e
       macro_porosity = eps
-      ux = 0
-      uy = vel_in
-      uz = 0
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
@@ -381,7 +342,7 @@
       temperature = T_e
       macro_porosity = eps
       ux = 0
-      uy = vel_in
+      uy = 0
       uz = 0
       vel_length_unit = "mm"
       vel_time_unit = "s"
@@ -390,8 +351,8 @@
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
-      include_dispersivity_correction = true
-      include_porosity_correction = true
+      include_dispersivity_correction = false
+      include_porosity_correction = false
 
       output_length_unit = "mm"
       output_time_unit = "s"
@@ -406,7 +367,7 @@
       temperature = T_e
       macro_porosity = eps
       ux = 0
-      uy = vel_in
+      uy = 0
       uz = 0
       vel_length_unit = "mm"
       vel_time_unit = "s"
@@ -415,7 +376,7 @@
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
-      include_dispersivity_correction = true
+      include_dispersivity_correction = false
       include_porosity_correction = false
 
       output_length_unit = "mm"
@@ -454,7 +415,7 @@
       type = DarcyWeisbachCoefficient
       variable = press_coef
 
-      friction_factor = 0.05       # ~64/Re
+      friction_factor = 0.05
       density = density            #g/mm^3
       velocity = vel_in           #mm/s
       hydraulic_diameter = 1.315   #mm
@@ -469,8 +430,8 @@
 
       porosity = eps
       viscosity = viscosity   #g/mm/s
-      particle_diameter = 0.01 #mm
-      kozeny_carman_const = 150 #for spheres
+      particle_diameter = 0.025 #mm
+      kozeny_carman_const = 5.55
 
       execute_on = 'initial timestep_end'
       block = 'cathode'
@@ -501,14 +462,6 @@
 []
 
 [BCs]
-  # dummy
-  [./dummy]
-      type = DirichletBC
-      variable = dummy
-      boundary = 'plate_bottom'
-      value = 0
-  [../]
-
   ## =============== tracer fluxes ================
   [./tracer_FluxIn]
       type = DGFlowMassFluxBC
@@ -530,29 +483,6 @@
       uz = vel_z
   [../]
 
-  ## NOTE: If we want to consider losses at boundary edges
-  #[./tracer_leaking]
-  #    type = DGFlowMassFluxBC
-  #    variable = tracer
-  #    boundary = 'catex_mem_left catex_mem_right
-  #                catex_mem_top catex_mem_bottom
-  #                cathode_left cathode_right
-  #                cathode_top cathode_bottom'
-  #    porosity = 1
-  #    ux = vel_x
-  #    uy = vel_y
-  #    uz = vel_z
-  #[../]
-  #[./tracer_membrane_trans]
-  #    type = DGFlowMassFluxBC
-  #    variable = tracer
-  #    boundary = 'catex_mem_interface'
-  #    porosity = 1
-  #    ux = vel_x
-  #    uy = vel_y
-  #    uz = vel_z
-  #[../]
-
   # exit pressure
   [./press_at_exit]
       type = DirichletBC
@@ -566,7 +496,7 @@
       type = CoupledNeumannBC
       variable = pressure
       boundary = 'channel_enter'
-      coupled = vel_in  # mm/s
+      coupled = vel_in   # mm/s
   [../]
 
 []

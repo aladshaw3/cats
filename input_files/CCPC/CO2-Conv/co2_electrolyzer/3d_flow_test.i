@@ -58,26 +58,7 @@
       initial_condition = 1.0e5
   [../]
 
-  # velocity in x
-  [./vel_x]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 0.0
-  [../]
 
-  # velocity in y
-  [./vel_y]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 0.0
-  [../]
-
-  # velocity in z
-  [./vel_z]
-      order = FIRST
-      family = MONOMIAL
-      initial_condition = 0.0
-  [../]
 []
 
 [ICs]
@@ -93,7 +74,7 @@
   [./D]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1000.0
+      initial_condition = 100.0
   [../]
 []
 
@@ -246,6 +227,25 @@
       variable = pressure
       boundary = 'channel_enter'
       value = 963.33   # mm/s
+  [../]
+
+  [./no_slip_x]
+      type = DirichletBC
+      variable = vel_x
+      boundary = 'channel_side_walls channel_bottom'
+      value = 0
+  [../]
+  [./no_slip_y]
+      type = DirichletBC
+      variable = vel_y
+      boundary = 'channel_side_walls channel_bottom'
+      value = 0
+  [../]
+  [./no_slip_z]
+      type = DirichletBC
+      variable = vel_z
+      boundary = 'channel_side_walls channel_bottom'
+      value = 0
   [../]
 []
 
