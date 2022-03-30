@@ -18,11 +18,11 @@
 [Mesh]
   [file]
     type = FileMeshGenerator
-    #file = CO2_electrolyzer_half_cell_coarse.msh
+    file = CO2_electrolyzer_half_cell_coarse.msh
 
     # No issue with mesh, just issues with the MUMPS linear solver
     # during preconditioning
-    file = CO2_electrolyzer_half_cell_fine.msh
+    #file = CO2_electrolyzer_half_cell_fine.msh
 
     ### ========= boundary_name ==========
     # "channel_exit"
@@ -65,7 +65,7 @@
       order = FIRST
       family = MONOMIAL
       scaling = 1
-      initial_condition = 1.0e-20
+      initial_condition = 1.0
       block = 'channel cathode catex_membrane'
   [../]
 
@@ -506,10 +506,10 @@
       type = TemporalStepFunction
       variable = vel_in
 
-      start_value = 963.33
+      start_value = 0.1
       aux_vals = '963.33'
-      aux_times = '15'
-      time_spans = '30'
+      aux_times = '5'
+      time_spans = '10'
 
       execute_on = 'initial timestep_begin nonlinear'
   [../]
@@ -714,7 +714,7 @@
   nl_abs_step_tol = 1e-12
 
   start_time = 0.0
-  end_time = 0.5
+  end_time = 20
   dtmax = 1
 
   [./TimeStepper]
