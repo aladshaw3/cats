@@ -15,8 +15,11 @@
 [Mesh]
   [file]
     type = FileMeshGenerator
-    file = CO2_electrolyzer_half_cell_coarse.msh
-    #file = CO2_electrolyzer_half_cell_fine.msh  #issue with this mesh
+    #file = CO2_electrolyzer_half_cell_coarse.msh
+
+    # No issue with mesh, just issues with the MUMPS linear solver
+    # during preconditioning
+    file = CO2_electrolyzer_half_cell_fine.msh
 
     ### ========= boundary_name ==========
     # "channel_exit"
@@ -59,7 +62,7 @@
       order = FIRST
       family = MONOMIAL
       scaling = 1
-      initial_condition = 1.0
+      initial_condition = 1.0e-20
       block = 'channel cathode catex_membrane'
   [../]
 
@@ -380,9 +383,9 @@
       variable = D
       temperature = T_e
       macro_porosity = eps
-      ux = 0
-      uy = vel_in
-      uz = 0
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
@@ -405,9 +408,9 @@
       variable = D
       temperature = T_e
       macro_porosity = eps
-      ux = 0
-      uy = vel_in
-      uz = 0
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
@@ -623,7 +626,8 @@
   petsc_options = '-snes_converged_reason
                     -snes_linesearch_monitor
 
-                    -ksp_gmres_modifiedgramschmidt'
+                    -ksp_gmres_modifiedgramschmidt
+                    -ksp_ksp_gmres_modifiedgramschmidt'
 
   # NOTE: The sub_pc_type arg not used if pc_type is ksp,
   #       Instead, set the ksp_ksp_type to the pc method
@@ -643,7 +647,7 @@
                         -pc_factor_shift_type
                         -ksp_pc_factor_shift_type
 
-                        -pc_asm_overlap
+                        -pc_gasm_overlap
 
                         -snes_atol
                         -snes_rtol
@@ -660,8 +664,7 @@
                         -ksp_rtol
                         -ksp_atol
 
-                        -ksp_pc_factor_mat_solver_type
-
+                         -ksp_pc_factor_mat_solver_type
                         	-mat_mumps_cntl_1
                           -mat_mumps_cntl_3
                           -mat_mumps_icntl_23'
@@ -689,17 +692,16 @@
                          50
                          50
 
-                         50
-                         50
+                         20
+                         10
 
                          1e-16
                          1e-6
 
                          mumps
-
                           0.01
-                          0.
-                          500'
+                          1e-10
+                          2000'
 
 
   line_search = l2
