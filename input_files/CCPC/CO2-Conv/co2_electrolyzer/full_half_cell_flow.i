@@ -52,7 +52,7 @@
 
 [Variables]
   [./dummy]
-      order = FIRST
+      order = CONSTANT
       family = LAGRANGE
       scaling = 1
       block = 'plate'
@@ -77,7 +77,7 @@
 
   # velocity in x
   [./vel_x]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       initial_condition = 0.0
       block = 'channel cathode catex_membrane'
@@ -85,7 +85,7 @@
 
   # velocity in y
   [./vel_y]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       initial_condition = 0.0
       block = 'channel cathode catex_membrane'
@@ -93,7 +93,7 @@
 
   # velocity in z
   [./vel_z]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       initial_condition = 0.0
       block = 'channel cathode catex_membrane'
@@ -504,13 +504,6 @@
 []
 
 [BCs]
-  # dummy
-  [./dummy]
-      type = DirichletBC
-      variable = dummy
-      boundary = 'plate_bottom'
-      value = 0
-  [../]
 
   ## =============== tracer fluxes ================
   [./tracer_FluxIn]
