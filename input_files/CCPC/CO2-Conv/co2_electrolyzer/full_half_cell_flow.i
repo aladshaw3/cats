@@ -3,6 +3,9 @@
 #   Dimensionality and flow rate from
 #   literature would result in a hydraulic
 #   residence time of ~0.2 seconds
+#
+#   Adjusted dispersion coefficients for
+#   maximized numerical stability 
 
 [GlobalParams]
 
@@ -358,15 +361,18 @@
       variable = D
       temperature = T_e
       macro_porosity = eps
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
+      ux = 0
+      uy = vel_in
+      uz = 0
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
       ref_diffusivity = 0.0017
       diff_length_unit = "mm"
       diff_time_unit = "s"
+
+      dispersivity = 0.1 #mm
+      disp_length_unit = "mm"
 
       include_dispersivity_correction = true
       include_porosity_correction = false
@@ -383,15 +389,18 @@
       variable = D
       temperature = T_e
       macro_porosity = eps
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
+      ux = 0
+      uy = vel_in
+      uz = 0
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
       ref_diffusivity = 0.0017
       diff_length_unit = "mm"
       diff_time_unit = "s"
+
+      dispersivity = 0.01   #mm (factor of 10 less than in channel)
+      disp_length_unit = "mm"
 
       include_dispersivity_correction = true
       include_porosity_correction = true
@@ -408,9 +417,9 @@
       variable = D
       temperature = T_e
       macro_porosity = eps
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
+      ux = 0
+      uy = vel_in
+      uz = 0
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
@@ -418,7 +427,10 @@
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
-      include_dispersivity_correction = false
+      dispersivity = 0.005 #mm (half of diff in cathode)
+      disp_length_unit = "mm"
+
+      include_dispersivity_correction = true
       include_porosity_correction = false
 
       output_length_unit = "mm"
@@ -655,12 +667,12 @@
                         -ksp_ksp_max_it
 
                         -ksp_rtol
-                        -ksp_atol
+                        -ksp_atol'
 
-                         -ksp_pc_factor_mat_solver_type
-                        	-mat_mumps_cntl_1
-                          -mat_mumps_cntl_3
-                          -mat_mumps_icntl_23'
+                         #-ksp_pc_factor_mat_solver_type
+                        	#-mat_mumps_cntl_1
+                          #-mat_mumps_cntl_3
+                          #-mat_mumps_icntl_23'
 
   ## NOTE: May be best to just use lu as pc_type instead of ksp
   petsc_options_value = 'fgmres
@@ -680,7 +692,7 @@
                          1E-8
 
                          fgmres
-                         lu
+                         ilu
 
                          50
                          50
@@ -688,18 +700,18 @@
                          20
                          10
 
-                         1e-16
-                         1e-6
+                         1e-8
+                         1e-6'
 
-                         mumps
-                          0.01
-                          1e-10
-                          2000'
+                         #mumps
+                          #0.01
+                          #1e-8
+                          #4000'
 
 
   line_search = l2
-  nl_rel_step_tol = 1e-10
-  nl_abs_step_tol = 1e-10
+  nl_rel_step_tol = 1e-12
+  nl_abs_step_tol = 1e-12
 
   start_time = 0.0
   end_time = 0.5
