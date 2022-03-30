@@ -53,7 +53,7 @@
 [Variables]
   [./dummy]
       order = CONSTANT
-      family = LAGRANGE
+      family = MONOMIAL
       scaling = 1
       block = 'plate'
   [../]
