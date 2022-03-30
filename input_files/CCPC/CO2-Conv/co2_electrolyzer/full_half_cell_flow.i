@@ -52,8 +52,8 @@
 
 [Variables]
   [./dummy]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       scaling = 1
       block = 'plate'
   [../]
@@ -118,7 +118,7 @@
   [../]
 
   [./D]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       block = 'channel cathode catex_membrane'
   [../]
@@ -146,7 +146,7 @@
 
   # Electrolyte temperature
   [./T_e]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       initial_condition = 300 #K
       block = 'channel cathode catex_membrane'
@@ -154,7 +154,7 @@
 
   # Electrode temperature
   [./T_s]
-      order = FIRST
+      order = CONSTANT
       family = MONOMIAL
       initial_condition = 300 #K
       block = 'plate cathode catex_membrane'
@@ -358,9 +358,9 @@
       variable = D
       temperature = T_e
       macro_porosity = eps
-      ux = 0
-      uy = vel_in
-      uz = 0
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
       vel_length_unit = "mm"
       vel_time_unit = "s"
 
@@ -418,7 +418,7 @@
       diff_length_unit = "mm"
       diff_time_unit = "s"
 
-      include_dispersivity_correction = true
+      include_dispersivity_correction = false
       include_porosity_correction = false
 
       output_length_unit = "mm"
