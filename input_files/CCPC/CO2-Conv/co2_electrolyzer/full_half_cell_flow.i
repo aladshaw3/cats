@@ -5,7 +5,7 @@
 #   residence time of ~0.2 seconds
 #
 #   Adjusted dispersion coefficients for
-#   maximized numerical stability 
+#   maximized numerical stability
 
 [GlobalParams]
 
@@ -667,12 +667,12 @@
                         -ksp_ksp_max_it
 
                         -ksp_rtol
-                        -ksp_atol'
+                        -ksp_atol
 
-                         #-ksp_pc_factor_mat_solver_type
-                        	#-mat_mumps_cntl_1
-                          #-mat_mumps_cntl_3
-                          #-mat_mumps_icntl_23'
+                         -ksp_pc_factor_mat_solver_type
+                        	-mat_mumps_cntl_1
+                          -mat_mumps_cntl_3
+                          -mat_mumps_icntl_23'
 
   ## NOTE: May be best to just use lu as pc_type instead of ksp
   petsc_options_value = 'fgmres
@@ -692,7 +692,7 @@
                          1E-8
 
                          fgmres
-                         ilu
+                         lu
 
                          50
                          50
@@ -701,12 +701,12 @@
                          10
 
                          1e-8
-                         1e-6'
+                         1e-6
 
-                         #mumps
-                          #0.01
-                          #1e-8
-                          #4000'
+                         mumps
+                          0.01
+                          1e-8
+                          4000'
 
 
   line_search = l2
