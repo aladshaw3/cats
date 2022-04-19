@@ -3650,7 +3650,7 @@
   nl_abs_step_tol = 1e-10
 
   start_time = 0.0
-  end_time = 10000
+  end_time = 25
   dtmax = 180
 
   [./TimeStepper]
