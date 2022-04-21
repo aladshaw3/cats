@@ -1,0 +1,8 @@
+[Tests]
+  [./test_vector_and_grad_fluxes]
+    type = 'Exodiff'
+    input = 'coupled_flux_bc.i'
+    exodiff = 'coupled_flux_bc_out.e'
+    rel_err = 1e-4
+  [../]
+[]
