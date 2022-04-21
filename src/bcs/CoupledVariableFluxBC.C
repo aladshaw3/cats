@@ -2,17 +2,10 @@
  *  \file CoupledVariableFluxBC.h
  *	\brief Boundary Condition kernel for flux of material leaving/entering a domain
  *  \details A Flux BC which is consistent with the boundary terms arising from
- *            any flux of material into or out of a domain. The determination of
- *            whether the domain is an input or output domain is made on the fly
- *            by looking at the sign of the dot product between the flux vector
- *            and the normals of the domain.
+ *            any flux of material into or out of a domain. The flux variable
+ *            is a vector composed of x, y, z flux components.
  *
- *            [OUTPUT]
- *            if ((_flux)*_normals[_qp] > 0.0)
  *                Res = _test[_i][_qp]*(_flux*_normals[_qp]);
- *            [INPUT]
- *             else
- *                Res = _test[_i][_qp]*(_flux_in*_normals[_qp]); //Default to zero
  *
  *
  *  \author Austin Ladshaw
@@ -37,9 +30,6 @@ InputParameters CoupledVariableFluxBC::validParams()
   params.addCoupledVar("fx",0.0,"Variable for flux in x-direction");
   params.addCoupledVar("fy",0.0,"Variable for flux in y-direction");
   params.addCoupledVar("fz",0.0,"Variable for flux in z-direction");
-  params.addParam<Real>("fx_in",0,"x-component of inlet flux vector");
-  params.addParam<Real>("fy_in",0,"y-component of inlet flux vector");
-  params.addParam<Real>("fz_in",0,"z-component of inlet flux vector");
   return params;
 }
 
@@ -50,15 +40,9 @@ _fy(coupledValue("fy")),
 _fz(coupledValue("fz")),
 _fx_var(coupled("fx")),
 _fy_var(coupled("fy")),
-_fz_var(coupled("fz")),
-
-_fx_in(getParam<Real>("fx_in")),
-_fy_in(getParam<Real>("fy_in")),
-_fz_in(getParam<Real>("fz_in"))
+_fz_var(coupled("fz"))
 {
-  _flux_in(0)=_fx_in;
-	_flux_in(1)=_fy_in;
-	_flux_in(2)=_fz_in;
+
 }
 
 Real CoupledVariableFluxBC::computeQpResidual()
@@ -67,20 +51,7 @@ Real CoupledVariableFluxBC::computeQpResidual()
 	_flux(1)=_fy[_qp];
 	_flux(2)=_fz[_qp];
 
-	Real r = 0;
-
-	//Output
-	if ((_flux)*_normals[_qp] > 0.0)
-	{
-		r += _test[_i][_qp]*(_flux*_normals[_qp]);
-	}
-	//Input
-	else
-	{
-		r += _test[_i][_qp]*(_flux_in*_normals[_qp]);
-	}
-
-	return r;
+	return _test[_i][_qp]*(_flux*_normals[_qp]);
 }
 
 Real CoupledVariableFluxBC::computeQpJacobian()
@@ -94,51 +65,19 @@ Real CoupledVariableFluxBC::computeQpOffDiagJacobian(unsigned int jvar)
 	_flux(1)=_fy[_qp];
 	_flux(2)=_fz[_qp];
 
-	Real r = 0;
-
 	if (jvar == _fx_var)
 	{
-		//Output
-		if ((_flux)*_normals[_qp] > 0.0)
-		{
-			r += _test[_i][_qp]*(_phi[_j][_qp]*_normals[_qp](0));
-		}
-		//Input
-		else
-		{
-			r += 0;
-		}
-		return r;
+		return _test[_i][_qp]*(_phi[_j][_qp]*_normals[_qp](0));
 	}
 
 	if (jvar == _fy_var)
 	{
-		//Output
-		if ((_flux)*_normals[_qp] > 0.0)
-		{
-			r += _test[_i][_qp]*(_phi[_j][_qp]*_normals[_qp](1));
-		}
-		//Input
-		else
-		{
-			r += 0;
-		}
-		return r;
+		return _test[_i][_qp]*(_phi[_j][_qp]*_normals[_qp](1));
 	}
 
 	if (jvar == _fz_var)
 	{
-		//Output
-		if ((_flux)*_normals[_qp] > 0.0)
-		{
-			r += _test[_i][_qp]*(_phi[_j][_qp]*_normals[_qp](2));
-		}
-		//Input
-		else
-		{
-			r += 0;
-		}
-		return r;
+		return _test[_i][_qp]*(_phi[_j][_qp]*_normals[_qp](2));
 	}
 
 	return 0.0;

@@ -1,15 +1,15 @@
 /*!
- *  \file CoupledVariableFluxBC.h
- *	\brief Boundary Condition kernel for flux of material leaving/entering a domain
- *  \details A Flux BC which is consistent with the boundary terms arising from
- *            any flux of material into or out of a domain. The flux variable
- *            is a vector composed of x, y, z flux components.
+ *  \file CoupledVariableGradientFluxBC.h
+ *	\brief Boundary Condition kernel for flux of material based on another variable gradient
+ *  \details A Flux BC which couples the gradient of another variable to the flux of
+ *          this variable. Additionally, a variable coefficient may be multiplied by
+ *          the other variable gradient to scale the flux accordingly.
  *
- *                Res = _test[_i][_qp]*(_flux*_normals[_qp]);
+ *                Res = -_test[_i][_qp]*_ceof*(_coupled_grad[_qp]*_normals[_qp]);
  *
  *
  *  \author Austin Ladshaw
- *	\date 11/03/2021
+ *	\date 04/21/2022
  *	\copyright This kernel was designed and built at Oak Ridge National
  *              Laboratory by Austin Ladshaw for research in electrochemical
  *              CO2 conversion.
@@ -25,17 +25,17 @@
 #include "IntegratedBC.h"
 #include "libmesh/vector_value.h"
 
-/// CoupledVariableFluxBC class object inherits from IntegratedBC object
+/// CoupledVariableGradientFluxBC class object inherits from IntegratedBC object
 /** This class object inherits from the IntegratedBC object.
 	All public and protected members of this class are required function overrides.*/
-class CoupledVariableFluxBC : public IntegratedBC
+class CoupledVariableGradientFluxBC : public IntegratedBC
 {
 public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
 
 	/// Required constructor for BC objects in MOOSE
-	CoupledVariableFluxBC(const InputParameters & parameters);
+	CoupledVariableGradientFluxBC(const InputParameters & parameters);
 
 protected:
 	/// Required function override for BC objects in MOOSE
@@ -52,16 +52,11 @@ protected:
 		cross coupling of the variables. */
   virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-	/// Flux vector in the system or at the outlet boundary
-	RealVectorValue _flux;
+  const VariableGradient & _coupled_grad;            ///< Coupled variable gradient
+  const unsigned int _coupled_var;                   ///< Variable identification for coupled variable
 
-  const VariableValue & _fx;			///< Flux in the x-direction
-	const VariableValue & _fy;			///< Flux in the y-direction
-	const VariableValue & _fz;			///< Flux in the z-direction
-
-	const unsigned int _fx_var;					///< Variable identification for fx
-	const unsigned int _fy_var;					///< Variable identification for fy
-	const unsigned int _fz_var;					///< Variable identification for fz
+  const VariableValue & _coef;			     ///< Variable for the coefficient
+	const unsigned int _coef_var;					 ///< Variable identification for the coefficient
 
 private:
 
