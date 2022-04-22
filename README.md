@@ -1,7 +1,7 @@
 CATS
 =====
 
-Catalysis And Treatment Simulations (CATS)  <Version 1.1>
+Catalysis And Treatment Simulations (CATS)
 
 This MOOSE module is can be used to simulate catalysis reactions in the exhaust systems for vehicles or in electrochemical catalysis for flow batteries and chemical conversion. Combines the standard MOOSE SUPG methods for fluid flow around through the domain and uses DG methods to simulate the mass/energy balances in the fluid streams, as well as electric potential and electric current balances. This module also includes an experimental DG implementation of Navier-Stokes equations for fluid flow.
 
@@ -66,15 +66,10 @@ Or, to run on multiple CPU cores...
 
 Citation
 -----
-Ladshaw, A.P., "CATS: Catalytic After Treatment System -- MOOSE based catalysis and fixed-bed model simulation tool," <Version (#)>, https://github.com/aladshaw3/cats, Accessed (Month) (Day), (Year).
+Ladshaw, A.P., "CATS: Catalytic After Treatment System -- MOOSE based catalysis and fixed-bed model simulation tool," https://github.com/aladshaw3/cats, Accessed (Month) (Day), (Year).
 
 
-Other Information
+Contact Information
 -----
 
 For questions, contact Austin Ladshaw (ladshawap@ornl.gov  --or--  aladshaw3@outlook.com)
-
-
-"Fork cats" to create a new MOOSE-based application.
-
-For more information see: [http://mooseframework.org/create-an-app/](http://mooseframework.org/create-an-app/)
