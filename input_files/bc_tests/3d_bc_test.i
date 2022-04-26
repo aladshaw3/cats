@@ -21,7 +21,7 @@
 [Mesh]
   [file]
     type = FileMeshGenerator
-    file = CO2_electrolyzer_half_cell_plateless_coarse.msh
+    file = CO2_electrolyzer_half_cell_plateless_v2_coarse.msh
 
     ### ========= boundary_name ==========
     # "channel_exit"
@@ -176,24 +176,9 @@
 [BCs]
 
   ## =============== tracer fluxes ================
-  [./pos_ion_FluxIn]
+  [./pos_ion_FluxIn_to_cathode_from_membrane]
       type = DGDiffusionFluxBC
       variable = proton
-      boundary = 'channel_interface_cathode'
-
-      # NOTE: This boundary should be on the cathode as well,
-      #       but in the current mesh only exists on the membrane
-      #boundary = 'cathode_interface_membrane'
-      Dxx = 1
-      Dyy = 1
-      Dzz = 1
-      u_input = 1e-8
-  [../]
-
-
-  [./pos_ion_FluxIn_for_mem]
-      type = DGDiffusionFluxBC
-      variable = proton_mem
       boundary = 'cathode_interface_membrane'
       Dxx = 1
       Dyy = 1
@@ -201,10 +186,20 @@
       u_input = 1e-8
   [../]
 
-  [./pos_ion_FluxIn_for_channel]
+  [./pos_ion_FluxIn_to_membrane_from_edge]
+      type = DGDiffusionFluxBC
+      variable = proton_mem
+      boundary = 'catex_mem_interface'
+      Dxx = 1
+      Dyy = 1
+      Dzz = 1
+      u_input = 1e-8
+  [../]
+
+  [./pos_ion_FluxIn_to_channel_from_bounds]
       type = DGDiffusionFluxBC
       variable = proton_channel
-      boundary = 'channel_bottom'
+      boundary = 'channel_exit channel_enter channel_side_walls'
       Dxx = 1
       Dyy = 1
       Dzz = 1
@@ -329,7 +324,7 @@
   nl_abs_step_tol = 1e-12
 
   start_time = 0.0
-  end_time = 5
+  end_time = 1
   dtmax = 1
 
   [./TimeStepper]

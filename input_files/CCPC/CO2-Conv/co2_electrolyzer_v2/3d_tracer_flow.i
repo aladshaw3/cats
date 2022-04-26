@@ -18,7 +18,7 @@
 [Mesh]
   [file]
     type = FileMeshGenerator
-    file = CO2_electrolyzer_half_cell_plateless_coarse.msh
+    file = CO2_electrolyzer_half_cell_plateless_v2_coarse.msh
 
     ### ========= boundary_name ==========
     # "channel_exit"
@@ -515,6 +515,17 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
+  [../]
+
+  # Testing out a diffusion of tracer from membrane into cathode 
+  [./tracer_FluxIn_to_cathode_from_membrane]
+      type = DGDiffusionFluxBC
+      variable = tracer
+      boundary = 'cathode_interface_membrane'
+      Dxx = 0.0017
+      Dyy = 0.0017
+      Dzz = 0.0017
+      u_input = 1e-6
   [../]
 
   # exit pressure
