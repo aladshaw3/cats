@@ -517,7 +517,7 @@
       uz = vel_z
   [../]
 
-  # Testing out a diffusion of tracer from membrane into cathode 
+  # Testing out a diffusion of tracer from membrane into cathode
   [./tracer_FluxIn_to_cathode_from_membrane]
       type = DGDiffusionFluxBC
       variable = tracer
@@ -584,6 +584,32 @@
 
   [./vy_outlet]
       type = SideAverageValue
+      boundary = 'channel_exit'
+      variable = vel_y
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./A_outlet]
+      type = AreaPostprocessor
+      boundary = 'channel_exit'
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./A_membrane]
+      type = AreaPostprocessor
+      boundary = 'catex_mem_interface'
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./Q_cross_mem]
+      type = SideIntegralVariablePostprocessor
+      boundary = 'catex_mem_interface'
+      variable = vel_z
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./Q_outlet]
+      type = SideIntegralVariablePostprocessor
       boundary = 'channel_exit'
       variable = vel_y
       execute_on = 'initial timestep_end'
