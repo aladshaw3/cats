@@ -18,7 +18,7 @@
 [Mesh]
   [file]
     type = FileMeshGenerator
-    file = CO2_electrolyzer_half_cell_plateless_v2_coarse.msh
+    file = CO2_electrolyzer_half_cell_plateless_v2_fine.msh
 
     ### ========= boundary_name ==========
     # "channel_exit"

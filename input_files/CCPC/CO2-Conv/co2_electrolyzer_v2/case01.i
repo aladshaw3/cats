@@ -71,6 +71,17 @@
   min_conductivity = 2e-5 #C/V/s/mm
   tight_coupling = true
 
+  # common to all SimpleGasPropertiesBase
+  diff_length_unit = "mm"
+  diff_time_unit = "s"
+  dispersivity = 0.75 #mm
+  disp_length_unit = "mm"
+  vel_length_unit = "mm"
+  vel_time_unit = "s"
+  output_length_unit = "mm"
+  output_time_unit = "s"
+  effective_diffusivity_factor = 1.5
+
 [] #END GlobalParams
 
 [Problem]
@@ -114,7 +125,7 @@
       order = FIRST
       family = LAGRANGE
       scaling = 1
-      initial_condition = 405300 # Pa == 4 atm
+      initial_condition = 0 # Pa == 4 atm
       block = 'channel cathode catex_membrane'
   [../]
 
@@ -141,6 +152,72 @@
       initial_condition = 0.0
       block = 'channel cathode catex_membrane'
   [../]
+
+  # concentration of HCO3 (umol/mm^3)
+  [./C_HCO3]
+      order = FIRST
+      family = MONOMIAL
+      scaling = 1
+      initial_condition = 2.938 #M
+      block = 'channel cathode'
+  [../]
+
+  # concentration of CO3 (umol/mm^3)
+  [./C_CO3]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.031 #M
+      block = 'channel cathode'
+  [../]
+
+  # concentration of CO2 (umol/mm^3)
+  [./C_CO2]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 0.031 #M
+      block = 'channel cathode'
+  [../]
+
+  # concentration of H (umol/mm^3)
+  [./C_H]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 4.41e-9 #M
+      block = 'channel cathode'
+  [../]
+
+  # concentration of OH (umol/mm^3)
+  [./C_OH]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 2.14e-6 #M
+      block = 'channel cathode'
+  [../]
+
+  # concentration of K (umol/mm^3)
+  [./C_K]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 3 #M
+      block = 'channel cathode'
+  [../]
+
+  # concentration of CO (umol/mm^3)
+  [./C_CO]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 1e-15 #M
+      block = 'channel cathode'
+  [../]
+
+  # concentration of H2 (umol/mm^3)
+  [./C_H2]
+      order = FIRST
+      family = MONOMIAL
+      initial_condition = 1e-15 #M
+      block = 'channel cathode'
+  [../]
+
 []
 
 [ICs]
@@ -152,6 +229,7 @@
   [./phi_e]
       order = FIRST
       family = LAGRANGE
+      initial_condition = 0.0
       block = 'channel cathode catex_membrane'
   [../]
 
@@ -288,6 +366,119 @@
       initial_condition = 0.02998 #C*s/g * (g/kg)*(mm^2/m^2)
       block = 'catex_membrane'
   [../]
+
+  # Diffusion of HCO3
+  [./D_HCO3]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Dispersion of HCO3
+  [./Dd_HCO3]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Diffusion of CO3
+  [./D_CO3]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Dispersion of CO3
+  [./Dd_CO3]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Diffusion of CO2
+  [./D_CO2]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Dispersion of CO2
+  [./Dd_CO2]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Diffusion of H
+  [./D_H]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Dispersion of H
+  [./Dd_H]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Diffusion of OH
+  [./D_OH]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Dispersion of OH
+  [./Dd_OH]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Diffusion of K
+  [./D_K]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Dispersion of K
+  [./Dd_K]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Diffusion of CO
+  [./D_CO]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Dispersion of CO
+  [./Dd_CO]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Diffusion of H2
+  [./D_H2]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
+  # Dispersion of H2
+  [./Dd_H2]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'channel cathode'
+  [../]
+
 []
 
 [Kernels]
@@ -412,9 +603,513 @@
       uz = SchloeglElectrokinetic
       block = 'catex_membrane'
   [../]
+
+
+  ## ===================== HCO3 balance ====================
+  [./HCO3_dot]
+      type = VariableCoefTimeDerivative
+      variable = C_HCO3
+      coupled_coef = eps
+  [../]
+  [./HCO3_gadv]
+      type = GPoreConcAdvection
+      variable = C_HCO3
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./HCO3_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_HCO3
+      porosity = 1
+      Dx = Dd_HCO3
+      Dy = Dd_HCO3
+      Dz = Dd_HCO3
+  [../]
+  [./HCO3_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_HCO3
+      valence = -1
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_HCO3
+      Dy = D_HCO3
+      Dz = D_HCO3
+  [../]
+
+  ## ===================== CO3 balance ====================
+  [./CO3_dot]
+      type = VariableCoefTimeDerivative
+      variable = C_CO3
+      coupled_coef = eps
+  [../]
+  [./CO3_gadv]
+      type = GPoreConcAdvection
+      variable = C_CO3
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./CO3_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_CO3
+      porosity = 1
+      Dx = Dd_CO3
+      Dy = Dd_CO3
+      Dz = Dd_CO3
+  [../]
+  [./CO3_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_CO3
+      valence = -2
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_CO3
+      Dy = D_CO3
+      Dz = D_CO3
+  [../]
+
+  ## ===================== CO2 balance ====================
+  [./CO2_dot]
+      type = VariableCoefTimeDerivative
+      variable = C_CO2
+      coupled_coef = eps
+  [../]
+  [./CO2_gadv]
+      type = GPoreConcAdvection
+      variable = C_CO2
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./CO2_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_CO2
+      porosity = 1
+      Dx = Dd_CO2
+      Dy = Dd_CO2
+      Dz = Dd_CO2
+  [../]
+  [./CO2_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_CO2
+      valence = 0
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_CO2
+      Dy = D_CO2
+      Dz = D_CO2
+  [../]
+
+  ## ===================== H balance ====================
+  [./H_dot]
+      type = VariableCoefTimeDerivative
+      variable = C_H
+      coupled_coef = eps
+  [../]
+  [./H_gadv]
+      type = GPoreConcAdvection
+      variable = C_H
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./H_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_H
+      porosity = 1
+      Dx = Dd_H
+      Dy = Dd_H
+      Dz = Dd_H
+  [../]
+  [./H_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_H
+      valence = 1
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_H
+      Dy = D_H
+      Dz = D_H
+  [../]
+
+  ## ===================== OH balance ====================
+  [./OH_dot]
+      type = VariableCoefTimeDerivative
+      variable = C_OH
+      coupled_coef = eps
+  [../]
+  [./OH_gadv]
+      type = GPoreConcAdvection
+      variable = C_OH
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./OH_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_OH
+      porosity = 1
+      Dx = Dd_OH
+      Dy = Dd_OH
+      Dz = Dd_OH
+  [../]
+  [./OH_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_OH
+      valence = -1
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_OH
+      Dy = D_OH
+      Dz = D_OH
+  [../]
+
+  ## ===================== K balance ====================
+  [./K_dot]
+      type = VariableCoefTimeDerivative
+      variable = C_K
+      coupled_coef = eps
+  [../]
+  [./K_gadv]
+      type = GPoreConcAdvection
+      variable = C_K
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./K_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_K
+      porosity = 1
+      Dx = Dd_K
+      Dy = Dd_K
+      Dz = Dd_K
+  [../]
+  [./K_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_K
+      valence = 1
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_K
+      Dy = D_K
+      Dz = D_K
+  [../]
+
+  ## ===================== CO balance ====================
+  [./CO_dot]
+      type = VariableCoefTimeDerivative
+      variable = C_CO
+      coupled_coef = eps
+  [../]
+  [./CO_gadv]
+      type = GPoreConcAdvection
+      variable = C_CO
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./CO_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_CO
+      porosity = 1
+      Dx = Dd_CO
+      Dy = Dd_CO
+      Dz = Dd_CO
+  [../]
+  [./CO_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_CO
+      valence = 0
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_CO
+      Dy = D_CO
+      Dz = D_CO
+  [../]
+
+  ## ===================== H2 balance ====================
+  [./H2_dot]
+      type = VariableCoefTimeDerivative
+      variable = C_H2
+      coupled_coef = eps
+  [../]
+  [./H2_gadv]
+      type = GPoreConcAdvection
+      variable = C_H2
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./H2_gdiff]
+      type = GVarPoreDiffusion
+      variable = C_H2
+      porosity = 1
+      Dx = Dd_H2
+      Dy = Dd_H2
+      Dz = Dd_H2
+  [../]
+  [./H2_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_H2
+      valence = 0
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_H2
+      Dy = D_H2
+      Dz = D_H2
+  [../]
 []
 
 [DGKernels]
+  ## ===================== HCO3 balance ====================
+  [./HCO3_dgadv]
+      type = DGPoreConcAdvection
+      variable = C_HCO3
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./HCO3_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = C_HCO3
+      porosity = 1
+      Dx = Dd_HCO3
+      Dy = Dd_HCO3
+      Dz = Dd_HCO3
+  [../]
+  [./HCO3_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = C_HCO3
+      valence = -1
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_HCO3
+      Dy = D_HCO3
+      Dz = D_HCO3
+  [../]
+
+  ## ===================== CO3 balance ====================
+  [./CO3_dgadv]
+      type = DGPoreConcAdvection
+      variable = C_CO3
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./CO3_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = C_CO3
+      porosity = 1
+      Dx = Dd_CO3
+      Dy = Dd_CO3
+      Dz = Dd_CO3
+  [../]
+  [./CO3_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = C_CO3
+      valence = -2
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_CO3
+      Dy = D_CO3
+      Dz = D_CO3
+  [../]
+
+  ## ===================== CO2 balance ====================
+  [./CO2_dgadv]
+      type = DGPoreConcAdvection
+      variable = C_CO2
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./CO2_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = C_CO2
+      porosity = 1
+      Dx = Dd_CO2
+      Dy = Dd_CO2
+      Dz = Dd_CO2
+  [../]
+  [./CO2_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = C_CO2
+      valence = 0
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_CO2
+      Dy = D_CO2
+      Dz = D_CO2
+  [../]
+
+  ## ===================== H balance ====================
+  [./H_dgadv]
+      type = DGPoreConcAdvection
+      variable = C_H
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./H_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = C_H
+      porosity = 1
+      Dx = Dd_H
+      Dy = Dd_H
+      Dz = Dd_H
+  [../]
+  [./H_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = C_H
+      valence = 1
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_H
+      Dy = D_H
+      Dz = D_H
+  [../]
+
+  ## ===================== OH balance ====================
+  [./OH_dgadv]
+      type = DGPoreConcAdvection
+      variable = C_OH
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./OH_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = C_OH
+      porosity = 1
+      Dx = Dd_OH
+      Dy = Dd_OH
+      Dz = Dd_OH
+  [../]
+  [./OH_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = C_OH
+      valence = -1
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_OH
+      Dy = D_OH
+      Dz = D_OH
+  [../]
+
+  ## ===================== K balance ====================
+  [./K_dgadv]
+      type = DGPoreConcAdvection
+      variable = C_K
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./K_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = C_K
+      porosity = 1
+      Dx = Dd_K
+      Dy = Dd_K
+      Dz = Dd_K
+  [../]
+  [./K_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = C_K
+      valence = 1
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_K
+      Dy = D_K
+      Dz = D_K
+  [../]
+
+  ## ===================== CO balance ====================
+  [./CO_dgadv]
+      type = DGPoreConcAdvection
+      variable = C_CO
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./CO_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = C_CO
+      porosity = 1
+      Dx = Dd_CO
+      Dy = Dd_CO
+      Dz = Dd_CO
+  [../]
+  [./CO_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = C_CO
+      valence = 0
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_CO
+      Dy = D_CO
+      Dz = D_CO
+  [../]
+
+  ## ===================== H2 balance ====================
+  [./H2_dgadv]
+      type = DGPoreConcAdvection
+      variable = C_H2
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+  [./H2_dgdiff]
+      type = DGVarPoreDiffusion
+      variable = C_H2
+      porosity = 1
+      Dx = Dd_H2
+      Dy = Dd_H2
+      Dz = Dd_H2
+  [../]
+  [./H2_dgnpdiff]
+      type = DGNernstPlanckDiffusion
+      variable = C_H2
+      valence = 0
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_H2
+      Dy = D_H2
+      Dz = D_H2
+  [../]
 
 []
 
@@ -450,7 +1145,7 @@
       type = TemporalStepFunction
       variable = Q_in
 
-      start_value = 16.6667
+      start_value = 0.0
       aux_vals = '1666.67'
 
       # Ramp up initial flow rate to
@@ -529,24 +1224,777 @@
       execute_on = 'initial timestep_end'
       block = 'catex_membrane'
   [../]
+
+  # ----------- Diffusion calc for HCO3 ----------------
+  [./D_HCO3_calc_channels]
+      type = SimpleFluidDispersion
+      variable = D_HCO3
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.0011
+
+      include_dispersivity_correction = false
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./D_HCO3_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = D_HCO3
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.0011
+
+      include_dispersivity_correction = false
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+  # Dispersion calc for HCO3
+  [./Dd_HCO3_calc_channels]
+      type = SimpleFluidDispersion
+      variable = Dd_HCO3
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.0011
+
+      include_dispersivity_correction = true
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./Dd_HCO3_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = Dd_HCO3
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.0011
+
+      include_dispersivity_correction = true
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+
+  # --------------- Diffusion calc for CO3 --------------
+  [./D_CO3_calc_channels]
+      type = SimpleFluidDispersion
+      variable = D_CO3
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.000801
+
+      include_dispersivity_correction = false
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./D_CO3_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = D_CO3
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.000801
+
+      include_dispersivity_correction = false
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+  # Dispersion calc for CO3
+  [./Dd_CO3_calc_channels]
+      type = SimpleFluidDispersion
+      variable = Dd_CO3
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.000801
+
+      include_dispersivity_correction = true
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./Dd_CO3_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = Dd_CO3
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.000801
+
+      include_dispersivity_correction = true
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+
+  # --------------- Diffusion calc for CO2 --------------
+  [./D_CO2_calc_channels]
+      type = SimpleFluidDispersion
+      variable = D_CO2
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00191
+
+      include_dispersivity_correction = false
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./D_CO2_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = D_CO2
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00191
+
+      include_dispersivity_correction = false
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+  # Dispersion calc for CO2
+  [./Dd_CO2_calc_channels]
+      type = SimpleFluidDispersion
+      variable = Dd_CO2
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00191
+
+      include_dispersivity_correction = true
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./Dd_CO2_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = Dd_CO2
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00191
+
+      include_dispersivity_correction = true
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+
+  # --------------- Diffusion calc for H --------------
+  [./D_H_calc_channels]
+      type = SimpleFluidDispersion
+      variable = D_H
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00695
+
+      include_dispersivity_correction = false
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./D_H_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = D_H
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00695
+
+      include_dispersivity_correction = false
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+  # Dispersion calc for H
+  [./Dd_H_calc_channels]
+      type = SimpleFluidDispersion
+      variable = Dd_H
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00695
+
+      include_dispersivity_correction = true
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./Dd_H_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = Dd_H
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00695
+
+      include_dispersivity_correction = true
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+
+  # --------------- Diffusion calc for OH --------------
+  [./D_OH_calc_channels]
+      type = SimpleFluidDispersion
+      variable = D_OH
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00493
+
+      include_dispersivity_correction = false
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./D_OH_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = D_OH
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00493
+
+      include_dispersivity_correction = false
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+  # Dispersion calc for OH
+  [./Dd_OH_calc_channels]
+      type = SimpleFluidDispersion
+      variable = Dd_OH
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00493
+
+      include_dispersivity_correction = true
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./Dd_OH_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = Dd_OH
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00493
+
+      include_dispersivity_correction = true
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+
+  # --------------- Diffusion calc for CO --------------
+  [./D_CO_calc_channels]
+      type = SimpleFluidDispersion
+      variable = D_CO
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.002107
+
+      include_dispersivity_correction = false
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./D_CO_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = D_CO
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.002107
+
+      include_dispersivity_correction = false
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+  # Dispersion calc for CO
+  [./Dd_CO_calc_channels]
+      type = SimpleFluidDispersion
+      variable = Dd_CO
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.002107
+
+      include_dispersivity_correction = true
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./Dd_CO_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = Dd_CO
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.002107
+
+      include_dispersivity_correction = true
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+
+  # --------------- Diffusion calc for H2 --------------
+  [./D_H2_calc_channels]
+      type = SimpleFluidDispersion
+      variable = D_H2
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00511
+
+      include_dispersivity_correction = false
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./D_H2_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = D_H2
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00511
+
+      include_dispersivity_correction = false
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+  # Dispersion calc for H2
+  [./Dd_H2_calc_channels]
+      type = SimpleFluidDispersion
+      variable = Dd_H2
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00511
+
+      include_dispersivity_correction = true
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./Dd_H2_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = Dd_H2
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.00511
+
+      include_dispersivity_correction = true
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+
+  # --------------- Diffusion calc for K --------------
+  [./D_K_calc_channels]
+      type = SimpleFluidDispersion
+      variable = D_K
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.001849
+
+      include_dispersivity_correction = false
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./D_K_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = D_K
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.001849
+
+      include_dispersivity_correction = false
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+  # Dispersion calc for K
+  [./Dd_K_calc_channels]
+      type = SimpleFluidDispersion
+      variable = Dd_K
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.001849
+
+      include_dispersivity_correction = true
+      include_porosity_correction = false
+
+      execute_on = 'initial timestep_end'
+      block = 'channel'
+  [../]
+  [./Dd_K_calc_cathode]
+      type = SimpleFluidDispersion
+      variable = Dd_K
+      temperature = T_e
+      macro_porosity = eps
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+
+      ref_diffusivity = 0.001849
+
+      include_dispersivity_correction = true
+      include_porosity_correction = true
+
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
 []
 
 
 [BCs]
-  # exit pressure
+  # ====== exit pressure ======
   [./press_at_exit]
       type = DirichletBC
       variable = pressure
       boundary = 'channel_exit'
-      value = 405300 # Pa == 4 atm
+      value = 0 # Pa == 4 atm
   [../]
 
-  # inlet pressure grad
+  # ===== inlet pressure grad =====
   [./press_grad_at_inlet]
       type = CoupledNeumannBC
       variable = pressure
       boundary = 'channel_enter'
       coupled = vel_in  # mm/s
+  [../]
+
+
+  ## =============== HCO3 fluxes ================
+  [./HCO3_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_HCO3
+      boundary = 'channel_enter'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 2.938
+  [../]
+  [./HCO3_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_HCO3
+      boundary = 'channel_exit'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ## =============== CO3 fluxes ================
+  [./CO3_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_CO3
+      boundary = 'channel_enter'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 0.031
+  [../]
+  [./CO3_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_CO3
+      boundary = 'channel_exit'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ## =============== CO2 fluxes ================
+  [./CO2_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_CO2
+      boundary = 'channel_enter'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 0.031
+  [../]
+  [./CO2_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_CO2
+      boundary = 'channel_exit'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ## =============== H fluxes ================
+  [./H_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_H
+      boundary = 'channel_enter'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 4.41e-9
+  [../]
+  [./H_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_H
+      boundary = 'channel_exit'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ## =============== OH fluxes ================
+  [./OH_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_OH
+      boundary = 'channel_enter'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 2.14e-6
+  [../]
+  [./OH_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_OH
+      boundary = 'channel_exit'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+
+  ## =============== K fluxes ================
+  [./K_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_K
+      boundary = 'channel_enter'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 3
+  [../]
+  [./K_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_K
+      boundary = 'channel_exit'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ## =============== CO fluxes ================
+  [./CO_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_CO
+      boundary = 'channel_enter'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 1e-15
+  [../]
+  [./CO_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_CO
+      boundary = 'channel_exit'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+  [../]
+
+  ## =============== H2 fluxes ================
+  [./H2_FluxIn]
+      type = DGFlowMassFluxBC
+      variable = C_H2
+      boundary = 'channel_enter'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
+      input_var = 1e-15
+  [../]
+  [./H2_FluxOut]
+      type = DGFlowMassFluxBC
+      variable = C_H2
+      boundary = 'channel_exit'
+      porosity = 1
+      ux = vel_x
+      uy = vel_y
+      uz = vel_z
   [../]
 
 []
@@ -604,6 +2052,21 @@
       type = SideIntegralVariablePostprocessor
       boundary = 'channel_exit'
       variable = vel_y
+      execute_on = 'initial timestep_end'
+  [../]
+
+
+  [./HCO3_inlet]
+      type = SideAverageValue
+      boundary = 'channel_enter'
+      variable = C_HCO3
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./HCO3_outlet]
+      type = SideAverageValue
+      boundary = 'channel_exit'
+      variable = C_HCO3
       execute_on = 'initial timestep_end'
   [../]
 []
