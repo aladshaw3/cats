@@ -74,6 +74,14 @@
       block = 'channel'
   [../]
 
+  [./pots]
+      order = FIRST
+      family = LAGRANGE
+      scaling = 1
+      initial_condition = 0.0
+      block = 'cathode'
+  [../]
+
 []
 
 [ICs]
@@ -131,6 +139,13 @@
       Dx = D
       Dy = D
       Dz = D
+  [../]
+
+  [./laplace_cathode]
+      type = VariableLaplacian
+      variable = pots
+      coupled_coef = 1
+      block = 'cathode'
   [../]
 
 
@@ -204,6 +219,13 @@
       Dyy = 1
       Dzz = 1
       u_input = 1e-8
+  [../]
+
+  [./ground]
+      type = DirichletBC
+      variable = pots
+      boundary = 'plate_interface_cathode channel_interface_cathode'
+      value = 0
   [../]
 
 
