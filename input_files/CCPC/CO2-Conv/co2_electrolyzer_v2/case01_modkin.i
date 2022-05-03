@@ -316,7 +316,7 @@
           reduced_state_stoich = '1'        # assumed
 
           oxidized_state_vars = 'C_H'
-          oxidized_state_stoich = '0.1737'  # fitted param
+          oxidized_state_stoich = '1'  # re-fitted param
 
           electric_potential_difference = phi_diff
 
@@ -342,7 +342,7 @@
           reduced_state_stoich = '1'         # assumed
 
           oxidized_state_vars = 'C_H C_CO2'
-          oxidized_state_stoich = '0.6774 1.5'  # fitted param
+          oxidized_state_stoich = '1 1'  # re-fitted param
 
           electric_potential_difference = phi_diff
 
@@ -1354,7 +1354,7 @@
       reduced_state_stoich = '1'        # assumed
 
       oxidized_state_vars = 'C_H'
-      oxidized_state_stoich = '0.1737'  # fitted param
+      oxidized_state_stoich = '1'  # re-fitted param
 
       electric_potential_difference = phi_diff
 
@@ -1380,7 +1380,7 @@
       reduced_state_stoich = '1'         # assumed
 
       oxidized_state_vars = 'C_H C_CO2'
-      oxidized_state_stoich = '0.6774 1.5'  # fitted param
+      oxidized_state_stoich = '1 1'  # re-fitted param
 
       electric_potential_difference = phi_diff
 
