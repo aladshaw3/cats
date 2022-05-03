@@ -80,6 +80,7 @@
   # Given minimum conductivity
   min_conductivity = 2e-5 #C/V/s/mm
   tight_coupling = false
+  include_ion_gradients = false #in current calculations
 
   # common to all SimpleGasPropertiesBase
   diff_length_unit = "mm"
@@ -299,6 +300,90 @@
       block = 'cathode'
   [../]
 
+  # -------- Butler-Volmer reaction rates ------------
+  # reduced_state <----> oxidized_state
+  # H2 + 2 OH- <----> 2 H2O + 2 e-
+  [./r_H2]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialModifiedButlerVolmerReaction
+
+          reaction_rate_const = 6.59167E-6    # umol/mm^2/s
+          equilibrium_potential = 0         # V
+
+          reduced_state_vars = 'C_H2'       # assumed
+          reduced_state_stoich = '1'        # assumed
+
+          oxidized_state_vars = 'C_H'
+          oxidized_state_stoich = '0.1737'  # fitted param
+
+          electric_potential_difference = phi_diff
+
+          temperature = T_e
+          number_of_electrons = 1         # params are fitted to this standard
+          electron_transfer_coef = 0.14   # fitted param
+      [../]
+      scaling = 1
+      block = 'cathode'
+  [../]
+
+  # CO + 2 OH- <----> CO2 + H2O + 2 e-
+  [./r_CO]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialModifiedButlerVolmerReaction
+
+          reaction_rate_const = 2.0833E-7    # umol/mm^2/s
+          equilibrium_potential = -0.11         # V
+
+          reduced_state_vars = 'C_CO'        # assumed
+          reduced_state_stoich = '1'         # assumed
+
+          oxidized_state_vars = 'C_H C_CO2'
+          oxidized_state_stoich = '0.6774 1.5'  # fitted param
+
+          electric_potential_difference = phi_diff
+
+          temperature = T_e
+          number_of_electrons = 1         # params are fitted to this standard
+          electron_transfer_coef = 0.35   # fitted param
+      [../]
+      scaling = 1
+      block = 'cathode'
+  [../]
+
+
+  # ------------- Butler-Volmer current densities ---------
+  [./J_H2]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialButlerVolmerCurrentDensity
+
+          number_of_electrons = 1       # params are fitted to this standard
+          specific_area = As
+          rate_var = r_H2
+      [../]
+      block = 'cathode'
+      scaling = 1
+  [../]
+
+  [./J_CO]
+      order = CONSTANT
+      family = MONOMIAL
+      [./InitialCondition]
+          type = InitialButlerVolmerCurrentDensity
+
+          number_of_electrons = 1       # params are fitted to this standard
+          specific_area = As
+          rate_var = r_CO
+      [../]
+      block = 'cathode'
+      scaling = 1
+  [../]
+
 []
 
 [ICs]
@@ -367,12 +452,65 @@
       block = 'cathode'
   [../]
 
+  # input current
+  [./input_current]
+      order = CONSTANT
+      family = MONOMIAL
+      initial_condition = 0.0 # C/s/mm^2
+      block = 'cathode catex_membrane'
+  [../]
+
   # Effective cathode conductivity
   [./sigma_s_eff]
       order = CONSTANT
       family = MONOMIAL
       initial_condition = 0.0986 # S/mm = [C/V/s/mm]
       block = 'cathode'
+  [../]
+
+  # Effective electrolyte conductivity # S/mm = [C/V/s/mm]
+  [./sigma_e_eff]
+      order = CONSTANT
+      family = MONOMIAL
+      block = 'cathode channel catex_membrane'
+  [../]
+
+  # Electric current in cathode in x [C/s/mm^2]
+  [./is_x]
+      order = FIRST
+      family = MONOMIAL
+      block = 'cathode'
+  [../]
+  # Electric current in cathode in y [C/s/mm^2]
+  [./is_y]
+      order = FIRST
+      family = MONOMIAL
+      block = 'cathode'
+  [../]
+  # Electric current in cathode in z [C/s/mm^2]
+  [./is_z]
+      order = FIRST
+      family = MONOMIAL
+      block = 'cathode'
+  [../]
+
+  # Electric current in electrolytes in x [C/s/mm^2]
+  [./ie_x]
+      order = FIRST
+      family = MONOMIAL
+      block = 'cathode channel catex_membrane'
+  [../]
+  # Electric current in electrolytes in y [C/s/mm^2]
+  [./ie_y]
+      order = FIRST
+      family = MONOMIAL
+      block = 'cathode channel catex_membrane'
+  [../]
+  # Electric current in electrolytes in z [C/s/mm^2]
+  [./ie_z]
+      order = FIRST
+      family = MONOMIAL
+      block = 'cathode channel catex_membrane'
   [../]
 
   # Effective catalytic surface area per volume
@@ -816,6 +954,15 @@
       scale = eps
   [../]
 
+  [./CO2_surf_rate]
+      type = ScaledWeightedCoupledSumFunction
+      variable = C_CO2
+      coupled_list = 'r_CO'
+      weights = '1'
+      scale = As
+      block = 'cathode'
+  [../]
+
   ## ===================== H balance ====================
   [./H_dot]
       type = VariableCoefTimeDerivative
@@ -900,6 +1047,15 @@
       scale = eps
   [../]
 
+  [./OH_surf_rate_cat]
+      type = ScaledWeightedCoupledSumFunction
+      variable = C_OH
+      coupled_list = 'r_H2 r_CO'
+      weights = '-2 -2'
+      scale = As
+      block = 'cathode'
+  [../]
+
   ## ===================== K balance ====================
   [./K_dot]
       type = VariableCoefTimeDerivative
@@ -957,6 +1113,15 @@
       Dz = Dd_CO
   [../]
 
+  [./CO_surf_rate]
+      type = ScaledWeightedCoupledSumFunction
+      variable = C_CO
+      coupled_list = 'r_CO'
+      weights = '-1'
+      scale = As
+      block = 'cathode'
+  [../]
+
   ## ===================== H2 balance ====================
   [./H2_dot]
       type = VariableCoefTimeDerivative
@@ -978,6 +1143,15 @@
       Dx = Dd_H2
       Dy = Dd_H2
       Dz = Dd_H2
+  [../]
+
+  [./H2_surf_rate_cat]
+      type = ScaledWeightedCoupledSumFunction
+      variable = C_H2
+      coupled_list = 'r_H2'
+      weights = '-1'
+      scale = As
+      block = 'cathode'
   [../]
 
   ## =============== water reaction ================
@@ -1106,12 +1280,20 @@
   [./phi_e_ionic_conductivity_cathode_and_channel]
       type = ElectrolyteIonConductivity
       variable = phi_e
-      porosity = eps
+      porosity = 1
       ion_conc = 'C_H C_K'
       diffusion = 'D_H D_K'
       ion_valence = '1 1'
       block = 'cathode channel'
       enable = false
+  [../]
+
+  [./phi_e_J_cat]
+      type = ScaledWeightedCoupledSumFunction
+      variable = phi_e
+      coupled_list = 'J_H2 J_CO'
+      weights = '1 1'
+      block = 'cathode'
   [../]
 
   # in membrane
@@ -1135,6 +1317,14 @@
       conductivity = sigma_s_eff
   [../]
 
+  [./phi_s_J_cat]
+      type = ScaledWeightedCoupledSumFunction
+      variable = phi_s
+      coupled_list = 'J_H2 J_CO'
+      weights = '-1 -1'
+      block = 'cathode'
+  [../]
+
   ## =============== Potential Difference ==================
   [./phi_diff_equ]
       type = Reaction
@@ -1145,6 +1335,87 @@
       variable = phi_diff
       coupled_list = 'phi_s phi_e'
       weights = '1 -1'
+  [../]
+
+
+  ## =============== Butler-Volmer Kinetics ================
+  [./r_H2_equ]
+      type = Reaction
+      variable = r_H2
+  [../]
+  [./r_H2_rxn]  # H2 + 2 OH- <----> 2 H2O + 2 e-
+      type = ModifiedButlerVolmerReaction
+      variable = r_H2
+
+      reaction_rate_const = 6.59167E-6    # umol/mm^2/s
+      equilibrium_potential = 0         # V
+
+      reduced_state_vars = 'C_H2'       # assumed
+      reduced_state_stoich = '1'        # assumed
+
+      oxidized_state_vars = 'C_H'
+      oxidized_state_stoich = '0.1737'  # fitted param
+
+      electric_potential_difference = phi_diff
+
+      temperature = T_e
+      number_of_electrons = 1         # params are fitted to this standard
+      electron_transfer_coef = 0.14   # fitted param
+
+      scale = 0.0375    # correlation factor between bulk and surface concentrations (1 means bulk=surface)
+  [../]
+
+  [./r_CO_equ]
+      type = Reaction
+      variable = r_CO
+  [../]
+  [./r_CO_rxn]  # CO + 2 OH- <----> CO2 + H2O + 2 e-
+      type = ModifiedButlerVolmerReaction
+      variable = r_CO
+
+      reaction_rate_const = 2.0833E-7    # umol/mm^2/s
+      equilibrium_potential = -0.11         # V
+
+      reduced_state_vars = 'C_CO'        # assumed
+      reduced_state_stoich = '1'         # assumed
+
+      oxidized_state_vars = 'C_H C_CO2'
+      oxidized_state_stoich = '0.6774 1.5'  # fitted param
+
+      electric_potential_difference = phi_diff
+
+      temperature = T_e
+      number_of_electrons = 1         # params are fitted to this standard
+      electron_transfer_coef = 0.35   # fitted param
+
+      scale = 0.0375   # correlation factor between bulk and surface concentrations (1 means bulk=surface)
+  [../]
+
+  ## =============== Butler-Volmer Current ================
+  [./J_H2_equ]
+      type = Reaction
+      variable = J_H2
+  [../]
+  [./J_H2_rxn]  # H2 + OH- <----> 2 H2O + 2 e-
+      type = ButlerVolmerCurrentDensity
+      variable = J_H2
+
+      number_of_electrons = 1  # params are fitted to this standard
+      specific_area = As
+      rate_var = r_H2
+  [../]
+
+  [./J_CO_equ]
+      type = Reaction
+      variable = J_CO
+  [../]
+  [./J_CO_rxn]  # CO + 2 OH- <----> CO2 + H2O + 2 e-
+      type = ButlerVolmerCurrentDensity
+      variable = J_CO
+
+      number_of_electrons = 1  # params are fitted to this standard
+      specific_area = As
+      rate_var = r_CO
   [../]
 []
 
@@ -1389,6 +1660,21 @@
       # full in 10 seconds
       aux_times = '5'
       time_spans = '10'
+
+      execute_on = 'initial timestep_begin nonlinear'
+  [../]
+
+  # calculate input current
+  [./current_step_input]
+      type = TemporalStepFunction
+      variable = input_current
+
+      start_value = 0.0
+      aux_vals = '0.001'
+
+      # Input current should approximately be a step function
+      aux_times = '15'
+      time_spans = '0.5'
 
       execute_on = 'initial timestep_begin nonlinear'
   [../]
@@ -2044,6 +2330,140 @@
       execute_on = 'initial timestep_end'
       block = 'cathode'
   [../]
+
+  # calculation of effective electrolyte conductivity
+  [./sigma_e_calc_cat]
+      type = ElectrolyteConductivity
+      variable = sigma_e_eff
+      temperature = T_e
+      ion_conc = 'C_H C_K'
+      diffusion = 'D_H D_K'
+      ion_valence = '1 1'
+      execute_on = 'initial timestep_end'
+      block = 'channel cathode'
+  [../]
+  [./sigma_e_calc_mem]
+      type = ElectrolyteConductivity
+      variable = sigma_e_eff
+      temperature = T_e
+      ion_conc = 'C_H_mem'
+      diffusion = 'D_H_mem'
+      ion_valence = '1'
+      execute_on = 'initial timestep_end'
+      block = 'catex_membrane'
+  [../]
+
+
+  # Calculations for electrolyte current in cathode and channel
+  [./ie_x_calc_cat]
+      type = AuxElectrolyteCurrent
+      variable = ie_x
+      direction = 0         # 0=x
+      electric_potential = phi_e
+      porosity = 1
+      temperature = T_e
+      ion_conc = 'C_H C_K'
+      diffusion = 'D_H D_K'
+      ion_valence = '1 1'
+      execute_on = 'initial timestep_end'
+      block = 'channel cathode'
+  [../]
+  [./ie_y_calc_cat]
+      type = AuxElectrolyteCurrent
+      variable = ie_y
+      direction = 1         # 1=y
+      electric_potential = phi_e
+      porosity = 1
+      temperature = T_e
+      ion_conc = 'C_H C_K'
+      diffusion = 'D_H D_K'
+      ion_valence = '1 1'
+      execute_on = 'initial timestep_end'
+      block = 'channel cathode'
+  [../]
+  [./ie_z_calc_cat]
+      type = AuxElectrolyteCurrent
+      variable = ie_z
+      direction = 2         # 2=z
+      electric_potential = phi_e
+      porosity = 1
+      temperature = T_e
+      ion_conc = 'C_H C_K'
+      diffusion = 'D_H D_K'
+      ion_valence = '1 1'
+      execute_on = 'initial timestep_end'
+      block = 'channel cathode'
+  [../]
+
+  # Calculations for electrolyte current in membrane
+  [./ie_x_calc_mem]
+      type = AuxElectrolyteCurrent
+      variable = ie_x
+      direction = 0         # 0=x
+      electric_potential = phi_e
+      porosity = 1
+      temperature = T_e
+      ion_conc = 'C_H_mem'
+      diffusion = 'D_H_mem'
+      ion_valence = '1'
+      execute_on = 'initial timestep_end'
+      block = 'catex_membrane'
+  [../]
+  [./ie_y_calc_mem]
+      type = AuxElectrolyteCurrent
+      variable = ie_y
+      direction = 1         # 1=y
+      electric_potential = phi_e
+      porosity = 1
+      temperature = T_e
+      ion_conc = 'C_H_mem'
+      diffusion = 'D_H_mem'
+      ion_valence = '1'
+      execute_on = 'initial timestep_end'
+      block = 'catex_membrane'
+  [../]
+  [./ie_z_calc_mem]
+      type = AuxElectrolyteCurrent
+      variable = ie_z
+      direction = 2         # 2=z
+      electric_potential = phi_e
+      porosity = 1
+      temperature = T_e
+      ion_conc = 'C_H_mem'
+      diffusion = 'D_H_mem'
+      ion_valence = '1'
+      execute_on = 'initial timestep_end'
+      block = 'catex_membrane'
+  [../]
+
+  # Calculation of electrode currents
+  [./is_x_calc]
+      type = AuxElectrodeCurrent
+      variable = is_x
+      direction = 0         # 0=x
+      electric_potential = phi_s
+      solid_frac = 1
+      conductivity = sigma_s_eff
+      execute_on = 'initial timestep_end'
+  [../]
+  [./is_y_calc]
+      type = AuxElectrodeCurrent
+      variable = is_y
+      direction = 1         # 1=y
+      electric_potential = phi_s
+      solid_frac = 1
+      conductivity = sigma_s_eff
+      execute_on = 'initial timestep_end'
+  [../]
+  [./is_z_calc]
+      type = AuxElectrodeCurrent
+      variable = is_z
+      direction = 2         # 2=z
+      electric_potential = phi_s
+      solid_frac = 1
+      conductivity = sigma_s_eff
+      execute_on = 'initial timestep_end'
+  [../]
 []
 
 
@@ -2259,7 +2679,7 @@
       type = CoupledNeumannBC
       variable = phi_e
       boundary = 'catex_mem_interface cathode_interface_membrane'
-      coupled = 0
+      coupled = input_current
   [../]
 
   # ==== Do we need to 'ground' the electrolyte potential as well? ====
@@ -2282,72 +2702,183 @@
 
 
 [Postprocessors]
-  [./pressure_inlet]
+  [./Diff_press_Pa]
       type = SideAverageValue
       boundary = 'channel_enter'
       variable = pressure
       execute_on = 'initial timestep_end'
   [../]
 
-  [./pressure_outlet]
-      type = SideAverageValue
-      boundary = 'channel_exit'
-      variable = pressure
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./vy_inlet]
-      type = SideAverageValue
-      boundary = 'channel_enter'
-      variable = vel_y
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./vy_outlet]
-      type = SideAverageValue
-      boundary = 'channel_exit'
-      variable = vel_y
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./A_outlet]
+  [./A_chan_xsec_sq_mm]
       type = AreaPostprocessor
       boundary = 'channel_exit'
       execute_on = 'initial timestep_end'
   [../]
 
-  [./A_membrane]
+  [./A_mem_top_sq_mm]
       type = AreaPostprocessor
       boundary = 'catex_mem_interface'
       execute_on = 'initial timestep_end'
   [../]
 
-  [./Q_cross_mem]
+  [./Q_xmem_cu_mm_p_s]
       type = SideIntegralVariablePostprocessor
       boundary = 'catex_mem_interface'
       variable = vel_z
       execute_on = 'initial timestep_end'
   [../]
 
-  [./Q_outlet]
+  [./Q_out_cu_mm_p_s]
       type = SideIntegralVariablePostprocessor
       boundary = 'channel_exit'
       variable = vel_y
       execute_on = 'initial timestep_end'
   [../]
 
+  [./Q_in_cu_mm_p_s]
+      type = SideIntegralVariablePostprocessor
+      boundary = 'channel_enter'
+      variable = vel_y
+      execute_on = 'initial timestep_end'
+  [../]
 
-  [./HCO3_inlet]
+  [./I_in_Amps]
+      type = SideIntegralVariablePostprocessor
+      boundary = 'catex_mem_interface'
+      variable = ie_z
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./I_interface_Amps]
+      type = SideIntegralVariablePostprocessor
+      boundary = 'cathode_interface_membrane'
+      variable = ie_z
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./V_solid_cathode]
+      type = ElementAverageValue
+      block = 'cathode'
+      variable = phi_s
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./V_elec_cathode]
+      type = ElementAverageValue
+      block = 'cathode'
+      variable = phi_e
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_HCO3_in_M]
       type = SideAverageValue
       boundary = 'channel_enter'
       variable = C_HCO3
       execute_on = 'initial timestep_end'
   [../]
 
-  [./HCO3_outlet]
+  [./C_HCO3_out_M]
       type = SideAverageValue
       boundary = 'channel_exit'
       variable = C_HCO3
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_CO3_in_M]
+      type = SideAverageValue
+      boundary = 'channel_enter'
+      variable = C_CO3
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_CO3_out_M]
+      type = SideAverageValue
+      boundary = 'channel_exit'
+      variable = C_CO3
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_CO2_in_M]
+      type = SideAverageValue
+      boundary = 'channel_enter'
+      variable = C_CO2
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_CO2_out_M]
+      type = SideAverageValue
+      boundary = 'channel_exit'
+      variable = C_CO2
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_CO_in_M]
+      type = SideAverageValue
+      boundary = 'channel_enter'
+      variable = C_CO
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_CO_out_M]
+      type = SideAverageValue
+      boundary = 'channel_exit'
+      variable = C_CO
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_H2_in_M]
+      type = SideAverageValue
+      boundary = 'channel_enter'
+      variable = C_H2
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_H2_out_M]
+      type = SideAverageValue
+      boundary = 'channel_exit'
+      variable = C_H2
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_H_in_M]
+      type = SideAverageValue
+      boundary = 'channel_enter'
+      variable = C_H
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_H_out_M]
+      type = SideAverageValue
+      boundary = 'channel_exit'
+      variable = C_H
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_OH_in_M]
+      type = SideAverageValue
+      boundary = 'channel_enter'
+      variable = C_OH
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_OH_out_M]
+      type = SideAverageValue
+      boundary = 'channel_exit'
+      variable = C_OH
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_K_in_M]
+      type = SideAverageValue
+      boundary = 'channel_enter'
+      variable = C_K
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./C_K_out_M]
+      type = SideAverageValue
+      boundary = 'channel_exit'
+      variable = C_K
       execute_on = 'initial timestep_end'
   [../]
 []
@@ -2438,12 +2969,12 @@
                           4000'
 
 
-  line_search = l2
+  line_search = none  # none, l2, or bt
   nl_rel_step_tol = 1e-12
   nl_abs_step_tol = 1e-12
 
   start_time = 0.0
-  end_time = 10
+  end_time = 515  #Experiments were run for 500s, the added 15s accounts for ramp up
   dtmax = 10
 
   [./TimeStepper]
