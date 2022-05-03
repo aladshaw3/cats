@@ -53,6 +53,12 @@
 #     min_conductivity = 2e-5 S/mm [C/V/s/mm] (background for tap water)
 #     c_ref = 1 M = 1 umol/mm^3
 #     gamma = 1 (assumes ideal solution)
+#         [To reduce problem size, ONLY consider ideal solution]
+#     Coupled Coeff for H+ flux at membrane
+#       -> coef = (F/R/T)*Dmem*C_H
+#             Dmem = 0.0014 mm^2/s
+#             C_H = 2.75 M
+#       coef = 0.14992 [umol/V/mm/s]
 #
 #   - Coefficients/Expressions
 #     ------------------------
@@ -62,6 +68,10 @@
 #     SchloeglElectrokineticCoefficient =~ 0.02998 C*s/g * (g/kg)*(mm^2/m^2)
 
 [GlobalParams]
+
+  # 'dg_scheme' and 'sigma' are parameters for the DG kernels
+  dg_scheme = nipg  # Non-symmetric (most stable)
+  sigma = 100       # Gradient jump penalty term
 
   # Override these defaults to apply unit conversion
   faraday_const = 0.0964853   # C/umol
@@ -74,7 +84,7 @@
   # common to all SimpleGasPropertiesBase
   diff_length_unit = "mm"
   diff_time_unit = "s"
-  dispersivity = 0.75 #mm
+  dispersivity = 1.0 #mm
   disp_length_unit = "mm"
   vel_length_unit = "mm"
   vel_time_unit = "s"
@@ -215,6 +225,53 @@
       order = FIRST
       family = MONOMIAL
       initial_condition = 1e-15 #M
+      block = 'channel cathode'
+  [../]
+
+
+  # Speciation reaction rates
+  # rate of water reaction
+  [./r_w]
+      order = CONSTANT
+      family = MONOMIAL
+      initial_condition = 0
+      scaling = 1
+      block = 'channel cathode'
+  [../]
+
+  # rate of CO2 -> HCO3 reaction
+  [./r_1]
+      order = CONSTANT
+      family = MONOMIAL
+      initial_condition = 0
+      scaling = 1
+      block = 'channel cathode'
+  [../]
+
+  # rate of HCO3 -> CO3 reaction
+  [./r_2]
+      order = CONSTANT
+      family = MONOMIAL
+      initial_condition = 0
+      scaling = 1
+      block = 'channel cathode'
+  [../]
+
+  # rate of alt CO2 -> HCO3 reaction
+  [./r_3]
+      order = CONSTANT
+      family = MONOMIAL
+      initial_condition = 0
+      scaling = 1
+      block = 'channel cathode'
+  [../]
+
+  # rate of alt HCO3 -> CO3 reaction
+  [./r_4]
+      order = CONSTANT
+      family = MONOMIAL
+      initial_condition = 0
+      scaling = 1
       block = 'channel cathode'
   [../]
 
@@ -639,6 +696,14 @@
       Dz = D_HCO3
   [../]
 
+  [./HCO3_rate_bulk]
+      type = ScaledWeightedCoupledSumFunction
+      variable = C_HCO3
+      coupled_list = 'r_1 r_2 r_3 r_4'
+      weights = '1 -1 1 -1'
+      scale = eps
+  [../]
+
   ## ===================== CO3 balance ====================
   [./CO3_dot]
       type = VariableCoefTimeDerivative
@@ -673,6 +738,14 @@
       Dz = D_CO3
   [../]
 
+  [./CO3_rate_bulk]
+      type = ScaledWeightedCoupledSumFunction
+      variable = C_CO3
+      coupled_list = 'r_2 r_4'
+      weights = '1 1'
+      scale = eps
+  [../]
+
   ## ===================== CO2 balance ====================
   [./CO2_dot]
       type = VariableCoefTimeDerivative
@@ -695,16 +768,13 @@
       Dy = Dd_CO2
       Dz = Dd_CO2
   [../]
-  [./CO2_gnpdiff]
-      type = GNernstPlanckDiffusion
+
+  [./CO2_rate_bulk]
+      type = ScaledWeightedCoupledSumFunction
       variable = C_CO2
-      valence = 0
-      porosity = 1
-      electric_potential = phi_e
-      temperature = T_e
-      Dx = D_CO2
-      Dy = D_CO2
-      Dz = D_CO2
+      coupled_list = 'r_1 r_3'
+      weights = '-1 -1'
+      scale = eps
   [../]
 
   ## ===================== H balance ====================
@@ -741,6 +811,14 @@
       Dz = D_H
   [../]
 
+  [./H_rate_bulk]
+      type = ScaledWeightedCoupledSumFunction
+      variable = C_H
+      coupled_list = 'r_w r_1 r_2'
+      weights = '1 1 1'
+      scale = eps
+  [../]
+
   ## ===================== OH balance ====================
   [./OH_dot]
       type = VariableCoefTimeDerivative
@@ -773,6 +851,14 @@
       Dx = D_OH
       Dy = D_OH
       Dz = D_OH
+  [../]
+
+  [./OH_rate_bulk]
+      type = ScaledWeightedCoupledSumFunction
+      variable = C_OH
+      coupled_list = 'r_w r_3 r_4'
+      weights = '1 -1 -1'
+      scale = eps
   [../]
 
   ## ===================== K balance ====================
@@ -831,17 +917,6 @@
       Dy = Dd_CO
       Dz = Dd_CO
   [../]
-  [./CO_gnpdiff]
-      type = GNernstPlanckDiffusion
-      variable = C_CO
-      valence = 0
-      porosity = 1
-      electric_potential = phi_e
-      temperature = T_e
-      Dx = D_CO
-      Dy = D_CO
-      Dz = D_CO
-  [../]
 
   ## ===================== H2 balance ====================
   [./H2_dot]
@@ -865,16 +940,115 @@
       Dy = Dd_H2
       Dz = Dd_H2
   [../]
-  [./H2_gnpdiff]
-      type = GNernstPlanckDiffusion
-      variable = C_H2
-      valence = 0
-      porosity = 1
-      electric_potential = phi_e
-      temperature = T_e
-      Dx = D_H2
-      Dy = D_H2
-      Dz = D_H2
+
+  ## =============== water reaction ================
+  [./r_w_equ]
+      type = Reaction
+      variable = r_w
+  [../]
+  [./r_w_rxn]  #   H2O <--> H+ + OH-
+      type = ConstReaction
+      variable = r_w
+      this_variable = r_w
+
+      forward_rate = 1.6E-3
+      reverse_rate = 1.6E11
+
+      # Apply the 'scale' as the C_ref value for simplicity
+      scale = 1 # umol/mm^3
+
+      reactants = '1'
+      reactant_stoich = '1'
+      products = 'C_H C_OH'
+      product_stoich = '1 1'
+  [../]
+
+  ## =============== r1 reaction ================
+  [./r_1_equ]
+      type = Reaction
+      variable = r_1
+  [../]
+  [./r_1_rxn]  #   CO2 + H2O <--> H+ + HCO3-
+      type = ConstReaction
+      variable = r_1
+      this_variable = r_1
+
+      forward_rate = 0.04
+      reverse_rate = 93683.3333
+
+      # Apply the 'scale' as the C_ref value for simplicity
+      scale = 1 # umol/mm^3
+
+      reactants = 'C_CO2'
+      reactant_stoich = '1'
+      products = 'C_H C_HCO3'
+      product_stoich = '1 1'
+  [../]
+
+  ## =============== r2 reaction ================
+  [./r_2_equ]
+      type = Reaction
+      variable = r_2
+  [../]
+  [./r_2_rxn]  #   HCO3- <--> H+ + CO3--
+      type = ConstReaction
+      variable = r_2
+      this_variable = r_2
+
+      forward_rate = 56.28333
+      reverse_rate = 1.2288E12
+
+      # Apply the 'scale' as the C_ref value for simplicity
+      scale = 1 # umol/mm^3
+
+      reactants = 'C_HCO3'
+      reactant_stoich = '1'
+      products = 'C_H C_CO3'
+      product_stoich = '1 1'
+  [../]
+
+  ## =============== r3 reaction ================
+  [./r_3_equ]
+      type = Reaction
+      variable = r_3
+  [../]
+  [./r_3_rxn]  #   CO2 + OH- <--> HCO3-
+      type = ConstReaction
+      variable = r_3
+      this_variable = r_3
+
+      forward_rate = 2100
+      reverse_rate = 4.918333E-5
+
+      # Apply the 'scale' as the C_ref value for simplicity
+      scale = 1 # umol/mm^3
+
+      reactants = 'C_CO2 C_OH'
+      reactant_stoich = '1 1'
+      products = 'C_HCO3'
+      product_stoich = '1'
+  [../]
+
+  ## =============== r4 reaction ================
+  [./r_4_equ]
+      type = Reaction
+      variable = r_4
+  [../]
+  [./r_4_rxn]  #   HCO3- + OH- <--> CO3-- + H2O
+      type = ConstReaction
+      variable = r_4
+      this_variable = r_4
+
+      forward_rate = 6.5E9
+      reverse_rate = 1.337E6
+
+      # Apply the 'scale' as the C_ref value for simplicity
+      scale = 1 # umol/mm^3
+
+      reactants = 'C_HCO3 C_OH'
+      reactant_stoich = '1 1'
+      products = 'C_CO3'
+      product_stoich = '1'
   [../]
 []
 
@@ -953,17 +1127,6 @@
       Dx = Dd_CO2
       Dy = Dd_CO2
       Dz = Dd_CO2
-  [../]
-  [./CO2_dgnpdiff]
-      type = DGNernstPlanckDiffusion
-      variable = C_CO2
-      valence = 0
-      porosity = 1
-      electric_potential = phi_e
-      temperature = T_e
-      Dx = D_CO2
-      Dy = D_CO2
-      Dz = D_CO2
   [../]
 
   ## ===================== H balance ====================
@@ -1070,17 +1233,6 @@
       Dy = Dd_CO
       Dz = Dd_CO
   [../]
-  [./CO_dgnpdiff]
-      type = DGNernstPlanckDiffusion
-      variable = C_CO
-      valence = 0
-      porosity = 1
-      electric_potential = phi_e
-      temperature = T_e
-      Dx = D_CO
-      Dy = D_CO
-      Dz = D_CO
-  [../]
 
   ## ===================== H2 balance ====================
   [./H2_dgadv]
@@ -1098,17 +1250,6 @@
       Dx = Dd_H2
       Dy = Dd_H2
       Dz = Dd_H2
-  [../]
-  [./H2_dgnpdiff]
-      type = DGNernstPlanckDiffusion
-      variable = C_H2
-      valence = 0
-      porosity = 1
-      electric_potential = phi_e
-      temperature = T_e
-      Dx = D_H2
-      Dy = D_H2
-      Dz = D_H2
   [../]
 
 []
@@ -1912,6 +2053,18 @@
       uz = vel_z
   [../]
 
+  [./proton_membrane_flux]
+      type = CoupledVariableGradientFluxBC
+      variable = C_H
+      boundary = 'cathode_interface_membrane'
+      coupled = phi_e
+      #       -> coef = (F/R/T)*Dmem*C_H
+      #             Dmem = 0.0014 mm^2/s
+      #             C_H = 2.75 M
+      #       coef = 0.14992 [umol/V/mm/s]
+      coef = 0.14992
+  [../]
+
   ## =============== OH fluxes ================
   [./OH_FluxIn]
       type = DGFlowMassFluxBC
@@ -2167,7 +2320,9 @@
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
-      dt = 0.01
+      dt = 0.1
+      cutback_factor_at_failure = 0.5
+      percent_change = 0.5
   [../]
 
 [] #END Executioner
