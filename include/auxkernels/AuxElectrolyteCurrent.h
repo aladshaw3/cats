@@ -76,4 +76,6 @@ private:
 
     Real _min_conductivity;                                 ///< Minimum allowable value for conductivity (based on sum of ions)
 
+    bool _includeIonGrads;                                  ///< Boolean used to determine whether or not to include ion gradients in calculation 
+
 };

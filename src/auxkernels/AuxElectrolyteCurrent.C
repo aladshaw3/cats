@@ -49,6 +49,8 @@ InputParameters AuxElectrolyteCurrent::validParams()
     params.addParam< std::vector<Real> >("ion_valence","List of valences for coupled ion concentrations");
 
     params.addParam<Real>("min_conductivity",0, "Minimum/background value of conductivity of the media");
+
+    params.addParam<bool>("include_ion_gradients",true, "Set to false if ion gradients are not to be included in current calculation");
     return params;
 }
 
@@ -64,7 +66,8 @@ _faraday(getParam<Real>("faraday_const")),
 _gas_const(getParam<Real>("gas_const")),
 
 _valence(getParam<std::vector<Real> >("ion_valence")),
-_min_conductivity(getParam<Real>("min_conductivity"))
+_min_conductivity(getParam<Real>("min_conductivity")),
+_includeIonGrads(getParam<bool>("include_ion_gradients"))
 {
     if (_dir > 2 || _dir < 0)
     {
@@ -132,6 +135,8 @@ Real AuxElectrolyteCurrent::effective_ionic_conductivity()
 Real AuxElectrolyteCurrent::sum_ion_gradient_terms()
 {
     Real sum = 0.0;
+    if (_includeIonGrads == false)
+      return sum;
     for (unsigned int i = 0; i<_ion_conc_grad.size(); ++i)
     {
         sum = sum + _valence[i]*(*_diffusion[i])[_qp]*( _norm_vec*(*_ion_conc_grad[i])[_qp] );

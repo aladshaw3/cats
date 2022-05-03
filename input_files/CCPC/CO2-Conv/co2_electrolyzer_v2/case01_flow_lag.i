@@ -53,12 +53,6 @@
 #     min_conductivity = 2e-5 S/mm [C/V/s/mm] (background for tap water)
 #     c_ref = 1 M = 1 umol/mm^3
 #     gamma = 1 (assumes ideal solution)
-#         [To reduce problem size, ONLY consider ideal solution]
-#     Coupled Coeff for H+ flux at membrane
-#       -> coef = (F/R/T)*Dmem*C_H
-#             Dmem = 0.0014 mm^2/s
-#             C_H = 2.75 M
-#       coef = 0.14992 [umol/V/mm/s]
 #
 #   - Coefficients/Expressions
 #     ------------------------
@@ -69,17 +63,13 @@
 
 [GlobalParams]
 
-  # 'dg_scheme' and 'sigma' are parameters for the DG kernels
-  dg_scheme = nipg  # Non-symmetric (most stable)
-  sigma = 100       # Gradient jump penalty term
-
   # Override these defaults to apply unit conversion
   faraday_const = 0.0964853   # C/umol
   gas_const = 8.314462E-6     # J/K/umol
 
   # Given minimum conductivity
   min_conductivity = 2e-5 #C/V/s/mm
-  tight_coupling = false
+  tight_coupling = true
 
   # common to all SimpleGasPropertiesBase
   diff_length_unit = "mm"
@@ -101,7 +91,7 @@
 [Mesh]
   [file]
     type = FileMeshGenerator
-    file = CO2_electrolyzer_half_cell_plateless_v2_coarse.msh
+    file = CO2_electrolyzer_half_cell_plateless_v2_fine.msh
 
     ### ========= boundary_name ==========
     # "channel_exit"
@@ -142,7 +132,7 @@
   # velocity in x (mm/s)
   [./vel_x]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       initial_condition = 0.0
       block = 'channel cathode catex_membrane'
   [../]
@@ -150,7 +140,7 @@
   # velocity in y (mm/s)
   [./vel_y]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       initial_condition = 0.0
       block = 'channel cathode catex_membrane'
   [../]
@@ -158,7 +148,7 @@
   # velocity in z (mm/s)
   [./vel_z]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       initial_condition = 0.0
       block = 'channel cathode catex_membrane'
   [../]
@@ -166,7 +156,7 @@
   # concentration of HCO3 (umol/mm^3)
   [./C_HCO3]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       scaling = 1
       initial_condition = 2.938 #M
       block = 'channel cathode'
@@ -175,7 +165,7 @@
   # concentration of CO3 (umol/mm^3)
   [./C_CO3]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       initial_condition = 0.031 #M
       block = 'channel cathode'
   [../]
@@ -183,7 +173,7 @@
   # concentration of CO2 (umol/mm^3)
   [./C_CO2]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       initial_condition = 0.031 #M
       block = 'channel cathode'
   [../]
@@ -191,7 +181,7 @@
   # concentration of H (umol/mm^3)
   [./C_H]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       initial_condition = 4.41e-9 #M
       block = 'channel cathode'
   [../]
@@ -199,7 +189,7 @@
   # concentration of OH (umol/mm^3)
   [./C_OH]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       initial_condition = 2.14e-6 #M
       block = 'channel cathode'
   [../]
@@ -207,7 +197,7 @@
   # concentration of K (umol/mm^3)
   [./C_K]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       initial_condition = 3 #M
       block = 'channel cathode'
   [../]
@@ -215,7 +205,7 @@
   # concentration of CO (umol/mm^3)
   [./C_CO]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       initial_condition = 1e-15 #M
       block = 'channel cathode'
   [../]
@@ -223,80 +213,9 @@
   # concentration of H2 (umol/mm^3)
   [./C_H2]
       order = FIRST
-      family = MONOMIAL
+      family = LAGRANGE
       initial_condition = 1e-15 #M
       block = 'channel cathode'
-  [../]
-
-
-  # Speciation reaction rates
-  # rate of water reaction
-  [./r_w]
-      order = CONSTANT
-      family = MONOMIAL
-      initial_condition = 0
-      scaling = 1
-      block = 'channel cathode'
-  [../]
-
-  # rate of CO2 -> HCO3 reaction
-  [./r_1]
-      order = CONSTANT
-      family = MONOMIAL
-      initial_condition = 0
-      scaling = 1
-      block = 'channel cathode'
-  [../]
-
-  # rate of HCO3 -> CO3 reaction
-  [./r_2]
-      order = CONSTANT
-      family = MONOMIAL
-      initial_condition = 0
-      scaling = 1
-      block = 'channel cathode'
-  [../]
-
-  # rate of alt CO2 -> HCO3 reaction
-  [./r_3]
-      order = CONSTANT
-      family = MONOMIAL
-      initial_condition = 0
-      scaling = 1
-      block = 'channel cathode'
-  [../]
-
-  # rate of alt HCO3 -> CO3 reaction
-  [./r_4]
-      order = CONSTANT
-      family = MONOMIAL
-      initial_condition = 0
-      scaling = 1
-      block = 'channel cathode'
-  [../]
-
-  # Potential in electrolyte (V)
-  [./phi_e]
-      order = FIRST
-      family = LAGRANGE
-      initial_condition = 0.0
-      block = 'channel cathode catex_membrane'
-  [../]
-
-  # Potential in electrode (V)
-  [./phi_s]
-      order = FIRST
-      family = LAGRANGE
-      initial_condition = 0.0
-      block = 'cathode'
-  [../]
-
-  # Potential difference (V)
-  [./phi_diff]
-      order = CONSTANT
-      family = MONOMIAL
-      initial_condition = 0.0
-      block = 'cathode'
   [../]
 
 []
@@ -306,272 +225,257 @@
 []
 
 [AuxVariables]
+  # ---------------- Temporarily setting var here ----------------
+  [./phi_e]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0.0
+      block = 'channel cathode catex_membrane'
+  [../]
+
+
   # velocity magnitude
   [./vel_mag]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode catex_membrane'
   [../]
 
   # velocity inlet
   [./vel_in]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel'
   [../]
 
   # Electrolyte temperature
   [./T_e]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       initial_condition = 298 #K
       block = 'channel cathode catex_membrane'
   [../]
 
   # Electrode temperature
   [./T_s]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       initial_condition = 298 #K
       block = 'cathode'
   [../]
 
   # fluid viscosity
   [./viscosity]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       initial_condition = 0.001 # Pa*s = g/mm/s
       block = 'channel cathode catex_membrane'
   [../]
 
   # domain porosity
   [./eps]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode catex_membrane'
   [../]
 
   # hydraulic diameter
   [./dh]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       initial_condition = 1.3072 #mm
       block = 'channel'
   [../]
 
   # particle diameter
   [./dp]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       initial_condition = 0.03 #mm
-      block = 'cathode'
-  [../]
-
-  # Effective cathode conductivity
-  [./sigma_s_eff]
-      order = CONSTANT
-      family = MONOMIAL
-      initial_condition = 0.0986 # S/mm = [C/V/s/mm]
-      block = 'cathode'
-  [../]
-
-  # Effective catalytic surface area per volume
-  [./As]
-      order = CONSTANT
-      family = MONOMIAL
-      initial_condition = 2.52e+4 # mm^-1
       block = 'cathode'
   [../]
 
   # membrane permeability
   [./kp]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       initial_condition = 1.58e-12 #mm^2
       block = 'catex_membrane'
   [../]
 
   # membrane electro-permeability
   [./k_phi]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       initial_condition = 1.13e-13 #mm^2
       block = 'catex_membrane'
   [../]
 
   # membrane concentration of H+
   [./C_H_mem]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       initial_condition = 2.75 #umol/mm^3
       block = 'catex_membrane'
   [../]
 
   # volumetric flowrate
   [./Q_in]
-      order = CONSTANT
-      family = MONOMIAL
-      initial_condition = 0 #mm^3/s --> upto 1666.67 #mm^3/s
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 16.6667 #mm^3/s --> upto 1666.67 #mm^3/s
       block = 'channel'
   [../]
 
   # channel area
   [./A_xsec]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       initial_condition = 1.73 #mm^2
       block = 'channel'
   [../]
 
   # DarcyWeisbachCoefficient
   [./DarcyWeisbach]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       initial_condition = 53.4 #mm^3*s/g
       block = 'channel'
   [../]
 
   # KozenyCarmanDarcyCoefficient
   [./KozenyCarman]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       initial_condition = 0.1638 #mm^3*s/g
       block = 'cathode'
   [../]
 
   # SchloeglDarcyCoefficient
   [./SchloeglDarcy]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       initial_condition = 1.58e-9 #mm^3*s/g
       block = 'catex_membrane'
   [../]
 
   # SchloeglElectrokineticCoefficient
   [./SchloeglElectrokinetic]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       initial_condition = 0.02998 #C*s/g * (g/kg)*(mm^2/m^2)
       block = 'catex_membrane'
   [../]
 
   # Diffusion of HCO3
   [./D_HCO3]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Dispersion of HCO3
   [./Dd_HCO3]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Diffusion of CO3
   [./D_CO3]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Dispersion of CO3
   [./Dd_CO3]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Diffusion of CO2
   [./D_CO2]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Dispersion of CO2
   [./Dd_CO2]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Diffusion of H
   [./D_H]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
-  [../]
-
-  # Diffusion of H in membrane
-  [./D_H_mem]
-      order = CONSTANT
-      family = MONOMIAL
-      initial_condition = 0.0014  # mm^2/s
-      block = 'catex_membrane'
   [../]
 
   # Dispersion of H
   [./Dd_H]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Diffusion of OH
   [./D_OH]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Dispersion of OH
   [./Dd_OH]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Diffusion of K
   [./D_K]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Dispersion of K
   [./Dd_K]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Diffusion of CO
   [./D_CO]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Dispersion of CO
   [./Dd_CO]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Diffusion of H2
   [./D_H2]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
   # Dispersion of H2
   [./Dd_H2]
-      order = CONSTANT
-      family = MONOMIAL
+      order = FIRST
+      family = LAGRANGE
       block = 'channel cathode'
   [../]
 
@@ -735,14 +639,6 @@
       Dz = D_HCO3
   [../]
 
-  [./HCO3_rate_bulk]
-      type = ScaledWeightedCoupledSumFunction
-      variable = C_HCO3
-      coupled_list = 'r_1 r_2 r_3 r_4'
-      weights = '1 -1 1 -1'
-      scale = eps
-  [../]
-
   ## ===================== CO3 balance ====================
   [./CO3_dot]
       type = VariableCoefTimeDerivative
@@ -777,14 +673,6 @@
       Dz = D_CO3
   [../]
 
-  [./CO3_rate_bulk]
-      type = ScaledWeightedCoupledSumFunction
-      variable = C_CO3
-      coupled_list = 'r_2 r_4'
-      weights = '1 1'
-      scale = eps
-  [../]
-
   ## ===================== CO2 balance ====================
   [./CO2_dot]
       type = VariableCoefTimeDerivative
@@ -807,13 +695,16 @@
       Dy = Dd_CO2
       Dz = Dd_CO2
   [../]
-
-  [./CO2_rate_bulk]
-      type = ScaledWeightedCoupledSumFunction
+  [./CO2_gnpdiff]
+      type = GNernstPlanckDiffusion
       variable = C_CO2
-      coupled_list = 'r_1 r_3'
-      weights = '-1 -1'
-      scale = eps
+      valence = 0
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_CO2
+      Dy = D_CO2
+      Dz = D_CO2
   [../]
 
   ## ===================== H balance ====================
@@ -850,14 +741,6 @@
       Dz = D_H
   [../]
 
-  [./H_rate_bulk]
-      type = ScaledWeightedCoupledSumFunction
-      variable = C_H
-      coupled_list = 'r_w r_1 r_2'
-      weights = '1 1 1'
-      scale = eps
-  [../]
-
   ## ===================== OH balance ====================
   [./OH_dot]
       type = VariableCoefTimeDerivative
@@ -890,14 +773,6 @@
       Dx = D_OH
       Dy = D_OH
       Dz = D_OH
-  [../]
-
-  [./OH_rate_bulk]
-      type = ScaledWeightedCoupledSumFunction
-      variable = C_OH
-      coupled_list = 'r_w r_3 r_4'
-      weights = '1 -1 -1'
-      scale = eps
   [../]
 
   ## ===================== K balance ====================
@@ -956,6 +831,17 @@
       Dy = Dd_CO
       Dz = Dd_CO
   [../]
+  [./CO_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_CO
+      valence = 0
+      porosity = 1
+      electric_potential = phi_e
+      temperature = T_e
+      Dx = D_CO
+      Dy = D_CO
+      Dz = D_CO
+  [../]
 
   ## ===================== H2 balance ====================
   [./H2_dot]
@@ -979,374 +865,20 @@
       Dy = Dd_H2
       Dz = Dd_H2
   [../]
-
-  ## =============== water reaction ================
-  [./r_w_equ]
-      type = Reaction
-      variable = r_w
-  [../]
-  [./r_w_rxn]  #   H2O <--> H+ + OH-
-      type = ConstReaction
-      variable = r_w
-      this_variable = r_w
-
-      forward_rate = 1.6E-3
-      reverse_rate = 1.6E11
-
-      # Apply the 'scale' as the C_ref value for simplicity
-      scale = 1 # umol/mm^3
-
-      reactants = '1'
-      reactant_stoich = '1'
-      products = 'C_H C_OH'
-      product_stoich = '1 1'
-  [../]
-
-  ## =============== r1 reaction ================
-  [./r_1_equ]
-      type = Reaction
-      variable = r_1
-  [../]
-  [./r_1_rxn]  #   CO2 + H2O <--> H+ + HCO3-
-      type = ConstReaction
-      variable = r_1
-      this_variable = r_1
-
-      forward_rate = 0.04
-      reverse_rate = 93683.3333
-
-      # Apply the 'scale' as the C_ref value for simplicity
-      scale = 1 # umol/mm^3
-
-      reactants = 'C_CO2'
-      reactant_stoich = '1'
-      products = 'C_H C_HCO3'
-      product_stoich = '1 1'
-  [../]
-
-  ## =============== r2 reaction ================
-  [./r_2_equ]
-      type = Reaction
-      variable = r_2
-  [../]
-  [./r_2_rxn]  #   HCO3- <--> H+ + CO3--
-      type = ConstReaction
-      variable = r_2
-      this_variable = r_2
-
-      forward_rate = 56.28333
-      reverse_rate = 1.2288E12
-
-      # Apply the 'scale' as the C_ref value for simplicity
-      scale = 1 # umol/mm^3
-
-      reactants = 'C_HCO3'
-      reactant_stoich = '1'
-      products = 'C_H C_CO3'
-      product_stoich = '1 1'
-  [../]
-
-  ## =============== r3 reaction ================
-  [./r_3_equ]
-      type = Reaction
-      variable = r_3
-  [../]
-  [./r_3_rxn]  #   CO2 + OH- <--> HCO3-
-      type = ConstReaction
-      variable = r_3
-      this_variable = r_3
-
-      forward_rate = 2100
-      reverse_rate = 4.918333E-5
-
-      # Apply the 'scale' as the C_ref value for simplicity
-      scale = 1 # umol/mm^3
-
-      reactants = 'C_CO2 C_OH'
-      reactant_stoich = '1 1'
-      products = 'C_HCO3'
-      product_stoich = '1'
-  [../]
-
-  ## =============== r4 reaction ================
-  [./r_4_equ]
-      type = Reaction
-      variable = r_4
-  [../]
-  [./r_4_rxn]  #   HCO3- + OH- <--> CO3-- + H2O
-      type = ConstReaction
-      variable = r_4
-      this_variable = r_4
-
-      forward_rate = 6.5E9
-      reverse_rate = 1.337E6
-
-      # Apply the 'scale' as the C_ref value for simplicity
-      scale = 1 # umol/mm^3
-
-      reactants = 'C_HCO3 C_OH'
-      reactant_stoich = '1 1'
-      products = 'C_CO3'
-      product_stoich = '1'
-  [../]
-
-
-  ### ==================== Electrolyte Potentials ==========================
-  # in cathode and channels
-  [./phi_e_conductivity_cathode_and_channel]
-      type = ElectrolytePotentialConductivity
-      variable = phi_e
+  [./H2_gnpdiff]
+      type = GNernstPlanckDiffusion
+      variable = C_H2
+      valence = 0
       porosity = 1
+      electric_potential = phi_e
       temperature = T_e
-      ion_conc = 'C_H C_K'
-      diffusion = 'D_H D_K'
-      ion_valence = '1 1'
-      block = 'cathode channel'
-  [../]
-  [./phi_e_ionic_conductivity_cathode_and_channel]
-      type = ElectrolyteIonConductivity
-      variable = phi_e
-      porosity = eps
-      ion_conc = 'C_H C_K'
-      diffusion = 'D_H D_K'
-      ion_valence = '1 1'
-      block = 'cathode channel'
-      enable = false
-  [../]
-
-  # in membrane
-  [./phi_e_conductivity_in_membrane]
-      type = ElectrolytePotentialConductivity
-      variable = phi_e
-      porosity = 1
-      temperature = T_e
-      ion_conc = 'C_H_mem'
-      ion_valence = '1'
-      diffusion = 'D_H_mem'
-      block = 'catex_membrane'
-  [../]
-
-  ### ==================== Cathode Potentials ==========================
-  # in cathode
-  [./phi_s_conductivity_in_electrode]
-      type = ElectrodePotentialConductivity
-      variable = phi_s
-      solid_frac = 1
-      conductivity = sigma_s_eff
-  [../]
-
-  ## =============== Potential Difference ==================
-  [./phi_diff_equ]
-      type = Reaction
-      variable = phi_diff
-  [../]
-  [./phi_diff_sum]
-      type = WeightedCoupledSumFunction
-      variable = phi_diff
-      coupled_list = 'phi_s phi_e'
-      weights = '1 -1'
+      Dx = D_H2
+      Dy = D_H2
+      Dz = D_H2
   [../]
 []
 
 [DGKernels]
-  ## ===================== HCO3 balance ====================
-  [./HCO3_dgadv]
-      type = DGPoreConcAdvection
-      variable = C_HCO3
-      porosity = 1
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
-  [../]
-  [./HCO3_dgdiff]
-      type = DGVarPoreDiffusion
-      variable = C_HCO3
-      porosity = 1
-      Dx = Dd_HCO3
-      Dy = Dd_HCO3
-      Dz = Dd_HCO3
-  [../]
-  [./HCO3_dgnpdiff]
-      type = DGNernstPlanckDiffusion
-      variable = C_HCO3
-      valence = -1
-      porosity = 1
-      electric_potential = phi_e
-      temperature = T_e
-      Dx = D_HCO3
-      Dy = D_HCO3
-      Dz = D_HCO3
-  [../]
-
-  ## ===================== CO3 balance ====================
-  [./CO3_dgadv]
-      type = DGPoreConcAdvection
-      variable = C_CO3
-      porosity = 1
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
-  [../]
-  [./CO3_dgdiff]
-      type = DGVarPoreDiffusion
-      variable = C_CO3
-      porosity = 1
-      Dx = Dd_CO3
-      Dy = Dd_CO3
-      Dz = Dd_CO3
-  [../]
-  [./CO3_dgnpdiff]
-      type = DGNernstPlanckDiffusion
-      variable = C_CO3
-      valence = -2
-      porosity = 1
-      electric_potential = phi_e
-      temperature = T_e
-      Dx = D_CO3
-      Dy = D_CO3
-      Dz = D_CO3
-  [../]
-
-  ## ===================== CO2 balance ====================
-  [./CO2_dgadv]
-      type = DGPoreConcAdvection
-      variable = C_CO2
-      porosity = 1
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
-  [../]
-  [./CO2_dgdiff]
-      type = DGVarPoreDiffusion
-      variable = C_CO2
-      porosity = 1
-      Dx = Dd_CO2
-      Dy = Dd_CO2
-      Dz = Dd_CO2
-  [../]
-
-  ## ===================== H balance ====================
-  [./H_dgadv]
-      type = DGPoreConcAdvection
-      variable = C_H
-      porosity = 1
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
-  [../]
-  [./H_dgdiff]
-      type = DGVarPoreDiffusion
-      variable = C_H
-      porosity = 1
-      Dx = Dd_H
-      Dy = Dd_H
-      Dz = Dd_H
-  [../]
-  [./H_dgnpdiff]
-      type = DGNernstPlanckDiffusion
-      variable = C_H
-      valence = 1
-      porosity = 1
-      electric_potential = phi_e
-      temperature = T_e
-      Dx = D_H
-      Dy = D_H
-      Dz = D_H
-  [../]
-
-  ## ===================== OH balance ====================
-  [./OH_dgadv]
-      type = DGPoreConcAdvection
-      variable = C_OH
-      porosity = 1
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
-  [../]
-  [./OH_dgdiff]
-      type = DGVarPoreDiffusion
-      variable = C_OH
-      porosity = 1
-      Dx = Dd_OH
-      Dy = Dd_OH
-      Dz = Dd_OH
-  [../]
-  [./OH_dgnpdiff]
-      type = DGNernstPlanckDiffusion
-      variable = C_OH
-      valence = -1
-      porosity = 1
-      electric_potential = phi_e
-      temperature = T_e
-      Dx = D_OH
-      Dy = D_OH
-      Dz = D_OH
-  [../]
-
-  ## ===================== K balance ====================
-  [./K_dgadv]
-      type = DGPoreConcAdvection
-      variable = C_K
-      porosity = 1
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
-  [../]
-  [./K_dgdiff]
-      type = DGVarPoreDiffusion
-      variable = C_K
-      porosity = 1
-      Dx = Dd_K
-      Dy = Dd_K
-      Dz = Dd_K
-  [../]
-  [./K_dgnpdiff]
-      type = DGNernstPlanckDiffusion
-      variable = C_K
-      valence = 1
-      porosity = 1
-      electric_potential = phi_e
-      temperature = T_e
-      Dx = D_K
-      Dy = D_K
-      Dz = D_K
-  [../]
-
-  ## ===================== CO balance ====================
-  [./CO_dgadv]
-      type = DGPoreConcAdvection
-      variable = C_CO
-      porosity = 1
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
-  [../]
-  [./CO_dgdiff]
-      type = DGVarPoreDiffusion
-      variable = C_CO
-      porosity = 1
-      Dx = Dd_CO
-      Dy = Dd_CO
-      Dz = Dd_CO
-  [../]
-
-  ## ===================== H2 balance ====================
-  [./H2_dgadv]
-      type = DGPoreConcAdvection
-      variable = C_H2
-      porosity = 1
-      ux = vel_x
-      uy = vel_y
-      uz = vel_z
-  [../]
-  [./H2_dgdiff]
-      type = DGVarPoreDiffusion
-      variable = C_H2
-      porosity = 1
-      Dx = Dd_H2
-      Dy = Dd_H2
-      Dz = Dd_H2
-  [../]
 
 []
 
@@ -2149,18 +1681,6 @@
       uz = vel_z
   [../]
 
-  [./proton_membrane_flux]
-      type = CoupledVariableGradientFluxBC
-      variable = C_H
-      boundary = 'cathode_interface_membrane'
-      coupled = phi_e
-      #       -> coef = (F/R/T)*Dmem*C_H
-      #             Dmem = 0.0014 mm^2/s
-      #             C_H = 2.75 M
-      #       coef = 0.14992 [umol/V/mm/s]
-      coef = 0.14992
-  [../]
-
   ## =============== OH fluxes ================
   [./OH_FluxIn]
       type = DGFlowMassFluxBC
@@ -2244,38 +1764,6 @@
       ux = vel_x
       uy = vel_y
       uz = vel_z
-  [../]
-
-  # ====== ground state ======
-  [./ground_potential]
-      type = DirichletBC
-      variable = phi_s
-      boundary = 'channel_interface_cathode plate_interface_cathode'
-      value = 0
-  [../]
-
-  # ===== applied current =====
-  [./applied_current]
-      type = CoupledNeumannBC
-      variable = phi_e
-      boundary = 'catex_mem_interface cathode_interface_membrane'
-      coupled = 0
-  [../]
-
-  # ==== Do we need to 'ground' the electrolyte potential as well? ====
-  [./ground_electrolyte_potential]
-      type = DirichletBC
-      variable = phi_e
-      #boundary = 'channel_bottom channel_side_walls plate_interface_cathode'
-      boundary = 'channel_bottom'
-      value = 0
-  [../]
-  [./no_flux_electrolyte_potential]
-      type = CoupledNeumannBC
-      variable = phi_e
-      #boundary = 'channel_bottom channel_side_walls plate_interface_cathode'
-      boundary = 'channel_bottom'
-      coupled = 0
   [../]
 
 []
@@ -2448,9 +1936,7 @@
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
-      dt = 0.1
-      cutback_factor_at_failure = 0.5
-      percent_change = 0.5
+      dt = 0.01
   [../]
 
 [] #END Executioner
