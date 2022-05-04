@@ -97,7 +97,7 @@
 [Mesh]
   [file]
     type = FileMeshGenerator
-    file = CO2_electrolyzer_half_cell_plateless_v2_coarse.msh
+    file = CO2_electrolyzer_half_cell_plateless_v2_fine.msh
 
     ### ========= boundary_name ==========
     # "channel_exit"
@@ -1129,6 +1129,7 @@
       weights = '-2 -2'
       scale = As
       block = 'cathode'
+      enable = true
   [../]
 
   ## ===================== K balance ====================
@@ -2923,7 +2924,7 @@
 
   start_time = 0.0
   end_time = 515  #Experiments were run for 500s, the added 15s accounts for ramp up
-  dtmax = 10
+  dtmax = 5
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
@@ -2937,7 +2938,20 @@
 [Preconditioning]
     [./SMP_PJFNK]
       type = SMP
-      full = true
+      #full = true
+
+      # NOTE: This is an alternative to 'full' coupling
+      #     Helps create a more sparse Jacobian
+      coupled_groups = 'pressure,vel_x pressure,vel_y, pressure,vel_z
+                        C_HCO3,r_1 C_HCO3,r_2 C_HCO3,r_3 C_HCO3,r_4
+                        C_CO3,r_2 C_CO3,r_4
+                        C_CO2,r_1 C_CO2,r_3 C_CO2,r_CO
+                        C_H,r_w C_H,r_1 C_H,r_2 C_H,r_H2 C_H,r_CO
+                        C_OH,r_w C_OH,r_3 C_OH,r_4 C_OH,r_H2 C_OH,r_CO
+                        C_CO,r_CO C_H2,r_H2
+                        J_CO,r_CO J_H2,r_H2
+                        J_CO,phi_e J_H2,phi_e J_CO,phi_s J_H2,phi_s
+                        phi_diff,phi_s phi_diff,phi_e'
       solve_type = pjfnk
     [../]
 
