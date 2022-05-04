@@ -10,8 +10,8 @@
 #       -> 2.75 umol/mm^3                 (CoupledVariableGradientFluxBC for H+)
 #
 #     exit pressure (@ channel_exit) = 0
-#     ground potential (@ channel_interface_cathode)
-#                      (@ plate_interface_cathode)  = 0
+#     reference electrolyte potential = 0 (@channel_bottom)
+#     applied cathode voltage = -0.4 to -2 V (@plate_interface_cathode)
 #
 #       [NOTE: Units for pressure in Pa]
 #           units for viscosity should be in Pa*s or g/mm/s
@@ -75,7 +75,7 @@
   # Given minimum conductivity
   min_conductivity = 2e-5 #C/V/s/mm
   tight_coupling = false
-  include_ion_gradients = false #in current calculations
+  include_ion_gradients = true #in current calculations
 
   # common to all SimpleGasPropertiesBase
   diff_length_unit = "mm"
@@ -453,6 +453,14 @@
       family = LAGRANGE
       initial_condition = 0.0 # C/s/mm^2
       block = 'cathode catex_membrane'
+  [../]
+
+  # cathode voltage
+  [./cat_volt]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0.0 # V
+      block = 'cathode'
   [../]
 
   # Effective cathode conductivity
@@ -1352,7 +1360,7 @@
       diffusion = 'D_H D_K'
       ion_valence = '1 1'
       block = 'cathode channel'
-      enable = false
+      enable = true
   [../]
 
   [./phi_e_J_cat]
@@ -1539,7 +1547,22 @@
       variable = input_current
 
       start_value = 0.0
-      aux_vals = '0.001'
+      aux_vals = '0.001'  # 100 mA/cm^2 ==> 0.001 C/s/mm^2
+
+      # Input current should approximately be a step function
+      aux_times = '15'
+      time_spans = '0.5'
+
+      execute_on = 'initial timestep_begin nonlinear'
+  [../]
+
+  # calculate cathode voltage
+  [./volt_step_input]
+      type = TemporalStepFunction
+      variable = cat_volt
+
+      start_value = 0.0
+      aux_vals = '-1.5'  # V
 
       # Input current should approximately be a step function
       aux_times = '15'
@@ -2599,36 +2622,28 @@
       uz = vel_z
   [../]
 
-  # ====== ground state ======
-  [./ground_potential]
-      type = DirichletBC
+  # ====== cathode state ======
+  [./applied_cathode_potential]
+      type = CoupledDirichletBC
       variable = phi_s
-      boundary = 'channel_interface_cathode plate_interface_cathode'
-      value = 0
+      boundary = 'plate_interface_cathode'
+      coupled = cat_volt
   [../]
 
   # ===== applied current =====
-  [./applied_current]
+  [./applied_current_mem]
       type = CoupledNeumannBC
       variable = phi_e
       boundary = 'catex_mem_interface'
       coupled = input_current
   [../]
 
-  # ==== Do we need to 'ground' the electrolyte potential as well? ====
-  [./ground_electrolyte_potential]
+  # ==== Reference electrolyte state ====
+  [./reference_electrolyte_potential]
       type = DirichletBC
       variable = phi_e
-      #boundary = 'channel_bottom channel_side_walls plate_interface_cathode'
       boundary = 'channel_bottom'
       value = 0
-  [../]
-  [./no_flux_electrolyte_potential]
-      type = CoupledNeumannBC
-      variable = phi_e
-      #boundary = 'channel_bottom channel_side_walls plate_interface_cathode'
-      boundary = 'channel_bottom'
-      coupled = 0
   [../]
 
 []
