@@ -11,7 +11,8 @@
 #
 #     exit pressure (@ channel_exit) = 0
 #     reference electrolyte potential = 0 (@channel_bottom)
-#     applied cathode voltage = -0.4 to -2 V (@plate_interface_cathode)
+#     ground reference for cathode = 0 (@cathode_interface_membrane
+#                                       plate_interface_cathode)
 #
 #       [NOTE: Units for pressure in Pa]
 #           units for viscosity should be in Pa*s or g/mm/s
@@ -97,7 +98,7 @@
 [Mesh]
   [file]
     type = FileMeshGenerator
-    file = CO2_electrolyzer_half_cell_plateless_v2_fine.msh
+    file = CO2_electrolyzer_half_cell_plateless_v2_coarse.msh
 
     ### ========= boundary_name ==========
     # "channel_exit"
@@ -391,6 +392,20 @@
       order = FIRST
       family = LAGRANGE
       block = 'channel cathode catex_membrane'
+  [../]
+
+  # electrolyte current magnitude
+  [./ie_mag]
+      order = FIRST
+      family = MONOMIAL
+      block = 'channel cathode catex_membrane'
+  [../]
+
+  # electrode current magnitude
+  [./is_mag]
+      order = FIRST
+      family = MONOMIAL
+      block = 'cathode'
   [../]
 
   # velocity inlet
@@ -1438,7 +1453,11 @@
       number_of_electrons = 1         # params are fitted to this standard
       electron_transfer_coef = 0.14   # fitted param
 
-      scale = 0.0375    # correlation factor between bulk and surface concentrations (1 means bulk=surface, 0.0375 was from vanadium flow battery)
+      # correlation factor between bulk and surface concentrations
+      # (1 means bulk=surface, 0.0375 was from vanadium flow battery)
+      #
+      #   Adjusted to get FE values within range of literature
+      scale = 5
   [../]
 
   [./r_CO_equ]
@@ -1464,7 +1483,11 @@
       number_of_electrons = 1         # params are fitted to this standard
       electron_transfer_coef = 0.35   # fitted param
 
-      scale = 0.0375   # correlation factor between bulk and surface concentrations (1 means bulk=surface, 0.0375 was from vanadium flow battery)
+      # correlation factor between bulk and surface concentrations
+      # (1 means bulk=surface, 0.0375 was from vanadium flow battery)
+      #
+      #   Adjusted to get FE values within range of literature
+      scale = 5e9
   [../]
 
   ## =============== Butler-Volmer Current ================
@@ -1548,11 +1571,11 @@
       variable = input_current
 
       start_value = 0.0
-      aux_vals = '0.001'  # 100 mA/cm^2 ==> 0.001 C/s/mm^2
+      aux_vals = '0.001 0.002 0.003 0.004'  # 100 mA/cm^2 ==> 0.001 C/s/mm^2
 
       # Input current should approximately be a step function
-      aux_times = '15'
-      time_spans = '0.5'
+      aux_times = '15 30 45 60'
+      time_spans = '0.5 0.5 0.5 0.5'
 
       execute_on = 'initial timestep_begin nonlinear'
   [../]
@@ -1563,7 +1586,7 @@
       variable = cat_volt
 
       start_value = 0.0
-      aux_vals = '-1.5'  # V
+      aux_vals = '0'  # V
 
       # Input current should approximately be a step function
       aux_times = '15'
@@ -2421,6 +2444,27 @@
       conductivity = sigma_s_eff
       execute_on = 'initial timestep_end'
   [../]
+
+
+  # calculate electrolyte current magnitude
+  [./ie_calc]
+      type = VectorMagnitude
+      variable = ie_mag
+      ux = ie_x
+      uy = ie_y
+      uz = ie_z
+      execute_on = 'initial timestep_end'
+  [../]
+
+  # calculate electrode current magnitude
+  [./is_calc]
+      type = VectorMagnitude
+      variable = is_mag
+      ux = is_x
+      uy = is_y
+      uz = is_z
+      execute_on = 'initial timestep_end'
+  [../]
 []
 
 
@@ -2627,8 +2671,15 @@
   [./applied_cathode_potential]
       type = CoupledDirichletBC
       variable = phi_s
-      boundary = 'plate_interface_cathode'
-      coupled = cat_volt
+      boundary = 'plate_interface_cathode channel_interface_cathode'
+      coupled = 0
+  [../]
+
+  [./no_flux_cathode_potential]
+      type = CoupledNeumannBC
+      variable = phi_s
+      boundary = 'cathode_interface_membrane'
+      coupled = 0
   [../]
 
   # ===== applied current =====
@@ -2637,6 +2688,13 @@
       variable = phi_e
       boundary = 'catex_mem_interface'
       coupled = input_current
+  [../]
+
+  [./no_flux_electrolyte_potential]
+      type = CoupledNeumannBC
+      variable = phi_e
+      boundary = 'plate_interface_cathode'
+      coupled = 0
   [../]
 
   # ==== Reference electrolyte state ====
@@ -2698,10 +2756,31 @@
       execute_on = 'initial timestep_end'
   [../]
 
-  [./I_interface_Amps]
+  [./Ie_from_mem_Amps]
       type = SideIntegralVariablePostprocessor
       boundary = 'cathode_interface_membrane'
       variable = ie_z
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./Is_from_mem_Amps]
+      type = SideIntegralVariablePostprocessor
+      boundary = 'cathode_interface_membrane'
+      variable = is_z
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./Ie_from_cat_Amps]
+      type = SideIntegralVariablePostprocessor
+      boundary = 'plate_interface_cathode channel_interface_cathode'
+      variable = ie_z
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./Is_from_cat_Amps]
+      type = SideIntegralVariablePostprocessor
+      boundary = 'plate_interface_cathode channel_interface_cathode'
+      variable = is_z
       execute_on = 'initial timestep_end'
   [../]
 
@@ -2897,7 +2976,7 @@
 
                          20
 
-                         1E-6
+                         1E-8
                          1E-8
 
                          fgmres
@@ -2909,7 +2988,7 @@
                          20
                          10
 
-                         1e-6
+                         1e-8
                          1e-8
 
                          mumps
@@ -2923,7 +3002,7 @@
   nl_abs_step_tol = 1e-12
 
   start_time = 0.0
-  end_time = 515  #Experiments were run for 500s, the added 15s accounts for ramp up
+  end_time = 75  #Experiments were run for 500s, the added 15s accounts for ramp up
   dtmax = 5
 
   [./TimeStepper]
@@ -2951,7 +3030,8 @@
                         C_CO,r_CO C_H2,r_H2
                         J_CO,r_CO J_H2,r_H2
                         J_CO,phi_e J_H2,phi_e J_CO,phi_s J_H2,phi_s
-                        phi_diff,phi_s phi_diff,phi_e'
+                        phi_diff,phi_s phi_diff,phi_e
+                        phi_e,C_HCO3, phi_e,C_CO3, phi_e,C_H phi_e,C_OH'
       solve_type = pjfnk
     [../]
 
