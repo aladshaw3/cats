@@ -76,7 +76,7 @@
   # Given minimum conductivity
   min_conductivity = 2e-5 #C/V/s/mm
   tight_coupling = false
-  include_ion_gradients = true #in current calculations
+  include_ion_gradients = false #in current calculations
 
   # common to all SimpleGasPropertiesBase
   diff_length_unit = "mm"
@@ -1376,7 +1376,7 @@
       diffusion = 'D_H D_K'
       ion_valence = '1 1'
       block = 'cathode channel'
-      enable = true
+      enable = false
   [../]
 
   [./phi_e_J_cat]
@@ -1454,10 +1454,8 @@
       electron_transfer_coef = 0.14   # fitted param
 
       # correlation factor between bulk and surface concentrations
-      # (1 means bulk=surface, 0.0375 was from vanadium flow battery)
-      #
       #   Adjusted to get FE values within range of literature
-      scale = 5
+      scale = 1
   [../]
 
   [./r_CO_equ]
@@ -1484,10 +1482,8 @@
       electron_transfer_coef = 0.35   # fitted param
 
       # correlation factor between bulk and surface concentrations
-      # (1 means bulk=surface, 0.0375 was from vanadium flow battery)
-      #
       #   Adjusted to get FE values within range of literature
-      scale = 5e9
+      scale = 2.5e9
   [../]
 
   ## =============== Butler-Volmer Current ================
@@ -1499,7 +1495,7 @@
       type = ButlerVolmerCurrentDensity
       variable = J_H2
 
-      number_of_electrons = 1  # params are fitted to this standard
+      number_of_electrons = 2  # params are fitted to this standard
       specific_area = As
       rate_var = r_H2
   [../]
@@ -1512,7 +1508,7 @@
       type = ButlerVolmerCurrentDensity
       variable = J_CO
 
-      number_of_electrons = 1  # params are fitted to this standard
+      number_of_electrons = 2  # params are fitted to this standard
       specific_area = As
       rate_var = r_CO
   [../]
@@ -3031,7 +3027,7 @@
                         J_CO,r_CO J_H2,r_H2
                         J_CO,phi_e J_H2,phi_e J_CO,phi_s J_H2,phi_s
                         phi_diff,phi_s phi_diff,phi_e
-                        phi_e,C_HCO3, phi_e,C_CO3, phi_e,C_H phi_e,C_OH'
+                        phi_e,C_HCO3, phi_e,C_CO3, phi_e,C_H phi_e,C_OH phi_e,C_K'
       solve_type = pjfnk
     [../]
 
