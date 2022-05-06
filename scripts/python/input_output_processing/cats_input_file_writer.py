@@ -304,8 +304,8 @@ class CATS_InputFile(object):
                 raise TypeError("The data stored at the key (" + key + ") is not a dict!")
 
     # method to write the stream to an file for MOOSE/CATS to read
-    def write_stream_to_file(self, file_name="", folder=""):
-        if self.stream_built == False:
+    def write_stream_to_file(self, file_name="", folder="", rebuild=False):
+        if self.stream_built == False or rebuild == True:
             self.build_stream()
         if file_name == "":
             file_name+="input"
