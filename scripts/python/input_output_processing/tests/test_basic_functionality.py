@@ -6,6 +6,7 @@ from os import path
 
 import pytest
 from input_output_processing.cats_input_file_writer import *
+from input_output_processing.read_moose_csv_to_df import *
 
 # Start single tests
 @pytest.mark.unit
@@ -135,3 +136,37 @@ class TestBasicFileReadingFunctionality():
         obj.write_stream_to_file(file_name="test_in_to_out", folder="test_output")
 
         assert path.exists("test_output/test_in_to_out.i") == True
+
+
+# Start test class for csv functions
+class TestCSVfileReader():
+    @pytest.fixture(scope="class")
+    def csv_obj(self):
+        obj = MOOSE_CVS_File("test_input/input_file_out.csv")
+        return obj
+
+    @pytest.mark.unit
+    def test_csv_obj_contents(self, csv_obj):
+        obj = csv_obj
+        assert hasattr(obj, 'df')
+        assert hasattr(obj, 'valid_col_names')
+        assert hasattr(obj, 'num_rows')
+
+        assert type(obj.valid_col_names) == list
+        assert obj.num_rows == 41
+
+    @pytest.mark.unit
+    def test_csv_obj_funcs(self, csv_obj):
+        obj = csv_obj
+
+        assert len(obj.column_names()) == 8
+
+        obj.read_new_file("test_input/input_file_out_2.csv")
+        assert obj.num_rows == 11
+
+        assert obj.value(0,'pressure_inlet') == 0
+        assert obj.value(-1,'pressure_inlet') == 0
+        assert obj.value(100,'pressure_inlet') == 13
+
+        assert obj.value(0.1,'pressure_inlet') == 2.6
+        assert obj.value(0.12,'pressure_inlet') == 3.12
