@@ -1250,7 +1250,7 @@
     temperature = T_e
     number_of_electrons = 1
     electron_transfer_coef = 0.14
-    scale = 1
+    scale = 1.0
   [../]
 
   [./r_CO_equ]
@@ -1271,7 +1271,7 @@
     temperature = T_e
     number_of_electrons = 1
     electron_transfer_coef = 0.35
-    scale = 2500000000.0
+    scale = 2500000037.252903
   [../]
 
   [./J_H2_equ]

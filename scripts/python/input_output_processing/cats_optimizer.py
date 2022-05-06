@@ -47,7 +47,7 @@ def _test_obj_func(x, p1, p2, p3, p4):
 
     obj.write_stream_to_file(og_file_copy, rebuild=True)
 
-    #os.system("mpiexec --n 16 ../../../cats-opt -i " + og_file_copy+".i")
+    os.system("mpiexec --n 2 ../../../cats-opt -i " + og_file_copy+".i")
 
     csv_file = og_file_copy+"_out.csv"
     csv_obj = MOOSE_CVS_File(csv_file)
