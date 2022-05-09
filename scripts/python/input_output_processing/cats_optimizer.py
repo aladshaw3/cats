@@ -47,7 +47,7 @@ def _test_obj_func(x, p1, p2, p3, p4):
 
     obj.write_stream_to_file(og_file_copy, rebuild=True)
 
-    os.system("mpiexec --n 2 ../../../cats-opt -i " + og_file_copy+".i")
+    os.system("mpiexec --n 16 ../../../cats-opt -i " + og_file_copy+".i")
 
     csv_file = og_file_copy+"_out.csv"
     csv_obj = MOOSE_CVS_File(csv_file)
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     x_obs = [25,40,55,70,25,40,55,70]
     params = [0.1737, 1, 0.6774, 2.5e9]
 
-    res1 = optimization.curve_fit(_test_obj_func, x_obs, y_target, p0=params, bounds=(0.01, [1., 1e10, 1.,1e12]))
+    res1 = optimization.curve_fit(_test_obj_func, x_obs, y_target, p0=params, bounds=([0.1, 0.01, 0.1, 1e8], [1., 1e3, 1., 1e12]))
 
     print(res1)
 
