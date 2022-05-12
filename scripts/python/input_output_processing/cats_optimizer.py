@@ -32,18 +32,18 @@ obj.write_stream_to_file(og_file_copy)
 #print(obj.data["Kernels"]["first_order_decay"]["forward_rate"])
 
 #def _test_obj_func(x, par):
-def _test_obj_func(x, p1, p2, p3, p4):
+def _test_obj_func(x, p1, p2):
     y_vals = [0] * len(x)
     obj.construct_from_file(og_file_copy+".i")
     #print(par)
     #obj.data["Kernels"]["first_order_decay"]["forward_rate"] = par
     #print(obj.data["Kernels"]["first_order_decay"]["forward_rate"])
 
-    obj.data["Kernels"]["r_H2_rxn"]["oxidized_state_stoich"][0] = abs(p1)
-    obj.data["Kernels"]["r_H2_rxn"]["scale"] = abs(p2)
+    #obj.data["Kernels"]["r_H2_rxn"]["oxidized_state_stoich"][0] = abs(p1)
+    obj.data["Kernels"]["r_H2_rxn"]["scale"] = 10**abs(p1)
 
-    obj.data["Kernels"]["r_CO_rxn"]["oxidized_state_stoich"][0] = abs(p3)
-    obj.data["Kernels"]["r_CO_rxn"]["scale"] = abs(p4)
+    #obj.data["Kernels"]["r_CO_rxn"]["oxidized_state_stoich"][0] = abs(p3)
+    obj.data["Kernels"]["r_CO_rxn"]["scale"] = 10**abs(p2)
 
     obj.write_stream_to_file(og_file_copy, rebuild=True)
 
@@ -83,9 +83,12 @@ if __name__ == "__main__":
                 0.001134,
                 0.002161]
     x_obs = [25,40,55,70,25,40,55,70]
-    params = [0.1737, 1, 0.6774, 2.5e9]
+    #params = [0.1737, 0, 0.6774, 9.4]
+    params = [0, 0]
 
-    res1 = optimization.curve_fit(_test_obj_func, x_obs, y_target, p0=params, bounds=([0.1, 0.01, 0.1, 1e8], [1., 1e3, 1., 1e12]))
+    #res1 = optimization.curve_fit(_test_obj_func, x_obs, y_target, p0=params, bounds=([0.1, -2, 0.1, 8], [1., 2, 1., 12]))
+
+    res1 = optimization.curve_fit(_test_obj_func, x_obs, y_target, p0=params, bounds=([-2, -2], [2, 12]))
 
     print(res1)
 
@@ -93,5 +96,25 @@ if __name__ == "__main__":
     #print(list)
 
     #list = _test_obj_func(x_obs,params[0]+1)
+
+    '''
+    (array([1.73322195e-01, 1.00042970e+00, 6.77366988e-01, 2.49679021e+09]), array([[ 3.43526197e-05, -7.10062506e-05,  2.27686410e-05,
+         9.60800440e+04],
+       [-7.10062506e-05,  1.47820166e-04, -4.77419390e-05,
+        -2.03216010e+05],
+       [ 2.27686410e-05, -4.77419390e-05,  1.58461282e-05,
+         6.67461418e+04],
+       [ 9.60800440e+04, -2.03216010e+05,  6.67461418e+04,
+         2.90033001e+14]]))
+
+    '''
+
+    '''
+    (array([6.00094323e-04, 9.39674705e+00]), array([[ 3.31429465e-06, -4.15967251e-05],
+       [-4.15967251e-05,  5.25144363e-04]]))
+
+       10^p [1.00138, 2.49314e9]
+
+    '''
 
     print("END")
