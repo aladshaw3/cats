@@ -1567,11 +1567,11 @@
       variable = input_current
 
       start_value = 0.0
-      aux_vals = '0.001 0.002 0.003 0.004'  # 100 mA/cm^2 ==> 0.001 C/s/mm^2
+      aux_vals = '0.001'  # 100 mA/cm^2 ==> 0.001 C/s/mm^2
 
       # Input current should approximately be a step function
-      aux_times = '15 30 45 60'
-      time_spans = '0.5 0.5 0.5 0.5'
+      aux_times = '15
+      time_spans = '0.5'
 
       execute_on = 'initial timestep_begin nonlinear'
   [../]
@@ -2752,48 +2752,6 @@
       execute_on = 'initial timestep_end'
   [../]
 
-  [./Ie_from_mem_Amps]
-      type = SideIntegralVariablePostprocessor
-      boundary = 'cathode_interface_membrane'
-      variable = ie_z
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./Is_from_mem_Amps]
-      type = SideIntegralVariablePostprocessor
-      boundary = 'cathode_interface_membrane'
-      variable = is_z
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./Ie_from_cat_Amps]
-      type = SideIntegralVariablePostprocessor
-      boundary = 'plate_interface_cathode channel_interface_cathode'
-      variable = ie_z
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./Is_from_cat_Amps]
-      type = SideIntegralVariablePostprocessor
-      boundary = 'plate_interface_cathode channel_interface_cathode'
-      variable = is_z
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./V_solid_cathode]
-      type = ElementAverageValue
-      block = 'cathode'
-      variable = phi_s
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./V_elec_cathode]
-      type = ElementAverageValue
-      block = 'cathode'
-      variable = phi_e
-      execute_on = 'initial timestep_end'
-  [../]
-
   [./C_HCO3_in_M]
       type = SideAverageValue
       boundary = 'channel_enter'
@@ -2891,20 +2849,6 @@
       variable = C_OH
       execute_on = 'initial timestep_end'
   [../]
-
-  [./C_K_in_M]
-      type = SideAverageValue
-      boundary = 'channel_enter'
-      variable = C_K
-      execute_on = 'initial timestep_end'
-  [../]
-
-  [./C_K_out_M]
-      type = SideAverageValue
-      boundary = 'channel_exit'
-      variable = C_K
-      execute_on = 'initial timestep_end'
-  [../]
 []
 
 [Executioner]
@@ -2998,8 +2942,8 @@
   nl_abs_step_tol = 1e-12
 
   start_time = 0.0
-  end_time = 75  #Experiments were run for 500s, the added 15s accounts for ramp up
-  dtmax = 5
+  end_time = 515  #Experiments were run for 500s, the added 15s accounts for ramp up
+  dtmax = 1
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
