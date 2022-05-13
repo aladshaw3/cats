@@ -27,7 +27,7 @@
     type = ConstReaction
     variable = A
     this_variable = A
-    forward_rate = 1.5
+    forward_rate = 0.5
     reverse_rate = 0.0
     scale = -1.0
     reactants = 'A'

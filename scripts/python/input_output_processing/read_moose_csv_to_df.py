@@ -13,6 +13,7 @@
 import pandas
 from bisect import bisect_left, bisect_right
 from os import path
+import sys, os
 import errno
 
 # Object to handle the data associated with MOOSE generated CSV files

@@ -914,6 +914,8 @@ class SensitivitySweep(object):
 
 # ----------- End: Definition of Class object for SensitivitySweep --------------------
 
+
+
 # ---------- Testing -------------
 
 if __name__ == "__main__":
@@ -962,12 +964,17 @@ if __name__ == "__main__":
         #cats_file_obj.data["Kernels"]["first_order_decay"]["scale"] = params["reaction_scale_A"]
 
         #Rebuild the CATS input stream and write to new (or same file)
-        #new_file = output_file+"_"+other["RunNum"]
-        new_file = output_file
+        new_file = output_file+"_"+other["RunNum"]
+        #new_file = output_file
         cats_file_obj.write_stream_to_file(new_file, rebuild=True)
 
         #Call the executable for the simulation
         os.system("mpiexec --n 16 ../../../cats-opt -i " + new_file+".i")
+
+        #Remove the old input file
+        #   Allows me to keep the result csv files while removing the .i files generated
+        if os.path.exists(new_file+".i"):
+            os.remove(new_file+".i")
 
         #Read in the result csv file
         result_file = new_file+"_out.csv"
@@ -1002,5 +1009,12 @@ if __name__ == "__main__":
         test_tuples[item] = (test_conds[item], 1.5)
 
     test_obj = SensitivitySweep(test_func2,test_params, test_tuples, test_other)
-    #test_obj.run_sweep("test_input/sens_res","test_analysis-simple-with-cats",True,10,2,False)
-    test_obj.run_exhaustive_sweep("test_input/sens_res","test_analysis-exhaustive-with-cats",True,10,1,False)
+    test_obj.run_sweep("test_input/sens_res","test_analysis-simple-with-cats",True,10,2,True)
+    #test_obj.run_exhaustive_sweep("test_input/sens_res","test_analysis-exhaustive-with-cats",True,10,1,True)
+
+    # Reference of args run_sweep(folder = "",
+    #                    sensitivity_file_name = "SensitivitySweepAnalysis.dat",
+    #                    relative = False,
+    #                    per = 1,
+    #                    cond_limit=1,
+    #                    skip_partials=False)
