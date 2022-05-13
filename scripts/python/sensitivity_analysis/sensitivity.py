@@ -17,6 +17,9 @@
 
 import math
 import sys, os
+sys.path.append('..') #Jump out of directory 1 level
+from input_output_processing.cats_input_file_writer import *
+from input_output_processing.read_moose_csv_to_df import *
 
 ## Sensivity class object for simple analyses
 #
@@ -38,7 +41,8 @@ class Sensitivity(object):
     #   @param func pointer to a func defined and written in python
     #   @param func_params map or dictionary of parameters the function depends on
     #   @param func_conds map or dictionary of conditions the function depends on
-    def __init__(self, func, func_params, func_conds):
+    #   @param func_args map or dictionary of other function arguments passed to function
+    def __init__(self, func, func_params, func_conds, func_args):
         # Check to make sure the arguments are dictionaries
         if type(func_params) is not dict:
             raise RuntimeError("Error! func_params must be a dictionary object!")
@@ -56,6 +60,8 @@ class Sensitivity(object):
         self.func_params = func_params
         ##A set of other conditions or information the model needs to use
         self.func_conds = func_conds
+        ##A set of other function arguments that the function needs to operate
+        self.func_args = func_args
         ##Computed set of partial derivatives or percent changes
         self.partials = {}
         ##When set to True, the partials are computed based on a percent change to the variable
@@ -93,6 +99,9 @@ class Sensitivity(object):
             message += "Function conditions:\n"
             for item in self.func_conds:
                 message += "\t" + str(item) + "\t" + str(self.func_conds[item]) + "\n"
+            message += "Function Arguments:\n"
+            for item in self.func_args:
+                message += "\t" + str(item) + "\t" + str(self.func_args[item]) + "\n"
             message += "Partial derivatives:\n"
             for item in self.partials:
                 message += "\t" + str(item) + "\t" + str(self.partials[item]) + "\n"
@@ -105,7 +114,7 @@ class Sensitivity(object):
 
     ##Function to call the users function with their parameters and conditions
     def eval_func(self):
-        return self.func(self.func_params,self.func_conds)
+        return self.func(self.func_params,self.func_conds,self.func_args)
 
     ##Function to compute all partials
     #
@@ -231,7 +240,7 @@ class Sensitivity(object):
 # @param cond_value  current list of values of conditions that needs updating
 # @param cond_limit_lower  list of the upper limits of the conditions
 # @param cond_limit_upper  list of the upper limits of the conditions
-def update_cond(cond_value, cond_limit_lower, cond_limit_upper):
+def update_cond(cond_value, cond_limit_lower, cond_limit_upper, user_base=None):
     complete = False
     i = 0
     for value in cond_value:
@@ -244,11 +253,17 @@ def update_cond(cond_value, cond_limit_lower, cond_limit_upper):
         else:
             #base is calculated based on the number of conditions to vary
             #       min_base = 2 (can't do less than this) -->  max_base = 10 (don't need more than this)
-            base = int(math.pow(10,math.log10(100000)/len(cond_value)))
-            if base > 10:
-                base = 10
-            if base < 2:
-                base = 2
+            if user_base == None:
+                base = int(math.pow(10,math.log10(100000)/len(cond_value)))
+                if base > 10:
+                    base = 10
+                if base < 2:
+                    base = 2
+            else:
+                base = user_base
+            if base == 0:
+                complete = True
+                return complete
             update = dist/base
             if value+update <= cond_limit_upper[i]:
                 cond_value[i] = value+update
@@ -286,7 +301,7 @@ class SensitivitySweep(object):
     #            e.g.,  func_conds_tuples["Temp"] = (273, 373)
     #
     #                        a condition for temperature that spans 100 degrees
-    def __init__(self, func, func_params, func_conds_tuples):
+    def __init__(self, func, func_params, func_conds_tuples, func_args):
         self.sweep_computed = False
         start_conditions = {}
         if type(func_conds_tuples) is not dict:
@@ -297,7 +312,7 @@ class SensitivitySweep(object):
 
             start_conditions[item] = func_conds_tuples[item][0]
         self.cond_tuples = func_conds_tuples
-        self.sens_obj = Sensitivity(func, func_params, start_conditions)
+        self.sens_obj = Sensitivity(func, func_params, start_conditions, func_args)
         ##Initialize a list of maps for sensitivity results to be stored digitally
         #
         # The below object (self.sens_maps) has the following format...
@@ -384,7 +399,18 @@ class SensitivitySweep(object):
     ##Run the Sensitivity Sweep Analysis and print results to a file
     #
     #       User may also specify whether or not to use relative parameter changes and the percent to change
-    def run_sweep(self, folder = "", sensitivity_file_name = "SensitivitySweepAnalysis.dat", relative = False, per = 1):
+    #
+    #   @param folder where to save the results
+    #   @param sensitivity_file_name name of the file to save
+    #   @param relative True=relative differences with 'per' percentage change, False=Partial derivatives
+    #   @param cond_limit Number of steps to take in conditions loop
+    #   @param skip_partials True=Just evaluate function at the given conditions, False=Evaluate and get partials
+    def run_sweep(self, folder = "",
+                        sensitivity_file_name = "SensitivitySweepAnalysis.dat",
+                        relative = False,
+                        per = 1,
+                        cond_limit=1,
+                        skip_partials=False):
         #Enfore a .dat file extension. This is used to flag the file as very large so that
         #   our git tracking ignores that file. May be unnecessary, but better safe than sorry.
         if folder != "":
@@ -410,6 +436,9 @@ class SensitivitySweep(object):
         file.write("\nSystem Baseline Conditions:\n")
         for item in self.sens_obj.func_conds:
             file.write(str(item) + "\t" + str(self.sens_obj.func_conds[item]) + "\n")
+        file.write("\nSystem Function Arguments:\n")
+        for item in self.sens_obj.func_args:
+            file.write(str(item) + "\t" + str(self.sens_obj.func_args[item]) + "\n")
 
         mmfile.write("-------------- Sensitivity Sweep Results (Max and Min Sensitivities) ---------------\n")
         if relative == False:
@@ -419,6 +448,9 @@ class SensitivitySweep(object):
         mmfile.write("\nSystem Parameters:\n")
         for item in self.sens_obj.func_params:
             mmfile.write(str(item) + "\t" + str(self.sens_obj.func_params[item]) + "\n")
+        mmfile.write("\nSystem Function Arguments:\n")
+        for item in self.sens_obj.func_args:
+            mmfile.write(str(item) + "\t" + str(self.sens_obj.func_args[item]) + "\n")
 
         #Begin looping through conditions, running sensitivity analyses, and printing results in a matrix
         i = 0
@@ -442,12 +474,16 @@ class SensitivitySweep(object):
                 if abs(dist) <= 10*math.sqrt(sys.float_info.epsilon):
                     file.write("Skipped this analysis... Spacing between bounds is too small\n")
                 else:
-                    dx = dist/10
-                    for n in range(0,11):
+                    if cond_limit > 0:
+                        dx = dist/cond_limit
+                    else:
+                        dx = 0
+                    for n in range(0,cond_limit+1):
                         update = self.cond_tuples[cond][0] + n*dx
                         #print(str(cond) + "\t" + str(update))
                         self.sens_obj.func_conds[cond] = update
-                        self.sens_obj.compute_partials(relative, per)
+                        if skip_partials == False:
+                            self.sens_obj.compute_partials(relative, per)
                         func_value = self.sens_obj.eval_func()
                         self.sens_maps.append({})
                         self.sens_maps[j]["func_result"] = func_value
@@ -501,7 +537,8 @@ class SensitivitySweep(object):
                         j+=1
             elif type(self.sens_obj.func_conds[cond]) is bool:
                 #Run simulation as is
-                self.sens_obj.compute_partials(relative, per)
+                if skip_partials == False:
+                    self.sens_obj.compute_partials(relative, per)
                 func_value = self.sens_obj.eval_func()
                 self.sens_maps.append({})
                 self.sens_maps[j]["func_result"] = func_value
@@ -558,7 +595,8 @@ class SensitivitySweep(object):
                     self.sens_obj.func_conds[cond] = False
                 else:
                     self.sens_obj.func_conds[cond] = True
-                self.sens_obj.compute_partials(relative, per)
+                if skip_partials == False:
+                    self.sens_obj.compute_partials(relative, per)
                 func_value = self.sens_obj.eval_func()
                 self.sens_maps.append({})
                 self.sens_maps[j]["func_result"] = func_value
@@ -610,8 +648,9 @@ class SensitivitySweep(object):
                 file.write("\n")
                 j+=1
             else:
-                print("Error! Invalid condition type in self.sens_obj.func_conds")
-                file.write("Skipped due to type error\n")
+                print("Non-numeric function conditions/args are not varied in search methods...")
+                print("Variations of the {" + str(cond) + "} condition will be skipped...")
+                file.write("Non-numeric function argument {" + str(cond) + "} is skipped \n")
 
             #Recover original condition before proceeding to next
             self.sens_obj.func_conds[cond] = og_cond
@@ -667,7 +706,18 @@ class SensitivitySweep(object):
     #
     #   The exhaustive sweep uses the helper function update_cond() to go through all condition permutations
     #   within the specified boundaries of each condition variable.
-    def run_exhaustive_sweep(self, folder = "", sensitivity_file_name = "ExhaustiveSensitivitySweepAnalysis.dat", relative = False, per = 1):
+    #
+    #   @param folder where to save the results
+    #   @param sensitivity_file_name name of the file to save
+    #   @param relative True=relative differences with 'per' percentage change, False=Partial derivatives
+    #   @param cond_limit Number of steps to take in conditions loop
+    #   @param skip_partials True=Just evaluate function at the given conditions, False=Evaluate and get partials
+    def run_exhaustive_sweep(self, folder = "",
+                                    sensitivity_file_name = "ExhaustiveSensitivitySweepAnalysis.dat",
+                                    relative = False,
+                                    per = 1,
+                                    cond_limit = 1,
+                                    skip_partials = False):
         #Enfore a .dat file extension. This is used to flag the file as very large so that
         #   our git tracking ignores that file. May be unnecessary, but better safe than sorry.
         if folder != "":
@@ -690,6 +740,9 @@ class SensitivitySweep(object):
         file.write("\nSystem Parameters:\n")
         for item in self.sens_obj.func_params:
             file.write(str(item) + "\t" + str(self.sens_obj.func_params[item]) + "\n")
+        file.write("\nSystem Function Arguments:\n")
+        for item in self.sens_obj.func_args:
+            file.write(str(item) + "\t" + str(self.sens_obj.func_args[item]) + "\n")
 
         mmfile.write("-------------- Sensitivity Sweep Results (Max and Min Sensitivities) ---------------\n")
         if relative == False:
@@ -699,6 +752,9 @@ class SensitivitySweep(object):
         mmfile.write("\nSystem Parameters:\n")
         for item in self.sens_obj.func_params:
             mmfile.write(str(item) + "\t" + str(self.sens_obj.func_params[item]) + "\n")
+        mmfile.write("\nSystem Function Arguments:\n")
+        for item in self.sens_obj.func_args:
+            mmfile.write(str(item) + "\t" + str(self.sens_obj.func_args[item]) + "\n")
 
         cond_list = []
         cond_value = []
@@ -706,8 +762,8 @@ class SensitivitySweep(object):
         cond_limit_lower = []
         for cond in self.sens_obj.func_conds:
             if type(self.sens_obj.func_conds[cond]) is not int and type(self.sens_obj.func_conds[cond]) is not float:
-                print("Non-numeric conditions are not currently supported in Exhaustive Search method...")
-                print("Variations of the " + str(cond) + " condition will be skipped...")
+                print("Non-numeric function conditions/args are not varied in search methods...")
+                print("Variations of the {" + str(cond) + "} condition will be skipped...")
             else:
                 cond_list.append(cond)
                 cond_value.append(self.cond_tuples[cond][0])
@@ -755,7 +811,8 @@ class SensitivitySweep(object):
             for cond in cond_list:
                 self.sens_obj.func_conds[cond] = cond_value[i]
                 i += 1
-            self.sens_obj.compute_partials(relative, per)
+            if skip_partials == False:
+                self.sens_obj.compute_partials(relative, per)
             func_value = self.sens_obj.eval_func()
             self.sens_maps.append({})
             self.sens_maps[perm]["func_result"] = func_value
@@ -806,7 +863,7 @@ class SensitivitySweep(object):
                                 self.min_sens_map[param]["cond_set"][cond] = self.sens_obj.func_conds[cond]
             file.write("\n")
             #Update Values
-            complete = update_cond(cond_value, cond_limit_lower, cond_limit_upper)
+            complete = update_cond(cond_value, cond_limit_lower, cond_limit_upper, user_base=cond_limit)
             perm+=1
         file.close()
 
@@ -860,7 +917,9 @@ class SensitivitySweep(object):
 # ---------- Testing -------------
 
 if __name__ == "__main__":
-    def test_func(params, conds):
+    '''
+    # Test 1: Basic python function
+    def test_func(params, conds, other):
         # B^2*A + x*A + y + z*B = f(x,y,z)
         return params["B"]*params["B"]*params["A"] + conds["X"]*params["A"] + conds["Y"]+conds["Z"]*params["B"]
 
@@ -869,15 +928,79 @@ if __name__ == "__main__":
     test_params["B"] = 3
 
     test_conds = {}
-    test_conds["X"] = 0
-    test_conds["Y"] = 0
-    test_conds["Z"] = 0
+    test_conds["X"] = 1
+    test_conds["Y"] = 1
+    test_conds["Z"] = 1
 
     test_tuples = {}
+
+    test_other = {}
+    test_other["Apple"] = "Banana"
 
     for item in test_conds:
         test_tuples[item] = (test_conds[item], test_conds[item]+2)
 
-    test_obj = SensitivitySweep(test_func,test_params, test_tuples)
-    test_obj.run_sweep("test_output","test_analysis-simple",True,10)
-    test_obj.run_exhaustive_sweep("test_output","test_analysis-exhaustive",True,10)
+    test_obj = SensitivitySweep(test_func,test_params,test_tuples,test_other)
+    test_obj.run_sweep("test_output","test_analysis-simple",True,10,2,True)
+    test_obj.run_exhaustive_sweep("test_output","test_analysis-exhaustive",True,10,2,True)
+    '''
+
+
+
+    # Test 2: Using cats
+    def test_func2(params, conds, other):
+        cats_file_obj = other["CATS"]       #class object
+        folder = other["folder"]            #string
+        input_file = other["file"]          #string
+        output_file = other["out_file_base"]     #string
+
+        # Read the input file into the object
+        cats_file_obj.construct_from_file(input_file)
+
+        #Replace params with those in given dict
+        cats_file_obj.data["Kernels"]["first_order_decay"]["forward_rate"] = conds["reaction_rate_A"]
+        #cats_file_obj.data["Kernels"]["first_order_decay"]["scale"] = params["reaction_scale_A"]
+
+        #Rebuild the CATS input stream and write to new (or same file)
+        #new_file = output_file+"_"+other["RunNum"]
+        new_file = output_file
+        cats_file_obj.write_stream_to_file(new_file, rebuild=True)
+
+        #Call the executable for the simulation
+        os.system("mpiexec --n 16 ../../../cats-opt -i " + new_file+".i")
+
+        #Read in the result csv file
+        result_file = new_file+"_out.csv"
+        csv_obj = MOOSE_CVS_File(result_file)
+
+        #Perform some computation
+        #   Here we just grab the last time value as a demo
+        res = csv_obj.value(2,'A') * 1
+
+        #Track the number of runs (so each output can have different name)
+        other["RunNum"] = str(int(other["RunNum"])+1)   #string
+
+        # Return the result
+        return res
+
+    # NOTE: You can skip partials by passing an empty param dict
+    test_params = {}
+    #test_params["reaction_scale_A"] = -1.0
+
+    test_conds = {}
+    test_conds["reaction_rate_A"] = 0.5
+
+    test_other = {}
+    test_other["CATS"] = CATS_InputFile()
+    test_other["folder"] = "test_input/"
+    test_other["file"] = "test_input/simple_react_test.i"
+    test_other["out_file_base"] = "test_input/simple_react_test"
+    test_other["RunNum"] = "0"
+
+    test_tuples = {}
+    for item in test_conds:
+        test_tuples[item] = (test_conds[item], 1.5)
+
+    test_obj = SensitivitySweep(test_func2,test_params, test_tuples, test_other)
+    #test_obj.run_sweep("test_input/sens_res","test_analysis-simple-with-cats",True,10,2,False)
+    test_obj.run_exhaustive_sweep("test_input/sens_res","test_analysis-exhaustive-with-cats",True,10,1,False)
