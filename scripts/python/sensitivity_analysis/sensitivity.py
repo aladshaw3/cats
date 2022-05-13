@@ -948,7 +948,7 @@ if __name__ == "__main__":
     '''
 
 
-
+    '''
     # Test 2: Using cats
     def test_func2(params, conds, other):
         cats_file_obj = other["CATS"]       #class object
@@ -1018,3 +1018,82 @@ if __name__ == "__main__":
     #                    per = 1,
     #                    cond_limit=1,
     #                    skip_partials=False)
+    '''
+
+
+    # Test 3: Using cats for CO2 analysis
+    def test_func3(params, conds, other):
+        cats_file_obj = other["CATS"]       #class object
+        folder = other["folder"]            #string
+        input_file = other["file"]          #string
+        output_file = other["out_file_base"]     #string
+
+        # Read the input file into the object
+        cats_file_obj.construct_from_file(input_file)
+
+        #Replace params/conds with those in given dict
+        #   Number of simulations = num_states^num_conds
+        cats_file_obj.data["AuxVariables"]["T_e"]["initial_condition"] = conds["temperature"]
+        cats_file_obj.data["AuxVariables"]["T_s"]["initial_condition"] = conds["temperature"]
+
+        cats_file_obj.data["AuxKernels"]["current_step_input"]["aux_vals"][0] = conds["applied_current"]
+
+        cats_file_obj.data["AuxKernels"]["flowrate_step_input"]["aux_vals"][0] = conds["flowrate"]
+
+        cats_file_obj.data["AuxVariables"]["As"]["initial_condition"] = conds["active_surface_area"]
+
+
+        #Rebuild the CATS input stream and write to new (or same file)
+        new_file = output_file+"_"+other["RunNum"]
+        cats_file_obj.write_stream_to_file(new_file, rebuild=True)
+
+        #Call the executable for the simulation
+        os.system("mpiexec --n 16 ../../../cats-opt -i " + new_file+".i")
+
+        #Remove the old input file
+        #   Allows me to keep the result csv files while removing the .i files generated
+        if os.path.exists(new_file+".i"):
+            os.remove(new_file+".i")
+
+        #Read in the result csv file
+        result_file = new_file+"_out.csv"
+        csv_obj = MOOSE_CVS_File(result_file)
+
+        #Perform some computation
+        res = csv_obj.value(515,'C_CO_out_M') * -csv_obj.value(515,'Q_out_cu_mm_p_s') * 2 * 0.096485 / csv_obj.value(515,'I_in_Amps')
+
+        #Track the number of runs (so each output can have different name)
+        other["RunNum"] = str(int(other["RunNum"])+1)   #string
+
+        # Return the result
+        return res
+
+    # NOTE: You can skip partials by passing an empty param dict
+    test_params = {}
+
+    test_conds = {}
+    test_conds["temperature"] = 298 #to 353
+    test_conds["applied_current"] = 0.001 #to 0.004
+    test_conds["flowrate"] = 500 #to 1666.67
+    test_conds["active_surface_area"] = 1.0e+4 #to 3.0e+4
+
+    test_args = {}
+    test_args["CATS"] = CATS_InputFile()
+    test_args["folder"] = "test_input/"
+    test_args["file"] = "test_input/case01_CGFE.i"
+    test_args["out_file_base"] = "test_input/case01_CGFE"
+    test_args["RunNum"] = "0"
+
+    test_tuples = {}
+    test_tuples["temperature"] = (test_conds["temperature"], 353)
+    test_tuples["applied_current"] = (test_conds["applied_current"], 0.004)
+    test_tuples["flowrate"] = (test_conds["flowrate"], 1666.67)
+    test_tuples["active_surface_area"] = (test_conds["active_surface_area"], 3.0e+4)
+
+    #res = test_func3(test_params, test_conds, test_args)
+
+    test_obj = SensitivitySweep(test_func3,test_params, test_tuples, test_args)
+    #test_obj.run_sweep("test_input/sens_res_co2","co2_sensitivity_cats_01",
+    #                                relative=True,per=10,cond_limit=2,skip_partials=True)
+    test_obj.run_exhaustive_sweep("test_input/sens_res_co2","co2_sensitivity_cats_01",
+                                    relative=True,per=10,cond_limit=2,skip_partials=True)

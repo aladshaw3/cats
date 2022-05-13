@@ -331,7 +331,7 @@
       [./InitialCondition]
           type = InitialModifiedButlerVolmerReaction
 
-          reaction_rate_const = 2.0833E-7    # umol/mm^2/s
+          reaction_rate_const = 519.39    # umol/mm^2/s
           equilibrium_potential = -0.11         # V
 
           reduced_state_vars = '0'        # assumed
@@ -358,7 +358,7 @@
       [./InitialCondition]
           type = InitialButlerVolmerCurrentDensity
 
-          number_of_electrons = 1       # params are fitted to this standard
+          number_of_electrons = 2       # params are fitted to this standard
           specific_area = As
           rate_var = r_H2
       [../]
@@ -372,7 +372,7 @@
       [./InitialCondition]
           type = InitialButlerVolmerCurrentDensity
 
-          number_of_electrons = 1       # params are fitted to this standard
+          number_of_electrons = 2       # params are fitted to this standard
           specific_area = As
           rate_var = r_CO
       [../]
@@ -2957,11 +2957,11 @@
 
   start_time = 0.0
   end_time = 515  #Experiments were run for 500s, the added 15s accounts for ramp up
-  dtmax = 1
+  dtmax = 10
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
-      dt = 0.1
+      dt = 0.05
       cutback_factor_at_failure = 0.5
       percent_change = 0.5
   [../]
@@ -2996,6 +2996,6 @@
     exodus = true
     csv = true
     print_linear_residuals = true
-    interval = 1
+    interval = 5
 
 [] #END Outputs
