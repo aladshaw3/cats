@@ -1049,6 +1049,9 @@ if __name__ == "__main__":
 
         #Call the executable for the simulation
         os.system("mpiexec --n 16 ../../../cats-opt -i " + new_file+".i")
+        # NOTE: Sometimes MOOSE will hang on the last simulation step. If I kill
+        #       the process, then the script will continue. It may be worth trying
+        #       to find a way to auto-kill the process if it hangs for too long. 
 
         #Remove the old input file
         #   Allows me to keep the result csv files while removing the .i files generated
