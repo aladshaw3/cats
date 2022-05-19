@@ -390,11 +390,12 @@ class SensitivitySweep(object):
                 message += "\t" + param
             i = 0
             for map in self.sens_maps:
-                message += "\n" + str(i) + "\t" + str(map["func_result"])
-                for cond in map["cond_set"]:
-                    message += "\t" + str(map["cond_set"][cond])
-                for param in map["param_response"]:
-                    message += "\t" + str(map["param_response"][param])
+                if map != {}:
+                    message += "\n" + str(i) + "\t" + str(map["func_result"])
+                    for cond in map["cond_set"]:
+                        message += "\t" + str(map["cond_set"][cond])
+                    for param in map["param_response"]:
+                        message += "\t" + str(map["param_response"][param])
                 i+=1
         return message
 
@@ -949,6 +950,8 @@ if __name__ == "__main__":
     test_obj = SensitivitySweep(test_func,test_params,test_tuples,test_other)
     test_obj.run_sweep("test_output","test_analysis-simple-numpy",False,10,2,False)
     test_obj.run_exhaustive_sweep("test_output","test_analysis-exhaustive-numpy",False,10,2,False)
+
+    print(test_obj)
 
 
 
