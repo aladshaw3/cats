@@ -952,6 +952,7 @@ if __name__ == "__main__":
     test_obj.run_exhaustive_sweep("test_output","test_analysis-exhaustive-numpy",False,10,2,False)
 
     print(test_obj)
+    print(test_obj.sens_obj)
 
 
 
