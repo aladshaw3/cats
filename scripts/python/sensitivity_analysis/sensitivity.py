@@ -17,6 +17,8 @@
 
 import math
 import sys, os
+# NOTE: If your function has multiple returns, you can return a numpy array to get all results
+import numpy as np
 sys.path.append('..') #Jump out of directory 1 level
 from input_output_processing.cats_input_file_writer import *
 from input_output_processing.read_moose_csv_to_df import *
@@ -189,7 +191,7 @@ class Sensitivity(object):
         self.partials_computed = True
         #Sort the parameters from most to least sensitive
         try:
-            self.sorted_param_sensitivity = {k: v for k, v in sorted(self.partials.items(), key=lambda item: abs(item[1].any()), reverse=True)}
+            self.sorted_param_sensitivity = {k: v for k, v in sorted(self.partials.items(), key=lambda item: abs(sum(item[1])), reverse=True)}
         except:
             self.sorted_param_sensitivity = {k: v for k, v in sorted(self.partials.items(), key=lambda item: abs(item[1]), reverse=True)}
 
@@ -509,7 +511,7 @@ class SensitivitySweep(object):
                                     self.min_sens_map[param]["cond_set"][c] = self.sens_obj.func_conds[c]
                             else:
                                 try:
-                                    if abs(self.sens_maps[j]["param_response"][param].any()) > abs(self.max_sens_map[param]["param_response"].any()):
+                                    if abs(sum(self.sens_maps[j]["param_response"][param])) > abs(sum(self.max_sens_map[param]["param_response"])):
                                         self.max_sens_map[param]["param_response"] = self.sens_maps[j]["param_response"][param]
                                         self.max_sens_map[param]["func_result"] = func_value
                                         for c in self.sens_obj.func_conds:
@@ -521,7 +523,7 @@ class SensitivitySweep(object):
                                         for c in self.sens_obj.func_conds:
                                             self.max_sens_map[param]["cond_set"][c] = self.sens_obj.func_conds[c]
                                 try:
-                                    if abs(self.sens_maps[j]["param_response"][param].any()) < abs(self.min_sens_map[param]["param_response"].any()):
+                                    if abs(sum(self.sens_maps[j]["param_response"][param])) < abs(sum(self.min_sens_map[param]["param_response"])):
                                         self.min_sens_map[param]["param_response"] = self.sens_maps[j]["param_response"][param]
                                         self.min_sens_map[param]["func_result"] = func_value
                                         for c in self.sens_obj.func_conds:
@@ -564,7 +566,7 @@ class SensitivitySweep(object):
                             self.min_sens_map[param]["cond_set"][c] = self.sens_obj.func_conds[c]
                     else:
                         try:
-                            if abs(self.sens_maps[j]["param_response"][param].any()) > abs(self.max_sens_map[param]["param_response"].any()):
+                            if abs(sum(self.sens_maps[j]["param_response"][param])) > abs(sum(self.max_sens_map[param]["param_response"])):
                                 self.max_sens_map[param]["param_response"] = self.sens_maps[j]["param_response"][param]
                                 self.max_sens_map[param]["func_result"] = func_value
                                 for c in self.sens_obj.func_conds:
@@ -576,7 +578,7 @@ class SensitivitySweep(object):
                                 for c in self.sens_obj.func_conds:
                                     self.max_sens_map[param]["cond_set"][c] = self.sens_obj.func_conds[c]
                         try:
-                            if abs(self.sens_maps[j]["param_response"][param].any()) < abs(self.min_sens_map[param]["param_response"].any()):
+                            if abs(sum(self.sens_maps[j]["param_response"][param])) < abs(sum(self.min_sens_map[param]["param_response"])):
                                 self.min_sens_map[param]["param_response"] = self.sens_maps[j]["param_response"][param]
                                 self.min_sens_map[param]["func_result"] = func_value
                                 for c in self.sens_obj.func_conds:
@@ -621,7 +623,7 @@ class SensitivitySweep(object):
                             self.min_sens_map[param]["cond_set"][c] = self.sens_obj.func_conds[c]
                     else:
                         try:
-                            if abs(self.sens_maps[j]["param_response"][param].any()) > abs(self.max_sens_map[param]["param_response"].any()):
+                            if abs(sum(self.sens_maps[j]["param_response"][param])) > abs(sum(self.max_sens_map[param]["param_response"])):
                                 self.max_sens_map[param]["param_response"] = self.sens_maps[j]["param_response"][param]
                                 self.max_sens_map[param]["func_result"] = func_value
                                 for c in self.sens_obj.func_conds:
@@ -633,7 +635,7 @@ class SensitivitySweep(object):
                                 for c in self.sens_obj.func_conds:
                                     self.max_sens_map[param]["cond_set"][c] = self.sens_obj.func_conds[c]
                         try:
-                            if abs(self.sens_maps[j]["param_response"][param].any()) < abs(self.min_sens_map[param]["param_response"].any()):
+                            if abs(sum(self.sens_maps[j]["param_response"][param])) < abs(sum(self.min_sens_map[param]["param_response"])):
                                 self.min_sens_map[param]["param_response"] = self.sens_maps[j]["param_response"][param]
                                 self.min_sens_map[param]["func_result"] = func_value
                                 for c in self.sens_obj.func_conds:
@@ -838,7 +840,7 @@ class SensitivitySweep(object):
                         self.min_sens_map[param]["cond_set"][cond] = self.sens_obj.func_conds[cond]
                 else:
                     try:
-                        if abs(self.sens_maps[perm]["param_response"][param].any()) > abs(self.max_sens_map[param]["param_response"].any()):
+                        if abs(sum(self.sens_maps[perm]["param_response"][param])) > abs(sum(self.max_sens_map[param]["param_response"])):
                             self.max_sens_map[param]["param_response"] = self.sens_maps[perm]["param_response"][param]
                             self.max_sens_map[param]["func_result"] = func_value
                             for cond in self.sens_obj.func_conds:
@@ -850,7 +852,7 @@ class SensitivitySweep(object):
                             for cond in self.sens_obj.func_conds:
                                 self.max_sens_map[param]["cond_set"][cond] = self.sens_obj.func_conds[cond]
                     try:
-                        if abs(self.sens_maps[perm]["param_response"][param].any()) < abs(self.min_sens_map[param]["param_response"].any()):
+                        if abs(sum(self.sens_maps[perm]["param_response"][param])) < abs(sum(self.min_sens_map[param]["param_response"])):
                             self.min_sens_map[param]["param_response"] = self.sens_maps[perm]["param_response"][param]
                             self.min_sens_map[param]["func_result"] = func_value
                             for cond in self.sens_obj.func_conds:
@@ -919,11 +921,13 @@ class SensitivitySweep(object):
 # ---------- Testing -------------
 
 if __name__ == "__main__":
-    '''
-    # Test 1: Basic python function
+    # Test 1: Basic python function (works with numpy arrays)
     def test_func(params, conds, other):
-        # B^2*A + x*A + y + z*B = f(x,y,z)
-        return params["B"]*params["B"]*params["A"] + conds["X"]*params["A"] + conds["Y"]+conds["Z"]*params["B"]
+        # B^2*A + x*A + y + z*B = f1(x,y,z)
+        # A*x = f2(x,y,z)
+        #return params["B"]*params["B"]*params["A"] + conds["X"]*params["A"] + conds["Y"]+conds["Z"]*params["B"]
+        return np.array([params["B"]*params["B"]*params["A"] + conds["X"]*params["A"] + conds["Y"]+conds["Z"]*params["B"], conds["X"]*params["A"]])
+        #return np.array([params["B"]*params["B"]*params["A"] + conds["X"]*params["A"] + conds["Y"]+conds["Z"]*params["B"]])
 
     test_params = {}
     test_params["A"] = 20
@@ -943,9 +947,9 @@ if __name__ == "__main__":
         test_tuples[item] = (test_conds[item], test_conds[item]+2)
 
     test_obj = SensitivitySweep(test_func,test_params,test_tuples,test_other)
-    test_obj.run_sweep("test_output","test_analysis-simple",True,10,2,True)
-    test_obj.run_exhaustive_sweep("test_output","test_analysis-exhaustive",True,10,2,True)
-    '''
+    test_obj.run_sweep("test_output","test_analysis-simple-numpy",False,10,2,False)
+    test_obj.run_exhaustive_sweep("test_output","test_analysis-exhaustive-numpy",False,10,2,False)
+
 
 
     '''
@@ -1021,6 +1025,7 @@ if __name__ == "__main__":
     '''
 
 
+    """
     # Test 3: Using cats for CO2 analysis
     def test_func3(params, conds, other):
         cats_file_obj = other["CATS"]       #class object
@@ -1051,7 +1056,7 @@ if __name__ == "__main__":
         os.system("mpiexec --n 16 ../../../cats-opt -i " + new_file+".i")
         # NOTE: Sometimes MOOSE will hang on the last simulation step. If I kill
         #       the process, then the script will continue. It may be worth trying
-        #       to find a way to auto-kill the process if it hangs for too long. 
+        #       to find a way to auto-kill the process if it hangs for too long.
 
         #Remove the old input file
         #   Allows me to keep the result csv files while removing the .i files generated
@@ -1100,3 +1105,5 @@ if __name__ == "__main__":
     #                                relative=True,per=10,cond_limit=2,skip_partials=True)
     test_obj.run_exhaustive_sweep("test_input/sens_res_co2","co2_sensitivity_cats_01",
                                     relative=True,per=10,cond_limit=2,skip_partials=True)
+
+    """
