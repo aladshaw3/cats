@@ -331,7 +331,7 @@
       [./InitialCondition]
           type = InitialModifiedButlerVolmerReaction
 
-          reaction_rate_const = 2.0833E-7    # umol/mm^2/s
+          reaction_rate_const = 519.39      # umol/mm^2/s
           equilibrium_potential = -0.11         # V
 
           reduced_state_vars = '0'        # assumed
@@ -2909,12 +2909,12 @@
                         -ksp_ksp_max_it
 
                         -ksp_atol
-                        -ksp_rtol
+                        -ksp_rtol'
 
-                         -ksp_pc_factor_mat_solver_type
-                        	-mat_mumps_cntl_1
-                          -mat_mumps_cntl_3
-                          -mat_mumps_icntl_23'
+                         #-ksp_pc_factor_mat_solver_type
+                        	#-mat_mumps_cntl_1
+                          #-mat_mumps_cntl_3
+                          #-mat_mumps_icntl_23'
 
   ## NOTE: May be best to just use lu as pc_type instead of ksp
   petsc_options_value = 'fgmres
@@ -2934,7 +2934,7 @@
                          1E-8
 
                          fgmres
-                         lu
+                         ilu
 
                          50
                          50
@@ -2943,12 +2943,12 @@
                          10
 
                          1e-8
-                         1e-8
+                         1e-8'
 
-                         mumps
-                          0.01
-                          1e-8
-                          4000'
+                         #mumps
+                          #0.01
+                          #1e-8
+                          #4000'
 
 
   line_search = l2  # none, l2, or bt
@@ -2961,7 +2961,8 @@
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
-      dt = 0.1
+      #dt = 0.1 #coarse
+      dt = 0.01 #fine
       cutback_factor_at_failure = 0.5
       percent_change = 0.5
   [../]
