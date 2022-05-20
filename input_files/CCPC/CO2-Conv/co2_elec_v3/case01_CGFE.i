@@ -37,10 +37,10 @@
 #   - Parameters
 #     ----------
 #     eps = 0.85 (porosity of cathode)
-#     As = 2.52e+4 mm^-1 (etched active area) [2.1e+4 mm^-1 non-etched]
+#     As = 30 mm^-1 (active area) = 6*(1-eps)/dp
 #     dp = 0.03 mm (avg particle size)
 #     dh = 1.3072 mm (hydraulic diameter for Darcy-Weisbach)
-#     lambda = 0.75 mm (avg dispersivity)
+#     lambda = 1.0 mm (avg dispersivity)
 #     n = 1 (fitted num of electrons transferred in each reaction)
 #     mu = 1 mPa*s (fluid viscosity) [g/m/s]
 #        = 0.001 Pa*s [g/mm/s]
@@ -358,7 +358,7 @@
       [./InitialCondition]
           type = InitialButlerVolmerCurrentDensity
 
-          number_of_electrons = 1       # params are fitted to this standard
+          number_of_electrons = 2       # params are fitted to this standard
           specific_area = As
           rate_var = r_H2
       [../]
@@ -372,7 +372,7 @@
       [./InitialCondition]
           type = InitialButlerVolmerCurrentDensity
 
-          number_of_electrons = 1       # params are fitted to this standard
+          number_of_electrons = 2       # params are fitted to this standard
           specific_area = As
           rate_var = r_CO
       [../]
@@ -535,7 +535,7 @@
   [./As]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 2.52e+4 # mm^-1
+      initial_condition = 30 # mm^-1
       block = 'cathode'
   [../]
 
@@ -1251,12 +1251,17 @@
       variable = r_w
   [../]
   [./r_w_rxn]  #   H2O <--> H+ + OH-
-      type = ConstReaction
+      type = ArrheniusReaction
       variable = r_w
       this_variable = r_w
 
-      forward_rate = 1.6E-3
-      reverse_rate = 1.6E11
+      temperature = T_e
+
+      forward_pre_exponential = 1.6E-3
+      forward_activation_energy = 0
+
+      reverse_pre_exponential = 26.2636
+      reverse_activation_energy = -55830
 
       # Apply the 'scale' as the C_ref value for simplicity
       scale = 1 # umol/mm^3
@@ -1273,12 +1278,17 @@
       variable = r_1
   [../]
   [./r_1_rxn]  #   CO2 + H2O <--> H+ + HCO3-
-      type = ConstReaction
+      type = ArrheniusReaction
       variable = r_1
       this_variable = r_1
 
-      forward_rate = 0.04
-      reverse_rate = 93683.3333
+      temperature = T_e
+
+      forward_pre_exponential = 4210430
+      forward_activation_energy = 47646.57
+
+      reverse_pre_exponential = 4.25e11
+      reverse_activation_energy = 39946.57
 
       # Apply the 'scale' as the C_ref value for simplicity
       scale = 1 # umol/mm^3
@@ -1295,12 +1305,17 @@
       variable = r_2
   [../]
   [./r_2_rxn]  #   HCO3- <--> H+ + CO3--
-      type = ConstReaction
+      type = ArrheniusReaction
       variable = r_2
       this_variable = r_2
 
-      forward_rate = 56.28333
-      reverse_rate = 1.2288E12
+      temperature = T_e
+
+      forward_pre_exponential = 22579.63
+      forward_activation_energy = 14900
+
+      reverse_pre_exponential = 1.23e12
+      reverse_activation_energy = 0
 
       # Apply the 'scale' as the C_ref value for simplicity
       scale = 1 # umol/mm^3
@@ -1317,12 +1332,17 @@
       variable = r_3
   [../]
   [./r_3_rxn]  #   CO2 + OH- <--> HCO3-
-      type = ConstReaction
+      type = ArrheniusReaction
       variable = r_3
       this_variable = r_3
 
-      forward_rate = 2100
-      reverse_rate = 4.918333E-5
+      temperature = T_e
+
+      forward_pre_exponential = 2.19e9
+      forward_activation_energy = 34336.83
+
+      reverse_pre_exponential = 1.34705e10
+      reverse_activation_energy = 82466.83
 
       # Apply the 'scale' as the C_ref value for simplicity
       scale = 1 # umol/mm^3
@@ -1339,12 +1359,17 @@
       variable = r_4
   [../]
   [./r_4_rxn]  #   HCO3- + OH- <--> CO3-- + H2O
-      type = ConstReaction
+      type = ArrheniusReaction
       variable = r_4
       this_variable = r_4
 
-      forward_rate = 6.5E9
-      reverse_rate = 1.337E6
+      temperature = T_e
+
+      forward_pre_exponential = 6.5e9
+      forward_activation_energy = 0
+
+      reverse_pre_exponential = 2.15e13
+      reverse_activation_energy = 40930
 
       # Apply the 'scale' as the C_ref value for simplicity
       scale = 1 # umol/mm^3
@@ -1441,7 +1466,7 @@
       reaction_rate_const = 6.59167E-6    # umol/mm^2/s
       equilibrium_potential = 0         # V
 
-      reduced_state_vars = '0'       # assumed
+      reduced_state_vars = 'C_H2'       # assumed
       reduced_state_stoich = '1'        # assumed
 
       oxidized_state_vars = 'C_H'
@@ -1469,7 +1494,7 @@
       reaction_rate_const = 519.39    # umol/mm^2/s (adjusted)
       equilibrium_potential = -0.11         # V
 
-      reduced_state_vars = '0'        # assumed
+      reduced_state_vars = 'C_CO'        # assumed
       reduced_state_stoich = '1'         # assumed
 
       oxidized_state_vars = 'C_H C_CO2'
@@ -2957,12 +2982,12 @@
 
   start_time = 0.0
   end_time = 515  #Experiments were run for 500s, the added 15s accounts for ramp up
-  dtmax = 1
+  dtmax = 10
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
-      #dt = 0.1 #coarse
-      dt = 0.01 #fine
+      dt = 0.05 #coarse
+      #dt = 0.01 #fine
       cutback_factor_at_failure = 0.5
       percent_change = 0.5
   [../]
