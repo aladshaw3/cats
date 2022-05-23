@@ -1463,11 +1463,11 @@
       type = ModifiedButlerVolmerReaction
       variable = r_H2
 
-      reaction_rate_const = 6.59167E-6    # umol/mm^2/s
+      reaction_rate_const = 2.59167E-3    # umol/mm^2/s (adjusted)
       equilibrium_potential = 0         # V
 
-      reduced_state_vars = 'C_H2'       # assumed
-      reduced_state_stoich = '1'        # assumed
+      reduced_state_vars = 'C_H2 C_OH'       # assumed
+      reduced_state_stoich = '1 2'        # assumed
 
       oxidized_state_vars = 'C_H'
       oxidized_state_stoich = '0.1737'  # fitted param
@@ -1491,11 +1491,11 @@
       type = ModifiedButlerVolmerReaction
       variable = r_CO
 
-      reaction_rate_const = 519.39    # umol/mm^2/s (adjusted)
+      reaction_rate_const = 4.6939e5    # umol/mm^2/s (adjusted)
       equilibrium_potential = -0.11         # V
 
-      reduced_state_vars = 'C_CO'        # assumed
-      reduced_state_stoich = '1'         # assumed
+      reduced_state_vars = 'C_CO C_OH'        # assumed
+      reduced_state_stoich = '1 2'         # assumed
 
       oxidized_state_vars = 'C_H C_CO2'
       oxidized_state_stoich = '0.6774 1.5'  # fitted param
