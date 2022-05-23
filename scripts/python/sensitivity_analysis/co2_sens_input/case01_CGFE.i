@@ -1463,7 +1463,7 @@
       type = ModifiedButlerVolmerReaction
       variable = r_H2
 
-      reaction_rate_const = 2.09167E-4    # umol/mm^2/s (adjusted)
+      reaction_rate_const = 4.09167E-4    # umol/mm^2/s (adjusted)
       equilibrium_potential = 0         # V
 
       reduced_state_vars = 'C_H2 C_OH'       # assumed
@@ -1491,7 +1491,7 @@
       type = ModifiedButlerVolmerReaction
       variable = r_CO
 
-      reaction_rate_const = 4.5939e4    # umol/mm^2/s (adjusted)
+      reaction_rate_const = 7.7939e4    # umol/mm^2/s (adjusted)
       equilibrium_potential = -0.11         # V
 
       reduced_state_vars = 'C_CO C_OH'        # assumed

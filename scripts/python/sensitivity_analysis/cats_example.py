@@ -47,7 +47,7 @@ def cats_co2_run(params, conds, other):
     cats_file_obj.data["AuxKernels"]["eps_calc_cathode"]["value"] = conds["porosity"]
 
     # What to do with conductivity
-    cats_file_obj.data["AuxVariables"]["sigma_s_eff"]["initial_condition"] = conds["conductivity"]*(1.0-conds["porosity"])**1.5
+    cats_file_obj.data["AuxVariables"]["sigma_s_eff"]["initial_condition"] = 1.698*(1.0-conds["porosity"])**1.5
 
 
     #Rebuild the CATS input stream and write to new (or same file)
@@ -86,10 +86,9 @@ if __name__ == "__main__":
     test_conds["temperature"] = 298 #to 353
     test_conds["applied_current"] = 0.001 #to 0.004
     test_conds["flowrate"] = 500 #to 1666.67
-    test_conds["particle_diameter"] = 0.01 #to 0.05
+    test_conds["particle_diameter"] = 0.015 #to 0.03
     test_conds["channel_depth"] = 0.49 #to 1.47
     test_conds["porosity"] = 0.8 #to 0.9
-    test_conds["conductivity"] = 1.0 #to 2.0
 
     test_args = {}
     test_args["CATS_obj"] = CATS_InputFile()
@@ -100,10 +99,9 @@ if __name__ == "__main__":
     test_tuples["temperature"] = (test_conds["temperature"], 353)
     test_tuples["applied_current"] = (test_conds["applied_current"], 0.004)
     test_tuples["flowrate"] = (test_conds["flowrate"], 1666.67)
-    test_tuples["particle_diameter"] = (test_conds["particle_diameter"], 0.05)
+    test_tuples["particle_diameter"] = (test_conds["particle_diameter"], 0.03)
     test_tuples["channel_depth"] = (test_conds["channel_depth"], 1.47)
     test_tuples["porosity"] = (test_conds["porosity"], 0.9)
-    test_tuples["conductivity"] = (test_conds["conductivity"], 2.0)
 
 
     test_obj = SensitivitySweep(cats_co2_run, test_params, test_tuples, test_args)
