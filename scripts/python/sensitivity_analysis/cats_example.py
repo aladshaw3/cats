@@ -107,5 +107,4 @@ if __name__ == "__main__":
 
 
     test_obj = SensitivitySweep(cats_co2_run, test_params, test_tuples, test_args)
-    test_obj.run_exhaustive_sweep("co2_sens_input/sens_res_co2","co2_sensitivity_cats_01",
-                                    relative=True,per=10,cond_limit=2,skip_partials=True)
+    test_obj.run_exhaustive_sweep("co2_sens_input/sens_res_co2","co2_sensitivity_cats_01",relative=True,per=10,cond_limit=2,skip_partials=True)
