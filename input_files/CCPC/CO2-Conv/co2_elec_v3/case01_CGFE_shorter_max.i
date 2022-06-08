@@ -1,4 +1,4 @@
-# Case 01
+# Case 01 - short depth
 # -------
 #   - BCs
 #     ---
@@ -36,12 +36,12 @@
 #
 #   - Parameters
 #     ----------
-#     eps = 0.85 (porosity of cathode)
-#     As = 30 mm^-1 (active area) = 6*(1-eps)/dp
-#     dp = 0.03 mm (avg particle size)
-#     dh = 1.3072 mm (hydraulic diameter for Darcy-Weisbach)
+#     eps = 0.80 (porosity of cathode)
+#     As = 48 mm^-1 (active area) = 6*(1-eps)/dp
+#     dp = 0.0375 mm (avg particle size: between 0.025 to 0.05)
+#     dh = 0.6917 mm (hydraulic diameter for Darcy-Weisbach)
 #     lambda = 1.0 mm (avg dispersivity)
-#     n = 1 (fitted num of electrons transferred in each reaction)
+#     n = 2 (fitted num of electrons transferred in each reaction)
 #     mu = 1 mPa*s (fluid viscosity) [g/m/s]
 #        = 0.001 Pa*s [g/mm/s]
 #     K = 150 (Kozeny-Carman constant)
@@ -49,7 +49,7 @@
 #     k_phi = 1.13e-13 mm^2 (Schloegl-Darcy Electrokinetic Permeability)
 #     conversion_factor = 10^9 (for Schloegl-Darcy Electrokinetic coef)
 #     sigma_s = 1.698 S/mm [C/V/s/mm]
-#         (sigma_s_eff) = 0.0986 S/mm
+#         (sigma_s_eff) = 0.152 S/mm
 #     sigma_e ~= 0.01589 S/mm [C/V/s/mm]
 #     min_conductivity = 2e-5 S/mm [C/V/s/mm] (background for tap water)
 #     c_ref = 1 M = 1 umol/mm^3
@@ -98,7 +98,7 @@
 [Mesh]
   [file]
     type = FileMeshGenerator
-    file = CO2_electrolyzer_half_cell_plateless_v2_coarse.msh
+    file = CO2_electrolyzer_half_cell_plateless_v2_coarse_shorter.msh
 
     ### ========= boundary_name ==========
     # "channel_exit"
@@ -419,7 +419,7 @@
   [./T_e]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 298 #K
+      initial_condition = 353 #K
       block = 'channel cathode catex_membrane'
   [../]
 
@@ -427,7 +427,7 @@
   [./T_s]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 298 #K
+      initial_condition = 353 #K
       block = 'cathode'
   [../]
 
@@ -450,7 +450,7 @@
   [./dh]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 1.3072 #mm
+      initial_condition = 0.6917 #mm
       block = 'channel'
   [../]
 
@@ -458,7 +458,7 @@
   [./dp]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0.03 #mm
+      initial_condition = 0.0375 #mm
       block = 'cathode'
   [../]
 
@@ -482,7 +482,7 @@
   [./sigma_s_eff]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0.0986 # S/mm = [C/V/s/mm]
+      initial_condition = 0.152 # S/mm = [C/V/s/mm]
       block = 'cathode'
   [../]
 
@@ -535,7 +535,7 @@
   [./As]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 30 # mm^-1
+      initial_condition = 32 # mm^-1
       block = 'cathode'
   [../]
 
@@ -640,7 +640,7 @@
   [./A_xsec]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 1.73 #mm^2
+      initial_condition = 0.57624 #mm^2
       block = 'channel'
   [../]
 
@@ -1463,7 +1463,7 @@
       type = ModifiedButlerVolmerReaction
       variable = r_H2
 
-      reaction_rate_const = 4.09167E-4    # umol/mm^2/s (adjusted)
+      reaction_rate_const = 2.09167E-3    # umol/mm^2/s (adjusted)
       equilibrium_potential = 0         # V
 
       reduced_state_vars = 'C_H2 C_OH'       # assumed
@@ -1491,7 +1491,7 @@
       type = ModifiedButlerVolmerReaction
       variable = r_CO
 
-      reaction_rate_const = 7.7939e4    # umol/mm^2/s (adjusted)
+      reaction_rate_const = 3.7939e5    # umol/mm^2/s (adjusted)
       equilibrium_potential = -0.11         # V
 
       reduced_state_vars = 'C_CO C_OH'        # assumed
@@ -1555,7 +1555,7 @@
   [./eps_calc_cathode]
       type = ConstantAux
       variable = eps
-      value = 0.85
+      value = 0.80
       execute_on = 'initial timestep_end'
       block = 'cathode'
   [../]
@@ -1592,11 +1592,11 @@
       variable = input_current
 
       start_value = 0.0
-      aux_vals = '0.001'  # 100 mA/cm^2 ==> 0.001 C/s/mm^2
+      aux_vals = '0.001 0.002 0.003 0.004'  # 100 mA/cm^2 ==> 0.001 C/s/mm^2
 
       # Input current should approximately be a step function
-      aux_times = '15'
-      time_spans = '0.5'
+      aux_times = '15 115 215 315'
+      time_spans = '0.5 0.5 0.5 0.5'
 
       execute_on = 'initial timestep_begin nonlinear'
   [../]
@@ -1703,7 +1703,7 @@
       friction_factor = 64           # -
       density = viscosity            # g/mm/s
       velocity = 1                   # -
-      hydraulic_diameter = 1.70877   #dh^2 (mm^2)
+      hydraulic_diameter = 0.47853   #dh^2 (mm^2)
 
       execute_on = 'initial timestep_end'
       block = 'channel'
@@ -2981,12 +2981,12 @@
   nl_abs_step_tol = 1e-12
 
   start_time = 0.0
-  end_time = 65  #Experiments were run for 500s, the added 15s accounts for ramp up
+  end_time = 515  #Experiments were run for 500s, the added 15s accounts for ramp up
   dtmax = 10
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
-      dt = 0.05 #coarse
+      dt = 0.01 #coarse
       #dt = 0.01 #fine
       cutback_factor_at_failure = 0.5
       percent_change = 0.5

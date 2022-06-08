@@ -2981,7 +2981,7 @@
   nl_abs_step_tol = 1e-12
 
   start_time = 0.0
-  end_time = 515  #Experiments were run for 500s, the added 15s accounts for ramp up
+  end_time = 65  #Experiments were run for 500s, the added 15s accounts for ramp up
   dtmax = 10
 
   [./TimeStepper]
