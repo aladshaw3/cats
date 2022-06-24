@@ -226,6 +226,47 @@
   [../]
 
 
+  # interface concentration of CO (umol/mm^3)
+  [./C_CO_int]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0 #M
+      block = 'cathode'
+  [../]
+
+  # interface concentration of H2 (umol/mm^3)
+  [./C_H2_int]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0 #M
+      block = 'cathode'
+  [../]
+
+  # interface concentration of CO2 (umol/mm^3)
+  [./C_CO2_int]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0.031 #M
+      block = 'cathode'
+  [../]
+
+  # interface concentration of H (umol/mm^3)
+  [./C_H_int]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 4.41e-9 #M
+      block = 'cathode'
+  [../]
+
+  # interface concentration of OH (umol/mm^3)
+  [./C_OH_int]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 2.14e-6 #M
+      block = 'cathode'
+  [../]
+
+
   # Speciation reaction rates
   # rate of water reaction
   [./r_w]
@@ -459,6 +500,14 @@
       order = FIRST
       family = LAGRANGE
       initial_condition = 0.015 #mm
+      block = 'cathode'
+  [../]
+
+  # particle diameter inverse
+  [./dp_inv]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 66.6667 #mm^-1
       block = 'cathode'
   [../]
 
@@ -801,6 +850,21 @@
       order = FIRST
       family = LAGRANGE
       block = 'channel cathode'
+  [../]
+
+
+  # Faradiac Efficiencies
+  [./FE_CO]
+      order = FIRST
+      family = LAGRANGE
+      block = 'cathode'
+  [../]
+
+  # Faradiac Efficiencies
+  [./FE_H2]
+      order = FIRST
+      family = LAGRANGE
+      block = 'cathode'
   [../]
 
 []
@@ -1454,6 +1518,77 @@
   [../]
 
 
+  ### ==================== Interfacial Concentrations ==========================
+  # H2
+  [./H2_interface_mb]
+      type = FilmMassTransfer
+      variable = C_H2_int
+      coupled = C_H2
+      rate_variable = D_H2
+      av_ratio = dp_inv
+  [../]
+  [./H2_int_rxn]
+      type = WeightedCoupledSumFunction
+      variable = C_H2_int
+      coupled_list = 'r_H2'
+      weights = '-1'
+  [../]
+
+  # H+
+  [./H_interface_mb]
+      type = FilmMassTransfer
+      variable = C_H_int
+      coupled = C_H
+      rate_variable = D_H
+      av_ratio = dp_inv
+  [../]
+
+  # OH-
+  [./OH_interface_mb]
+      type = FilmMassTransfer
+      variable = C_OH_int
+      coupled = C_OH
+      rate_variable = D_OH
+      av_ratio = dp_inv
+  [../]
+  [./OH_int_rxn]
+      type = WeightedCoupledSumFunction
+      variable = C_OH_int
+      coupled_list = 'r_H2 r_CO'
+      weights = '-2 -2'
+  [../]
+
+  # CO2
+  [./CO2_interface_mb]
+      type = FilmMassTransfer
+      variable = C_CO2_int
+      coupled = C_CO2
+      rate_variable = D_CO2
+      av_ratio = dp_inv
+  [../]
+  [./CO2_int_rxn]
+      type = WeightedCoupledSumFunction
+      variable = C_CO2_int
+      coupled_list = 'r_CO'
+      weights = '1'
+  [../]
+
+  # CO
+  [./CO_interface_mb]
+      type = FilmMassTransfer
+      variable = C_CO_int
+      coupled = C_CO
+      rate_variable = D_CO
+      av_ratio = dp_inv
+  [../]
+  [./CO_int_rxn]
+      type = WeightedCoupledSumFunction
+      variable = C_CO_int
+      coupled_list = 'r_CO'
+      weights = '-1'
+  [../]
+
+
   ## =============== Butler-Volmer Kinetics ================
   [./r_H2_equ]
       type = Reaction
@@ -1466,10 +1601,10 @@
       reaction_rate_const = 4.09167E-4    # umol/mm^2/s (adjusted)
       equilibrium_potential = 0         # V
 
-      reduced_state_vars = 'C_H2 C_OH'       # assumed
+      reduced_state_vars = 'C_H2_int C_OH_int'       # assumed
       reduced_state_stoich = '1 2'        # assumed
 
-      oxidized_state_vars = 'C_H'
+      oxidized_state_vars = 'C_H_int'
       oxidized_state_stoich = '0.1737'  # fitted param
 
       electric_potential_difference = phi_diff
@@ -1494,10 +1629,10 @@
       reaction_rate_const = 7.7939e4    # umol/mm^2/s (adjusted)
       equilibrium_potential = -0.11         # V
 
-      reduced_state_vars = 'C_CO C_OH'        # assumed
+      reduced_state_vars = 'C_CO_int C_OH_int'        # assumed
       reduced_state_stoich = '1 2'         # assumed
 
-      oxidized_state_vars = 'C_H C_CO2'
+      oxidized_state_vars = 'C_H_int C_CO2_int'
       oxidized_state_stoich = '0.6774 1.5'  # fitted param
 
       electric_potential_difference = phi_diff
@@ -1556,6 +1691,25 @@
       type = ConstantAux
       variable = eps
       value = 0.80
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+  # Faradiac Efficienies
+  [./FE_CO_calc]
+      type = AuxRatio
+      variable = FE_CO
+      numerator_vars = 'J_CO'
+      denominator_vars = 'J_CO J_H2'
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+  [./FE_H2_calc]
+      type = AuxRatio
+      variable = FE_H2
+      numerator_vars = 'J_H2'
+      denominator_vars = 'J_CO J_H2'
       execute_on = 'initial timestep_end'
       block = 'cathode'
   [../]
@@ -2888,6 +3042,20 @@
       variable = C_K
       execute_on = 'initial timestep_end'
   [../]
+
+  [./FE_CO]
+      type = ElementAverageValue
+      variable = FE_CO
+      block = 'cathode'
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./FE_H2]
+      type = ElementAverageValue
+      variable = FE_H2
+      block = 'cathode'
+      execute_on = 'initial timestep_end'
+  [../]
 []
 
 [Executioner]
@@ -3011,7 +3179,9 @@
                         J_CO,r_CO J_H2,r_H2
                         J_CO,phi_e J_H2,phi_e J_CO,phi_s J_H2,phi_s
                         phi_diff,phi_s phi_diff,phi_e
-                        phi_e,C_HCO3, phi_e,C_CO3, phi_e,C_H phi_e,C_OH phi_e,C_K'
+                        phi_e,C_HCO3, phi_e,C_CO3, phi_e,C_H phi_e,C_OH phi_e,C_K
+                        C_H2,C_H2_int C_H,C_H_int C_OH,C_OH_int C_CO2,C_CO2_int C_CO,C_CO_int
+                        r_H2,C_H2_int r_H2,C_OH_int r_CO,C_OH_int r_CO,C_CO2_int r_CO,C_CO_int'
       solve_type = pjfnk
     [../]
 
