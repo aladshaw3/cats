@@ -20,20 +20,6 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
-/****************************************************************/
-/*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
-/*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
-/*                   ALL RIGHTS RESERVED                        */
-/*                                                              */
-/*          Prepared by Battelle Energy Alliance, LLC           */
-/*            Under Contract No. DE-AC07-05ID14517              */
-/*            With the U. S. Department of Energy               */
-/*                                                              */
-/*            See COPYRIGHT for full restrictions               */
-/****************************************************************/
-
 #include "GasPropertiesBase.h"
 
 registerMooseObject("catsApp", GasPropertiesBase);
@@ -292,6 +278,6 @@ Real GasPropertiesBase::computeValue()
 {
     prepareEgret();
     calculateAllProperties();
-    // return for testing purposes only 
+    // return for testing purposes only
     return _egret_dat.total_dyn_vis/1000.0*100.0;
 }
