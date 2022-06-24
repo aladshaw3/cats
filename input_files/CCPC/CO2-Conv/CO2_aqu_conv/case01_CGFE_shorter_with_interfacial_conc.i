@@ -372,7 +372,7 @@
       [./InitialCondition]
           type = InitialModifiedButlerVolmerReaction
 
-          reaction_rate_const = 519.39      # umol/mm^2/s
+          reaction_rate_const = 2.083E-7      # umol/mm^2/s
           equilibrium_potential = -0.11         # V
 
           reduced_state_vars = '0'        # assumed
@@ -1598,7 +1598,7 @@
       type = ModifiedButlerVolmerReaction
       variable = r_H2
 
-      reaction_rate_const = 4.09167E-4    # umol/mm^2/s (adjusted)
+      reaction_rate_const = 6.19167E-4    # umol/mm^2/s (adjusted)
       equilibrium_potential = 0         # V
 
       reduced_state_vars = 'C_H2_int C_OH_int'       # assumed
@@ -1611,7 +1611,7 @@
 
       temperature = T_e
       number_of_electrons = 1         # params are fitted to this standard
-      electron_transfer_coef = 0.14   # fitted param
+      electron_transfer_coef = 0.5   # fitted param
 
       # correlation factor between bulk and surface concentrations
       #   Adjusted to get FE values within range of literature
@@ -1761,7 +1761,7 @@
       variable = cat_volt
 
       start_value = 0.0
-      aux_vals = '0'  # V
+      aux_vals = '0'  # V  (3.5 @ 100 mA/cm^2, 4.0 @ 200 mA/cm^2, 4.5 @ 300 mA/cm^2, 5.0 @ 400 mA/cm^2)
 
       # Input current should approximately be a step function
       aux_times = '15'
@@ -2874,10 +2874,10 @@
 
   # ==== Reference electrolyte state ====
   [./reference_electrolyte_potential]
-      type = DirichletBC
+      type = CoupledDirichletBC
       variable = phi_e
       boundary = 'channel_bottom'
-      value = 0
+      coupled = cat_volt
   [../]
 
 []
