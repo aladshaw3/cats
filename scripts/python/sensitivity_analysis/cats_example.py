@@ -11,7 +11,7 @@ from input_output_processing.read_moose_csv_to_df import *
 # CATS sensitivity run function (expects 3 states for all conditions)
 def cats_co2_run(params, conds, other):
     cats_file_obj = other["CATS_obj"]               #class object
-    folder = "co2_sens_input"
+    folder = "co2_sens_input_2"
     output_file = other["result_file_basename"]     #string
 
     #Input file base name varies depending on channel_depth condition
@@ -19,13 +19,13 @@ def cats_co2_run(params, conds, other):
 
     # expects depth = 1.47
     if conds["channel_depth"] > 0.99:
-        input_file = "co2_sens_input/case01_CGFE.i"
+        input_file = "co2_sens_input_2/case01_CGFE.i"
     # expects depth = 0.98
     elif conds["channel_depth"] > 0.50:
-        input_file = "co2_sens_input/case01_CGFE_short.i"
+        input_file = "co2_sens_input_2/case01_CGFE_short.i"
     # expects depth = 0.49
     else:
-        input_file = "co2_sens_input/case01_CGFE_shorter.i"
+        input_file = "co2_sens_input_2/case01_CGFE_shorter.i"
 
     # Read the input file into the object
     cats_file_obj.construct_from_file(input_file)
@@ -41,13 +41,8 @@ def cats_co2_run(params, conds, other):
 
     # What to do with particle size
     cats_file_obj.data["AuxVariables"]["dp"]["initial_condition"] = conds["particle_diameter"]
-    cats_file_obj.data["AuxVariables"]["As"]["initial_condition"] = 6.0*(1.0-conds["porosity"])/conds["particle_diameter"]
-
-    # What to do with porosity
-    cats_file_obj.data["AuxKernels"]["eps_calc_cathode"]["value"] = conds["porosity"]
-
-    # What to do with conductivity
-    cats_file_obj.data["AuxVariables"]["sigma_s_eff"]["initial_condition"] = 1.698*(1.0-conds["porosity"])**1.5
+    cats_file_obj.data["AuxVariables"]["dp_inv"]["initial_condition"] = 1.0/conds["particle_diameter"]
+    cats_file_obj.data["AuxVariables"]["As"]["initial_condition"] = 6.0*(1.0-0.8)/conds["particle_diameter"]
 
 
     #Rebuild the CATS input stream and write to new (or same file)
@@ -70,7 +65,8 @@ def cats_co2_run(params, conds, other):
     csv_obj = MOOSE_CVS_File(result_file)
 
     #Perform some computation
-    res = csv_obj.value(515,'C_CO_out_M') * -csv_obj.value(515,'Q_out_cu_mm_p_s') * 2 * 0.096485 / csv_obj.value(515,'I_in_Amps')
+    #res = csv_obj.value(515,'C_CO_out_M') * -csv_obj.value(515,'Q_out_cu_mm_p_s') * 2 * 0.096485 / csv_obj.value(515,'I_in_Amps')
+    res = csv_obj.value(515,'FE_CO')
 
     #Track the number of runs (so each output can have different name)
     other["RunNum"] = str(int(other["RunNum"])+1)   #string
@@ -88,11 +84,10 @@ if __name__ == "__main__":
     test_conds["flowrate"] = 500 #to 1666.67
     test_conds["particle_diameter"] = 0.015 #to 0.03
     test_conds["channel_depth"] = 0.49 #to 1.47
-    test_conds["porosity"] = 0.8 #to 0.9
 
     test_args = {}
     test_args["CATS_obj"] = CATS_InputFile()
-    test_args["result_file_basename"] = "co2_sens_input/case01_CGFE"
+    test_args["result_file_basename"] = "co2_sens_input_2/case01_CGFE"
     test_args["RunNum"] = "0"
 
     test_tuples = {}
@@ -101,8 +96,8 @@ if __name__ == "__main__":
     test_tuples["flowrate"] = (test_conds["flowrate"], 1666.67)
     test_tuples["particle_diameter"] = (test_conds["particle_diameter"], 0.03)
     test_tuples["channel_depth"] = (test_conds["channel_depth"], 1.47)
-    test_tuples["porosity"] = (test_conds["porosity"], 0.9)
 
 
     test_obj = SensitivitySweep(cats_co2_run, test_params, test_tuples, test_args)
-    test_obj.run_exhaustive_sweep("co2_sens_input/sens_res_co2","co2_sensitivity_cats_01",relative=True,per=10,cond_limit=2,skip_partials=True)
+    test_obj.run_exhaustive_sweep("co2_sens_input_2/sens_res_co2","co2_sensitivity_cats_02",
+                    relative=True,per=10,cond_limit=2,skip_partials=True)
