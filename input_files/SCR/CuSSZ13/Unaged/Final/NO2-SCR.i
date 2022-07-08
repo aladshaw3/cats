@@ -1655,7 +1655,6 @@
           forward_activation_energy = 75075.4063936518
 
           forward_pre_exponential = 13725167148853.1
-          #forward_pre_exponential = 1372516714885.31
 
 
           reverse_activation_energy = 0
@@ -1681,7 +1680,6 @@
           forward_activation_energy = 53260.3863936518
 
           forward_pre_exponential = 145181130020.463
-          #forward_pre_exponential = 14518113002.0463
 
 
           reverse_activation_energy = 0
@@ -1707,7 +1705,6 @@
           forward_activation_energy = 77986.1763936518
 
           forward_pre_exponential = 15651219976223.6
-          #forward_pre_exponential = 1565121997622.36
 
 
           reverse_activation_energy = 0
@@ -1733,7 +1730,6 @@
           forward_activation_energy = 73387.7563936518
 
           forward_pre_exponential = 9513150643765.07
-          #forward_pre_exponential = 951315064376.507
 
 
           reverse_activation_energy = 0
@@ -1760,7 +1756,6 @@
           forward_activation_energy = 53126.0063936518
 
           forward_pre_exponential = 226043372451.468
-          #forward_pre_exponential = 22604337245146.8
 
 
           reverse_activation_energy = 0
@@ -1786,7 +1781,6 @@
           forward_activation_energy = 49266.4263936518
 
           forward_pre_exponential = 85288248447.6855
-          #forward_pre_exponential = 8528824844768.55
 
 
           reverse_activation_energy = 0
@@ -1812,7 +1806,6 @@
           forward_activation_energy = 39309.8263936518
 
           forward_pre_exponential = 9713469804.52266
-          #forward_pre_exponential = 971346980452.266
 
 
           reverse_activation_energy = 0
@@ -1836,9 +1829,9 @@
           variable = r28
           this_variable = r28
 
-          forward_activation_energy = 56946.0263936518
+          forward_activation_energy = 68904.24993210533
 
-          forward_pre_exponential = 183578.417658479
+          forward_pre_exponential = 77569.01682353504
 
 
           reverse_activation_energy = 0
@@ -1861,9 +1854,9 @@
           variable = r29
           this_variable = r29
 
-          forward_activation_energy = 70419.8063936518
+          forward_activation_energy = 79400.57918688397
 
-          forward_pre_exponential = 2667072.90885306
+          forward_pre_exponential = 2881811.4857164673
 
 
           reverse_activation_energy = 0
@@ -1886,9 +1879,9 @@
           variable = r30
           this_variable = r30
 
-          forward_activation_energy = 55857.3863936518
+          forward_activation_energy = 61396.28223428124
 
-          forward_pre_exponential = 128573.994477963
+          forward_pre_exponential = 234321.0711526532
 
 
           reverse_activation_energy = 0
@@ -1912,9 +1905,9 @@
           variable = r31
           this_variable = r31
 
-          forward_activation_energy = 93110.3563936519
+          forward_activation_energy = 112661.28344052973
 
-          forward_pre_exponential = 28372964.584683
+          forward_pre_exponential = 11992538.836242285
 
 
           reverse_activation_energy = 0
@@ -1937,9 +1930,9 @@
           variable = r32
           this_variable = r32
 
-          forward_activation_energy = 83735.8563936518
+          forward_activation_energy = 80842.11512929981
 
-          forward_pre_exponential = 7156161.2710666
+          forward_pre_exponential = 3023679.5791008086
 
 
           reverse_activation_energy = 0
@@ -1962,9 +1955,9 @@
           variable = r33
           this_variable = r33
 
-          forward_activation_energy = 53546.2763936518
+          forward_activation_energy = 54725.359895494235
 
-          forward_pre_exponential = 18828.095111708
+          forward_pre_exponential = 7955.013125974719
 
 
           reverse_activation_energy = 0

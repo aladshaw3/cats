@@ -3,7 +3,7 @@ sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
 #Importing all reaction dictionaries
-from rxns_v5 import *
+from rxns_v7 import *
 
 # Create dict to iterate through
 rxn_list = {"r5f": r5f,"r5r": r5r,"r6f": r6f,"r6r": r6r,"r7": r7,"r8": r8,"r9": r9,
@@ -235,8 +235,8 @@ sim.set_site_density("CuO","Unaged",0.001147378)
 
 # Build the constraints then discretize
 sim.build_constraints()
-sim.discretize_model(method=DiscretizationMethod.OrthogonalCollocation,
-                    tstep=90,elems=5,colpoints=2)
+sim.discretize_model(method=DiscretizationMethod.FiniteDifference,
+                    tstep=90,elems=10,colpoints=2)
 
 
 sim.set_temperature_from_data("Unaged", "NOSCR", temp_data, {"T_in_NOSCR": 0, "T_mid_NOSCR": 2.5, "T_out_NOSCR": 5})
@@ -381,10 +381,10 @@ sim.fix_all_reactions()
 sim.auto_select_all_weight_factors()
 
 Tstr = "NOSCR"
-sim.ignore_weight_factor("NH3","Unaged",Tstr,time_window=(325,510))
-sim.ignore_weight_factor("NO","Unaged",Tstr,time_window=(325,510))
-sim.ignore_weight_factor("NO2","Unaged",Tstr,time_window=(325,510))
-sim.ignore_weight_factor("N2O","Unaged",Tstr,time_window=(325,510))
+#sim.ignore_weight_factor("NH3","Unaged",Tstr,time_window=(325,510))
+#sim.ignore_weight_factor("NO","Unaged",Tstr,time_window=(325,510))
+#sim.ignore_weight_factor("NO2","Unaged",Tstr,time_window=(325,510))
+#sim.ignore_weight_factor("N2O","Unaged",Tstr,time_window=(325,510))
 
 Tstr = "NO2SCR"
 sim.ignore_weight_factor("NH3","Unaged",Tstr,time_window=(0,2))

@@ -2,8 +2,8 @@ import sys
 sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
-run = "02"
-oldrun="01"
+run = "03"
+oldrun="02"
 
 readfile = 'output/full_lowtemp_model'+oldrun+'.json'
 writefile = "full_lowtemp_model"+run+".json"
@@ -16,11 +16,13 @@ sim.unfix_all_reactions()
 
 #  ============= Modify parameter bounds =================
 #   Specify modifications to parameter boundaries (default = +/- 20%)
-upper = 1+0.25
-lower = 1-0.05
+upper = 1+0.35
+lower = 1-0.35
+upper_e = 1+0.10
+lower_e = 1-0.10
 for rxn in sim.model.arrhenius_rxns:
     sim.set_reaction_param_bounds(rxn, "A", bounds=(sim.model.A[rxn].value*lower,sim.model.A[rxn].value*upper))
-    sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*lower,sim.model.E[rxn].value*upper))
+    sim.set_reaction_param_bounds(rxn, "E", bounds=(sim.model.E[rxn].value*lower_e,sim.model.E[rxn].value*upper_e))
 
 # Select reactions to fix
 sim.fix_reaction("r1")
@@ -47,7 +49,18 @@ sim.fix_reaction("r17")
 sim.fix_reaction("r18")
 sim.fix_reaction("r19")
 sim.fix_reaction("r20")
-# Only going to vary the low temp reactions (NH4NO3 forming)
+
+
+#sim.fix_reaction("r21")
+#sim.fix_reaction("r22")
+#sim.fix_reaction("r23")
+#sim.fix_reaction("r24")
+sim.fix_reaction("r25")
+sim.fix_reaction("r26")
+sim.fix_reaction("r27")
+
+# Only going to vary the low temp reactions (NH4NO3 related --> N2O or NO2 SCR)
+
 sim.fix_reaction("r34")
 sim.fix_reaction("r35")
 sim.fix_reaction("r36")
@@ -57,7 +70,7 @@ sim.fix_reaction("r39")
 
 sim.finalize_auto_scaling()
 options={'print_user_options': 'yes',
-        'linear_solver': LinearSolverMethod.MA27,
+        'linear_solver': LinearSolverMethod.MA97,
         'tol': 1e-6,
         'acceptable_tol': 1e-6,
         'compl_inf_tol': 1e-6,
