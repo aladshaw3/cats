@@ -369,19 +369,19 @@
     [./S1]
         order = FIRST
         family = MONOMIAL
-	      initial_condition = 0.052619
+	      initial_condition = 0.05036
     [../]
 
     [./S2]
         order = FIRST
         family = MONOMIAL
-	      initial_condition = 0.0231257
+	      initial_condition = 0.02518
     [../]
 
     [./S3]
         order = FIRST
         family = MONOMIAL
-      	initial_condition = 0.026252
+      	initial_condition = 0.009914
     [../]
 
 [] #END Variables
@@ -393,28 +393,28 @@
   [./w1]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.052619
+      initial_condition = 0.05036
   [../]
 
   # Z2Cu sites
   [./w2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.0231257
+      initial_condition = 0.02518
   [../]
 
   # ZH sites
   [./w3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.026252
+      initial_condition = 0.009914
   [../]
 
   # CuO sites
   [./CuO]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.001147378
+      initial_condition = 2.33028E-12
   [../]
   #=====================================
 
@@ -1970,7 +1970,7 @@
       products = ''
       product_stoich = ''
     [../]
-    
+
     ## ======= CuO Facilitated NH3 Oxidation ======
         [./r34_val]
             type = Reaction
@@ -2359,7 +2359,7 @@
 
         start_value = 10
         aux_vals = '0.2 10'
-        aux_times = '2.091 18.25'
+        aux_times = '2.091 16.25'
         time_spans = '0.5 0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2416,7 +2416,7 @@
 
         start_value = 1E-15
         aux_vals = '300 1E-15 300 1E-15 300 1E-15'
-        aux_times = '2.091   27.591    36.75    52.25    68.59    82.42'
+        aux_times = '2.091   25.59    31.75    43.92    60.42    72.59'
         time_spans = '0.5      0.5    0.5    0.5    0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2445,7 +2445,7 @@
 
         start_value = 1E-15
         aux_vals = '300 150 300'
-        aux_times = '27.591   60.42   89.92'
+        aux_times = '25.59   53.75   79.75'
         time_spans = '0.5      0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2474,7 +2474,7 @@
 
         start_value = 1E-15
         aux_vals = '150 1E-15'
-        aux_times = '60.42   89.92'
+        aux_times = '53.75   79.75'
         time_spans = '0.5      0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2773,7 +2773,7 @@
   petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = bt
+  line_search = l2
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-4
   nl_rel_step_tol = 1e-10
@@ -2783,7 +2783,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 97.0
+  end_time = 85.0
   dtmax = 0.25
 
   [./TimeStepper]

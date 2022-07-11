@@ -422,7 +422,7 @@
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 623.15
+      initial_condition = 673.15
   [../]
   #=====================================
 
@@ -1233,6 +1233,7 @@
   product_stoich = '1'
 [../]
 
+
     ## ======= NO Oxidation ======
         [./r5_val]
             type = Reaction
@@ -1970,7 +1971,7 @@
       products = ''
       product_stoich = ''
     [../]
-    
+
     ## ======= CuO Facilitated NH3 Oxidation ======
         [./r34_val]
             type = Reaction
@@ -2124,6 +2125,7 @@
           products = ''
           product_stoich = ''
         [../]
+
 
 
 [] #END Kernels
@@ -2359,7 +2361,7 @@
 
         start_value = 10
         aux_vals = '0.2 10'
-        aux_times = '2.091 18.25'
+        aux_times = '2.091 17.42'
         time_spans = '0.5 0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2416,7 +2418,7 @@
 
         start_value = 1E-15
         aux_vals = '300 1E-15 300 1E-15 300 1E-15'
-        aux_times = '2.091   27.591    36.75    52.25    68.59    82.42'
+        aux_times = '2.091   27.42    39.42    47.59   61.42   69.09'
         time_spans = '0.5      0.5    0.5    0.5    0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2445,7 +2447,7 @@
 
         start_value = 1E-15
         aux_vals = '300 150 300'
-        aux_times = '27.591   60.42   89.92'
+        aux_times = '27.42   54.25   76.25'
         time_spans = '0.5      0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2474,7 +2476,7 @@
 
         start_value = 1E-15
         aux_vals = '150 1E-15'
-        aux_times = '60.42   89.92'
+        aux_times = '54.25   76.25'
         time_spans = '0.5      0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2773,7 +2775,7 @@
   petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = bt
+  line_search = l2
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-4
   nl_rel_step_tol = 1e-10
@@ -2783,7 +2785,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 97.0
+  end_time = 81.0
   dtmax = 0.25
 
   [./TimeStepper]

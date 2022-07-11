@@ -369,19 +369,19 @@
     [./S1]
         order = FIRST
         family = MONOMIAL
-	      initial_condition = 0.052619
+	      initial_condition = 0.04968
     [../]
 
     [./S2]
         order = FIRST
         family = MONOMIAL
-	      initial_condition = 0.0231257
+	      initial_condition = 0.026925
     [../]
 
     [./S3]
         order = FIRST
         family = MONOMIAL
-      	initial_condition = 0.026252
+      	initial_condition = 0.0144814
     [../]
 
 [] #END Variables
@@ -393,28 +393,28 @@
   [./w1]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.052619
+      initial_condition = 0.04968
   [../]
 
   # Z2Cu sites
   [./w2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.0231257
+      initial_condition = 0.026925
   [../]
 
   # ZH sites
   [./w3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.026252
+      initial_condition = 0.0144814
   [../]
 
   # CuO sites
   [./CuO]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.001147378
+      initial_condition = 7.85352E-7
   [../]
   #=====================================
 
@@ -1970,7 +1970,7 @@
       products = ''
       product_stoich = ''
     [../]
-    
+
     ## ======= CuO Facilitated NH3 Oxidation ======
         [./r34_val]
             type = Reaction
@@ -2293,7 +2293,7 @@
         type = MicroscalePoreVolumePerTotalVolume
         variable = total_pore
         porosity = pore
-        microscale_porosity = vol_avg_micro_pore
+        microscale_porosity = vol_avg_micro_pore   #Volume avg porosity for all solids
         execute_on = 'initial timestep_end'
     [../]
 
@@ -2359,7 +2359,7 @@
 
         start_value = 10
         aux_vals = '0.2 10'
-        aux_times = '2.091 18.25'
+        aux_times = '2.091 17.75'
         time_spans = '0.5 0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2416,7 +2416,7 @@
 
         start_value = 1E-15
         aux_vals = '300 1E-15 300 1E-15 300 1E-15'
-        aux_times = '2.091   27.591    36.75    52.25    68.59    82.42'
+        aux_times = '2.091   25.25    32.59    45.42    60.25    73.59'
         time_spans = '0.5      0.5    0.5    0.5    0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2445,7 +2445,7 @@
 
         start_value = 1E-15
         aux_vals = '300 150 300'
-        aux_times = '27.591   60.42   89.92'
+        aux_times = '25.25   52.59   80.59'
         time_spans = '0.5      0.5    0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2474,7 +2474,7 @@
 
         start_value = 1E-15
         aux_vals = '150 1E-15'
-        aux_times = '60.42   89.92'
+        aux_times = '52.59   80.59'
         time_spans = '0.5      0.5'
 
         execute_on = 'initial timestep_begin nonlinear'
@@ -2783,7 +2783,7 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 97.0
+  end_time = 90.0
   dtmax = 0.25
 
   [./TimeStepper]

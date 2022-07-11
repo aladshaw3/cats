@@ -2,8 +2,8 @@ import sys
 sys.path.append('../..')
 from catalyst.isothermal_monolith_catalysis import *
 
-run = "03"
-oldrun="02"
+run = "05"
+oldrun="04"
 
 readfile = 'output/full_lowtemp_model'+oldrun+'.json'
 writefile = "full_lowtemp_model"+run+".json"
@@ -51,13 +51,13 @@ sim.fix_reaction("r19")
 sim.fix_reaction("r20")
 
 
-#sim.fix_reaction("r21")
-#sim.fix_reaction("r22")
-#sim.fix_reaction("r23")
-#sim.fix_reaction("r24")
-sim.fix_reaction("r25")
-sim.fix_reaction("r26")
-sim.fix_reaction("r27")
+sim.fix_reaction("r21")
+sim.fix_reaction("r22")
+sim.fix_reaction("r23")
+sim.fix_reaction("r24")
+#sim.fix_reaction("r25")
+#sim.fix_reaction("r26")
+#sim.fix_reaction("r27")
 
 # Only going to vary the low temp reactions (NH4NO3 related --> N2O or NO2 SCR)
 

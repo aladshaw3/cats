@@ -369,19 +369,19 @@
     [./S1]
         order = FIRST
         family = MONOMIAL
-	      initial_condition = 0.052619
+        initial_condition = 0.05036
     [../]
 
     [./S2]
         order = FIRST
         family = MONOMIAL
-	      initial_condition = 0.0231257
+        initial_condition = 0.02518
     [../]
 
     [./S3]
         order = FIRST
         family = MONOMIAL
-      	initial_condition = 0.026252
+        initial_condition = 0.009914
     [../]
 
 [] #END Variables
@@ -393,28 +393,28 @@
   [./w1]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.052619
+      initial_condition = 0.05036
   [../]
 
   # Z2Cu sites
   [./w2]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.0231257
+      initial_condition = 0.02518
   [../]
 
   # ZH sites
   [./w3]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.026252
+      initial_condition = 0.009914
   [../]
 
   # CuO sites
   [./CuO]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 0.001147378
+      initial_condition = 2.33028E-12
   [../]
   #=====================================
 
@@ -422,7 +422,7 @@
   [./temp]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 623.15
+      initial_condition = 523.15
   [../]
   #=====================================
 
@@ -544,7 +544,7 @@
   [./NH3_ppm]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1E-15
+      initial_condition = 300
   [../]
 
   [./NH3_inlet]
@@ -555,7 +555,7 @@
   [./NOx_ppm]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1E-15
+      initial_condition = 1e-15
   [../]
 
   [./NOx_inlet]
@@ -566,7 +566,7 @@
   [./NO2_ppm]
       order = FIRST
       family = MONOMIAL
-      initial_condition = 1E-15
+      initial_condition = 225
   [../]
 
   [./NO2_inlet]
@@ -994,8 +994,8 @@
     [./q2a_rate]
         type = WeightedCoupledSumFunction
         variable = q2a
-        coupled_list = 'r2a r2b r7 r8 r10 r11 r14 r15 r18 r19 r22 r23 r29 r37 r38'
-        weights = '1 -1 -1 1 -1 1 -1 1 -1 1 -2 1 1 -1 1'
+        coupled_list = 'r2a r2b r7 r8 r10 r11 r14 r15 r18 r19 r22 r23 r37 r38 r29'
+        weights = '1 -1 -1 1 -1 1 -1 1 -1 1 -2 1 -1 1 1'
     [../]
 
     [./q2b_dot]
@@ -1016,8 +1016,8 @@
     [./q3_rate]
         type = WeightedCoupledSumFunction
         variable = q3
-        coupled_list = 'r3 r9 r12 r16 r17 r20 r24 r30 r34 r35 r36 r39'
-        weights = '1 -1 -1 -1 -1 -1 -2 1 -1 -1 -1 -1'
+        coupled_list = 'r3 r9 r12 r16 r17 r20 r24 r34 r35 r36 r39 r30'
+        weights = '1 -1 -1 -1 -1 -1 -2 -1 -1 -1 -1 1'
     [../]
 
     [./q4a_dot]
@@ -1643,334 +1643,334 @@
         [../]
 
     ## ======= NH4NO3 Formation ======
-    [./r21_val]
-        type = Reaction
-        variable = r21
-    [../]
-    [./r21_rx]
-      type = ArrheniusReaction
-      variable = r21
-      this_variable = r21
-
-      forward_activation_energy = 75075.4063936518
-
-      forward_pre_exponential = 13725167148853.1
-
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q1 NO2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r22_val]
-        type = Reaction
-        variable = r22
-    [../]
-    [./r22_rx]
-      type = ArrheniusReaction
-      variable = r22
-      this_variable = r22
-
-      forward_activation_energy = 53260.3863936518
-
-      forward_pre_exponential = 145181130020.463
-
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2a NO2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r23_val]
-        type = Reaction
-        variable = r23
-    [../]
-    [./r23_rx]
-      type = ArrheniusReaction
-      variable = r23
-      this_variable = r23
-
-      forward_activation_energy = 77986.1763936518
-
-      forward_pre_exponential = 15651219976223.6
-
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2b NO2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r24_val]
-        type = Reaction
-        variable = r24
-    [../]
-    [./r24_rx]
-      type = ArrheniusReaction
-      variable = r24
-      this_variable = r24
-
-      forward_activation_energy = 73387.7563936518
-
-      forward_pre_exponential = 9513150643765.07
-
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3 NO2w'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-## ======= NH4NO3 Fast SCR ======
-    [./r25_val]
-        type = Reaction
-        variable = r25
-    [../]
-    [./r25_rx]
-      type = ArrheniusReaction
-      variable = r25
-      this_variable = r25
-
-      forward_activation_energy = 70710.5297349962
-
-      forward_pre_exponential = 62080551762.96071
-
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q1_NH4NO3 NOxw'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r26_val]
-        type = Reaction
-        variable = r26
-    [../]
-    [./r26_rx]
-      type = ArrheniusReaction
-      variable = r26
-      this_variable = r26
-
-      forward_activation_energy = 35916.5665259635
-
-      forward_pre_exponential = 209742871777.6007
-
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2_NH4NO3 NOxw'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r27_val]
-        type = Reaction
-        variable = r27
-    [../]
-    [./r27_rx]
-      type = ArrheniusReaction
-      variable = r27
-      this_variable = r27
-
-      forward_activation_energy = 46079.66077100184
-
-      forward_pre_exponential = 5928267865.696233
-
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3_NH4NO3 NOxw'
-      reactant_stoich = '1 1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-## ======= NH4NO3 NO2 SCR ======
-    [./r28_val]
-        type = Reaction
-        variable = r28
-    [../]
-    [./r28_rx]
-      type = ArrheniusReaction
-      variable = r28
-      this_variable = r28
-
-      forward_activation_energy = 75037.11333383534
-
-      forward_pre_exponential = 88553.12826623367
-
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q1_NH4NO3'
-      reactant_stoich = '1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r29_val]
-        type = Reaction
-        variable = r29
-    [../]
-    [./r29_rx]
-      type = ArrheniusReaction
-      variable = r29
-      this_variable = r29
-
-      forward_activation_energy = 86369.69506268155
-
-      forward_pre_exponential = 7087070.50687908
-
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2_NH4NO3'
-      reactant_stoich = '1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r30_val]
-        type = Reaction
-        variable = r30
-    [../]
-    [./r30_rx]
-      type = ArrheniusReaction
-      variable = r30
-      this_variable = r30
-
-      forward_activation_energy = 64622.42311535661
-
-      forward_pre_exponential = 576371.0007899981
-
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3_NH4NO3'
-      reactant_stoich = '1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-## ======= NH4NO3 N2O Formation ======
-    [./r31_val]
-        type = Reaction
-        variable = r31
-    [../]
-    [./r31_rx]
-      type = ArrheniusReaction
-      variable = r31
-      this_variable = r31
-
-      forward_activation_energy = 147716.99195964902
-
-      forward_pre_exponential = 4412994.571409592
-
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q1_NH4NO3'
-      reactant_stoich = '1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r32_val]
-        type = Reaction
-        variable = r32
-    [../]
-    [./r32_rx]
-      type = ArrheniusReaction
-      variable = r32
-      this_variable = r32
-
-      forward_activation_energy = 104609.74276382678
-
-      forward_pre_exponential = 3023834.2419679123
-
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q2_NH4NO3'
-      reactant_stoich = '1'
-      products = ''
-      product_stoich = ''
-    [../]
-
-    [./r33_val]
-        type = Reaction
-        variable = r33
-    [../]
-    [./r33_rx]
-      type = ArrheniusReaction
-      variable = r33
-      this_variable = r33
-
-      forward_activation_energy = 45092.97864319702
-
-      forward_pre_exponential = 2184.6838330402097
-
-
-      reverse_activation_energy = 0
-      reverse_pre_exponential = 0
-
-      temperature = temp
-      scale = 1.0
-      reactants = 'q3_NH4NO3'
-      reactant_stoich = '1'
-      products = ''
-      product_stoich = ''
-    [../]
-    
+        [./r21_val]
+            type = Reaction
+            variable = r21
+        [../]
+        [./r21_rx]
+          type = ArrheniusReaction
+          variable = r21
+          this_variable = r21
+
+          forward_activation_energy = 75075.4063936518
+
+          forward_pre_exponential = 13725167148853.1
+
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q1 NO2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r22_val]
+            type = Reaction
+            variable = r22
+        [../]
+        [./r22_rx]
+          type = ArrheniusReaction
+          variable = r22
+          this_variable = r22
+
+          forward_activation_energy = 53260.3863936518
+
+          forward_pre_exponential = 145181130020.463
+
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2a NO2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r23_val]
+            type = Reaction
+            variable = r23
+        [../]
+        [./r23_rx]
+          type = ArrheniusReaction
+          variable = r23
+          this_variable = r23
+
+          forward_activation_energy = 77986.1763936518
+
+          forward_pre_exponential = 15651219976223.6
+
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2b NO2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r24_val]
+            type = Reaction
+            variable = r24
+        [../]
+        [./r24_rx]
+          type = ArrheniusReaction
+          variable = r24
+          this_variable = r24
+
+          forward_activation_energy = 73387.7563936518
+
+          forward_pre_exponential = 9513150643765.07
+
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3 NO2w'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+    ## ======= NH4NO3 Fast SCR ======
+        [./r25_val]
+            type = Reaction
+            variable = r25
+        [../]
+        [./r25_rx]
+          type = ArrheniusReaction
+          variable = r25
+          this_variable = r25
+
+          forward_activation_energy = 70710.5297349962
+
+          forward_pre_exponential = 62080551762.96071
+
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q1_NH4NO3 NOxw'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r26_val]
+            type = Reaction
+            variable = r26
+        [../]
+        [./r26_rx]
+          type = ArrheniusReaction
+          variable = r26
+          this_variable = r26
+
+          forward_activation_energy = 35916.5665259635
+
+          forward_pre_exponential = 209742871777.6007
+
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2_NH4NO3 NOxw'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r27_val]
+            type = Reaction
+            variable = r27
+        [../]
+        [./r27_rx]
+          type = ArrheniusReaction
+          variable = r27
+          this_variable = r27
+
+          forward_activation_energy = 46079.66077100184
+
+          forward_pre_exponential = 5928267865.696233
+
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3_NH4NO3 NOxw'
+          reactant_stoich = '1 1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+    ## ======= NH4NO3 NO2 SCR ======
+        [./r28_val]
+            type = Reaction
+            variable = r28
+        [../]
+        [./r28_rx]
+          type = ArrheniusReaction
+          variable = r28
+          this_variable = r28
+
+          forward_activation_energy = 75037.11333383534
+
+          forward_pre_exponential = 88553.12826623367
+
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q1_NH4NO3'
+          reactant_stoich = '1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r29_val]
+            type = Reaction
+            variable = r29
+        [../]
+        [./r29_rx]
+          type = ArrheniusReaction
+          variable = r29
+          this_variable = r29
+
+          forward_activation_energy = 86369.69506268155
+
+          forward_pre_exponential = 7087070.50687908
+
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2_NH4NO3'
+          reactant_stoich = '1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r30_val]
+            type = Reaction
+            variable = r30
+        [../]
+        [./r30_rx]
+          type = ArrheniusReaction
+          variable = r30
+          this_variable = r30
+
+          forward_activation_energy = 64622.42311535661
+
+          forward_pre_exponential = 576371.0007899981
+
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3_NH4NO3'
+          reactant_stoich = '1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+    ## ======= NH4NO3 N2O Formation ======
+        [./r31_val]
+            type = Reaction
+            variable = r31
+        [../]
+        [./r31_rx]
+          type = ArrheniusReaction
+          variable = r31
+          this_variable = r31
+
+          forward_activation_energy = 147716.99195964902
+
+          forward_pre_exponential = 4412994.571409592
+
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q1_NH4NO3'
+          reactant_stoich = '1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r32_val]
+            type = Reaction
+            variable = r32
+        [../]
+        [./r32_rx]
+          type = ArrheniusReaction
+          variable = r32
+          this_variable = r32
+
+          forward_activation_energy = 104609.74276382678
+
+          forward_pre_exponential = 3023834.2419679123
+
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q2_NH4NO3'
+          reactant_stoich = '1'
+          products = ''
+          product_stoich = ''
+        [../]
+
+        [./r33_val]
+            type = Reaction
+            variable = r33
+        [../]
+        [./r33_rx]
+          type = ArrheniusReaction
+          variable = r33
+          this_variable = r33
+
+          forward_activation_energy = 45092.97864319702
+
+          forward_pre_exponential = 2184.6838330402097
+
+
+          reverse_activation_energy = 0
+          reverse_pre_exponential = 0
+
+          temperature = temp
+          scale = 1.0
+          reactants = 'q3_NH4NO3'
+          reactant_stoich = '1'
+          products = ''
+          product_stoich = ''
+        [../]
+
     ## ======= CuO Facilitated NH3 Oxidation ======
         [./r34_val]
             type = Reaction
@@ -2126,6 +2126,8 @@
         [../]
 
 
+
+
 [] #END Kernels
 
 [DGKernels]
@@ -2240,7 +2242,21 @@
 
 [] #END DGKernels
 
+[Functions]
+  [./data_fun]
+    type = PiecewiseMultilinear
+    data_file = NO2-SCR_temp.txt
+  [../]
+[]
+
 [AuxKernels]
+
+    [./temp_AuxK]
+      type = FunctionAux
+      variable = temp
+      function = data_fun
+      execute_on = 'initial timestep_end'
+    [../]
 
     [./velocity]
         # NOTE: velocity must use same shape function type as temperature and space-velocity
@@ -2353,17 +2369,6 @@
 
 
     # ==== Setting the time variant inlet conditions ======
-    [./O2_step_input]
-        type = TemporalStepFunction
-        variable = O2_percent
-
-        start_value = 10
-        aux_vals = '0.2 10'
-        aux_times = '2.091 18.25'
-        time_spans = '0.5 0.5'
-
-        execute_on = 'initial timestep_begin nonlinear'
-    [../]
 
     [./O2_convert_to_molar]
         type = SimpleGasVolumeFractionToConcentration
@@ -2379,18 +2384,6 @@
         input_volfrac_unit = "%"
 
         execute_on = 'initial timestep_end'
-    [../]
-
-    [./H2O_step_input]
-        type = TemporalStepFunction
-        variable = H2O_percent
-
-        start_value = 5
-        aux_vals = '5'
-        aux_times = '3'
-        time_spans = '0.5'
-
-        execute_on = 'initial timestep_begin nonlinear'
     [../]
 
     [./H2O_convert_to_molar]
@@ -2409,19 +2402,6 @@
         execute_on = 'initial timestep_end'
     [../]
 
-
-    [./NH3_step_input]
-        type = TemporalStepFunction
-        variable = NH3_ppm
-
-        start_value = 1E-15
-        aux_vals = '300 1E-15 300 1E-15 300 1E-15'
-        aux_times = '2.091   27.591    36.75    52.25    68.59    82.42'
-        time_spans = '0.5      0.5    0.5    0.5    0.5    0.5'
-
-        execute_on = 'initial timestep_begin nonlinear'
-    [../]
-
     [./NH3_convert_to_molar]
         type = SimpleGasVolumeFractionToConcentration
         variable = NH3_inlet
@@ -2438,19 +2418,6 @@
         execute_on = 'initial timestep_end'
     [../]
 
-
-    [./NO_step_input]
-        type = TemporalStepFunction
-        variable = NOx_ppm
-
-        start_value = 1E-15
-        aux_vals = '300 150 300'
-        aux_times = '27.591   60.42   89.92'
-        time_spans = '0.5      0.5    0.5'
-
-        execute_on = 'initial timestep_begin nonlinear'
-    [../]
-
     [./NO_convert_to_molar]
         type = SimpleGasVolumeFractionToConcentration
         variable = NOx_inlet
@@ -2465,19 +2432,6 @@
         input_volfrac_unit = "ppm"
 
         execute_on = 'initial timestep_end'
-    [../]
-
-
-    [./NO2_step_input]
-        type = TemporalStepFunction
-        variable = NO2_ppm
-
-        start_value = 1E-15
-        aux_vals = '150 1E-15'
-        aux_times = '60.42   89.92'
-        time_spans = '0.5      0.5'
-
-        execute_on = 'initial timestep_begin nonlinear'
     [../]
 
     [./NO2_convert_to_molar]
@@ -2754,6 +2708,24 @@
         execute_on = 'initial timestep_end'
     [../]
 
+    [./q1_NH4NO3]
+        type = ElementAverageValue
+        variable = q1_NH4NO3
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./q2_NH4NO3]
+        type = ElementAverageValue
+        variable = q2_NH4NO3
+        execute_on = 'initial timestep_end'
+    [../]
+
+    [./q3_NH4NO3]
+        type = ElementAverageValue
+        variable = q3_NH4NO3
+        execute_on = 'initial timestep_end'
+    [../]
+
 
 [] #END Postprocessors
 
@@ -2773,7 +2745,7 @@
   petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
 
   #NOTE: turning off line search can help converge for high Renolds number
-  line_search = bt
+  line_search = l2
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-4
   nl_rel_step_tol = 1e-10
@@ -2783,12 +2755,12 @@
   l_max_its = 300
 
   start_time = 0.0
-  end_time = 97.0
-  dtmax = 0.25
+  end_time = 500.0
+  dtmax = 1
 
   [./TimeStepper]
-     type = ConstantDT
-     dt = 0.25
+    type = SolutionTimeAdaptiveDT
+    dt = 0.125
   [../]
 [] #END Executioner
 
