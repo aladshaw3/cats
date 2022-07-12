@@ -66,10 +66,10 @@ Or, to run on multiple CPU cores...
 
 Citation
 -----
-Ladshaw, A.P., "CATS: Catalytic After Treatment System -- MOOSE based catalysis and fixed-bed model simulation tool," https://github.com/aladshaw3/cats, Accessed (Month) (Day), (Year).
+Ladshaw, A.P., "CATS: Catalysis And Treatment Systems -- MOOSE based catalysis simulation tool," https://github.com/aladshaw3/cats, Accessed (Month) (Day), (Year).
 
 
 Contact Information
 -----
 
-For questions, contact Austin Ladshaw (ladshawap@ornl.gov  --or--  aladshaw3@outlook.com)
+For questions, contact Austin Ladshaw (aladshaw3@outlook.com)
