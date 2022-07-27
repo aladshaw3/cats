@@ -524,7 +524,7 @@
       order = FIRST
       family = LAGRANGE
       initial_condition = 0.0 # V
-      block = 'cathode'
+      block = 'cathode channel'
   [../]
 
   # Effective cathode conductivity
