@@ -359,83 +359,21 @@
       type = DirichletBC
       variable = vel_y
       boundary = 'inlet'
-        value = 2
+      value = 2
     [../]
 
     [./z_no_slip]
-      type = PenaltyDirichletBC
+      type = DirichletBC
       variable = vel_z
       boundary = 'inner_walls'
       value = 0.0
-        penalty = 10000
     [../]
     [./y_no_slip]
-      type = PenaltyDirichletBC
+      type = DirichletBC
       variable = vel_y
       boundary = 'inner_walls'
       value = 0.0
-        penalty = 10000
     [../]
-
-#    [./z_no_slip]
-#      type = DirichletBC
-#      variable = vel_z
-#      boundary = 'inner_walls'
-#      value = 0.0
-#    [../]
-#    [./y_no_slip]
-#      type = DirichletBC
-#      variable = vel_y
-#      boundary = 'inner_walls'
-#      value = 0.0
-#    [../]
-
-# If we know that the edges have a no-slip condition, do we need to create a FunctionBC to account for that
-#    [./y_inlet]
-#      type = FunctionDirichletBC
-#      variable = vel_y
-#      boundary = 'inlet'
-#      function = 'inlet_func'
-#    [../]
-
-# NOTE: This works, but the average inlet velocity is NOT 2, because of the no-slip condition
-#    [./y_inlet_const]
-#      type = DirichletBC
-#      variable = vel_y
-#      boundary = 'inlet'
-#        value = 2.6666667
-#    [../]
-
-# NOTE: This is better that just DirichletBC, but is still not giving the right average
-#    [./y_inlet_slope_const]
-#      type = PenaltyDirichletBC
-#      variable = vel_y
-#      boundary = 'inlet'
-#        value = 2.3
-#      penalty = 1
-#    [../]
-
-
-# Check on this. May only be for compressible NS
-#
-#       May need to create our own custom version of this
-#
-#    [./y_inlet_const]
-#      type = NSPenalizedNormalFlowBC  --> May want to check this out or switch to using NS based module stuff
-#      variable = vel_y
-#      boundary = 'inlet'
-#        specified_udotn = -2.0
-#       penalty = 100
-#        rho = 1.225e-6
-#        rhoE = 0
-#        rhou = 0
-#        vel_x = vel_x
-#        vel_y = vel_y
-#        vel_z = vel_z
-#        fluid_properties = ideal_gas
-#        rhov = 0
-#        rhow = 0
-#    [../]
 
 []
 

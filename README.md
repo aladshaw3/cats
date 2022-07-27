@@ -64,6 +64,17 @@ Or, to run on multiple CPU cores...
 <code> mpiexec --n 4 ./cats-opt -i path/to/file.i </code>
 
 
+WARNING
+-----
+There may be a current bug in MOOSE that is caused by applying an integrated boundary
+condition on a node set internal to a domain. MOOSE will report an error stating that
+the variable does not exist on that node set, however, if you run the code with...
+
+<code> mpiexec --n # ./cats-opt -i path/to/file.i </code>
+
+where # > 1, then the code should run fine. See issue #13 for more information. 
+
+
 Citation
 -----
 Ladshaw, A.P., "CATS: Catalysis And Treatment Systems -- MOOSE based catalysis simulation tool," https://github.com/aladshaw3/cats, Accessed (Month) (Day), (Year).

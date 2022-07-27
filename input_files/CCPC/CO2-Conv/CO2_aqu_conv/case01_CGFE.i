@@ -36,10 +36,10 @@
 #
 #   - Parameters
 #     ----------
-#     eps = 0.85 (porosity of cathode)
-#     As = 30 mm^-1 (active area) = 6*(1-eps)/dp
-#     dp = 0.03 mm (avg particle size)
-#     dh = 1.07 mm (hydraulic diameter for Darcy-Weisbach)
+#     eps = 0.80 (porosity of cathode)
+#     As = 80 mm^-1 (active area) = 6*(1-eps)/dp
+#     dp = 0.015 mm (avg particle size)
+#     dh = 1.3072 mm (hydraulic diameter for Darcy-Weisbach)
 #     lambda = 1.0 mm (avg dispersivity)
 #     n = 1 (fitted num of electrons transferred in each reaction)
 #     mu = 1 mPa*s (fluid viscosity) [g/m/s]
@@ -49,7 +49,7 @@
 #     k_phi = 1.13e-13 mm^2 (Schloegl-Darcy Electrokinetic Permeability)
 #     conversion_factor = 10^9 (for Schloegl-Darcy Electrokinetic coef)
 #     sigma_s = 1.698 S/mm [C/V/s/mm]
-#         (sigma_s_eff) = 0.0986 S/mm
+#         (sigma_s_eff) = 0.15187 S/mm
 #     sigma_e ~= 0.01589 S/mm [C/V/s/mm]
 #     min_conductivity = 2e-5 S/mm [C/V/s/mm] (background for tap water)
 #     c_ref = 1 M = 1 umol/mm^3
@@ -75,8 +75,8 @@
 
   # Given minimum conductivity
   min_conductivity = 2e-5 #C/V/s/mm
-  tight_coupling = false
-  include_ion_gradients = false #in current calculations
+  tight_coupling = true
+  include_ion_gradients = true #in current calculations
 
   # common to all SimpleGasPropertiesBase
   diff_length_unit = "mm"
@@ -132,7 +132,7 @@
       order = FIRST
       family = LAGRANGE
       scaling = 1
-      initial_condition = 0 # Pa == 4 atm
+      initial_condition = 0
       block = 'channel cathode catex_membrane'
   [../]
 
@@ -223,6 +223,47 @@
       family = LAGRANGE
       initial_condition = 0 #M
       block = 'channel cathode'
+  [../]
+
+
+  # interface concentration of CO (umol/mm^3)
+  [./C_CO_int]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0 #M
+      block = 'cathode'
+  [../]
+
+  # interface concentration of H2 (umol/mm^3)
+  [./C_H2_int]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0 #M
+      block = 'cathode'
+  [../]
+
+  # interface concentration of CO2 (umol/mm^3)
+  [./C_CO2_int]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 0.031 #M
+      block = 'cathode'
+  [../]
+
+  # interface concentration of H (umol/mm^3)
+  [./C_H_int]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 4.41e-9 #M
+      block = 'cathode'
+  [../]
+
+  # interface concentration of OH (umol/mm^3)
+  [./C_OH_int]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 2.14e-6 #M
+      block = 'cathode'
   [../]
 
 
@@ -331,7 +372,7 @@
       [./InitialCondition]
           type = InitialModifiedButlerVolmerReaction
 
-          reaction_rate_const = 519.39      # umol/mm^2/s
+          reaction_rate_const = 2.083E-7      # umol/mm^2/s
           equilibrium_potential = -0.11         # V
 
           reduced_state_vars = '0'        # assumed
@@ -450,7 +491,7 @@
   [./dh]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 1.07 #mm
+      initial_condition = 1.3072 #mm
       block = 'channel'
   [../]
 
@@ -458,7 +499,15 @@
   [./dp]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0.03 #mm
+      initial_condition = 0.015 #mm
+      block = 'cathode'
+  [../]
+
+  # particle diameter inverse
+  [./dp_inv]
+      order = FIRST
+      family = LAGRANGE
+      initial_condition = 66.6667 #mm^-1
       block = 'cathode'
   [../]
 
@@ -475,14 +524,14 @@
       order = FIRST
       family = LAGRANGE
       initial_condition = 0.0 # V
-      block = 'cathode'
+      block = 'cathode channel'
   [../]
 
   # Effective cathode conductivity
   [./sigma_s_eff]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 0.0986 # S/mm = [C/V/s/mm]
+      initial_condition = 0.15187 # S/mm = [C/V/s/mm]
       block = 'cathode'
   [../]
 
@@ -535,7 +584,7 @@
   [./As]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 30 # mm^-1
+      initial_condition = 80 # mm^-1
       block = 'cathode'
   [../]
 
@@ -640,7 +689,7 @@
   [./A_xsec]
       order = FIRST
       family = LAGRANGE
-      initial_condition = 1.1534 #mm^2
+      initial_condition = 1.73 #mm^2
       block = 'channel'
   [../]
 
@@ -801,6 +850,21 @@
       order = FIRST
       family = LAGRANGE
       block = 'channel cathode'
+  [../]
+
+
+  # Faradiac Efficiencies
+  [./FE_CO]
+      order = FIRST
+      family = LAGRANGE
+      block = 'cathode'
+  [../]
+
+  # Faradiac Efficiencies
+  [./FE_H2]
+      order = FIRST
+      family = LAGRANGE
+      block = 'cathode'
   [../]
 
 []
@@ -1454,6 +1518,77 @@
   [../]
 
 
+  ### ==================== Interfacial Concentrations ==========================
+  # H2
+  [./H2_interface_mb]
+      type = FilmMassTransfer
+      variable = C_H2_int
+      coupled = C_H2
+      rate_variable = D_H2
+      av_ratio = dp_inv
+  [../]
+  [./H2_int_rxn]
+      type = WeightedCoupledSumFunction
+      variable = C_H2_int
+      coupled_list = 'r_H2'
+      weights = '-1'
+  [../]
+
+  # H+
+  [./H_interface_mb]
+      type = FilmMassTransfer
+      variable = C_H_int
+      coupled = C_H
+      rate_variable = D_H
+      av_ratio = dp_inv
+  [../]
+
+  # OH-
+  [./OH_interface_mb]
+      type = FilmMassTransfer
+      variable = C_OH_int
+      coupled = C_OH
+      rate_variable = D_OH
+      av_ratio = dp_inv
+  [../]
+  [./OH_int_rxn]
+      type = WeightedCoupledSumFunction
+      variable = C_OH_int
+      coupled_list = 'r_H2 r_CO'
+      weights = '-2 -2'
+  [../]
+
+  # CO2
+  [./CO2_interface_mb]
+      type = FilmMassTransfer
+      variable = C_CO2_int
+      coupled = C_CO2
+      rate_variable = D_CO2
+      av_ratio = dp_inv
+  [../]
+  [./CO2_int_rxn]
+      type = WeightedCoupledSumFunction
+      variable = C_CO2_int
+      coupled_list = 'r_CO'
+      weights = '1'
+  [../]
+
+  # CO
+  [./CO_interface_mb]
+      type = FilmMassTransfer
+      variable = C_CO_int
+      coupled = C_CO
+      rate_variable = D_CO
+      av_ratio = dp_inv
+  [../]
+  [./CO_int_rxn]
+      type = WeightedCoupledSumFunction
+      variable = C_CO_int
+      coupled_list = 'r_CO'
+      weights = '-1'
+  [../]
+
+
   ## =============== Butler-Volmer Kinetics ================
   [./r_H2_equ]
       type = Reaction
@@ -1463,20 +1598,20 @@
       type = ModifiedButlerVolmerReaction
       variable = r_H2
 
-      reaction_rate_const = 2.09167E-4    # umol/mm^2/s (adjusted)
+      reaction_rate_const = 6.19167E-4    # umol/mm^2/s (adjusted)
       equilibrium_potential = 0         # V
 
-      reduced_state_vars = 'C_H2 C_OH'       # assumed
+      reduced_state_vars = 'C_H2_int C_OH_int'       # assumed
       reduced_state_stoich = '1 2'        # assumed
 
-      oxidized_state_vars = 'C_H'
+      oxidized_state_vars = 'C_H_int'
       oxidized_state_stoich = '0.1737'  # fitted param
 
       electric_potential_difference = phi_diff
 
       temperature = T_e
       number_of_electrons = 1         # params are fitted to this standard
-      electron_transfer_coef = 0.14   # fitted param
+      electron_transfer_coef = 0.5   # fitted param
 
       # correlation factor between bulk and surface concentrations
       #   Adjusted to get FE values within range of literature
@@ -1491,13 +1626,13 @@
       type = ModifiedButlerVolmerReaction
       variable = r_CO
 
-      reaction_rate_const = 4.5939e4    # umol/mm^2/s (adjusted)
+      reaction_rate_const = 7.7939e4    # umol/mm^2/s (adjusted)
       equilibrium_potential = -0.11         # V
 
-      reduced_state_vars = 'C_CO C_OH'        # assumed
+      reduced_state_vars = 'C_CO_int C_OH_int'        # assumed
       reduced_state_stoich = '1 2'         # assumed
 
-      oxidized_state_vars = 'C_H C_CO2'
+      oxidized_state_vars = 'C_H_int C_CO2_int'
       oxidized_state_stoich = '0.6774 1.5'  # fitted param
 
       electric_potential_difference = phi_diff
@@ -1555,7 +1690,26 @@
   [./eps_calc_cathode]
       type = ConstantAux
       variable = eps
-      value = 0.85
+      value = 0.80
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+  # Faradiac Efficienies
+  [./FE_CO_calc]
+      type = AuxRatio
+      variable = FE_CO
+      numerator_vars = 'J_CO'
+      denominator_vars = 'J_CO J_H2'
+      execute_on = 'initial timestep_end'
+      block = 'cathode'
+  [../]
+
+  [./FE_H2_calc]
+      type = AuxRatio
+      variable = FE_H2
+      numerator_vars = 'J_H2'
+      denominator_vars = 'J_CO J_H2'
       execute_on = 'initial timestep_end'
       block = 'cathode'
   [../]
@@ -1607,7 +1761,7 @@
       variable = cat_volt
 
       start_value = 0.0
-      aux_vals = '0'  # V
+      aux_vals = '0'  # V  (3.5 @ 100 mA/cm^2, 4.0 @ 200 mA/cm^2, 4.5 @ 300 mA/cm^2, 5.0 @ 400 mA/cm^2)
 
       # Input current should approximately be a step function
       aux_times = '15'
@@ -1703,7 +1857,7 @@
       friction_factor = 64           # -
       density = viscosity            # g/mm/s
       velocity = 1                   # -
-      hydraulic_diameter = 1.1449   #dh^2 (mm^2)
+      hydraulic_diameter = 0.47853   #dh^2 (mm^2)
 
       execute_on = 'initial timestep_end'
       block = 'channel'
@@ -2693,7 +2847,7 @@
       type = CoupledDirichletBC
       variable = phi_s
       boundary = 'plate_interface_cathode channel_interface_cathode'
-      coupled = 0
+      coupled = cat_volt
   [../]
 
   [./no_flux_cathode_potential]
@@ -2720,10 +2874,10 @@
 
   # ==== Reference electrolyte state ====
   [./reference_electrolyte_potential]
-      type = DirichletBC
+      type = CoupledDirichletBC
       variable = phi_e
       boundary = 'channel_bottom'
-      value = 0
+      coupled = cat_volt
   [../]
 
 []
@@ -2888,6 +3042,20 @@
       variable = C_K
       execute_on = 'initial timestep_end'
   [../]
+
+  [./FE_CO]
+      type = ElementAverageValue
+      variable = FE_CO
+      block = 'cathode'
+      execute_on = 'initial timestep_end'
+  [../]
+
+  [./FE_H2]
+      type = ElementAverageValue
+      variable = FE_H2
+      block = 'cathode'
+      execute_on = 'initial timestep_end'
+  [../]
 []
 
 [Executioner]
@@ -2981,8 +3149,8 @@
   nl_abs_step_tol = 1e-12
 
   start_time = 0.0
-  end_time = 515  #Experiments were run for 500s, the added 15s accounts for ramp up
-  dtmax = 10
+  end_time = 115  #Experiments were run for 500s, the added 15s accounts for ramp up
+  dtmax = 60
 
   [./TimeStepper]
 		  type = SolutionTimeAdaptiveDT
@@ -3011,7 +3179,9 @@
                         J_CO,r_CO J_H2,r_H2
                         J_CO,phi_e J_H2,phi_e J_CO,phi_s J_H2,phi_s
                         phi_diff,phi_s phi_diff,phi_e
-                        phi_e,C_HCO3, phi_e,C_CO3, phi_e,C_H phi_e,C_OH phi_e,C_K'
+                        phi_e,C_HCO3, phi_e,C_CO3, phi_e,C_H phi_e,C_OH phi_e,C_K
+                        C_H2,C_H2_int C_H,C_H_int C_OH,C_OH_int C_CO2,C_CO2_int C_CO,C_CO_int
+                        r_H2,C_H2_int r_H2,C_OH_int r_CO,C_OH_int r_CO,C_CO2_int r_CO,C_CO_int'
       solve_type = pjfnk
     [../]
 

@@ -1,3 +1,23 @@
+## NOTE: Because of some changes in MOOSE, we may need to make modifications
+# to our multi-block domains as was done here. Variable C_H was added to the
+# catex_membrane domain because we wanted to impose an Integrated BC on that
+# variable for a node set that exists between the catex_membrane and the cathode.
+# In a prior MOOSE build, these internal boundaries could be assigned to one domain
+# or another. In this case, that node set was assigned to the cathode domain. However,
+# due to changes in MOOSE it appears that the internal domains are now assigned to
+# both domains that share those nodes (if the nodes are shared). This means that
+# any variable that we want imposed with an Integrated BC on that node set MUST
+# now exist in both domains.
+
+# HOWEVER, after some additional testing, if executing the code with MPI and a
+# number of cores > 1, then the issue does not persist. It is uncertain as to
+# why this is. It may be a new bug in MOOSE.
+
+# Updates have been made to the primary CO2 electrochem files that were impacted,
+# and some older files (except for this one) have been removed. This file will
+# serve as notes and a reminder for my future self.
+
+
 # Case 01 - short depth
 # -------
 #   - BCs
@@ -190,7 +210,7 @@
       order = FIRST
       family = LAGRANGE
       initial_condition = 4.41e-9 #M
-      block = 'channel cathode'
+      block = 'channel cathode catex_membrane'
   [../]
 
   # concentration of OH (umol/mm^3)
@@ -729,7 +749,7 @@
   [./D_H]
       order = FIRST
       family = LAGRANGE
-      block = 'channel cathode'
+      block = 'channel cathode catex_membrane'
   [../]
 
   # Diffusion of H in membrane
@@ -744,7 +764,7 @@
   [./Dd_H]
       order = FIRST
       family = LAGRANGE
-      block = 'channel cathode'
+      block = 'channel cathode catex_membrane'
   [../]
 
   # Diffusion of OH
@@ -1093,6 +1113,7 @@
       coupled_list = 'r_w r_1 r_2'
       weights = '1 1 1'
       scale = eps
+      block = 'cathode channel'
   [../]
 
   ## ===================== OH balance ====================
@@ -2696,12 +2717,12 @@
       coupled = 0
   [../]
 
-  [./no_flux_cathode_potential]
-      type = CoupledNeumannBC
-      variable = phi_s
-      boundary = 'cathode_interface_membrane'
-      coupled = 0
-  [../]
+  #[./no_flux_cathode_potential]
+  #    type = CoupledNeumannBC
+  #    variable = phi_s
+  #    boundary = 'cathode_interface_membrane'
+  #    coupled = 0
+  #[../]
 
   # ===== applied current =====
   [./applied_current_mem]
@@ -2959,7 +2980,7 @@
                          1E-8
 
                          fgmres
-                         ilu
+                         lu
 
                          50
                          50
