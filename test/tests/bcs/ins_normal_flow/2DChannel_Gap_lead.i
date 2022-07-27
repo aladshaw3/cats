@@ -384,30 +384,19 @@
         penalty = 1e6
     [../]
 
-#NOTE: This is still the best option for INS module. Use dirichlet BC at inlets and Penalty at walls
-#    [./y_inlet_const]
-#        type = DirichletBC
-#        variable = vel_y
-#        boundary = 'inlet'
-#        value = 1.15        #This is the average velocity at the inlet which is wider than the channel
-#        # Avg velocity = Q/A
-#    [../]
 
-
-# This is a weaker form of a Dirichlet BC that may be more appropriate
+# Dirichlet BC for no slip
     [./z_no_slip]
-      type = PenaltyDirichletBC
+      type = DirichletBC
       variable = vel_z
       boundary = 'inner_walls'
       value = 0.0
-        penalty = 10000
     [../]
     [./y_no_slip]
-      type = PenaltyDirichletBC
+      type = DirichletBC
       variable = vel_y
       boundary = 'inner_walls'
       value = 0.0
-        penalty = 10000
     [../]
 
 []

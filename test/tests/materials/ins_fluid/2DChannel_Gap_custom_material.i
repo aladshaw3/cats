@@ -391,7 +391,7 @@
         penalty = 1e6  #This term should be larger than the no_slip terms
     [../]
 
-# This is a weaker form of a Dirichlet BC that may be more appropriate
+# Dirichlet BC for no slip
     [./z_no_slip]
       type = DirichletBC
       variable = vel_z
