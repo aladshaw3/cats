@@ -47,7 +47,7 @@
 
  Real GElectrodeOhmicHeating::computeQpResidual()
  {
-     return _test[_i][_qp]*_conductivity[_qp]*_sol_frac[_qp]*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
+     return -_test[_i][_qp]*_conductivity[_qp]*_sol_frac[_qp]*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
  }
 
  Real GElectrodeOhmicHeating::computeQpJacobian()
@@ -59,15 +59,15 @@
  {
      if (jvar == _sol_frac_var)
      {
-         return _test[_i][_qp]*_conductivity[_qp]*_phi[_j][_qp]*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
+         return -_test[_i][_qp]*_conductivity[_qp]*_phi[_j][_qp]*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
      }
      if (jvar == _conductivity_var)
      {
-         return _test[_i][_qp]*_phi[_j][_qp]*_sol_frac[_qp]*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
+         return -_test[_i][_qp]*_phi[_j][_qp]*_sol_frac[_qp]*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
      }
      if (jvar == _e_potential_var)
      {
-         return _test[_i][_qp]*_conductivity[_qp]*_sol_frac[_qp]*(2.0*_grad_phi[_j][_qp]*_e_potential_grad[_qp]);
+         return -_test[_i][_qp]*_conductivity[_qp]*_sol_frac[_qp]*(2.0*_grad_phi[_j][_qp]*_e_potential_grad[_qp]);
      }
 
      return 0.0;

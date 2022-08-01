@@ -122,7 +122,7 @@
 
  Real GElectrolyteOhmicHeating::computeQpResidual()
  {
-     return _test[_i][_qp]*effective_ionic_conductivity()*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
+     return -_test[_i][_qp]*effective_ionic_conductivity()*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
  }
 
  Real GElectrolyteOhmicHeating::computeQpJacobian()
@@ -134,25 +134,25 @@
  {
      if (jvar == _porosity_var)
      {
-         return _test[_i][_qp]*(_faraday*_faraday/_gas_const/_temp[_qp])*_phi[_j][_qp]*sum_ion_terms()*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
+         return -_test[_i][_qp]*(_faraday*_faraday/_gas_const/_temp[_qp])*_phi[_j][_qp]*sum_ion_terms()*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
      }
      if (jvar == _temp_var)
      {
-         return _test[_i][_qp]*effective_ionic_conductivity()*(_e_potential_grad[_qp]*_e_potential_grad[_qp])*(-1.0/_temp[_qp])*_phi[_j][_qp];
+         return -_test[_i][_qp]*effective_ionic_conductivity()*(_e_potential_grad[_qp]*_e_potential_grad[_qp])*(-1.0/_temp[_qp])*_phi[_j][_qp];
      }
      if (jvar == _e_potential_var)
      {
-         return _test[_i][_qp]*effective_ionic_conductivity()*(2.0*_grad_phi[_j][_qp]*_e_potential_grad[_qp]);
+         return -_test[_i][_qp]*effective_ionic_conductivity()*(2.0*_grad_phi[_j][_qp]*_e_potential_grad[_qp]);
      }
 
      Real offjac = 0.0;
      for (unsigned int i = 0; i<_ion_conc.size(); ++i)
      {
          if (jvar == _ion_conc_vars[i] && _tight == true)
-           offjac = _test[_i][_qp]*( (_faraday*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*_valence[i]*_valence[i]*(*_diffusion[i])[_qp]*_phi[_j][_qp] )*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
+           offjac = -_test[_i][_qp]*( (_faraday*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*_valence[i]*_valence[i]*(*_diffusion[i])[_qp]*_phi[_j][_qp] )*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
            break;
          if (jvar == _diffusion_vars[i])
-           offjac = _test[_i][_qp]*( (_faraday*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*_valence[i]*_valence[i]*_phi[_j][_qp]*(*_ion_conc[i])[_qp] )*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
+           offjac = -_test[_i][_qp]*( (_faraday*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*_valence[i]*_valence[i]*_phi[_j][_qp]*(*_ion_conc[i])[_qp] )*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
            break;
      }
 
