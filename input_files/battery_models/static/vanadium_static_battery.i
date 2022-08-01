@@ -290,7 +290,7 @@
       order = FIRST
       family = LAGRANGE
       initial_condition = 300 # K
-      block = 'neg_collector neg_electrode membrane pos_electrode pos_collector'
+      block = 'neg_collector neg_electrode pos_electrode pos_collector'
   [../]
 
   # electrode conductivity (C/V/cm/min)
@@ -409,24 +409,6 @@
       variable = phi_e
       porosity = eps
       temperature = T_e
-      ion_conc = 'H_p V_IV V_V'
-      diffusion = 'D_H_p D_V_IV D_V_V'
-      ion_valence = '1 2 1'
-      block = 'pos_electrode'
-  [../]
-  [./phi_e_ionic_conductivity_in_neg_electrodes]
-      type = ElectrolyteIonConductivity
-      variable = phi_e
-      porosity = eps
-      ion_conc = 'H_p V_II V_III'
-      diffusion = 'D_H_p D_V_II D_V_III'
-      ion_valence = '1 2 3'
-      block = 'neg_electrode'
-  [../]
-  [./phi_e_ionic_conductivity_in_pos_electrodes]
-      type = ElectrolyteIonConductivity
-      variable = phi_e
-      porosity = eps
       ion_conc = 'H_p V_IV V_V'
       diffusion = 'D_H_p D_V_IV D_V_V'
       ion_valence = '1 2 1'
