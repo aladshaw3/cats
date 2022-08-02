@@ -42,4 +42,6 @@ jobs:
       shell: bash -l {0}
       run: | 
         conda activate moose
+        cd ..
+        cd moose/test
         ./run_tests -j4
