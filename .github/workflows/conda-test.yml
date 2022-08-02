@@ -27,6 +27,11 @@ jobs:
         mamba install moose-tools moose-libmesh
     - name: Install MOOSE
       run: |
-        ls -a
         cd ..
-        ls -a
+        git clone https://github.com/aladshaw3/moose.git
+        cd moose
+        git checkout master
+        make -j4
+    - name: Run MOOSE Tests
+      run: | 
+        ./run_tests -j4
