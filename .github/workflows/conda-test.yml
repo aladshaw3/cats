@@ -1,4 +1,4 @@
-name: Python Package using Conda
+name: Build and Test
 
 on:
   push:
@@ -22,10 +22,9 @@ jobs:
         channels: https://conda.software.inl.gov/public,conda-forge,defaults
         channel-priority: true
         activate-environment: moose
-        #environment-file: etc/example-environment.yml
-    #- name: Setup conda channels
-    #  run: |
-    #    conda config --add channels https://conda.software.inl.gov/public
     - name: Install dependencies 
       run: |
         mamba install moose-tools moose-libmesh
+    - name: Install MOOSE
+      run: |
+        ls -a
