@@ -23,8 +23,9 @@ jobs:
         channel-priority: true
         activate-environment: moose
     - name: Install dependencies 
+      shell: bash -l {0}
       run: |
-        conda init bash
+        mamba init
         conda activate moose
         mamba install moose-tools moose-libmesh
     - name: Install MOOSE
