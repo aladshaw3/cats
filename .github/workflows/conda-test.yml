@@ -24,6 +24,7 @@ jobs:
         activate-environment: moose
     - name: Install dependencies 
       run: |
+        mamba activate moose
         mamba install moose-tools moose-libmesh
     - name: Install MOOSE
       run: |
@@ -32,7 +33,9 @@ jobs:
         cd moose
         git checkout master
         cd test
+        mamba activate moose
         make -j4
     - name: Run MOOSE Tests
       run: | 
+        mamba activate moose
         ./run_tests -j4
