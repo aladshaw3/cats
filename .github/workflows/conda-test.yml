@@ -15,12 +15,17 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Activate MOOSE environment
-      uses: conda-incubator/setup-miniconda@v2
+    - uses: conda-incubator/setup-miniconda@v2
       with:
+        python-version: 3.9
+        mamba-version: "*"
+        channels: https://conda.software.inl.gov/public,conda-forge,defaults
+        channel-priority: true
         activate-environment: moose
-    - name: Setup conda channels
-      run: |
-        conda config --add channels https://conda.software.inl.gov/public
+        #environment-file: etc/example-environment.yml
+    #- name: Setup conda channels
+    #  run: |
+    #    conda config --add channels https://conda.software.inl.gov/public
     - name: Install dependencies 
       run: |
-        conda install moose-tools moose-libmesh
+        mamba install moose-tools moose-libmesh
