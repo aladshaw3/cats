@@ -28,3 +28,5 @@ jobs:
     - name: Install MOOSE
       run: |
         ls -a
+        cd ..
+        ls -a
