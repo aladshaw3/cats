@@ -31,6 +31,7 @@ jobs:
         git clone https://github.com/aladshaw3/moose.git
         cd moose
         git checkout master
+        cd test
         make -j4
     - name: Run MOOSE Tests
       run: | 
