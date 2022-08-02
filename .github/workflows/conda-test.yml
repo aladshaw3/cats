@@ -29,6 +29,7 @@ jobs:
         conda activate moose
         mamba install moose-tools moose-libmesh
     - name: Install MOOSE
+      shell: bash -l {0}
       run: |
         cd ..
         git clone https://github.com/aladshaw3/moose.git
@@ -38,6 +39,7 @@ jobs:
         conda activate moose
         make -j4
     - name: Run MOOSE Tests
+      shell: bash -l {0}
       run: | 
         conda activate moose
         ./run_tests -j4
