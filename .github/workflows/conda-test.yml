@@ -22,12 +22,11 @@ jobs:
         channels: https://conda.software.inl.gov/public,conda-forge,defaults
         channel-priority: true
         activate-environment: moose
+    - name: Install dependencies 
       run: |
+        conda init bash
+        conda activate moose
         mamba install moose-tools moose-libmesh
-    #- name: Install dependencies 
-    #  run: |
-    #    conda activate moose
-    #    mamba install moose-tools moose-libmesh
     - name: Install MOOSE
       run: |
         cd ..
