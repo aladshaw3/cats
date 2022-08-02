@@ -21,7 +21,7 @@ jobs:
     - name: Setup conda channels
       run: |
         conda config --add channels https://conda.software.inl.gov/public
+        conda install mamba -n base -c conda-forge
     - name: Install dependencies 
       run: |
-        conda install moose-tools 
-        conda install moose-libmesh
+        mamba install moose-tools moose-libmesh
