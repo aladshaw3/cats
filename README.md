@@ -1,6 +1,6 @@
 ## Build Status
 
-[![Checks](https://github.com/aladshaw3/cats/actions/workflows/conda-test.yml/badge.svg)](https://github.com/aladshaw3/cats/actions/workflows/conda-test.yml)
+[![Checks](https://github.com/aladshaw3/cats/actions/workflows/conda-build.yml/badge.svg)](https://github.com/aladshaw3/cats/actions/workflows/conda-build.yml)
 
 CATS
 =====
