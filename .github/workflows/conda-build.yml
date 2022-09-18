@@ -40,13 +40,13 @@ jobs:
         cd test
         conda activate moose
         make -j4
-    - name: Run MOOSE Tests
-      shell: bash -l {0}
-      run: | 
-        conda activate moose
-        cd ..
-        cd moose/test
-        ./run_tests -j4
+#    - name: Run MOOSE Tests
+#      shell: bash -l {0}
+#      run: | 
+#        conda activate moose
+#        cd ..
+#        cd moose/test
+#        ./run_tests -j4
     - name: Build CATS
       shell: bash -l {0}
       run: | 
