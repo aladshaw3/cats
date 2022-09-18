@@ -1,0 +1,8 @@
+[Tests]
+  [./ohmic_heating]
+    type = Exodiff
+    input = ohmic_heating_test.i
+    exodiff = ohmic_heating_test_out.e
+    rel_err = 1e-3
+  [../]
+[]

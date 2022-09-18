@@ -5,6 +5,8 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  schedule:
+    - cron: '30 5 * * 5'
 
 jobs:
   build-linux:
@@ -32,19 +34,19 @@ jobs:
       shell: bash -l {0}
       run: |
         cd ..
-        git clone https://github.com/aladshaw3/moose.git
+        git clone https://github.com/idaholab/moose.git
         cd moose
         git checkout master
         cd test
         conda activate moose
         make -j4
-    - name: Run MOOSE Tests
-      shell: bash -l {0}
-      run: | 
-        conda activate moose
-        cd ..
-        cd moose/test
-        ./run_tests -j4
+#    - name: Run MOOSE Tests
+#      shell: bash -l {0}
+#      run: | 
+#        conda activate moose
+#        cd ..
+#        cd moose/test
+#        ./run_tests -j4
     - name: Build CATS
       shell: bash -l {0}
       run: | 
