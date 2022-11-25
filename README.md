@@ -1,3 +1,7 @@
+## Last Updated
+
+Nov 25, 2022
+
 ## Build Status
 
 [![Checks](https://github.com/aladshaw3/cats/actions/workflows/conda-build.yml/badge.svg)](https://github.com/aladshaw3/cats/actions/workflows/conda-build.yml)
