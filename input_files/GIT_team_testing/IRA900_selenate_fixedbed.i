@@ -35,7 +35,7 @@
         xmax = 1.15   #radius in cm
         ymin = 0
         ymax = 4.10  #length in cm
-        nx = 1
+        nx = 3
         ny = 20
     [../]
 []
@@ -51,11 +51,6 @@
        initial_condition = 1e-20  #C_T
     [../]
 
-# (Cb_B, concentration of Cl- in bulk phase)
-#    [./Cb_Cl] #in meq/mL
-#
-#       initial_condition = 1e-20
-#    [../]
 
 # (Cp_A, concentration of SeO4 within the pore)
     [./Cp_SeO40] #in meq/mL
@@ -274,6 +269,12 @@
        initial_condition = 0.00159
     [../]
 
+		[./Db_SeO4] #bulk diffusivity of micropore diffusion
+       order = FIRST
+       family = MONOMIAL
+       initial_condition = 0.099
+    [../]
+
     [./Cp_SeO4Avg] #Average of washing concentration within the pellet
        initial_condition = 1e-20
     [../]
@@ -320,9 +321,9 @@
         type = GVarPoreDiffusion
         variable = Cb_SeO4
         porosity = eps_b
-        Dx = 0
-        Dy = 0.099 #axial dispersion cm^2/min (mostly for stabilization - need to check to see if valid. Otherwise, use 'order = CONSTANT' for stabilization)
-        Dz = 0
+        Dx = Db_SeO4
+        Dy = Db_SeO4 #axial dispersion cm^2/min (mostly for stabilization - need to check to see if valid. Otherwise, use 'order = CONSTANT' for stabilization)
+        Dz = Db_SeO4
     [../]
     [./SeO4_trans]
        type = FilmMassTransfer
@@ -990,15 +991,6 @@
         product_stoich = '1'
     [../]
 
-### mass balance in the bulk phase ###
-#    [./mat_bal_bulk]
-#      type = MaterialBalance
-#      variable = Cb_Cl
-#      this_variable = Cb_Cl
-#      coupled_list = 'Cb_Cl Cb_SeO4'
-#      weights = '1 1'
-#      total_material = C_total
-#    [../]
 
  []
 
@@ -1016,9 +1008,9 @@
 				type = DGVarPoreDiffusion
 				variable = Cb_SeO4
 				porosity = eps_b
-				Dx = 0
-				Dy = 0.099 #axial dispersion cm^2/min (mostly for stabilization - need to check to see if valid. Otherwise, use 'order = CONSTANT' for stabilization)
-				Dz = 0
+				Dx = Db_SeO4
+				Dy = Db_SeO4 #axial dispersion cm^2/min (mostly for stabilization - need to check to see if valid. Otherwise, use 'order = CONSTANT' for stabilization)
+				Dz = Db_SeO4
 		[../]
 []
 
@@ -1065,11 +1057,20 @@
 
 [BCs]
 
-    [./SeO4_Flux]
+    [./SeO4_Flux_in]
         type = DGPoreConcFluxBC
         variable = Cb_SeO4
-        boundary = 'top bottom'
+        boundary = 'bottom'
         u_input = 33.0E-3 # in meq/cm^3
+        porosity = eps_b
+        ux = vel_x
+        uy = vel_y
+        uz = vel_z
+    [../]
+		[./SeO4_Flux_out]
+        type = DGPoreConcFluxBC
+        variable = Cb_SeO4
+        boundary = 'top'
         porosity = eps_b
         ux = vel_x
         uy = vel_y
@@ -1289,12 +1290,6 @@
         execute_on = 'initial timestep_end'
     [../]
 
-#    [./Cb_Cl]
-#        type = SideAverageValue
-#        boundary = 'top'
-#        variable = Cb_Cl
-#        execute_on = 'initial timestep_end'
-#    [../]
 
     [./eps_p]
         type = ElementAverageValue
@@ -1339,12 +1334,7 @@
     petsc_options = '-snes_converged_reason'
   petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
   petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
-# NOTE: The default tolerances are far to strict and cause the program to crawl
-#    nl_rel_tol = 1e-10
-#   nl_abs_tol = 1e-4
-#   l_tol = 1e-8
-#   l_max_its = 70
-#   nl_max_its = 20
+
     nl_rel_tol = 1e-8
     nl_abs_tol = 1e-20        # Need a very low tolerance here given how small your residuals are on your unit basis
     nl_rel_step_tol = 1e-8
@@ -1352,7 +1342,6 @@
     nl_max_its = 70
     l_tol = 1e-7
     l_max_its = 300
-#    solve_type = pjfnk
     line_search = bt    # Options: default none l2 bt basic
     start_time = 0.0
     end_time = 120
@@ -1360,7 +1349,7 @@
 
     [./TimeStepper]
         type = SolutionTimeAdaptiveDT
-        dt = 6
+        dt = 0.01
     [../]
 []
 

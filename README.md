@@ -1,10 +1,11 @@
 ## Last Updated
 
-Nov 25, 2022
+Dec 3, 2022
 
 ## Build Status
 
 [![Checks](https://github.com/aladshaw3/cats/actions/workflows/conda-build.yml/badge.svg)](https://github.com/aladshaw3/cats/actions/workflows/conda-build.yml)
+[![Checks2](https://github.com/aladshaw3/cats/actions/workflows/personal-conda-build.yml/badge.svg)](https://github.com/aladshaw3/cats/actions/workflows/personal-conda-build.yml)
 
 CATS
 =====
@@ -80,7 +81,7 @@ the variable does not exist on that node set, however, if you run the code with.
 
 <code> mpiexec --n # ./cats-opt -i path/to/file.i </code>
 
-where # > 1, then the code should run fine. See issue #13 for more information. 
+where # > 1, then the code should run fine. See issue #13 for more information.
 
 
 Citation
