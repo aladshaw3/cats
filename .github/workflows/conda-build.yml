@@ -1,4 +1,4 @@
-name: Build and Test
+name: MOOSE Master
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
         channels: https://conda.software.inl.gov/public,conda-forge,defaults
         channel-priority: true
         activate-environment: moose
-    - name: Install dependencies 
+    - name: Install dependencies
       shell: bash -l {0}
       run: |
         mamba init
@@ -42,18 +42,18 @@ jobs:
         make -j4
 #    - name: Run MOOSE Tests
 #      shell: bash -l {0}
-#      run: | 
+#      run: |
 #        conda activate moose
 #        cd ..
 #        cd moose/test
 #        ./run_tests -j4
     - name: Build CATS
       shell: bash -l {0}
-      run: | 
-        conda activate moose 
+      run: |
+        conda activate moose
         make -j4
     - name: Run CATS Tests
       shell: bash -l {0}
       run: |
-        conda activate moose 
+        conda activate moose
         ./run_tests -j4

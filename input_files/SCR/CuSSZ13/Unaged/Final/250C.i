@@ -6,11 +6,12 @@
 [] #END GlobalParams
 
 [Problem]
-    coord_type = RZ
+    #coord_type = RZ  # getting deprecipated
     #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
 [] #END Problem
 
 [Mesh]
+    coord_type = RZ
     type = GeneratedMesh
     dim = 2
     nx = 1

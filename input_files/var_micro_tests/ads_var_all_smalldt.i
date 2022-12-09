@@ -1,11 +1,11 @@
 [GlobalParams]
   dg_scheme = nipg
   sigma = 10
- 
+
 # Assumed constant: Dp*ew = 0.03125  where Dp ~= ew*ew*Dm   and Dm ~ 0.25 cm^2/s
 #
 #   Dp = 0.0625
- 
+
 #Actual transfer rates adjusted from above diffusion (0.25 cm^2/s), the pellet porosity (0.5),
 #   and the ratio of the effective rate to actual rate (see avg_mass_trans_no_micro.i for rate)
 #
@@ -15,21 +15,21 @@
     micro_length = 0.003        #Radius of pellet Based on the Ao = 1000 cm^-1
     num_nodes = 10
     coord_id = 2
- 
+
     order = FIRST
     family = MONOMIAL
- 
+
 [] #END GlobalParams
 
 [Problem]
 
-    coord_type = RZ
+    #coord_type = RZ  # being depreciated
     #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
 
 [] #END Problem
 
 [Mesh]
-
+    coord_type = RZ
     type = GeneratedMesh
     dim = 2
     nx = 1
@@ -54,55 +54,55 @@
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./Cw1]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
-    
+
     [./Cw2]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./Cw3]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./Cw4]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./Cw5]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./Cw6]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./Cw7]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./Cw8]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./Cw9]
         order = FIRST
         family = LAGRANGE
@@ -114,55 +114,55 @@
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./q1]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./q2]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./q3]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./q4]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./q5]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./q6]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./q7]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./q8]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0
     [../]
- 
+
     [./q9]
         order = FIRST
         family = LAGRANGE
@@ -174,55 +174,55 @@
         family = LAGRANGE
         initial_condition = 0.01
     [../]
- 
+
     [./S1]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0.02
     [../]
- 
+
     [./S2]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0.04
     [../]
- 
+
     [./S3]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0.08
     [../]
- 
+
     [./S4]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0.2
     [../]
- 
+
     [./S5]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0.4
     [../]
- 
+
     [./S6]
         order = FIRST
         family = LAGRANGE
         initial_condition = 0.8
     [../]
- 
+
     [./S7]
         order = FIRST
         family = LAGRANGE
         initial_condition = 1.0
     [../]
- 
+
     [./S8]
         order = FIRST
         family = LAGRANGE
         initial_condition = 1.0
     [../]
- 
+
     [./S9]
         order = FIRST
         family = LAGRANGE
@@ -232,202 +232,202 @@
 [] #END Variables
 
 [AuxVariables]
- 
+
 # Variables for maximum active site density
      [./S_max0]
        order = FIRST
        family = LAGRANGE
         initial_condition = 0.01
      [../]
-     
+
      [./S_max1]
        order = FIRST
        family = LAGRANGE
         initial_condition = 0.02
      [../]
-     
+
      [./S_max2]
        order = FIRST
        family = LAGRANGE
         initial_condition = 0.04
      [../]
-     
+
      [./S_max3]
        order = FIRST
        family = LAGRANGE
         initial_condition = 0.08
      [../]
-     
+
      [./S_max4]
        order = FIRST
        family = LAGRANGE
         initial_condition = 0.2
      [../]
-     
+
      [./S_max5]
        order = FIRST
        family = LAGRANGE
         initial_condition = 0.4
      [../]
-     
+
      [./S_max6]
        order = FIRST
        family = LAGRANGE
         initial_condition = 0.8
      [../]
-     
+
      [./S_max7]
        order = FIRST
        family = LAGRANGE
         initial_condition = 1.0
      [../]
-     
+
      [./S_max8]
        order = FIRST
        family = LAGRANGE
         initial_condition = 1.0
      [../]
-     
+
      [./S_max9]
        order = FIRST
        family = LAGRANGE
         initial_condition = 1.0
      [../]
- 
+
 # Variables for diffusivity inside particles (should be Dp*ew at that node)
     [./D0]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.05
     [../]
-    
+
     [./D1]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.05
     [../]
-    
+
     [./D2]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.05
     [../]
-    
+
     [./D3]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.046875
     [../]
-    
+
     [./D4]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.04
     [../]
-    
+
     [./D5]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.02
     [../]
-    
+
     [./D6]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.01
     [../]
-    
+
     [./D7]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.005
     [../]
-    
+
     [./D8]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.0025
     [../]
-    
+
     [./D9]
       order = FIRST
       family = LAGRANGE
       initial_condition = 0.00125
     [../]
- 
+
 # Variables for porosity inside particles
     [./ew0]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.80
     [../]
-    
+
     [./ew1]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.80
     [../]
-    
+
     [./ew2]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.80
     [../]
-    
+
     [./ew3]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.75
     [../]
-    
+
     [./ew4]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.64
     [../]
-    
+
     [./ew5]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.32
     [../]
-    
+
     [./ew6]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.16
     [../]
-    
+
     [./ew7]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.08
     [../]
-    
+
     [./ew8]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.04
     [../]
-    
+
     [./ew9]
       order = FIRST
       family = LAGRANGE
        initial_condition = 0.02
     [../]
- 
+
    [./ewAvg]
  #initial_condition = 0
    [../]
- 
+
   [./CwAvg]
 #initial_condition = 0
   [../]
- 
+
   [./qAvg]
 #initial_condition = 0
   [../]
- 
+
    [./SAvg]
    [../]
 
@@ -442,7 +442,7 @@
       family = LAGRANGE
       initial_condition = 0.5
   [../]
- 
+
   [./wash_pore]
       order = FIRST
       family = LAGRANGE
@@ -502,7 +502,7 @@
         coupled = Cw9
         av_ratio = 500          #(1-pore)*Ao  with Ao = 1000 cm^-1
     [../]
- 
+
 # inner BC
     [./Cw0_dot]
         type = MicroscaleVariableCoefTimeDerivative
@@ -525,7 +525,7 @@
         nodal_time_var = 1.0
         node_id = 0
     [../]
- 
+
     [./Cw1_dot]
         type = MicroscaleVariableCoefTimeDerivative
         variable = Cw1
@@ -549,7 +549,7 @@
         nodal_time_var = 1.0
         node_id = 1
     [../]
- 
+
     [./Cw2_dot]
         type = MicroscaleVariableCoefTimeDerivative
         variable = Cw2
@@ -573,7 +573,7 @@
         nodal_time_var = 1.0
         node_id = 2
     [../]
- 
+
     [./Cw3_dot]
         type = MicroscaleVariableCoefTimeDerivative
         variable = Cw3
@@ -597,7 +597,7 @@
         nodal_time_var = 1.0
         node_id = 3
     [../]
- 
+
     [./Cw4_dot]
         type = MicroscaleVariableCoefTimeDerivative
         variable = Cw4
@@ -621,7 +621,7 @@
         nodal_time_var = 1.0
         node_id = 4
     [../]
- 
+
     [./Cw5_dot]
         type = MicroscaleVariableCoefTimeDerivative
         variable = Cw5
@@ -645,7 +645,7 @@
         nodal_time_var = 1.0
         node_id = 5
     [../]
- 
+
     [./Cw6_dot]
         type = MicroscaleVariableCoefTimeDerivative
         variable = Cw6
@@ -669,7 +669,7 @@
         nodal_time_var = 1.0
         node_id = 6
     [../]
- 
+
     [./Cw7_dot]
         type = MicroscaleVariableCoefTimeDerivative
         variable = Cw7
@@ -693,7 +693,7 @@
         nodal_time_var = 1.0
         node_id = 7
     [../]
- 
+
     [./Cw8_dot]
         type = MicroscaleVariableCoefTimeDerivative
         variable = Cw8
@@ -718,7 +718,7 @@
         node_id = 8
     [../]
 
- 
+
 # outer BC
     [./Cw9_dot]
         type = MicroscaleVariableCoefTimeDerivative
@@ -742,7 +742,7 @@
         nodal_time_var = 1.0
         node_id = 9
     [../]
- 
+
     [./q0_dot]
         type = TimeDerivative
         variable = q0
@@ -767,7 +767,7 @@
       weights = '1 1'
       total_material = S_max0
     [../]
- 
+
     [./q1_dot]
         type = TimeDerivative
         variable = q1
@@ -792,7 +792,7 @@
       weights = '1 1'
       total_material = S_max1
     [../]
- 
+
     [./q2_dot]
         type = TimeDerivative
         variable = q2
@@ -817,7 +817,7 @@
       weights = '1 1'
       total_material = S_max2
     [../]
- 
+
     [./q3_dot]
         type = TimeDerivative
         variable = q3
@@ -842,7 +842,7 @@
       weights = '1 1'
       total_material = S_max3
     [../]
- 
+
     [./q4_dot]
         type = TimeDerivative
         variable = q4
@@ -867,7 +867,7 @@
       weights = '1 1'
       total_material = S_max4
     [../]
- 
+
     [./q5_dot]
         type = TimeDerivative
         variable = q5
@@ -892,7 +892,7 @@
       weights = '1 1'
       total_material = S_max5
     [../]
- 
+
     [./q6_dot]
         type = TimeDerivative
         variable = q6
@@ -917,7 +917,7 @@
       weights = '1 1'
       total_material = S_max6
     [../]
- 
+
     [./q7_dot]
         type = TimeDerivative
         variable = q7
@@ -942,7 +942,7 @@
       weights = '1 1'
       total_material = S_max7
     [../]
- 
+
     [./q8_dot]
         type = TimeDerivative
         variable = q8
@@ -967,7 +967,7 @@
       weights = '1 1'
       total_material = S_max8
     [../]
- 
+
     [./q9_dot]
         type = TimeDerivative
         variable = q9
@@ -1017,7 +1017,7 @@
 [] #END DGKernels
 
 [AuxKernels]
- 
+
     [./Cw_avg]
         type = MicroscaleIntegralAvg
         variable = CwAvg
@@ -1026,7 +1026,7 @@
         micro_vars = 'Cw0 Cw1 Cw2 Cw3 Cw4 Cw5 Cw6 Cw7 Cw8 Cw9'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./ew_avg]
         type = MicroscaleIntegralAvg
         variable = ewAvg
@@ -1035,7 +1035,7 @@
         micro_vars = 'ew0 ew1 ew2 ew3 ew4 ew5 ew6 ew7 ew8 ew9'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./q_avg]
         type = MicroscaleIntegralAvg
         variable = qAvg
@@ -1044,7 +1044,7 @@
         micro_vars = 'q0 q1 q2 q3 q4 q5 q6 q7 q8 q9'
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./S_avg]
         type = MicroscaleIntegralAvg
         variable = SAvg
@@ -1092,7 +1092,7 @@
         variable = C
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./C_avg]
         type = ElementAverageValue
         variable = C
@@ -1110,19 +1110,19 @@
         variable = SAvg
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Cw_avg]
         type = ElementAverageValue
         variable = CwAvg
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./ew_avg]
         type = ElementAverageValue
         variable = ewAvg
         execute_on = 'initial timestep_end'
     [../]
- 
+
 # If we want to probe a specific location in the mesh, we need to use the
 #       ElementalVariableValue PostProcessor. This will integrate the value
 #       of the variable over a specific element (i.e., location) in the
@@ -1134,12 +1134,12 @@
 #   NOTE: The indexing for element ids starts from 1 in MOOSE
 #               You can use ParaView to view the GlobalElement IDs in
 #               the domain to figure out which position and id you want.
- 
+
 # For the demo below, we are observing all the intrapartle adsorption values
 #       at elementid = 1 (i.e., entrance to this mesh). We can use this then
 #       to view the internal surface concentrations as a function of particle
 #       radius.
- 
+
     [./q0]
         type = ElementalVariableValue
         variable = q0
@@ -1200,7 +1200,7 @@
         elementid = 1
         execute_on = 'initial timestep_end'
     [../]
- 
+
     [./Cw0]
         type = ElementalVariableValue
         variable = Cw0
@@ -1297,7 +1297,7 @@
      type = ConstantDT
      dt = 0.0001
   [../]
- 
+
 [] #END Executioner
 
 [Outputs]
