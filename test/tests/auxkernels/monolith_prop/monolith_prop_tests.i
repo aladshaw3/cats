@@ -460,7 +460,6 @@
 
         output_length_unit = "cm"
         output_time_unit = "min"
-        per_solids_volume = false
 
         execute_on = 'initial timestep_end'
     [../]
