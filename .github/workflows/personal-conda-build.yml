@@ -32,8 +32,8 @@ jobs:
         mamba init
 
         conda activate moose
-        conda install moose-tools
-        conda install moose-libmesh
+        mamba install moose-tools moose-libmesh
+
 
     - name: Install MOOSE
       shell: bash -l {0}
