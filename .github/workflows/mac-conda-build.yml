@@ -1,4 +1,4 @@
-name: MAC: MOOSE Master
+name: MAC-MOOSE Master
 
 on:
   push:
