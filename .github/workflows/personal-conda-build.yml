@@ -21,7 +21,8 @@ jobs:
       with:
         python-version: 3.7
 
-        #mamba-version: "*"
+        mamba-version: "*"
+
         channels: https://conda.software.inl.gov/public,conda-forge,defaults
         channel-priority: true
         activate-environment: moose
