@@ -9,8 +9,8 @@ on:
     - cron: '30 5 * * 5'
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
+  build-mac:
+    runs-on: macos-latest
     strategy:
       max-parallel: 4
 
