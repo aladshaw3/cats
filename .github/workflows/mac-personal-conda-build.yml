@@ -25,11 +25,13 @@ jobs:
         channel-priority: true
         activate-environment: moose
     - name: Install dependencies
+      shell: bash -l {0}
       run: |
         mamba init
         conda activate moose
         mamba install moose-tools moose-libmesh
     - name: Install MOOSE
+      shell: bash -l {0}
       run: |
         cd ..
         git clone https://github.com/aladshaw3/moose.git
@@ -46,10 +48,12 @@ jobs:
 #        cd moose/test
 #        ./run_tests -j4
     - name: Build CATS
+      shell: bash -l {0}
       run: |
         conda activate moose
         make -j4
     - name: Run CATS Tests
+      shell: bash -l {0}
       run: |
         conda activate moose
         ./run_tests -j4
