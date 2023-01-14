@@ -19,7 +19,8 @@ jobs:
     - name: Activate MOOSE environment
       uses: conda-incubator/setup-miniconda@v2
       with:
-        python-version: 3.9
+        python-version: 3.7
+
         #mamba-version: "*"
         channels: https://conda.software.inl.gov/public,conda-forge,defaults
         channel-priority: true
