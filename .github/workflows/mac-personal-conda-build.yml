@@ -1,4 +1,4 @@
-name: MAC: Fork Build
+name: MAC-Fork Build
 
 on:
   push:
