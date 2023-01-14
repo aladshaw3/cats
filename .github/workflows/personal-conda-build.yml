@@ -29,7 +29,9 @@ jobs:
       run: |
         conda init
         conda activate moose
-        conda install moose-tools moose-libmesh
+        conda install moose-tools
+        conda install moose-libmesh
+
     - name: Install MOOSE
       shell: bash -l {0}
       run: |
