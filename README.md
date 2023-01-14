@@ -1,11 +1,14 @@
 ## Last Updated
 
-Dec 16, 2022
+Jac 13, 2023
 
 ## Build Status
 
 [![Checks](https://github.com/aladshaw3/cats/actions/workflows/conda-build.yml/badge.svg)](https://github.com/aladshaw3/cats/actions/workflows/conda-build.yml)
 [![Checks2](https://github.com/aladshaw3/cats/actions/workflows/personal-conda-build.yml/badge.svg)](https://github.com/aladshaw3/cats/actions/workflows/personal-conda-build.yml)
+
+[![Checks3](https://github.com/aladshaw3/cats/actions/workflows/mac-conda-build.yml/badge.svg)](https://github.com/aladshaw3/cats/actions/workflows/mac-conda-build.yml)
+[![Checks4](https://github.com/aladshaw3/cats/actions/workflows/mac-personal-conda-build.yml/badge.svg)](https://github.com/aladshaw3/cats/actions/workflows/mac-personal-conda-build.yml)
 
 CATS
 =====
