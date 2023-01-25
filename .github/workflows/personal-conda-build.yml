@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Activate MOOSE environment
-      uses: conda-incubator/setup-miniconda@v2
+      uses: conda-incubator/setup-miniconda@main
       with:
         python-version: 3.9
         mamba-version: "*"
