@@ -23,6 +23,8 @@ jobs:
         mamba-version: "*"
         channels: https://conda.software.inl.gov/public,conda-forge,defaults
         channel-priority: true
+        miniforge-variant: Mambaforge
+        miniforge-version: latest
         activate-environment: moose
     - name: Install dependencies
       shell: bash -l {0}
