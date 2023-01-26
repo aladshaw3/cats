@@ -17,12 +17,14 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Activate MOOSE environment
-      uses: conda-incubator/setup-miniconda@v2
+      uses: conda-incubator/setup-miniconda@main
       with:
         python-version: 3.9
         mamba-version: "*"
         channels: https://conda.software.inl.gov/public,conda-forge,defaults
         channel-priority: true
+        miniforge-variant: Mambaforge
+        miniforge-version: latest
         activate-environment: moose
     - name: Install dependencies
       shell: bash -l {0}
