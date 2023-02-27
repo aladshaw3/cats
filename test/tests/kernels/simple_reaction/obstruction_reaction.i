@@ -99,13 +99,6 @@
     type = GAnisotropicDiffusion
     variable = conc
   [../]
-  #Reaction kernel only applies to the system boundaries
-  #   Thus, this kernel is meant to emulate a surface reaction
-  #[./rxn_conc]
-  #  type = CoefReaction
-  #  variable = conc
-  #  coefficient = 1.0
-  #[../]
 
   #Coupled Reaction and time derivatives
   [./coupled_dot]
@@ -132,7 +125,7 @@
     variable = p
     u = vel_x
     v = vel_y
-    p = p
+    pressure = p
   [../]
 
   #Conservation of momentum equ in x (with time derivative)
@@ -145,7 +138,7 @@
     variable = vel_x
     u = vel_x
     v = vel_y
-    p = p
+    pressure = p
     component = 0
   [../]
 
@@ -159,7 +152,7 @@
     variable = vel_y
     u = vel_x
     v = vel_y
-    p = p
+    pressure = p
     component = 1
   [../]
 []
@@ -278,7 +271,6 @@
   [./inlet_func]
     type = ParsedFunction
     #Parabola that has velocity of zero at y=top and=bot, with maximum at y=middle
-    #value = a*y^2 + b*y + c	solve for a, b, and c
     value = '-0.25 * y^2 + 1'
   [../]
 []
