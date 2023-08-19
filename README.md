@@ -1,14 +1,14 @@
 ## Last Updated
 
-June 30, 2023
+August 18, 2023
+
+NOTES:
+- Removed Mac Workflow support due to persistent up-stream failures in the GitHub action tool for Mac
 
 ## Build Status
 
 [![Checks](https://github.com/aladshaw3/cats/actions/workflows/conda-build.yml/badge.svg)](https://github.com/aladshaw3/cats/actions/workflows/conda-build.yml)
 [![Checks2](https://github.com/aladshaw3/cats/actions/workflows/personal-conda-build.yml/badge.svg)](https://github.com/aladshaw3/cats/actions/workflows/personal-conda-build.yml)
-
-[![Checks3](https://github.com/aladshaw3/cats/actions/workflows/mac-conda-build.yml/badge.svg)](https://github.com/aladshaw3/cats/actions/workflows/mac-conda-build.yml)
-[![Checks4](https://github.com/aladshaw3/cats/actions/workflows/mac-personal-conda-build.yml/badge.svg)](https://github.com/aladshaw3/cats/actions/workflows/mac-personal-conda-build.yml)
 
 CATS
 =====
