@@ -9,14 +9,11 @@
   av_ratio = 5145.04 #m^-1
 [] #END GlobalParams
 
-[Problem]
-    coord_type = RZ
-    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
-[] #END Problem
-
 [Mesh]
 #NOTE: For some reason, changing the grid sizes hurts the solution (start with coarse grid)
     type = GeneratedMesh
+	coord_type = RZ
+    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
     dim = 2
     nx = 1
     ny = 10
