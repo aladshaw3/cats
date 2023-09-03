@@ -39,7 +39,7 @@
 
 [Mesh]
   file = 2D-Flow-Converted.unv
-  boundary_name = 'inlet outlet top bottom object'
+  #boundary_name = 'inlet outlet top bottom object'
 []
 
 #Use MONOMIAL for DG and LAGRANGE for non-DG
