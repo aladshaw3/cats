@@ -6,7 +6,6 @@ NOTES:
 - Removed Mac Workflow support due to persistent up-stream failures in the GitHub action tool for Mac
 - Updated `catsApp.C` file to remove depreciation warnings
 - Updated all `test` and `user_examples` files to remove depreciation warnings
-- Removed all old `input_files`
 
 ## Build Status
 
@@ -79,15 +78,25 @@ Or, to run on multiple CPU cores...
 <code> mpiexec --n 4 ./cats-opt -i path/to/file.i </code>
 
 
-WARNING
+WARNINGS
 -----
-There may be a current bug in MOOSE that is caused by applying an integrated boundary
+
+
+(1) There may be a current bug in MOOSE that is caused by applying an integrated boundary
 condition on a node set internal to a domain. MOOSE will report an error stating that
 the variable does not exist on that node set, however, if you run the code with...
 
 <code> mpiexec --n # ./cats-opt -i path/to/file.i </code>
 
 where # > 1, then the code should run fine. See issue #13 for more information.
+
+---
+
+(2) The `input_files` folder is old and uses some legacy features and interfaces in MOOSE. Those 
+files are kept here for reference ONLY. There is no guarentee that they will run with updated 
+versions of MOOSE in their current state. 
+
+For most up-to-date syntax and examples, look into the `user_examples` and `test` folders. 
 
 
 Citation

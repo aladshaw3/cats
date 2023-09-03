@@ -31,13 +31,10 @@
   coord_id = 2  #0 ==> washcoat (1=cylindrical particles, 2=spherical particles)
 [] #END GlobalParams
 
-[Problem]
-    coord_type = RZ
-    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
-[] #END Problem
-
 [Mesh]
     type = GeneratedMesh
+	coord_type = RZ
+    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
     dim = 2
     nx = 3
     ny = 10

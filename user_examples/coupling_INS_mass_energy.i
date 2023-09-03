@@ -44,11 +44,8 @@
     [../]
 []
 
-[Problem]
-    coord_type = RZ
-[] #END Problem
-
 [Mesh]
+	coord_type = RZ
     [./my_mesh]
         type = GeneratedMeshGenerator
         dim = 2
