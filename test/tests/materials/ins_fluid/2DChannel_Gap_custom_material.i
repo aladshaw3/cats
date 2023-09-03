@@ -72,12 +72,12 @@
      type = ParsedFunction
      #Parabola that has velocity of zero at z=top and=bot, with maximum at z=middle
      #value = a*z^2 + b*z + c    solve for a, b, and c
-     value = '-2623.5*z^2 + 333.19*z - 7.0788'
+     expression = '-2623.5*z^2 + 333.19*z - 7.0788'
    [../]
 
     [./dens_func]
         type = ParsedFunction
-        value = '1.225e-6 - 0.225e-6*(y/5)'
+        expression = '1.225e-6 - 0.225e-6*(y/5)'
     [../]
  []
 

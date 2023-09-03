@@ -1,10 +1,8 @@
-[Problem]
-    coord_type = RZ
-    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
-[] #END Problem
 
 [Mesh]
-#Generate a 2D mesh to entire domain (block = 0)
+	#Generate a 2D mesh to entire domain (block = 0)
+	coord_type = RZ
+    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
   [gen]
     type = GeneratedMeshGenerator
     dim = 2
@@ -26,7 +24,7 @@
   [./interface]
     type = SideSetsBetweenSubdomainsGenerator
     input = subdomain1
-    master_block = '0'
+    primary_block = '0'
     paired_block = '1'
     new_boundary = 'master0_interface'
   [../]

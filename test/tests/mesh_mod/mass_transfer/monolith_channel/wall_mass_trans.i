@@ -3,14 +3,9 @@
   sigma = 10
 [] #END GlobalParams
 
-[Problem]
-
-    coord_type = RZ
-    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
-
-[] #END Problem
-
 [Mesh]
+	coord_type = RZ
+    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
 
 #NOTE: The washcoat thickness is a very important parameter for this type of model
 #           [thickness must align with the stated average bulk porosity]
@@ -38,7 +33,7 @@
       [./interface]
         type = SideSetsBetweenSubdomainsGenerator
         input = subdomain1
-        master_block = '0'
+        primary_block = '0'
         paired_block = '1'
         new_boundary = 'master0_interface'
       [../]
