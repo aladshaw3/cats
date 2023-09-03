@@ -306,6 +306,6 @@
     type = ParsedFunction
     #Parabola that has velocity of zero at y=top and=bot, with maximum at y=middle
     #value = a*y^2 + b*y + c	solve for a, b, and c
-    value = '-0.25 * y^2 + 1'
+    expression = '-0.25 * y^2 + 1'
   [../]
 []

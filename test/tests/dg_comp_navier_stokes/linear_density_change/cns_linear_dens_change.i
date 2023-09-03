@@ -375,7 +375,7 @@
   [./rho_fun]
       type = ParsedFunction
       #value = '3+x'        # linearly increasing density
-      value = '-0.0714*x+0.857'        # linearly decreasing density
+      expression = '-0.0714*x+0.857'        # linearly decreasing density
       #value = '1'
   [../]
 []
