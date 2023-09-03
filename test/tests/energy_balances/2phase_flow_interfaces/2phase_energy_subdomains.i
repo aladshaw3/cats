@@ -3,13 +3,10 @@
     sigma = 10
   
 [] #END GlobalParams
-
-[Problem]
-    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
-    coord_type = RZ
-[] #END Problem
  
 [Mesh]
+	#NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
+	coord_type = RZ
  
     [gen] #block = 0
          type = GeneratedMeshGenerator

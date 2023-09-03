@@ -41,7 +41,7 @@
 
 [Mesh]
   file = 2D-Flow-Step-Converted.unv
-  boundary_name = 'inlet outlet wall'
+  ##boundary_name = 'inlet outlet wall'
 []
 
 
@@ -308,7 +308,7 @@
   [./inlet_func]
     type = ParsedFunction
     #Parabola that has velocity of zero at y=top and=bot, with maximum at y=middle
-    value = '10.0*(1-exp(-1*t))'   #in cm/s
+    expression = '10.0*(1-exp(-1*t))'   #in cm/s
     # Velocities in cm/s
   [../]
 []

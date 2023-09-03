@@ -45,7 +45,7 @@
 
 [Mesh]
   file = Perf-Cylinder-Converted.unv
-  boundary_name = 'inlet outlet wall'
+  ##boundary_name = 'inlet outlet wall'
 []
 
 
@@ -389,7 +389,7 @@
 
     # Constant with time (slow ramp up)
     #     This is better to use because it is more generally applicable
-    value = '1.0*(1-exp(-1*t))'   #in cm/s
+    expression = '1.0*(1-exp(-1*t))'   #in cm/s
   [../]
 []
 

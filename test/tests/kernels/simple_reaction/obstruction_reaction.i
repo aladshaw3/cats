@@ -39,7 +39,7 @@
 
 [Mesh]
   file = 2D-Flow-Converted.unv
-  boundary_name = 'inlet outlet top bottom object'
+  #boundary_name = 'inlet outlet top bottom object'
 []
 
 #Use MONOMIAL for DG and LAGRANGE for non-DG
@@ -271,6 +271,6 @@
   [./inlet_func]
     type = ParsedFunction
     #Parabola that has velocity of zero at y=top and=bot, with maximum at y=middle
-    value = '-0.25 * y^2 + 1'
+    expression = '-0.25 * y^2 + 1'
   [../]
 []

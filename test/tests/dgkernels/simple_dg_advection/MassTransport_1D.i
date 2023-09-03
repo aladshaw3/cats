@@ -11,7 +11,6 @@
     type = GeneratedMesh
     dim = 1
 	nx = 50
-#	nx = 10
     xmin = 0.0
     xmax = 10.0
 [] # END Mesh

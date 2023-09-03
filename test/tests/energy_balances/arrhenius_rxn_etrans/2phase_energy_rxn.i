@@ -9,14 +9,11 @@
     reverse_pre_exponential = 0     #m^3/mol/s
   
 [] #END GlobalParams
-
-[Problem]
-    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
-    coord_type = RZ
-[] #END Problem
  
 [Mesh]
     type = GeneratedMesh
+	#NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
+    coord_type = RZ
     dim = 2
     nx = 5
     ny = 10
@@ -29,7 +26,7 @@
 [Functions]
      [./qc_ic]
          type = ParsedFunction
-         value = 4.01E-4*-1.8779*exp(1.8779*y/0.1346)/(1-exp(1.8779))
+         expression = 4.01E-4*-1.8779*exp(1.8779*y/0.1346)/(1-exp(1.8779))
      [../]
 []
 

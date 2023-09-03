@@ -5,13 +5,9 @@
   sigma = 10
 [] #END GlobalParams
 
-[Problem]
-    coord_type = RZ
-    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
-[] #END Problem
-
 [Mesh]
     type = GeneratedMesh
+	coord_type = RZ
     dim = 2
     nx = 1
     ny = 10

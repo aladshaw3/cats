@@ -83,7 +83,7 @@
 [Functions]
   [./parsed_function]
     type = ParsedFunction
-    value = '1000 - x*4606.34'
+    expression = '1000 - x*4606.34'
   [../]
 []
 

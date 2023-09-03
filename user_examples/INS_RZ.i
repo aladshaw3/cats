@@ -28,11 +28,8 @@
 
  []
 
-[Problem]
-    coord_type = RZ     #Transforms the x-direction to radius and y-direction to length
-[] #END Problem
-
 [Mesh]
+	coord_type = RZ     #Transforms the x-direction to radius and y-direction to length
     [./my_mesh]
         type = GeneratedMeshGenerator
         dim = 2

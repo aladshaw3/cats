@@ -32,14 +32,11 @@
     #   Ao*(1-eps) = 6640.5
   
 [] #END GlobalParams
-
-[Problem]
-    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
-    coord_type = RZ
-[] #END Problem
  
 [Mesh]
     type = GeneratedMesh
+	#NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
+    coord_type = RZ
     dim = 2
     nx = 5
     ny = 10
@@ -52,16 +49,13 @@
 [Functions]
      [./qc_ic]
          type = ParsedFunction
-        value = 4.01E-4*-1.8779*exp(1.8779*y/0.1346)/(1-exp(1.8779))
-#        value = 4.01E-4        #Avg qc
-#        value = 8.89E-4     #Max qc
-#        value = 1.359E-4       #Min qc
+        expression = 4.01E-4*-1.8779*exp(1.8779*y/0.1346)/(1-exp(1.8779))
      [../]
 
     [./v_ic]
 #m/s  avg - superficial velocity (low 2.5769 - high 3.17)
         type = ParsedFunction
-        value = '2.71 + 0.2*(y/0.1346)'
+        expression = '2.71 + 0.2*(y/0.1346)'
     [../]
 []
 

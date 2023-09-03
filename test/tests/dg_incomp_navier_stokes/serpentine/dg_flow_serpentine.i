@@ -1,3 +1,5 @@
+## NOTE: You MUST use MPI with at least 2 CPU to run this test
+
 # File demos Incompressible Navier-Stokes flow with DG methods
 
 # Equations:

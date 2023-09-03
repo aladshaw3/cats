@@ -66,13 +66,10 @@
   [../]
 []
 
-[Problem]
-    #NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
-    coord_type = RZ
-[] #END Problem
-
 [Mesh]
     type = GeneratedMesh
+	#NOTE: For RZ coordinates, x ==> R and y ==> Z (and z ==> nothing)
+    coord_type = RZ
     dim = 2
     nx = 5
     ny = 20

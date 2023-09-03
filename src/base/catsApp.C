@@ -20,9 +20,9 @@ catsApp::catsApp(InputParameters parameters) : MooseApp(parameters)
 catsApp::~catsApp() {}
 
 void
-catsApp::registerAll(Factory & f, ActionFactory & af, Syntax & s)
+catsApp::registerAll(Factory & f, ActionFactory & af, Syntax & syntax)
 {
-  ModulesApp::registerAll(f, af, s);
+  ModulesApp::registerAllObjects<catsApp>(f, af, syntax);
   Registry::registerObjectsTo(f, {"catsApp"});
   Registry::registerActionsTo(af, {"catsApp"});
 
