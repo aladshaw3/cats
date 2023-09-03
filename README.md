@@ -1,9 +1,12 @@
 ## Last Updated
 
-August 18, 2023
+September 2, 2023
 
 NOTES:
 - Removed Mac Workflow support due to persistent up-stream failures in the GitHub action tool for Mac
+- Updated `catsApp.C` file to remove depreciation warnings
+- Updated all `test` and `user_examples` files to remove depreciation warnings
+- Removed all old `input_files`
 
 ## Build Status
 
