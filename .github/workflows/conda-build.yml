@@ -31,7 +31,7 @@ jobs:
       run: |
         mamba init
         conda activate moose
-        mamba install moose-tools moose-libmesh
+        mamba install moose-dev
     - name: Install MOOSE
       shell: bash -l {0}
       run: |
@@ -39,8 +39,8 @@ jobs:
         git clone https://github.com/idaholab/moose.git
         cd moose
         git checkout master
-        cd test
         conda activate moose
+        cd test
         make -j4
 #    - name: Run MOOSE Tests
 #      shell: bash -l {0}

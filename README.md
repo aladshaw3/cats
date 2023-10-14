@@ -1,11 +1,13 @@
 ## Last Updated
 
-September 2, 2023
+October 13, 2023
 
 NOTES:
 - Removed Mac Workflow support due to persistent up-stream failures in the GitHub action tool for Mac
 - Updated `catsApp.C` file to remove depreciation warnings
 - Updated all `test` and `user_examples` files to remove depreciation warnings
+- Updated installation procedure in github actions 
+- Verified fresh installation on WSL with `wasp` library
 
 ## Build Status
 
@@ -35,6 +37,21 @@ For more information, please read through the 'CATS-UserGuide-*.pdf' in the home
 Installation and Usage
 -----
 To use CATS, a user must first download and install the MOOSE framework (https://mooseframework.inl.gov/). Follow the installation instructions contained therein first.
+
+ - Basic Instructions for the moose conda/mamba environment 
+ 
+<code> mamba init </code>
+
+<code> mamba create -n moose moose-dev </code>
+
+<code> mamba activate moose </code>
+
+ - Basic Instructions for keeping moose environment updated 
+ 
+<code> mamba update --all </code>
+
+**NOTE**: The `wasp` library is now required in moose. You may need to run `./update_and_rebuild_wasp.sh` from the `scripts` directory of your `moose` folder. 
+If you still have trouble, try uninstalling and reinstalling `moose` from scratch. 
 
 After MOOSE is installed, you can download this source code repository to a sub-directory at the same level as the 'moose/' directory. (e.g., if MOOSE is installed in '(HOME)/projects/moose', then perform the 'git clone ...' commands in the '(HOME)/projects/' directory.)
 
