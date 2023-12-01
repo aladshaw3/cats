@@ -35,11 +35,11 @@ InputParameters GasPropertiesBase::validParams()
     params.addRequiredCoupledVar("uz","Variable for velocity in z-direction (m/s)");
     params.addRequiredCoupledVar("hydraulic_diameter","Name of the hydraulic diameter variable (m)");
 
-    params.addParam< std::vector<Real> >("molar_weights","List of molecular weights (g/mol)");
-    params.addParam< std::vector<Real> >("sutherland_temp","List of Sutherland's reference temperatures (K)");
-    params.addParam< std::vector<Real> >("sutherland_const","List of Sutherland's constants (K)");
-    params.addParam< std::vector<Real> >("sutherland_vis","List of Sutherland's reference viscosities (g/cm/s)");
-    params.addParam< std::vector<Real> >("spec_heat","List of specific heats (J/g/K)");
+    params.addRequiredParam< std::vector<Real> >("molar_weights","List of molecular weights (g/mol)");
+    params.addRequiredParam< std::vector<Real> >("sutherland_temp","List of Sutherland's reference temperatures (K)");
+    params.addRequiredParam< std::vector<Real> >("sutherland_const","List of Sutherland's constants (K)");
+    params.addRequiredParam< std::vector<Real> >("sutherland_vis","List of Sutherland's reference viscosities (g/cm/s)");
+    params.addRequiredParam< std::vector<Real> >("spec_heat","List of specific heats (J/g/K)");
 
     params.addCoupledVar("carrier_gas",0,"Concentration for the carrier gas (mol/m^3)");
     params.addParam< Real >("carrier_gas_mw",0,"Molecular weight for the carrier gas (g/mol)");
