@@ -39,8 +39,8 @@ registerMooseObject("catsApp", ModifiedButlerVolmerReaction);
 InputParameters ModifiedButlerVolmerReaction::validParams()
 {
     InputParameters params = Kernel::validParams();
-    params.addParam< std::vector<Real> >("reduced_state_stoich","List of stoichiometry for reduced-state reactants");
-    params.addParam< std::vector<Real> >("oxidized_state_stoich","List of stoichiometry for oxidized-state products");
+    params.addRequiredParam< std::vector<Real> >("reduced_state_stoich","List of stoichiometry for reduced-state reactants");
+    params.addRequiredParam< std::vector<Real> >("oxidized_state_stoich","List of stoichiometry for oxidized-state products");
 
     params.addParam< Real >("oxidation_rate_const",1.0,"Forward oxidation-rate constant");
     params.addParam< Real >("reduction_rate_const",1.0,"Reverse reduction-rate constant");

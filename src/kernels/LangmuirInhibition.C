@@ -36,8 +36,8 @@ InputParameters LangmuirInhibition::validParams()
 {
     InputParameters params = Kernel::validParams();
     params.addRequiredParam< std::vector<Real> >("pre_exponentials","Pre-exponential terms for the Langmuir coefficients");
-    params.addParam< std::vector<Real> >("betas","Beta terms for the Langmuir coefficients");
-    params.addParam< std::vector<Real> >("activation_energies","Activation energy terms for the Langmuir coefficients");
+    params.addParam< std::vector<Real> >("betas",{0},"Beta terms for the Langmuir coefficients");
+    params.addParam< std::vector<Real> >("activation_energies",{0},"Activation energy terms for the Langmuir coefficients");
     params.addRequiredCoupledVar("coupled_list","List of names of the variables being coupled");
     params.addRequiredCoupledVar("temperature","Name of the coupled temperature variable (K)");
     return params;

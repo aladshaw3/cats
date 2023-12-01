@@ -36,8 +36,8 @@ InputParameters PairedLangmuirInhibition::validParams()
 {
     InputParameters params = LangmuirInhibition::validParams();
     params.addRequiredParam< std::vector<Real> >("binary_pre_exp"," Binary Pre-exponential terms for the Langmuir coefficients.");
-    params.addParam< std::vector<Real> >("binary_betas","Binary Beta terms for the Langmuir coefficients.");
-    params.addParam< std::vector<Real> >("binary_energies","Binary Activation energy terms for the Langmuir coefficients.");
+    params.addParam< std::vector<Real> >("binary_betas",{0},"Binary Beta terms for the Langmuir coefficients.");
+    params.addParam< std::vector<Real> >("binary_energies",{0},"Binary Activation energy terms for the Langmuir coefficients.");
     params.addRequiredCoupledVar("coupled_i_list","List of names of the i-th variables being paired to the j-th variables");
     params.addRequiredCoupledVar("coupled_j_list","List of names of the j-th variables being paired to the i-th variables");
     return params;

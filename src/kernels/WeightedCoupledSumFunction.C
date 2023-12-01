@@ -34,7 +34,7 @@ InputParameters WeightedCoupledSumFunction::validParams()
 {
     InputParameters params = Kernel::validParams();
     params.addRequiredCoupledVar("coupled_list","List of names of the variables being coupled");
-    params.addParam< std::vector<Real> >("weights","List of weight factors in the sum");
+    params.addRequiredParam< std::vector<Real> >("weights","List of weight factors in the sum");
     return params;
 }
 

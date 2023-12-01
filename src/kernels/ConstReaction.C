@@ -32,8 +32,8 @@ registerMooseObject("catsApp", ConstReaction);
 InputParameters ConstReaction::validParams()
 {
     InputParameters params = Kernel::validParams();
-    params.addParam< std::vector<Real> >("reactant_stoich","List of stoichiometry for reactants");
-    params.addParam< std::vector<Real> >("product_stoich","List of stoichiometry for products");
+    params.addRequiredParam< std::vector<Real> >("reactant_stoich","List of stoichiometry for reactants");
+    params.addRequiredParam< std::vector<Real> >("product_stoich","List of stoichiometry for products");
     params.addParam< Real >("forward_rate",0.0,"Forward rate constant");
     params.addParam< Real >("reverse_rate",0.0,"Reverse rate constant");
     params.addParam< Real >("scale",1.0,"Scaling parameter for this reaction");
