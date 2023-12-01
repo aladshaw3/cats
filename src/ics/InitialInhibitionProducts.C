@@ -28,7 +28,7 @@ registerMooseObject("catsApp", InitialInhibitionProducts);
 InputParameters InitialInhibitionProducts::validParams()
 {
     InputParameters params = InitialCondition::validParams();
-    params.addParam< std::vector<Real> >("power_list","List of powers for coupled inhibition terms");
+    params.addRequiredParam< std::vector<Real> >("power_list","List of powers for coupled inhibition terms");
     params.addRequiredCoupledVar("coupled_list","List of names of the inhibition variables");
     return params;
 }

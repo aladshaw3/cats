@@ -31,7 +31,7 @@ InputParameters InitialIonicStrength::validParams()
 {
     InputParameters params = InitialCondition::validParams();
     params.addRequiredCoupledVar("ion_conc","List of names of the ion concentration variables (mol/L^3)");
-    params.addParam< std::vector<Real> >("ion_valence","List of valences for coupled ion concentrations");
+    params.addRequiredParam< std::vector<Real> >("ion_valence","List of valences for coupled ion concentrations");
     params.addParam< Real >("conversion_factor",1,"Conversion factor for 'ion_conc' to get ionic strength in M [default=1 M/M]");
     return params;
 }
