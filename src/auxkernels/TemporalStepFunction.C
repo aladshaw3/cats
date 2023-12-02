@@ -31,9 +31,9 @@ InputParameters TemporalStepFunction::validParams()
 {
     InputParameters params = AuxKernel::validParams();
     params.addParam<Real>("start_value",0,"Value of the variable to start at");
-    params.addParam< std::vector<Real> >("aux_vals","Values for aux at corresponding times");
-    params.addParam< std::vector<Real> >("aux_times","Time values at which to update aux value");
-    params.addParam< std::vector<Real> >("time_spans","Amount of time it takes to go from one input to the next");
+    params.addRequiredParam< std::vector<Real> >("aux_vals","Values for aux at corresponding times");
+    params.addRequiredParam< std::vector<Real> >("aux_times","Time values at which to update aux value");
+    params.addParam< std::vector<Real> >("time_spans",{0},"Amount of time it takes to go from one input to the next");
     return params;
 }
 

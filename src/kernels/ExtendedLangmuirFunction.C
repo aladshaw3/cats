@@ -31,7 +31,7 @@ InputParameters ExtendedLangmuirFunction::validParams()
 {
     InputParameters params = Kernel::validParams();
     params.addParam<Real>("site_density",0.0,"Maximum Capacity for Langmuir Function of this sorption site (mol/L)");
-    params.addParam< std::vector<Real> >("langmuir_coeff","Coefficient for the langmuir function (L/mol)");
+    params.addParam< std::vector<Real> >("langmuir_coeff",{0},"Coefficient for the langmuir function (L/mol)");
     params.addRequiredCoupledVar("coupled_list","List of names of the variables being coupled");
     params.addRequiredCoupledVar("main_coupled","Name of the primary variable being coupled");
     return params;
@@ -47,6 +47,15 @@ _coupled_var_i(coupled("main_coupled"))
 	unsigned int n = coupledComponents("coupled_list");
 	_coupled_vars.resize(n);
 	_coupled.resize(n);
+	
+	if (_coupled.size() != _langmuir_coef.size())
+	{
+		_langmuir_coef.resize(_coupled.size());
+        for (int i=0; i<_langmuir_coef.size(); i++)
+        {
+            _langmuir_coef[i] = 1.0;
+        }
+	}
 
 	for (unsigned int i = 0; i<_coupled.size(); ++i)
 	{
@@ -100,11 +109,6 @@ Real ExtendedLangmuirFunction::computeExtLangmuirOffJacobi(int i)
 
 Real ExtendedLangmuirFunction::computeQpResidual()
 {
-  if (_coupled.size() != _langmuir_coef.size())
-  {
-    moose::internal::mooseErrorRaw("User is required to provide list of variables of the same length as list of Langmuir coefficients.");
-  }
-
 	return -_test[_i][_qp]*computeExtLangmuirEquilibrium();
 }
 

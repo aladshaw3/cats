@@ -46,7 +46,7 @@ InputParameters AuxElectrolyteCurrent::validParams()
 
     params.addRequiredCoupledVar("ion_conc","List of names of the ion concentration variables (mol/L^3)");
     params.addRequiredCoupledVar("diffusion","List of names of the diffusion variables (L^2/T)");
-    params.addParam< std::vector<Real> >("ion_valence","List of valences for coupled ion concentrations");
+    params.addRequiredParam< std::vector<Real> >("ion_valence","List of valences for coupled ion concentrations");
 
     params.addParam<Real>("min_conductivity",0, "Minimum/background value of conductivity of the media");
 

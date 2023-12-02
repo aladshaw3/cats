@@ -37,7 +37,7 @@ InputParameters ElectrolyteIonConductivity::validParams()
 
     params.addRequiredCoupledVar("ion_conc","List of names of the ion concentration variables (mol/L^3)");
     params.addRequiredCoupledVar("diffusion","List of names of the diffusion variables (L^2/T)");
-    params.addParam< std::vector<Real> >("ion_valence","List of valences for coupled ion concentrations");
+    params.addRequiredParam< std::vector<Real> >("ion_valence","List of valences for coupled ion concentrations");
 
     params.addParam<bool>("tight_coupling",true, "True = use tight coupling of gradients");
     return params;
