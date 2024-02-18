@@ -36,44 +36,53 @@
 
 registerMooseObject("catsApp", GasVelocityCylindricalReactor);
 
-InputParameters GasVelocityCylindricalReactor::validParams()
+InputParameters
+GasVelocityCylindricalReactor::validParams()
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addCoupledVar("porosity",0.5,"Value of bulk porosity");
-    params.addRequiredCoupledVar("space_velocity","Name of the space-velocity variable (catalyst volumes/time)");
-    params.addRequiredCoupledVar("inlet_temperature","Name of the inlet temperature variable (in K)");
-    params.addCoupledVar("inlet_pressure",101.35,"Name of the inlet pressure variable (in kPa)");
-    params.addParam< Real >("ref_temperature",298.15,"Reference temperature for the space-velocity (in K)");
-    params.addParam< Real >("ref_pressure",101.35,"Reference pressure for the space-velocity (in kPa)");
-    params.addRequiredParam< Real >("radius","Radius of the cylindrical reactor");
-    params.addRequiredParam< Real >("length","Length of the cylindrical reactor");
-    params.addParam< bool >("by_total_reactor_volume",true,"If true, then the space-velocity will be assume total volume. If false, it will be assumed by catalyst volume.");
-    return params;
+  InputParameters params = AuxKernel::validParams();
+  params.addCoupledVar("porosity", 0.5, "Value of bulk porosity");
+  params.addRequiredCoupledVar("space_velocity",
+                               "Name of the space-velocity variable (catalyst volumes/time)");
+  params.addRequiredCoupledVar("inlet_temperature",
+                               "Name of the inlet temperature variable (in K)");
+  params.addCoupledVar("inlet_pressure", 101.35, "Name of the inlet pressure variable (in kPa)");
+  params.addParam<Real>(
+      "ref_temperature", 298.15, "Reference temperature for the space-velocity (in K)");
+  params.addParam<Real>(
+      "ref_pressure", 101.35, "Reference pressure for the space-velocity (in kPa)");
+  params.addRequiredParam<Real>("radius", "Radius of the cylindrical reactor");
+  params.addRequiredParam<Real>("length", "Length of the cylindrical reactor");
+  params.addParam<bool>("by_total_reactor_volume",
+                        true,
+                        "If true, then the space-velocity will be assume total volume. If false, "
+                        "it will be assumed by catalyst volume.");
+  return params;
 }
 
-GasVelocityCylindricalReactor::GasVelocityCylindricalReactor(const InputParameters & parameters) :
-AuxKernel(parameters),
-_space_velocity(coupledValue("space_velocity")),
-_radius(getParam<Real>("radius")),
-_length(getParam<Real>("length")),
-_porosity(coupledValue("porosity")),
-_temperature_in(coupledValue("inlet_temperature")),
-_pressure_in(coupledValue("inlet_pressure")),
-_temperature_ref(getParam<Real>("ref_temperature")),
-_pressure_ref(getParam<Real>("ref_pressure")),
-_total_vol_basis(getParam<bool>("by_total_reactor_volume"))
+GasVelocityCylindricalReactor::GasVelocityCylindricalReactor(const InputParameters & parameters)
+  : AuxKernel(parameters),
+    _space_velocity(coupledValue("space_velocity")),
+    _radius(getParam<Real>("radius")),
+    _length(getParam<Real>("length")),
+    _porosity(coupledValue("porosity")),
+    _temperature_in(coupledValue("inlet_temperature")),
+    _pressure_in(coupledValue("inlet_pressure")),
+    _temperature_ref(getParam<Real>("ref_temperature")),
+    _pressure_ref(getParam<Real>("ref_pressure")),
+    _total_vol_basis(getParam<bool>("by_total_reactor_volume"))
 {
-
 }
 
-Real GasVelocityCylindricalReactor::computeValue()
+Real
+GasVelocityCylindricalReactor::computeValue()
 {
-    Real _area = _radius*_radius*3.14159;
-    Real _ref_flow_rate;
-    if (_total_vol_basis == false)
-      _ref_flow_rate = _space_velocity[_qp]*_length*_area*(1-_porosity[_qp]);
-    else
-      _ref_flow_rate = _space_velocity[_qp]*_length*_area;
-    Real _true_flow_rate = _temperature_in[_qp]*_ref_flow_rate/_temperature_ref*_pressure_ref/(_pressure_in[_qp]);
-    return _true_flow_rate/_area/_porosity[_qp];
+  Real _area = _radius * _radius * 3.14159;
+  Real _ref_flow_rate;
+  if (_total_vol_basis == false)
+    _ref_flow_rate = _space_velocity[_qp] * _length * _area * (1 - _porosity[_qp]);
+  else
+    _ref_flow_rate = _space_velocity[_qp] * _length * _area;
+  Real _true_flow_rate = _temperature_in[_qp] * _ref_flow_rate / _temperature_ref * _pressure_ref /
+                         (_pressure_in[_qp]);
+  return _true_flow_rate / _area / _porosity[_qp];
 }

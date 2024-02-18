@@ -34,18 +34,17 @@
 class SimpleGasIsobaricHeatCapacity : public SimpleGasPropertiesBase
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    SimpleGasIsobaricHeatCapacity(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  SimpleGasIsobaricHeatCapacity(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    std::string _output_energy_unit;                ///< Units of the energy term in heat capacity (kJ, J)
-    std::string _output_mass_unit;                  ///< Units of the mass term in heat capacity (kg, g, mg)
-
+  std::string _output_energy_unit; ///< Units of the energy term in heat capacity (kJ, J)
+  std::string _output_mass_unit;   ///< Units of the mass term in heat capacity (kg, g, mg)
 };

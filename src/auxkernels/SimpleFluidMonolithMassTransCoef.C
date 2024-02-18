@@ -22,42 +22,49 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
- #include "SimpleFluidMonolithMassTransCoef.h"
+#include "SimpleFluidMonolithMassTransCoef.h"
 
- registerMooseObject("catsApp", SimpleFluidMonolithMassTransCoef);
+registerMooseObject("catsApp", SimpleFluidMonolithMassTransCoef);
 
- InputParameters SimpleFluidMonolithMassTransCoef::validParams()
- {
-     InputParameters params = SimpleFluidPropertiesBase::validParams();
-     params.addParam< std::string >("output_length_unit","m","Length units for mass transfer on output");
-     params.addParam< std::string >("output_time_unit","s","Time units for mass transfer on output");
+InputParameters
+SimpleFluidMonolithMassTransCoef::validParams()
+{
+  InputParameters params = SimpleFluidPropertiesBase::validParams();
+  params.addParam<std::string>(
+      "output_length_unit", "m", "Length units for mass transfer on output");
+  params.addParam<std::string>("output_time_unit", "s", "Time units for mass transfer on output");
 
-     return params;
- }
+  return params;
+}
 
- SimpleFluidMonolithMassTransCoef::SimpleFluidMonolithMassTransCoef(const InputParameters & parameters) :
- SimpleFluidPropertiesBase(parameters),
- _output_length_unit(getParam<std::string >("output_length_unit")),
- _output_time_unit(getParam<std::string >("output_time_unit"))
- {
+SimpleFluidMonolithMassTransCoef::SimpleFluidMonolithMassTransCoef(
+    const InputParameters & parameters)
+  : SimpleFluidPropertiesBase(parameters),
+    _output_length_unit(getParam<std::string>("output_length_unit")),
+    _output_time_unit(getParam<std::string>("output_time_unit"))
+{
+}
 
- }
+Real
+SimpleFluidMonolithMassTransCoef::computeValue()
+{
+  Real Re = SimpleFluidPropertiesBase::reynolds_number();
+  Real Sc = SimpleFluidPropertiesBase::schmidt_number();
+  Real Sh = (0.3 + (0.62 * sqrt(Re) * pow(Sc, 0.33) * pow(1 + pow(0.4 / Sc, 0.67), -0.25)) *
+                       pow(1 + pow(Re / 282000, 5.0 / 8.0), 4.0 / 5.0));
 
- Real SimpleFluidMonolithMassTransCoef::computeValue()
- {
-     Real Re = SimpleFluidPropertiesBase::reynolds_number();
-     Real Sc = SimpleFluidPropertiesBase::schmidt_number();
-     Real Sh = (0.3+(0.62*sqrt(Re)*pow(Sc,0.33)*pow(1+pow(0.4/Sc,0.67),-0.25))*pow(1+pow(Re/282000,5.0/8.0),4.0/5.0));
+  Real L = SimpleFluidPropertiesBase::length_conversion(
+      _char_len[_qp], _char_len_unit, _output_length_unit);
 
-     Real L = SimpleFluidPropertiesBase::length_conversion(_char_len[_qp], _char_len_unit, _output_length_unit);
+  Real Deff =
+      SimpleFluidPropertiesBase::effective_molecular_diffusion(_temperature[_qp], _macro_pore[_qp]);
+  Deff = SimpleFluidPropertiesBase::length_conversion(Deff, _diff_length_unit, _output_length_unit);
+  Deff = SimpleFluidPropertiesBase::length_conversion(Deff, _diff_length_unit, _output_length_unit);
+  Deff =
+      1 / SimpleFluidPropertiesBase::time_conversion(1 / Deff, _diff_time_unit, _output_time_unit);
 
-     Real Deff = SimpleFluidPropertiesBase::effective_molecular_diffusion(_temperature[_qp], _macro_pore[_qp]);
-     Deff = SimpleFluidPropertiesBase::length_conversion(Deff, _diff_length_unit, _output_length_unit);
-     Deff = SimpleFluidPropertiesBase::length_conversion(Deff, _diff_length_unit, _output_length_unit);
-     Deff = 1/SimpleFluidPropertiesBase::time_conversion(1/Deff, _diff_time_unit, _output_time_unit);
-
-     Real km = Sh*Deff/L;
-     km = SimpleFluidPropertiesBase::length_conversion(km, "cm", _output_length_unit);
-     km = 1/SimpleFluidPropertiesBase::time_conversion(1/km, "s", _output_time_unit);
-     return km;
- }
+  Real km = Sh * Deff / L;
+  km = SimpleFluidPropertiesBase::length_conversion(km, "cm", _output_length_unit);
+  km = 1 / SimpleFluidPropertiesBase::time_conversion(1 / km, "s", _output_time_unit);
+  return km;
+}

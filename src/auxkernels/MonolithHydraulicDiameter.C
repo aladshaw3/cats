@@ -22,27 +22,29 @@
 
 registerMooseObject("catsApp", MonolithHydraulicDiameter);
 
-InputParameters MonolithHydraulicDiameter::validParams()
+InputParameters
+MonolithHydraulicDiameter::validParams()
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addParam<Real>("cell_density",50,"Cell density of the monolith (# of cells per face area)");
-    params.addRequiredCoupledVar("channel_vol_ratio","Ratio of channel volume to total volume ");
-    return params;
+  InputParameters params = AuxKernel::validParams();
+  params.addParam<Real>(
+      "cell_density", 50, "Cell density of the monolith (# of cells per face area)");
+  params.addRequiredCoupledVar("channel_vol_ratio", "Ratio of channel volume to total volume ");
+  return params;
 }
 
-MonolithHydraulicDiameter::MonolithHydraulicDiameter(const InputParameters & parameters) :
-AuxKernel(parameters),
-_cell_density(getParam<Real>("cell_density")),
-_bulk_porosity(coupledValue("channel_vol_ratio"))
+MonolithHydraulicDiameter::MonolithHydraulicDiameter(const InputParameters & parameters)
+  : AuxKernel(parameters),
+    _cell_density(getParam<Real>("cell_density")),
+    _bulk_porosity(coupledValue("channel_vol_ratio"))
 {
-
 }
 
-Real MonolithHydraulicDiameter::computeValue()
+Real
+MonolithHydraulicDiameter::computeValue()
 {
-    Real Ac = _bulk_porosity[_qp]/_cell_density;
-    Real dc = 2.0*sqrt((Ac/3.14159));
-    Real ds = sqrt(Ac);
-    Real dh = 0.5*(dc+ds);
-    return dh;
+  Real Ac = _bulk_porosity[_qp] / _cell_density;
+  Real dc = 2.0 * sqrt((Ac / 3.14159));
+  Real ds = sqrt(Ac);
+  Real dh = 0.5 * (dc + ds);
+  return dh;
 }

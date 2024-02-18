@@ -30,24 +30,23 @@
 class SimpleFluidViscosity : public SimpleFluidPropertiesBase
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    SimpleFluidViscosity(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  SimpleFluidViscosity(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    std::string _output_length_unit;                ///< Units of the length term in viscosity (m, cm, mm)
-    std::string _output_mass_unit;                  ///< Units of the mass term in viscosity (kg, g, mg)
-    std::string _output_time_unit;                  ///< Units of the time term in viscosity (hr, min, s)
+  std::string _output_length_unit; ///< Units of the length term in viscosity (m, cm, mm)
+  std::string _output_mass_unit;   ///< Units of the mass term in viscosity (kg, g, mg)
+  std::string _output_time_unit;   ///< Units of the time term in viscosity (hr, min, s)
 
-    std::string _output_pressure_unit;              ///< Units of the pressure term in viscosity (kPa, Pa, mPa)
+  std::string _output_pressure_unit; ///< Units of the pressure term in viscosity (kPa, Pa, mPa)
 
-    MooseEnum _output_basis;					              ///< Enumerator to determine what basis to use (pressure or mass)
+  MooseEnum _output_basis; ///< Enumerator to determine what basis to use (pressure or mass)
 
 private:
-
 };

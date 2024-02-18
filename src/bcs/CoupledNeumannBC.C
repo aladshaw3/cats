@@ -23,34 +23,36 @@
 
 registerMooseObject("MooseApp", CoupledNeumannBC);
 
-InputParameters CoupledNeumannBC::validParams()
+InputParameters
+CoupledNeumannBC::validParams()
 {
-    InputParameters params = IntegratedBC::validParams();
-    params.addCoupledVar("coupled",0, "The variable whose value we are coupling to.");
-    return params;
+  InputParameters params = IntegratedBC::validParams();
+  params.addCoupledVar("coupled", 0, "The variable whose value we are coupling to.");
+  return params;
 }
 
 CoupledNeumannBC::CoupledNeumannBC(const InputParameters & parameters)
-: IntegratedBC(parameters),
-_coupled(coupledValue("coupled")),
-_coupled_var(coupled("coupled"))
+  : IntegratedBC(parameters), _coupled(coupledValue("coupled")), _coupled_var(coupled("coupled"))
 {
 }
 
-Real CoupledNeumannBC::computeQpResidual()
+Real
+CoupledNeumannBC::computeQpResidual()
 {
-    return -_test[_i][_qp] * _coupled[_qp];
+  return -_test[_i][_qp] * _coupled[_qp];
 }
 
-Real CoupledNeumannBC::computeQpJacobian()
+Real
+CoupledNeumannBC::computeQpJacobian()
 {
+  return 0.;
+}
+
+Real
+CoupledNeumannBC::computeQpOffDiagJacobian(unsigned int jvar)
+{
+  if (jvar == _coupled_var)
+    return -_test[_i][_qp] * _phi[_j][_qp];
+  else
     return 0.;
-}
-
-Real CoupledNeumannBC::computeQpOffDiagJacobian(unsigned int jvar)
-{
-    if (jvar == _coupled_var)
-      return -_test[_i][_qp] * _phi[_j][_qp];
-    else
-      return 0.;
 }

@@ -1,8 +1,8 @@
 /*!
  *  \file InterfaceConstReaction.h
  *  \brief Interface Kernel for creating a Henry's Law type of reaction between domains
- *  \details This file creates an iterface kernel for the coupling a pair of non-linear variables in different
- *            subdomains across a boundary designated as a side-set in the mesh. The variables are
+ *  \details This file creates an iterface kernel for the coupling a pair of non-linear variables in
+ * different subdomains across a boundary designated as a side-set in the mesh. The variables are
  *            coupled linearly in a via a Henry's Law type reaction as shown below:
  *                  Res = test * (kf*u - kr*v)
  *                          where u = master variable in master domain
@@ -10,7 +10,8 @@
  *                          kf is always associated with variable u
  *                          and kr is always associated with variable v
  *
- *  \note Only need 1 interface kernel for both non-linear variables that are coupled to handle transfer in both domains
+ *  \note Only need 1 interface kernel for both non-linear variables that are coupled to handle
+ * transfer in both domains
  *
  *
  *  \author Austin Ladshaw
@@ -29,22 +30,24 @@
 
 registerMooseObject("catsApp", InterfaceConstReaction);
 
-InputParameters InterfaceConstReaction::validParams()
+InputParameters
+InterfaceConstReaction::validParams()
 {
-    InputParameters params = InterfaceKernel::validParams();
-    params.addParam< Real >("variable_rate",1.0,"Forward reaction rate coefficient");
-    params.addParam< Real >("neighbor_rate",1.0,"Reverse reaction rate coefficient");
-    return params;
+  InputParameters params = InterfaceKernel::validParams();
+  params.addParam<Real>("variable_rate", 1.0, "Forward reaction rate coefficient");
+  params.addParam<Real>("neighbor_rate", 1.0, "Reverse reaction rate coefficient");
+  return params;
 }
 
 InterfaceConstReaction::InterfaceConstReaction(const InputParameters & parameters)
   : InterfaceKernel(parameters),
-_variable_rate(getParam<Real>("variable_rate")),
-_neighbor_rate(getParam<Real>("neighbor_rate"))
+    _variable_rate(getParam<Real>("variable_rate")),
+    _neighbor_rate(getParam<Real>("neighbor_rate"))
 {
 }
 
-Real InterfaceConstReaction::computeQpResidual(Moose::DGResidualType type)
+Real
+InterfaceConstReaction::computeQpResidual(Moose::DGResidualType type)
 {
   Real r = 0;
   switch (type)
@@ -53,19 +56,21 @@ Real InterfaceConstReaction::computeQpResidual(Moose::DGResidualType type)
     // Residual = (kf*u - kr*v)
     // Weak form for master domain is: (test, kf*u - kr*v )
     case Moose::Element:
-      r = _test[_i][_qp] * (_variable_rate*_u[_qp] - _neighbor_rate*_neighbor_value[_qp]);
+      r = _test[_i][_qp] * (_variable_rate * _u[_qp] - _neighbor_rate * _neighbor_value[_qp]);
       break;
 
     // Similarly, weak form for slave domain is: -(test, kf*u - kr*v),
     // flip the sign because the direction is opposite.
     case Moose::Neighbor:
-      r = -_test_neighbor[_i][_qp] * (_variable_rate*_u[_qp] - _neighbor_rate*_neighbor_value[_qp]);
+      r = -_test_neighbor[_i][_qp] *
+          (_variable_rate * _u[_qp] - _neighbor_rate * _neighbor_value[_qp]);
       break;
   }
   return r;
 }
 
-Real InterfaceConstReaction::computeQpJacobian(Moose::DGJacobianType type)
+Real
+InterfaceConstReaction::computeQpJacobian(Moose::DGJacobianType type)
 {
   Real jac = 0;
   switch (type)

@@ -35,19 +35,19 @@ public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
 
-	/// Required constructor for objects in MOOSE
-	ElectrodeCurrentFromPotentialGradient(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  ElectrodeCurrentFromPotentialGradient(const InputParameters & parameters);
 
 protected:
-	/// Required residual function for standard kernels in MOOSE
-	/** This function returns a residual contribution for this object.*/
-	virtual Real computeQpResidual() override;
+  /// Required residual function for standard kernels in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual() override;
 
-	/// Required Jacobian function for standard kernels in MOOSE
-	/** This function returns a Jacobian contribution for this object. The Jacobian being
-		computed is the associated diagonal element in the overall Jacobian matrix for the
-		system and is used in preconditioning of the linear sub-problem. */
-	virtual Real computeQpJacobian() override;
+  /// Required Jacobian function for standard kernels in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+    computed is the associated diagonal element in the overall Jacobian matrix for the
+    system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian() override;
 
   /// Not Required, but aids in the preconditioning step
   /** This function returns the off diagonal Jacobian contribution for this object. By
@@ -55,20 +55,18 @@ protected:
         cross coupling of the variables. */
   virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-	RealVectorValue _norm_vec;	    ///< Vector for direction of gradient
+  RealVectorValue _norm_vec; ///< Vector for direction of gradient
 
-  unsigned int _dir;				      ///< Direction of current this kernel acts on (0=x, 1=y, 2=z)
+  unsigned int _dir; ///< Direction of current this kernel acts on (0=x, 1=y, 2=z)
 
-  const VariableGradient & _e_potential_grad;       ///< Coupled eletric potential variable (V or J/C)
-  const unsigned int _e_potential_var;              ///< Variable identification for coupled eletric potential
+  const VariableGradient & _e_potential_grad; ///< Coupled eletric potential variable (V or J/C)
+  const unsigned int _e_potential_var; ///< Variable identification for coupled eletric potential
 
-  const VariableValue & _sol_frac;			  ///< Solids fraction variable
-  const unsigned int _sol_frac_var;				///< Variable identification for solids fraction
+  const VariableValue & _sol_frac;  ///< Solids fraction variable
+  const unsigned int _sol_frac_var; ///< Variable identification for solids fraction
 
-  const VariableValue & _conductivity;			  ///< Conductivity variable (in C/C/length/time)
-  const unsigned int _conductivity_var;				///< Variable identification for conductivity
-
+  const VariableValue & _conductivity;  ///< Conductivity variable (in C/C/length/time)
+  const unsigned int _conductivity_var; ///< Variable identification for conductivity
 
 private:
-
 };

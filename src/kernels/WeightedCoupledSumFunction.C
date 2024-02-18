@@ -1,9 +1,9 @@
 /*!
  *  \file WeightedCoupledSumFunction.h
  *	\brief Standard kernel for coupling a vector non-linear variables via a weighted summation
- *	\details This file creates a standard MOOSE kernel for the coupling of a vector non-linear variables
- *			together to a variable whose value is to be determined by those coupled sums. This kernel is
- *      particularly useful if you have a variable that is a function of several different rate
+ *	\details This file creates a standard MOOSE kernel for the coupling of a vector non-linear
+ *variables together to a variable whose value is to be determined by those coupled sums. This
+ *kernel is particularly useful if you have a variable that is a function of several different rate
  *      variables (e.g., dq/dt = r1 + 2*r2). In these cases, instead of rewriting each reaction
  *      kernel and redefining all parameters, you create a set of rate variables (r1, r2, etc), then
  *      coupled those rates to other non-linear variables and kernels.
@@ -30,57 +30,60 @@
 
 registerMooseObject("catsApp", WeightedCoupledSumFunction);
 
-InputParameters WeightedCoupledSumFunction::validParams()
+InputParameters
+WeightedCoupledSumFunction::validParams()
 {
-    InputParameters params = Kernel::validParams();
-    params.addRequiredCoupledVar("coupled_list","List of names of the variables being coupled");
-    params.addRequiredParam< std::vector<Real> >("weights","List of weight factors in the sum");
-    return params;
+  InputParameters params = Kernel::validParams();
+  params.addRequiredCoupledVar("coupled_list", "List of names of the variables being coupled");
+  params.addRequiredParam<std::vector<Real>>("weights", "List of weight factors in the sum");
+  return params;
 }
 
 WeightedCoupledSumFunction::WeightedCoupledSumFunction(const InputParameters & parameters)
-: Kernel(parameters),
-_weight(getParam<std::vector<Real> >("weights"))
+  : Kernel(parameters), _weight(getParam<std::vector<Real>>("weights"))
 {
-	unsigned int n = coupledComponents("coupled_list");
-	_coupled_vars.resize(n);
-	_coupled.resize(n);
+  unsigned int n = coupledComponents("coupled_list");
+  _coupled_vars.resize(n);
+  _coupled.resize(n);
 
   if (_coupled.size() != _weight.size())
   {
-    moose::internal::mooseErrorRaw("User is required to provide list of variables of the same length as list of weights.");
+    moose::internal::mooseErrorRaw(
+        "User is required to provide list of variables of the same length as list of weights.");
   }
 
-	for (unsigned int i = 0; i<_coupled.size(); ++i)
-	{
-		_coupled_vars[i] = coupled("coupled_list",i);
-		_coupled[i] = &coupledValue("coupled_list",i);
-	}
-
+  for (unsigned int i = 0; i < _coupled.size(); ++i)
+  {
+    _coupled_vars[i] = coupled("coupled_list", i);
+    _coupled[i] = &coupledValue("coupled_list", i);
+  }
 }
 
-Real WeightedCoupledSumFunction::computeQpResidual()
+Real
+WeightedCoupledSumFunction::computeQpResidual()
 {
   Real sum = 0.0;
-  for (unsigned int i = 0; i<_coupled.size(); ++i)
-    sum += (*_coupled[i])[_qp]*_weight[i];
-  return -_test[_i][_qp]*sum;
+  for (unsigned int i = 0; i < _coupled.size(); ++i)
+    sum += (*_coupled[i])[_qp] * _weight[i];
+  return -_test[_i][_qp] * sum;
 }
 
-Real WeightedCoupledSumFunction::computeQpJacobian()
+Real
+WeightedCoupledSumFunction::computeQpJacobian()
 {
-	return 0.0;
+  return 0.0;
 }
 
-Real WeightedCoupledSumFunction::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+WeightedCoupledSumFunction::computeQpOffDiagJacobian(unsigned int jvar)
 {
-  for (unsigned int i = 0; i<_coupled.size(); ++i)
-	{
-		if (jvar == _coupled_vars[i])
-		{
-			return -_test[_i][_qp]*_phi[_j][_qp]*_weight[i];
-		}
-	}
+  for (unsigned int i = 0; i < _coupled.size(); ++i)
+  {
+    if (jvar == _coupled_vars[i])
+    {
+      return -_test[_i][_qp] * _phi[_j][_qp] * _weight[i];
+    }
+  }
 
-	return 0.0;
+  return 0.0;
 }

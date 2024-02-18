@@ -12,10 +12,9 @@
  *
  *                          where J = current density (C / (total volume) / time)
  *                                n = number of electrons transferred in reaction 'r'
- *                                As = specific surface area (total electrode surface area / total volume)
- *                                      [total volume would include void volume]
- *                                F = Faraday's constant (default = 96,485.3 C/mol)
- *                                r = reaction rate variable (moles / electrode surface area / time)
+ *                                As = specific surface area (total electrode surface area / total
+ * volume) [total volume would include void volume] F = Faraday's constant (default = 96,485.3
+ * C/mol) r = reaction rate variable (moles / electrode surface area / time)
  *
  *
  *  \author Austin Ladshaw
@@ -42,37 +41,36 @@
 class ButlerVolmerCurrentDensity : public Kernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    ButlerVolmerCurrentDensity(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  ButlerVolmerCurrentDensity(const InputParameters & parameters);
 
 protected:
-    /// Required residual function for standard kernels in MOOSE
-    /** This function returns a residual contribution for this object.*/
-    virtual Real computeQpResidual();
+  /// Required residual function for standard kernels in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual();
 
-    /// Required Jacobian function for standard kernels in MOOSE
-    /** This function returns a Jacobian contribution for this object. The Jacobian being
-     computed is the associated diagonal element in the overall Jacobian matrix for the
-     system and is used in preconditioning of the linear sub-problem. */
-    virtual Real computeQpJacobian();
+  /// Required Jacobian function for standard kernels in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+   computed is the associated diagonal element in the overall Jacobian matrix for the
+   system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian();
 
-    /// Not Required, but aids in the preconditioning step
-    /** This function returns the off diagonal Jacobian contribution for this object. By
-     returning a non-zero value we will hopefully improve the convergence rate for the
-     cross coupling of the variables. */
-    virtual Real computeQpOffDiagJacobian(unsigned int jvar);
+  /// Not Required, but aids in the preconditioning step
+  /** This function returns the off diagonal Jacobian contribution for this object. By
+   returning a non-zero value we will hopefully improve the convergence rate for the
+   cross coupling of the variables. */
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-    const VariableValue & _rate;      ///< Variable for reaction rate (mol/area/time)
-    const unsigned int _rate_var;     ///< Variable identification for reaction rate
-    const VariableValue & _specarea;      ///< Variable for specific area (m^-1) [area/volume]
-    const unsigned int _specarea_var;     ///< Variable identification for specific area
+  const VariableValue & _rate;      ///< Variable for reaction rate (mol/area/time)
+  const unsigned int _rate_var;     ///< Variable identification for reaction rate
+  const VariableValue & _specarea;  ///< Variable for specific area (m^-1) [area/volume]
+  const unsigned int _specarea_var; ///< Variable identification for specific area
 
-    Real _n;                                            ///< Number of electrons transferred (default = 1)
-    Real _faraday;                                      ///< Value of Faraday's Constant (default = 96485.3 C/mol)
+  Real _n;       ///< Number of electrons transferred (default = 1)
+  Real _faraday; ///< Value of Faraday's Constant (default = 96485.3 C/mol)
 
 private:
-
 };

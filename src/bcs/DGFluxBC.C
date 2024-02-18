@@ -12,8 +12,8 @@
  *			In true finite volumes or DG methods, there is no Dirichlet	boundary conditions,
  *			because the solutions are based on fluxes into and out of cells in a domain.
  *
- *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic equations:
- *                    Theory and Implementation, SIAM, Houston, TX, 2008.
+ *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic
+ *equations: Theory and Implementation, SIAM, Houston, TX, 2008.
  *
  *
  *  \author Austin Ladshaw
@@ -35,62 +35,63 @@
 
 registerMooseObject("catsApp", DGFluxBC);
 
-InputParameters DGFluxBC::validParams()
+InputParameters
+DGFluxBC::validParams()
 {
-    InputParameters params = IntegratedBC::validParams();
-    params.addParam<Real>("vx",0, "x-component of velocity vector");
-    params.addParam<Real>("vy",0,"y-component of velocity vector");
-    params.addParam<Real>("vz",0,"z-component of velocity vector");
-    params.addParam<Real>("u_input", 0.0, "input value of u");
-    return params;
+  InputParameters params = IntegratedBC::validParams();
+  params.addParam<Real>("vx", 0, "x-component of velocity vector");
+  params.addParam<Real>("vy", 0, "y-component of velocity vector");
+  params.addParam<Real>("vz", 0, "z-component of velocity vector");
+  params.addParam<Real>("u_input", 0.0, "input value of u");
+  return params;
 }
 
-DGFluxBC::DGFluxBC(const InputParameters & parameters) :
-IntegratedBC(parameters),
-_vx(getParam<Real>("vx")),
-_vy(getParam<Real>("vy")),
-_vz(getParam<Real>("vz")),
-_u_input(getParam<Real>("u_input"))
+DGFluxBC::DGFluxBC(const InputParameters & parameters)
+  : IntegratedBC(parameters),
+    _vx(getParam<Real>("vx")),
+    _vy(getParam<Real>("vy")),
+    _vz(getParam<Real>("vz")),
+    _u_input(getParam<Real>("u_input"))
 {
-	_velocity(0)=_vx;
-	_velocity(1)=_vy;
-	_velocity(2)=_vz;
+  _velocity(0) = _vx;
+  _velocity(1) = _vy;
+  _velocity(2) = _vz;
 }
 
 Real
 DGFluxBC::computeQpResidual()
 {
-	Real r = 0;
+  Real r = 0;
 
-	//Output
-	if ((_velocity)*_normals[_qp] > 0.0)
-	{
-		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u[_qp];
-	}
-	//Input
-	else
-	{
-		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u_input;
-	}
+  // Output
+  if ((_velocity)*_normals[_qp] > 0.0)
+  {
+    r += _test[_i][_qp] * (_velocity * _normals[_qp]) * _u[_qp];
+  }
+  // Input
+  else
+  {
+    r += _test[_i][_qp] * (_velocity * _normals[_qp]) * _u_input;
+  }
 
-	return r;
+  return r;
 }
 
 Real
 DGFluxBC::computeQpJacobian()
 {
-	Real r = 0;
+  Real r = 0;
 
-	//Output
-	if ((_velocity)*_normals[_qp] > 0.0)
-	{
-		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_phi[_j][_qp];
-	}
-	//Input
-	else
-	{
-		r += 0.0;
-	}
+  // Output
+  if ((_velocity)*_normals[_qp] > 0.0)
+  {
+    r += _test[_i][_qp] * (_velocity * _normals[_qp]) * _phi[_j][_qp];
+  }
+  // Input
+  else
+  {
+    r += 0.0;
+  }
 
-	return r;
+  return r;
 }

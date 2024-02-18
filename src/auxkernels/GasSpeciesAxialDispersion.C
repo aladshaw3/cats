@@ -23,33 +23,38 @@
 
 registerMooseObject("catsApp", GasSpeciesAxialDispersion);
 
-InputParameters GasSpeciesAxialDispersion::validParams()
+InputParameters
+GasSpeciesAxialDispersion::validParams()
 {
-    InputParameters params = GasPropertiesBase::validParams();
-    params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
-    params.addRequiredCoupledVar("macroscale_diameter","Name of the macrocale column diameter variable (m)");
-    return params;
+  InputParameters params = GasPropertiesBase::validParams();
+  params.addParam<unsigned int>(
+      "species_index", 0, "Index of the gas species we want the diffusion of");
+  params.addRequiredCoupledVar("macroscale_diameter",
+                               "Name of the macrocale column diameter variable (m)");
+  return params;
 }
 
-GasSpeciesAxialDispersion::GasSpeciesAxialDispersion(const InputParameters & parameters) :
-GasPropertiesBase(parameters),
-_index(getParam< unsigned int >("species_index")),
-_column_dia(coupledValue("macroscale_diameter"))
+GasSpeciesAxialDispersion::GasSpeciesAxialDispersion(const InputParameters & parameters)
+  : GasPropertiesBase(parameters),
+    _index(getParam<unsigned int>("species_index")),
+    _column_dia(coupledValue("macroscale_diameter"))
 {
-    if (_index > _gases.size())
-    {
-        moose::internal::mooseErrorRaw("Index out of bounds!");
-    }
+  if (_index > _gases.size())
+  {
+    moose::internal::mooseErrorRaw("Index out of bounds!");
+  }
 }
 
-Real GasSpeciesAxialDispersion::computeValue()
+Real
+GasSpeciesAxialDispersion::computeValue()
 {
-    prepareEgret();
-    calculateAllProperties();
+  prepareEgret();
+  calculateAllProperties();
 
-    Real Sc = ScNum(_egret_dat.kinematic_viscosity,_egret_dat.species_dat[_index].molecular_diffusion);
-    Real Re = ReNum(_egret_dat.velocity,_column_dia[_qp]*100.0,_egret_dat.kinematic_viscosity);
-    Real factor = (20.0/Re/Sc) + 0.5;
+  Real Sc =
+      ScNum(_egret_dat.kinematic_viscosity, _egret_dat.species_dat[_index].molecular_diffusion);
+  Real Re = ReNum(_egret_dat.velocity, _column_dia[_qp] * 100.0, _egret_dat.kinematic_viscosity);
+  Real factor = (20.0 / Re / Sc) + 0.5;
 
-    return _egret_dat.velocity*_egret_dat.char_length*factor/100.0/100.0;
+  return _egret_dat.velocity * _egret_dat.char_length * factor / 100.0 / 100.0;
 }

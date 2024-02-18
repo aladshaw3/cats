@@ -31,26 +31,24 @@
 class InitialButlerVolmerCurrentDensity : public InitialCondition
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for BC objects in MOOSE
-    InitialButlerVolmerCurrentDensity(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  InitialButlerVolmerCurrentDensity(const InputParameters & parameters);
 
 protected:
+  /// Required function override for IC objects in MOOSE
+  /** This function returns the value of the variable at point p in the mesh.*/
+  virtual Real value(const Point & p) override;
 
-    /// Required function override for IC objects in MOOSE
-    /** This function returns the value of the variable at point p in the mesh.*/
-    virtual Real value(const Point & p) override;
+  const VariableValue & _rate;      ///< Variable for reaction rate (mol/area/time)
+  const unsigned int _rate_var;     ///< Variable identification for reaction rate
+  const VariableValue & _specarea;  ///< Variable for specific area (m^-1) [area/volume]
+  const unsigned int _specarea_var; ///< Variable identification for specific area
 
-    const VariableValue & _rate;      ///< Variable for reaction rate (mol/area/time)
-    const unsigned int _rate_var;     ///< Variable identification for reaction rate
-    const VariableValue & _specarea;      ///< Variable for specific area (m^-1) [area/volume]
-    const unsigned int _specarea_var;     ///< Variable identification for specific area
-
-    Real _n;                                            ///< Number of electrons transferred (default = 1)
-    Real _faraday;                                      ///< Value of Faraday's Constant (default = 96485.3 C/mol)
+  Real _n;       ///< Number of electrons transferred (default = 1)
+  Real _faraday; ///< Value of Faraday's Constant (default = 96485.3 C/mol)
 
 private:
-
 };

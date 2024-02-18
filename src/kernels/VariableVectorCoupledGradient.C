@@ -28,8 +28,8 @@
  *            e.g.,   Reaction:                         Res = -vel_x
  *                    VariableVectorCoupledGradient:    Res = Var_Coeff * grad(P)_x
  *
- *  \note The vectors are allowed to just be unit vectors in a specific direction. This is particularly
- *        useful when enforcing the Divergence of velocity to be zero in a piecewise manner.
+ *  \note The vectors are allowed to just be unit vectors in a specific direction. This is
+ *particularly useful when enforcing the Divergence of velocity to be zero in a piecewise manner.
  *
  *  \author Austin Ladshaw
  *	\date 10/29/2021
@@ -47,64 +47,67 @@
 
 registerMooseObject("catsApp", VariableVectorCoupledGradient);
 
-InputParameters VariableVectorCoupledGradient::validParams()
+InputParameters
+VariableVectorCoupledGradient::validParams()
 {
-    InputParameters params = VectorCoupledGradient::validParams();
-    params.addCoupledVar("ux",0,"Variable coefficent in x-direction");
-    params.addCoupledVar("uy",0,"Variable coefficent in y-direction");
-    params.addCoupledVar("uz",0,"Variable coefficent in z-direction");
-    return params;
+  InputParameters params = VectorCoupledGradient::validParams();
+  params.addCoupledVar("ux", 0, "Variable coefficent in x-direction");
+  params.addCoupledVar("uy", 0, "Variable coefficent in y-direction");
+  params.addCoupledVar("uz", 0, "Variable coefficent in z-direction");
+  return params;
 }
 
-VariableVectorCoupledGradient::VariableVectorCoupledGradient(const InputParameters & parameters) :
-VectorCoupledGradient(parameters),
-_ux(coupledValue("ux")),
-_uy(coupledValue("uy")),
-_uz(coupledValue("uz")),
-_ux_var(coupled("ux")),
-_uy_var(coupled("uy")),
-_uz_var(coupled("uz"))
+VariableVectorCoupledGradient::VariableVectorCoupledGradient(const InputParameters & parameters)
+  : VectorCoupledGradient(parameters),
+    _ux(coupledValue("ux")),
+    _uy(coupledValue("uy")),
+    _uz(coupledValue("uz")),
+    _ux_var(coupled("ux")),
+    _uy_var(coupled("uy")),
+    _uz_var(coupled("uz"))
 {
-
 }
 
-Real VariableVectorCoupledGradient::computeQpResidual()
+Real
+VariableVectorCoupledGradient::computeQpResidual()
 {
-    _vec(0)=_ux[_qp];
-    _vec(1)=_uy[_qp];
-    _vec(2)=_uz[_qp];
+  _vec(0) = _ux[_qp];
+  _vec(1) = _uy[_qp];
+  _vec(2) = _uz[_qp];
 
-    return _test[_i][_qp]*(_vec*_coupled_grad[_qp]);
+  return _test[_i][_qp] * (_vec * _coupled_grad[_qp]);
 }
 
-Real VariableVectorCoupledGradient::computeQpJacobian()
+Real
+VariableVectorCoupledGradient::computeQpJacobian()
 {
-    return 0.0;
+  return 0.0;
 }
 
-Real VariableVectorCoupledGradient::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+VariableVectorCoupledGradient::computeQpOffDiagJacobian(unsigned int jvar)
 {
-  _vec(0)=_ux[_qp];
-  _vec(1)=_uy[_qp];
-  _vec(2)=_uz[_qp];
+  _vec(0) = _ux[_qp];
+  _vec(1) = _uy[_qp];
+  _vec(2) = _uz[_qp];
   if (jvar == _coupled_var)
   {
-      return _test[_i][_qp]*(_vec*_grad_phi[_j][_qp]);
+    return _test[_i][_qp] * (_vec * _grad_phi[_j][_qp]);
   }
 
   if (jvar == _ux_var)
-	{
-  		return _test[_i][_qp]*(_phi[_j][_qp]*_coupled_grad[_qp](0));
-	}
+  {
+    return _test[_i][_qp] * (_phi[_j][_qp] * _coupled_grad[_qp](0));
+  }
 
-	if (jvar == _uy_var)
-	{
-		  return _test[_i][_qp]*(_phi[_j][_qp]*_coupled_grad[_qp](1));
-	}
+  if (jvar == _uy_var)
+  {
+    return _test[_i][_qp] * (_phi[_j][_qp] * _coupled_grad[_qp](1));
+  }
 
-	if (jvar == _uz_var)
-	{
-		  return _test[_i][_qp]*(_phi[_j][_qp]*_coupled_grad[_qp](2));
-	}
+  if (jvar == _uz_var)
+  {
+    return _test[_i][_qp] * (_phi[_j][_qp] * _coupled_grad[_qp](2));
+  }
   return 0.0;
 }

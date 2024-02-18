@@ -33,19 +33,18 @@
 class SimpleGasKnudsenDiffusivity : public SimpleGasPropertiesBase
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    SimpleGasKnudsenDiffusivity(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  SimpleGasKnudsenDiffusivity(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    std::string _output_length_unit;                ///< Units of the length term in transfer coef (m, cm, mm)
-    std::string _output_time_unit;                  ///< Units of the time term in transfer coef (hr, min, s)
-    Real _molar_weight;                             ///< Molecular weight of gas-species of interest (g/mol)
-
+  std::string _output_length_unit; ///< Units of the length term in transfer coef (m, cm, mm)
+  std::string _output_time_unit;   ///< Units of the time term in transfer coef (hr, min, s)
+  Real _molar_weight;              ///< Molecular weight of gas-species of interest (g/mol)
 };

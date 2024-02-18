@@ -1,12 +1,11 @@
 /*!
  *  \file MaterialBalance.h
  *  \brief Kernel for creating a material balance kernel
- *  \details This file creates a standard MOOSE kernel for the coupling a set of non-linear variables to
- *            resolve a material balance equation. This kernel is usually used with sets of chemical reactions
- *            to close the system of equations for the chemistry in a given system.
- *            The residual is as follows...
- *                      Res = CT - sum(b_i, C_i)
- *                      where CT = total concentration, b_i is a weight parameter, and C_i is a component of CT
+ *  \details This file creates a standard MOOSE kernel for the coupling a set of non-linear
+ * variables to resolve a material balance equation. This kernel is usually used with sets of
+ * chemical reactions to close the system of equations for the chemistry in a given system. The
+ * residual is as follows... Res = CT - sum(b_i, C_i) where CT = total concentration, b_i is a
+ * weight parameter, and C_i is a component of CT
  *
  *
  *  \author Austin Ladshaw
@@ -25,88 +24,93 @@
 
 registerMooseObject("catsApp", MaterialBalance);
 
-InputParameters MaterialBalance::validParams()
+InputParameters
+MaterialBalance::validParams()
 {
-    InputParameters params = Kernel::validParams();
-    params.addRequiredParam< std::vector<Real> >("weights","List of weights for variables in the balance");
-    params.addRequiredCoupledVar("coupled_list","List of names of the variables being coupled");
-    params.addRequiredCoupledVar("total_material","Name of variable for total material");
-    params.addRequiredCoupledVar("this_variable","Name of this variable the kernel acts on");
-    return params;
+  InputParameters params = Kernel::validParams();
+  params.addRequiredParam<std::vector<Real>>("weights",
+                                             "List of weights for variables in the balance");
+  params.addRequiredCoupledVar("coupled_list", "List of names of the variables being coupled");
+  params.addRequiredCoupledVar("total_material", "Name of variable for total material");
+  params.addRequiredCoupledVar("this_variable", "Name of this variable the kernel acts on");
+  return params;
 }
 
 MaterialBalance::MaterialBalance(const InputParameters & parameters)
-: Kernel(parameters),
-_weights(getParam<std::vector<Real> >("weights")),
-_coupled_total(coupledValue("total_material")),
-_coupled_var_total(coupled("total_material")),
-_coupled_main(coupledValue("this_variable")),
-_main_var(coupled("this_variable"))
+  : Kernel(parameters),
+    _weights(getParam<std::vector<Real>>("weights")),
+    _coupled_total(coupledValue("total_material")),
+    _coupled_var_total(coupled("total_material")),
+    _coupled_main(coupledValue("this_variable")),
+    _main_var(coupled("this_variable"))
 {
-    unsigned int n = coupledComponents("coupled_list");
-    _coupled_vars.resize(n);
-    _coupled.resize(n);
-    inList = false;
-    index = -1;
+  unsigned int n = coupledComponents("coupled_list");
+  _coupled_vars.resize(n);
+  _coupled.resize(n);
+  inList = false;
+  index = -1;
 
-    if (_coupled.size() != _weights.size())
+  if (_coupled.size() != _weights.size())
+  {
+    moose::internal::mooseErrorRaw(
+        "User is required to provide list of variables of the same length as list of weights.");
+  }
+
+  for (unsigned int i = 0; i < _coupled.size(); ++i)
+  {
+    _coupled_vars[i] = coupled("coupled_list", i);
+    _coupled[i] = &coupledValue("coupled_list", i);
+    if (_coupled_vars[i] == _main_var)
+      inList = true;
+  }
+
+  if (inList == true)
+  {
+    for (unsigned int i = 0; i < _coupled.size(); ++i)
     {
-      moose::internal::mooseErrorRaw("User is required to provide list of variables of the same length as list of weights.");
+      if (_coupled_vars[i] == _main_var)
+        index = i;
     }
-
-    for (unsigned int i = 0; i<_coupled.size(); ++i)
-    {
-        _coupled_vars[i] = coupled("coupled_list",i);
-        _coupled[i] = &coupledValue("coupled_list",i);
-        if (_coupled_vars[i] == _main_var)
-            inList = true;
-    }
-
-    if (inList == true)
-    {
-        for (unsigned int i = 0; i<_coupled.size(); ++i)
-        {
-            if (_coupled_vars[i] == _main_var)
-                index = i;
-        }
-    }
-
+  }
 }
 
-Real MaterialBalance::computeQpResidual()
+Real
+MaterialBalance::computeQpResidual()
 {
-    Real sum = 0.0;
-    for (unsigned int i = 0; i<_coupled.size(); ++i)
-    {
-        sum += _weights[i] * ((*_coupled[i])[_qp]);
-    }
-    return (_coupled_total[_qp] - sum) * _test[_i][_qp];
+  Real sum = 0.0;
+  for (unsigned int i = 0; i < _coupled.size(); ++i)
+  {
+    sum += _weights[i] * ((*_coupled[i])[_qp]);
+  }
+  return (_coupled_total[_qp] - sum) * _test[_i][_qp];
 }
 
-Real MaterialBalance::computeQpJacobian()
+Real
+MaterialBalance::computeQpJacobian()
 {
-    if (inList == true)
-    {
-        return -_phi[_j][_qp] * _weights[index] * _test[_i][_qp];
-    }
-    else
-    {
-        return _phi[_j][_qp] * _test[_i][_qp];
-    }
+  if (inList == true)
+  {
+    return -_phi[_j][_qp] * _weights[index] * _test[_i][_qp];
+  }
+  else
+  {
+    return _phi[_j][_qp] * _test[_i][_qp];
+  }
 }
 
-Real MaterialBalance::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+MaterialBalance::computeQpOffDiagJacobian(unsigned int jvar)
 {
-    if (jvar == _coupled_var_total && jvar != _main_var)
+  if (jvar == _coupled_var_total && jvar != _main_var)
+  {
+    return _phi[_j][_qp] * _test[_i][_qp];
+  }
+  for (unsigned int i = 0; i < _coupled.size(); ++i)
+  {
+    if (jvar == _coupled_vars[i] && jvar != _main_var)
     {
-        return _phi[_j][_qp] * _test[_i][_qp];
+      return -_phi[_j][_qp] * _weights[index] * _test[_i][_qp];
     }
-    for (unsigned int i = 0; i<_coupled.size(); ++i)
-    {
-        if (jvar == _coupled_vars[i] && jvar != _main_var)
-        {
-            return -_phi[_j][_qp] * _weights[index] * _test[_i][_qp];
-        }
-    }
-    return 0.0;
+  }
+  return 0.0;
 }

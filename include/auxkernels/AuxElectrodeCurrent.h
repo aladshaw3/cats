@@ -37,22 +37,20 @@
 class AuxElectrodeCurrent : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    AuxElectrodeCurrent(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  AuxElectrodeCurrent(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-
-    RealVectorValue _norm_vec;	    ///< Vector for direction of gradient
-    unsigned int _dir;				      ///< Direction of current this kernel acts on (0=x, 1=y, 2=z)
-    const VariableGradient & _e_potential_grad;       ///< Coupled eletric potential variable (V or J/C)
-    const VariableValue & _sol_frac;			  ///< Solids fraction variable
-    const VariableValue & _conductivity;			  ///< Conductivity variable (in C/C/length/time)
-
+  RealVectorValue _norm_vec; ///< Vector for direction of gradient
+  unsigned int _dir;         ///< Direction of current this kernel acts on (0=x, 1=y, 2=z)
+  const VariableGradient & _e_potential_grad; ///< Coupled eletric potential variable (V or J/C)
+  const VariableValue & _sol_frac;            ///< Solids fraction variable
+  const VariableValue & _conductivity;        ///< Conductivity variable (in C/C/length/time)
 };

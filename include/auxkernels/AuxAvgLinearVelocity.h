@@ -1,7 +1,7 @@
 /*!
  *  \file AuxAvgLinearVelocity.h
- *    \brief Auxillary kernel to calculate the average linear velocity in a column based on flow rate and porosity
- *    \details This file is responsible for calculating the value of an auxvariable
+ *    \brief Auxillary kernel to calculate the average linear velocity in a column based on flow
+ * rate and porosity \details This file is responsible for calculating the value of an auxvariable
  *              according to the standard expression for superficial velocity, then
  *              update that estimate based on a porosity of the column. The end
  *              result will be an average linear velocity within that column.
@@ -33,19 +33,18 @@
 class AuxAvgLinearVelocity : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    AuxAvgLinearVelocity(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  AuxAvgLinearVelocity(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    const VariableValue & _flow_rate;                ///< Variable for the flow rate (m^3/s)
-    const VariableValue & _xsec_area;                ///< Variable for the cross-sectional area (m^2)
-    const VariableValue & _porosity;                ///< Variable for the porosity
-
+  const VariableValue & _flow_rate; ///< Variable for the flow rate (m^3/s)
+  const VariableValue & _xsec_area; ///< Variable for the cross-sectional area (m^2)
+  const VariableValue & _porosity;  ///< Variable for the porosity
 };

@@ -30,24 +30,23 @@
 class LinearChangeInTime : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    LinearChangeInTime(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  LinearChangeInTime(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    /** This is the function that is called by the MOOSE framework when a calculation of the total
-        system pressure is needed. You are required to override this function for any inherited
-        AuxKernel. */
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  /** This is the function that is called by the MOOSE framework when a calculation of the total
+      system pressure is needed. You are required to override this function for any inherited
+      AuxKernel. */
+  virtual Real computeValue() override;
 
 private:
-    Real _start_time;           ///< Start time for the linear change
-    Real _end_time;             ///< End time for the linear change
-    Real _end_value;            ///< Final value of the auxvariable after linearly changing
-    Real _start_value;          ///< Start value of the auxvariable after linearly changing
-    bool _start_set;            ///< Boolean to denote when value starts
-
+  Real _start_time;  ///< Start time for the linear change
+  Real _end_time;    ///< End time for the linear change
+  Real _end_value;   ///< Final value of the auxvariable after linearly changing
+  Real _start_value; ///< Start value of the auxvariable after linearly changing
+  bool _start_set;   ///< Boolean to denote when value starts
 };

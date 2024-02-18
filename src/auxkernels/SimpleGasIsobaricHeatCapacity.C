@@ -30,30 +30,33 @@
 
 registerMooseObject("catsApp", SimpleGasIsobaricHeatCapacity);
 
-InputParameters SimpleGasIsobaricHeatCapacity::validParams()
+InputParameters
+SimpleGasIsobaricHeatCapacity::validParams()
 {
-    InputParameters params = SimpleGasPropertiesBase::validParams();
-    params.addParam< std::string >("output_energy_unit","kJ","Energy units for gas heat capacity on output");
-    params.addParam< std::string >("output_mass_unit","kg","Mass units for gas heat capacity on output");
+  InputParameters params = SimpleGasPropertiesBase::validParams();
+  params.addParam<std::string>(
+      "output_energy_unit", "kJ", "Energy units for gas heat capacity on output");
+  params.addParam<std::string>(
+      "output_mass_unit", "kg", "Mass units for gas heat capacity on output");
 
-    return params;
+  return params;
 }
 
-SimpleGasIsobaricHeatCapacity::SimpleGasIsobaricHeatCapacity(const InputParameters & parameters) :
-SimpleGasPropertiesBase(parameters),
-_output_energy_unit(getParam<std::string >("output_energy_unit")),
-_output_mass_unit(getParam<std::string >("output_mass_unit"))
+SimpleGasIsobaricHeatCapacity::SimpleGasIsobaricHeatCapacity(const InputParameters & parameters)
+  : SimpleGasPropertiesBase(parameters),
+    _output_energy_unit(getParam<std::string>("output_energy_unit")),
+    _output_mass_unit(getParam<std::string>("output_mass_unit"))
 {
-
 }
 
-Real SimpleGasIsobaricHeatCapacity::computeValue()
+Real
+SimpleGasIsobaricHeatCapacity::computeValue()
 {
-    // cp [kJ/kg/K]
-    Real Kc = 2.68588E-08;
-    Real cmax = 0.3;
-    Real cp = 1 + cmax*(Kc*pow(_temperature[_qp],2.5))/(1+Kc*pow(_temperature[_qp],2.5));
-    cp = SimpleGasPropertiesBase::energy_conversion(cp, "kJ", _output_energy_unit);
-    cp = 1/SimpleGasPropertiesBase::mass_conversion(1/cp, "kg", _output_mass_unit);
-    return cp;
+  // cp [kJ/kg/K]
+  Real Kc = 2.68588E-08;
+  Real cmax = 0.3;
+  Real cp = 1 + cmax * (Kc * pow(_temperature[_qp], 2.5)) / (1 + Kc * pow(_temperature[_qp], 2.5));
+  cp = SimpleGasPropertiesBase::energy_conversion(cp, "kJ", _output_energy_unit);
+  cp = 1 / SimpleGasPropertiesBase::mass_conversion(1 / cp, "kg", _output_mass_unit);
+  return cp;
 }

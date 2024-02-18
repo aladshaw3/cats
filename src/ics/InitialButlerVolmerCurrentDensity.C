@@ -25,30 +25,39 @@
 
 registerMooseObject("catsApp", InitialButlerVolmerCurrentDensity);
 
-InputParameters InitialButlerVolmerCurrentDensity::validParams()
+InputParameters
+InitialButlerVolmerCurrentDensity::validParams()
 {
-    InputParameters params = InitialCondition::validParams();
-    params.addRequiredCoupledVar("rate_var","Variable for reaction rate that exchanges electrons (moles / electrode area / time)");
-    params.addCoupledVar("specific_area",1.0,"Specific area for transfer [surface area of electrode / total volume] (m^-1)");
+  InputParameters params = InitialCondition::validParams();
+  params.addRequiredCoupledVar(
+      "rate_var",
+      "Variable for reaction rate that exchanges electrons (moles / electrode area / time)");
+  params.addCoupledVar(
+      "specific_area",
+      1.0,
+      "Specific area for transfer [surface area of electrode / total volume] (m^-1)");
 
-    params.addParam<Real>("faraday_const",96485.3, "Value of Faraday's constant (default = 96485.3 C/mol)");
-    params.addParam<Real>("number_of_electrons",1.0,"Number of electrons transferred the redox reaction");
-    return params;
+  params.addParam<Real>(
+      "faraday_const", 96485.3, "Value of Faraday's constant (default = 96485.3 C/mol)");
+  params.addParam<Real>(
+      "number_of_electrons", 1.0, "Number of electrons transferred the redox reaction");
+  return params;
 }
 
-InitialButlerVolmerCurrentDensity::InitialButlerVolmerCurrentDensity(const InputParameters & parameters)
-: InitialCondition(parameters),
-_rate(coupledValue("rate_var")),
-_rate_var(coupled("rate_var")),
-_specarea(coupledValue("specific_area")),
-_specarea_var(coupled("specific_area")),
-_n(getParam<Real>("number_of_electrons")),
-_faraday(getParam<Real>("faraday_const"))
+InitialButlerVolmerCurrentDensity::InitialButlerVolmerCurrentDensity(
+    const InputParameters & parameters)
+  : InitialCondition(parameters),
+    _rate(coupledValue("rate_var")),
+    _rate_var(coupled("rate_var")),
+    _specarea(coupledValue("specific_area")),
+    _specarea_var(coupled("specific_area")),
+    _n(getParam<Real>("number_of_electrons")),
+    _faraday(getParam<Real>("faraday_const"))
 {
-
 }
 
-Real InitialButlerVolmerCurrentDensity::value(const Point & /*p*/)
+Real
+InitialButlerVolmerCurrentDensity::value(const Point & /*p*/)
 {
-    return _n * _specarea[_qp] * _faraday * (-_rate[_qp]);
+  return _n * _specarea[_qp] * _faraday * (-_rate[_qp]);
 }

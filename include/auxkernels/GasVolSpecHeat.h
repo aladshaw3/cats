@@ -1,7 +1,8 @@
 /*!
  *  \file GasVolSpecHeat.h
  *    \brief AuxKernel kernel to compute the gas phase volumetric specific heat (Cv)
- *    \details This file is responsible for calculating the gas volumetric specific heat (Cv) in J/kg/K
+ *    \details This file is responsible for calculating the gas volumetric specific heat (Cv) in
+ * J/kg/K
  *
  *
  *  \author Austin Ladshaw
@@ -30,18 +31,17 @@
 class GasVolSpecHeat : public GasPropertiesBase
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    GasVolSpecHeat(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  GasVolSpecHeat(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    Real _Cp_Cv_ratio;            ///< Value for the ratio of Cp to Cv for the gas (assumed = 1.4 if not given)
+  Real _Cp_Cv_ratio; ///< Value for the ratio of Cp to Cv for the gas (assumed = 1.4 if not given)
 
 private:
-
 };

@@ -1,9 +1,9 @@
 /*!
  *  \file SchloeglElectrokineticCoefficient.h
- *    \brief Auxillary kernel for a Schloegl Electrokinetic coefficient for implementation of Darcy's Law in membranes
- *    \details This file is responsible for calculating the value of an auxvariable
- *              according to the Schloegl Electrokinetic relationship for Darcy flow in membranes. This calculated
- *              coefficient is to be used in the calculation of velocity in/across a membrane
+ *    \brief Auxillary kernel for a Schloegl Electrokinetic coefficient for implementation of
+ *Darcy's Law in membranes \details This file is responsible for calculating the value of an
+ *auxvariable according to the Schloegl Electrokinetic relationship for Darcy flow in membranes.
+ *This calculated coefficient is to be used in the calculation of velocity in/across a membrane
  *              assuming Darcy flow. This is where all velocities are resolved via only
  *              pressure gradients (and electric potential gradients) in the domain.
  *
@@ -49,54 +49,66 @@
         Pressure Units have an equivalence with Joules and Volume
           (i.e., 1 Pa = 1 J/m^3)
 
-        You can use any units you want and use this _conv_factor to make up the difference if needed.
-            For example, what if you want velocity in cm/min, have phi in Voltz, viscosity in kPa*min,
+        You can use any units you want and use this _conv_factor to make up the difference if
+needed. For example, what if you want velocity in cm/min, have phi in Voltz, viscosity in kPa*min,
                   ion_conc in moles/cm^3, permeability in cm^2, and your mesh dimensions in cm.
             Using this kernel as is will result in the following:
 
             (cm^2/(kPa*min)) * (C/mol) * (mol/cm^3) * (V/cm) == units of velocity
 
-            1 V = 1 J/C  ==>  (cm^2/(kPa*min)) * (1/cm^3) * (J/cm) == now, units of velocity are very strange...
+            1 V = 1 J/C  ==>  (cm^2/(kPa*min)) * (1/cm^3) * (J/cm) == now, units of velocity are
+very strange...
 
             Rearrage: (cm^2/(kPa*min)) * (1/cm) * (J/cm^3)  ==>  J/cm^3 is a unit of pressure
 
-            1 kPa = 1000 J/m^3 * 1 m^3/100^3 cm^3 == 0.001 J/cm^3   ==> Thus, _conv_factor = 1000 kPa*cm^3/J
+            1 kPa = 1000 J/m^3 * 1 m^3/100^3 cm^3 == 0.001 J/cm^3   ==> Thus, _conv_factor = 1000
+kPa*cm^3/J
 
             (cm^2/(kPa*min)) * (1/cm) * (J/cm^3) * (1000 kPa*cm^3/J) ==> cm/min
 
-        Thus, if you are following this basic unit convention for all variables, then the unit conversion
-            term should always have units of (Pressure * Volume / Energy)
-            where the Pressure should be same units as viscosity, the Volume should use same volume units
-            in ion_conc, and the Energy unit should use same energy basis in the potential variable (phi).
+        Thus, if you are following this basic unit convention for all variables, then the unit
+conversion term should always have units of (Pressure * Volume / Energy) where the Pressure should
+be same units as viscosity, the Volume should use same volume units in ion_conc, and the Energy unit
+should use same energy basis in the potential variable (phi).
 **/
 
 #include "SchloeglElectrokineticCoefficient.h"
 
 registerMooseObject("catsApp", SchloeglElectrokineticCoefficient);
 
-InputParameters SchloeglElectrokineticCoefficient::validParams()
+InputParameters
+SchloeglElectrokineticCoefficient::validParams()
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addCoupledVar("electrokinetic_permeability",1.13E-19,"Name of the electrokinetic permeability variable (default = 1.13E-19 m^2)");
-    params.addCoupledVar("viscosity",0.001,"Name of the viscosity variable (default = 10^-3 Pa*s)");
-    params.addRequiredCoupledVar("ion_conc","Name of the ion concentration variable in the membrane (units: Moles/Length^3)");
-    params.addParam<Real>("faraday_const",96485.3, "Value of Faraday's constant (default = 96485.3 C/mol)");
-    params.addParam<Real>("conversion_factor",1, "Value of the conversion factor for dealing with odd units (default = 1, i.e., no conversion)");
-    return params;
+  InputParameters params = AuxKernel::validParams();
+  params.addCoupledVar("electrokinetic_permeability",
+                       1.13E-19,
+                       "Name of the electrokinetic permeability variable (default = 1.13E-19 m^2)");
+  params.addCoupledVar("viscosity", 0.001, "Name of the viscosity variable (default = 10^-3 Pa*s)");
+  params.addRequiredCoupledVar(
+      "ion_conc", "Name of the ion concentration variable in the membrane (units: Moles/Length^3)");
+  params.addParam<Real>(
+      "faraday_const", 96485.3, "Value of Faraday's constant (default = 96485.3 C/mol)");
+  params.addParam<Real>("conversion_factor",
+                        1,
+                        "Value of the conversion factor for dealing with odd units (default = 1, "
+                        "i.e., no conversion)");
+  return params;
 }
 
-SchloeglElectrokineticCoefficient::SchloeglElectrokineticCoefficient(const InputParameters & parameters) :
-AuxKernel(parameters),
-_viscosity(coupledValue("viscosity")),
-_eleckin_perm(coupledValue("electrokinetic_permeability")),
-_ion_conc(coupledValue("ion_conc")),
-_faraday(getParam<Real>("faraday_const")),
-_conv_factor(getParam<Real>("conversion_factor"))
+SchloeglElectrokineticCoefficient::SchloeglElectrokineticCoefficient(
+    const InputParameters & parameters)
+  : AuxKernel(parameters),
+    _viscosity(coupledValue("viscosity")),
+    _eleckin_perm(coupledValue("electrokinetic_permeability")),
+    _ion_conc(coupledValue("ion_conc")),
+    _faraday(getParam<Real>("faraday_const")),
+    _conv_factor(getParam<Real>("conversion_factor"))
 {
-
 }
 
-Real SchloeglElectrokineticCoefficient::computeValue()
+Real
+SchloeglElectrokineticCoefficient::computeValue()
 {
-    return (_eleckin_perm[_qp]/(_viscosity[_qp]+1e-15))*_faraday*_ion_conc[_qp]*_conv_factor;
+  return (_eleckin_perm[_qp] / (_viscosity[_qp] + 1e-15)) * _faraday * _ion_conc[_qp] *
+         _conv_factor;
 }

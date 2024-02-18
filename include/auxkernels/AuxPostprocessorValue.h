@@ -44,18 +44,17 @@
 class AuxPostprocessorValue : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    AuxPostprocessorValue(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  AuxPostprocessorValue(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    const PostprocessorValue & _post_val;     ///< Postprocessor value
+  const PostprocessorValue & _post_val; ///< Postprocessor value
 
 private:
-
 };

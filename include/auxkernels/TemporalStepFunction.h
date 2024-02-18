@@ -31,25 +31,24 @@
 class TemporalStepFunction : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    TemporalStepFunction(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  TemporalStepFunction(const InputParameters & parameters);
 
 protected:
-    /// Function  to update the aux value based on given time
-    Real newValue(Real time);
-    
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Function  to update the aux value based on given time
+  Real newValue(Real time);
+
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    Real _start_value;                      ///< Start value of the auxvariable
-    std::vector<Real> _input_vals;         ///< Values for aux that update at corresponding times
-    std::vector<Real> _input_times;        ///< Values for determining when to change aux
-    std::vector<Real> _time_spans;         ///< Amount of time it take to change to new input value
-    std::vector<Real> _slopes;             ///< Slopes between each subsequent aux
-    int index;                             ///< Index variable to keep track of location in vectors
-
+  Real _start_value;              ///< Start value of the auxvariable
+  std::vector<Real> _input_vals;  ///< Values for aux that update at corresponding times
+  std::vector<Real> _input_times; ///< Values for determining when to change aux
+  std::vector<Real> _time_spans;  ///< Amount of time it take to change to new input value
+  std::vector<Real> _slopes;      ///< Slopes between each subsequent aux
+  int index;                      ///< Index variable to keep track of location in vectors
 };

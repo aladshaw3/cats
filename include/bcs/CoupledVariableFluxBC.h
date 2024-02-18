@@ -27,42 +27,41 @@
 
 /// CoupledVariableFluxBC class object inherits from IntegratedBC object
 /** This class object inherits from the IntegratedBC object.
-	All public and protected members of this class are required function overrides.*/
+  All public and protected members of this class are required function overrides.*/
 class CoupledVariableFluxBC : public IntegratedBC
 {
 public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
 
-	/// Required constructor for BC objects in MOOSE
-	CoupledVariableFluxBC(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  CoupledVariableFluxBC(const InputParameters & parameters);
 
 protected:
-	/// Required function override for BC objects in MOOSE
-	/** This function returns a residual contribution for this object.*/
-	virtual Real computeQpResidual() override;
-	/// Required function override for BC objects in MOOSE
-	/** This function returns a Jacobian contribution for this object. The Jacobian being
-		computed is the associated diagonal element in the overall Jacobian matrix for the
-		system and is used in preconditioning of the linear sub-problem. */
-	virtual Real computeQpJacobian() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+    computed is the associated diagonal element in the overall Jacobian matrix for the
+    system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian() override;
   /// Not Required, but aids in the preconditioning step
-	/** This function returns the off diagonal Jacobian contribution for this object. By
-		returning a non-zero value we will hopefully improve the convergence rate for the
-		cross coupling of the variables. */
+  /** This function returns the off diagonal Jacobian contribution for this object. By
+    returning a non-zero value we will hopefully improve the convergence rate for the
+    cross coupling of the variables. */
   virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-	/// Flux vector in the system or at the outlet boundary
-	RealVectorValue _flux;
+  /// Flux vector in the system or at the outlet boundary
+  RealVectorValue _flux;
 
-  const VariableValue & _fx;			///< Flux in the x-direction
-	const VariableValue & _fy;			///< Flux in the y-direction
-	const VariableValue & _fz;			///< Flux in the z-direction
+  const VariableValue & _fx; ///< Flux in the x-direction
+  const VariableValue & _fy; ///< Flux in the y-direction
+  const VariableValue & _fz; ///< Flux in the z-direction
 
-	const unsigned int _fx_var;					///< Variable identification for fx
-	const unsigned int _fy_var;					///< Variable identification for fy
-	const unsigned int _fz_var;					///< Variable identification for fz
+  const unsigned int _fx_var; ///< Variable identification for fx
+  const unsigned int _fy_var; ///< Variable identification for fy
+  const unsigned int _fz_var; ///< Variable identification for fz
 
 private:
-
 };

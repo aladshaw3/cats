@@ -28,64 +28,75 @@
 
 registerMooseObject("catsApp", ElectrodeCurrentFromPotentialGradient);
 
-InputParameters ElectrodeCurrentFromPotentialGradient::validParams()
+InputParameters
+ElectrodeCurrentFromPotentialGradient::validParams()
 {
-    InputParameters params = Kernel::validParams();
-    params.addRequiredParam<unsigned int>("direction","Directional index for current that this kernel acts on (0 = x, 1 = y, 2 = z)");
+  InputParameters params = Kernel::validParams();
+  params.addRequiredParam<unsigned int>(
+      "direction", "Directional index for current that this kernel acts on (0 = x, 1 = y, 2 = z)");
 
-    params.addRequiredCoupledVar("electric_potential","Variable for electric potential (V or J/C)");
-    params.addCoupledVar("solid_frac",1,"Variable for volume fraction or porosity (default = 1)");
-    params.addCoupledVar("conductivity",50,"Variable for conductivity of the electrode in units of C/V/length/time or similar (default = 50 C/V/m/s)");
+  params.addRequiredCoupledVar("electric_potential", "Variable for electric potential (V or J/C)");
+  params.addCoupledVar("solid_frac", 1, "Variable for volume fraction or porosity (default = 1)");
+  params.addCoupledVar("conductivity",
+                       50,
+                       "Variable for conductivity of the electrode in units of C/V/length/time or "
+                       "similar (default = 50 C/V/m/s)");
 
-    return params;
+  return params;
 }
 
-ElectrodeCurrentFromPotentialGradient::ElectrodeCurrentFromPotentialGradient(const InputParameters & parameters) :
-Kernel(parameters),
-_dir(getParam<unsigned int>("direction")),
+ElectrodeCurrentFromPotentialGradient::ElectrodeCurrentFromPotentialGradient(
+    const InputParameters & parameters)
+  : Kernel(parameters),
+    _dir(getParam<unsigned int>("direction")),
 
-_e_potential_grad(coupledGradient("electric_potential")),
-_e_potential_var(coupled("electric_potential")),
-_sol_frac(coupledValue("solid_frac")),
-_sol_frac_var(coupled("solid_frac")),
-_conductivity(coupledValue("conductivity")),
-_conductivity_var(coupled("conductivity"))
+    _e_potential_grad(coupledGradient("electric_potential")),
+    _e_potential_var(coupled("electric_potential")),
+    _sol_frac(coupledValue("solid_frac")),
+    _sol_frac_var(coupled("solid_frac")),
+    _conductivity(coupledValue("conductivity")),
+    _conductivity_var(coupled("conductivity"))
 {
-    if (_dir > 2 || _dir < 0)
-    {
-        moose::internal::mooseErrorRaw("Invalid current direction index!");
-    }
+  if (_dir > 2 || _dir < 0)
+  {
+    moose::internal::mooseErrorRaw("Invalid current direction index!");
+  }
 
-    _norm_vec(0) = 0.0;
-    _norm_vec(1) = 0.0;
-    _norm_vec(2) = 0.0;
-    _norm_vec(_dir) = 1.0;
+  _norm_vec(0) = 0.0;
+  _norm_vec(1) = 0.0;
+  _norm_vec(2) = 0.0;
+  _norm_vec(_dir) = 1.0;
 }
 
-Real ElectrodeCurrentFromPotentialGradient::computeQpResidual()
+Real
+ElectrodeCurrentFromPotentialGradient::computeQpResidual()
 {
-    return _test[_i][_qp]*_sol_frac[_qp]*_conductivity[_qp]*(_norm_vec*_e_potential_grad[_qp]);
+  return _test[_i][_qp] * _sol_frac[_qp] * _conductivity[_qp] *
+         (_norm_vec * _e_potential_grad[_qp]);
 }
 
-Real ElectrodeCurrentFromPotentialGradient::computeQpJacobian()
+Real
+ElectrodeCurrentFromPotentialGradient::computeQpJacobian()
 {
-    return 0.0;
+  return 0.0;
 }
 
-Real ElectrodeCurrentFromPotentialGradient::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+ElectrodeCurrentFromPotentialGradient::computeQpOffDiagJacobian(unsigned int jvar)
 {
-    if (jvar == _e_potential_var)
-    {
-        return _test[_i][_qp]*_sol_frac[_qp]*_conductivity[_qp]*(_norm_vec*_grad_phi[_j][_qp]);
-    }
-    if (jvar == _sol_frac_var)
-    {
-        return _test[_i][_qp]*_conductivity[_qp]*_phi[_j][_qp]*(_norm_vec*_e_potential_grad[_qp]);
-    }
-    if (jvar == _conductivity_var)
-    {
-        return _test[_i][_qp]*_sol_frac[_qp]*_phi[_j][_qp]*(_norm_vec*_e_potential_grad[_qp]);
-    }
+  if (jvar == _e_potential_var)
+  {
+    return _test[_i][_qp] * _sol_frac[_qp] * _conductivity[_qp] * (_norm_vec * _grad_phi[_j][_qp]);
+  }
+  if (jvar == _sol_frac_var)
+  {
+    return _test[_i][_qp] * _conductivity[_qp] * _phi[_j][_qp] *
+           (_norm_vec * _e_potential_grad[_qp]);
+  }
+  if (jvar == _conductivity_var)
+  {
+    return _test[_i][_qp] * _sol_frac[_qp] * _phi[_j][_qp] * (_norm_vec * _e_potential_grad[_qp]);
+  }
 
-    return 0.0;
+  return 0.0;
 }

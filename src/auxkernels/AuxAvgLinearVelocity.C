@@ -1,7 +1,7 @@
 /*!
  *  \file AuxAvgLinearVelocity.h
- *    \brief Auxillary kernel to calculate the average linear velocity in a column based on flow rate and porosity
- *    \details This file is responsible for calculating the value of an auxvariable
+ *    \brief Auxillary kernel to calculate the average linear velocity in a column based on flow
+ * rate and porosity \details This file is responsible for calculating the value of an auxvariable
  *              according to the standard expression for superficial velocity, then
  *              update that estimate based on a porosity of the column. The end
  *              result will be an average linear velocity within that column.
@@ -27,25 +27,26 @@
 
 registerMooseObject("catsApp", AuxAvgLinearVelocity);
 
-InputParameters AuxAvgLinearVelocity::validParams()
+InputParameters
+AuxAvgLinearVelocity::validParams()
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");
-    params.addRequiredCoupledVar("flow_rate","Name of the flow rate variable (m^3/s)");
-    params.addRequiredCoupledVar("xsec_area","Name of the cross-sectional area variable (m^2)");
-    return params;
+  InputParameters params = AuxKernel::validParams();
+  params.addRequiredCoupledVar("porosity", "Name of the bulk porosity variable");
+  params.addRequiredCoupledVar("flow_rate", "Name of the flow rate variable (m^3/s)");
+  params.addRequiredCoupledVar("xsec_area", "Name of the cross-sectional area variable (m^2)");
+  return params;
 }
 
-AuxAvgLinearVelocity::AuxAvgLinearVelocity(const InputParameters & parameters) :
-AuxKernel(parameters),
-_flow_rate(coupledValue("flow_rate")),
-_xsec_area(coupledValue("xsec_area")),
-_porosity(coupledValue("porosity"))
+AuxAvgLinearVelocity::AuxAvgLinearVelocity(const InputParameters & parameters)
+  : AuxKernel(parameters),
+    _flow_rate(coupledValue("flow_rate")),
+    _xsec_area(coupledValue("xsec_area")),
+    _porosity(coupledValue("porosity"))
 {
-
 }
 
-Real AuxAvgLinearVelocity::computeValue()
+Real
+AuxAvgLinearVelocity::computeValue()
 {
-    return _flow_rate[_qp]/_xsec_area[_qp]/_porosity[_qp];
+  return _flow_rate[_qp] / _xsec_area[_qp] / _porosity[_qp];
 }

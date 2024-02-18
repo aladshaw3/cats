@@ -20,27 +20,27 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
- #pragma once
+#pragma once
 
- #include "SimpleGasPropertiesBase.h"
+#include "SimpleGasPropertiesBase.h"
 
- /// SimpleGasVolumeFractionToConcentration class object inherits from SimpleGasPropertiesBase object
- class SimpleGasVolumeFractionToConcentration : public SimpleGasPropertiesBase
- {
- public:
-     /// Required new syntax for InputParameters
-     static InputParameters validParams();
+/// SimpleGasVolumeFractionToConcentration class object inherits from SimpleGasPropertiesBase object
+class SimpleGasVolumeFractionToConcentration : public SimpleGasPropertiesBase
+{
+public:
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-     /// Required constructor for objects in MOOSE
-     SimpleGasVolumeFractionToConcentration(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  SimpleGasVolumeFractionToConcentration(const InputParameters & parameters);
 
- protected:
-     /// Required MOOSE function override
-     virtual Real computeValue() override;
+protected:
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
- private:
-     std::string _output_volume_unit;                ///< Units of the volume term in concentration (kL, L, mL, m^3, cm^3, mm^3)
-     std::string _input_volfrac_unit;                ///< Units of the volume fraction term (%, ppm, ppb)
-     const VariableValue & _volfrac;                 ///< Variable/value of the volume fraction term 
-
- };
+private:
+  std::string
+      _output_volume_unit; ///< Units of the volume term in concentration (kL, L, mL, m^3, cm^3, mm^3)
+  std::string _input_volfrac_unit; ///< Units of the volume fraction term (%, ppm, ppb)
+  const VariableValue & _volfrac;  ///< Variable/value of the volume fraction term
+};

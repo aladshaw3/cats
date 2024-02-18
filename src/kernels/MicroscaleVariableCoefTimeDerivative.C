@@ -21,40 +21,45 @@
 
 registerMooseObject("catsApp", MicroscaleVariableCoefTimeDerivative);
 
-InputParameters MicroscaleVariableCoefTimeDerivative::validParams()
+InputParameters
+MicroscaleVariableCoefTimeDerivative::validParams()
 {
-    InputParameters params = MicroscaleCoefTimeDerivative::validParams();
-    params.addRequiredCoupledVar("nodal_time_var","Variable coefficient at the current node for the time derivative");
-    return params;
+  InputParameters params = MicroscaleCoefTimeDerivative::validParams();
+  params.addRequiredCoupledVar("nodal_time_var",
+                               "Variable coefficient at the current node for the time derivative");
+  return params;
 }
 
-MicroscaleVariableCoefTimeDerivative::MicroscaleVariableCoefTimeDerivative(const InputParameters & parameters)
-: MicroscaleCoefTimeDerivative(parameters),
-_coupled_coef(coupledValue("nodal_time_var")),
-_coupled_coef_var(coupled("nodal_time_var"))
+MicroscaleVariableCoefTimeDerivative::MicroscaleVariableCoefTimeDerivative(
+    const InputParameters & parameters)
+  : MicroscaleCoefTimeDerivative(parameters),
+    _coupled_coef(coupledValue("nodal_time_var")),
+    _coupled_coef_var(coupled("nodal_time_var"))
 {
-
 }
 
-Real MicroscaleVariableCoefTimeDerivative::computeQpResidual()
+Real
+MicroscaleVariableCoefTimeDerivative::computeQpResidual()
 {
-    _nodal_time_coef = _coupled_coef[_qp];
-    return MicroscaleCoefTimeDerivative::computeQpResidual();
+  _nodal_time_coef = _coupled_coef[_qp];
+  return MicroscaleCoefTimeDerivative::computeQpResidual();
 }
 
-Real MicroscaleVariableCoefTimeDerivative::computeQpJacobian()
+Real
+MicroscaleVariableCoefTimeDerivative::computeQpJacobian()
 {
-    _nodal_time_coef = _coupled_coef[_qp];
-    return MicroscaleCoefTimeDerivative::computeQpJacobian();
+  _nodal_time_coef = _coupled_coef[_qp];
+  return MicroscaleCoefTimeDerivative::computeQpJacobian();
 }
 
-Real MicroscaleVariableCoefTimeDerivative::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+MicroscaleVariableCoefTimeDerivative::computeQpOffDiagJacobian(unsigned int jvar)
 {
-    _nodal_time_coef = _coupled_coef[_qp];
+  _nodal_time_coef = _coupled_coef[_qp];
 
-    if (jvar == _coupled_coef_var)
-    {
-        return _rd_l*_phi[_j][_qp]*_test[_i][_qp] * _u_dot[_qp];
-    }
-    return 0.0;
+  if (jvar == _coupled_coef_var)
+  {
+    return _rd_l * _phi[_j][_qp] * _test[_i][_qp] * _u_dot[_qp];
+  }
+  return 0.0;
 }

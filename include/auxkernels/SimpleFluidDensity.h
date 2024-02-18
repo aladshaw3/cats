@@ -30,18 +30,18 @@
 class SimpleFluidDensity : public SimpleFluidPropertiesBase
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    SimpleFluidDensity(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  SimpleFluidDensity(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    std::string _output_volume_unit;                ///< Units of the volume term in denisty (kL, L, mL, uL, m^3, cm^3, mm^3)
-    std::string _output_mass_unit;                  ///< Units of the mass term in density (kg, g, mg)
-
+  std::string
+      _output_volume_unit; ///< Units of the volume term in denisty (kL, L, mL, uL, m^3, cm^3, mm^3)
+  std::string _output_mass_unit; ///< Units of the mass term in density (kg, g, mg)
 };

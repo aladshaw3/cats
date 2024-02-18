@@ -25,58 +25,62 @@
 
 registerMooseObject("catsApp", DGWallEnergyFluxBC);
 
-InputParameters DGWallEnergyFluxBC::validParams()
+InputParameters
+DGWallEnergyFluxBC::validParams()
 {
-    InputParameters params = IntegratedBC::validParams();
-    params.addCoupledVar("transfer_coef",1,"Variable for heat transfer coefficient (W/m^2/K)");
-    params.addCoupledVar("wall_temp",298,"Variable for the wall temperature (K)");
-    params.addRequiredCoupledVar("temperature","Variable for the phase temperature (K)");
-    params.addCoupledVar("area_frac",1,"Variable for contact area fraction (or volume fraction) (-)");
-    return params;
+  InputParameters params = IntegratedBC::validParams();
+  params.addCoupledVar("transfer_coef", 1, "Variable for heat transfer coefficient (W/m^2/K)");
+  params.addCoupledVar("wall_temp", 298, "Variable for the wall temperature (K)");
+  params.addRequiredCoupledVar("temperature", "Variable for the phase temperature (K)");
+  params.addCoupledVar(
+      "area_frac", 1, "Variable for contact area fraction (or volume fraction) (-)");
+  return params;
 }
 
-DGWallEnergyFluxBC::DGWallEnergyFluxBC(const InputParameters & parameters) :
-IntegratedBC(parameters),
-_hw(coupledValue("transfer_coef")),
-_hw_var(coupled("transfer_coef")),
-_temp(coupledValue("temperature")),
-_temp_var(coupled("temperature")),
-_walltemp(coupledValue("wall_temp")),
-_walltemp_var(coupled("wall_temp")),
-_areafrac(coupledValue("area_frac")),
-_areafrac_var(coupled("area_frac"))
+DGWallEnergyFluxBC::DGWallEnergyFluxBC(const InputParameters & parameters)
+  : IntegratedBC(parameters),
+    _hw(coupledValue("transfer_coef")),
+    _hw_var(coupled("transfer_coef")),
+    _temp(coupledValue("temperature")),
+    _temp_var(coupled("temperature")),
+    _walltemp(coupledValue("wall_temp")),
+    _walltemp_var(coupled("wall_temp")),
+    _areafrac(coupledValue("area_frac")),
+    _areafrac_var(coupled("area_frac"))
 {
-
 }
 
-Real DGWallEnergyFluxBC::computeQpResidual()
+Real
+DGWallEnergyFluxBC::computeQpResidual()
 {
-    return _test[_i][_qp]*_hw[_qp]*_areafrac[_qp]*(_temp[_qp] - _walltemp[_qp]);
+  return _test[_i][_qp] * _hw[_qp] * _areafrac[_qp] * (_temp[_qp] - _walltemp[_qp]);
 }
 
-Real DGWallEnergyFluxBC::computeQpJacobian()
+Real
+DGWallEnergyFluxBC::computeQpJacobian()
 {
-    return 0.0;
+  return 0.0;
 }
 
-Real DGWallEnergyFluxBC::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+DGWallEnergyFluxBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
-    if (jvar == _hw_var)
-    {
-        return _test[_i][_qp]*_phi[_j][_qp]*_areafrac[_qp]*(_temp[_qp] - _walltemp[_qp]);
-    }
-    if (jvar == _temp_var)
-    {
-        return _test[_i][_qp]*_hw[_qp]*_areafrac[_qp]*_phi[_j][_qp];
-    }
-    if (jvar == _walltemp_var)
-    {
-        return -_test[_i][_qp]*_hw[_qp]*_areafrac[_qp]*_phi[_j][_qp];
-    }
-    if (jvar == _areafrac_var)
-    {
-        return _test[_i][_qp]*_hw[_qp]*_phi[_j][_qp]*(_temp[_qp] - _walltemp[_qp]);
-    }
+  if (jvar == _hw_var)
+  {
+    return _test[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp] * (_temp[_qp] - _walltemp[_qp]);
+  }
+  if (jvar == _temp_var)
+  {
+    return _test[_i][_qp] * _hw[_qp] * _areafrac[_qp] * _phi[_j][_qp];
+  }
+  if (jvar == _walltemp_var)
+  {
+    return -_test[_i][_qp] * _hw[_qp] * _areafrac[_qp] * _phi[_j][_qp];
+  }
+  if (jvar == _areafrac_var)
+  {
+    return _test[_i][_qp] * _hw[_qp] * _phi[_j][_qp] * (_temp[_qp] - _walltemp[_qp]);
+  }
 
-    return 0.0;
+  return 0.0;
 }

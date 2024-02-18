@@ -1,7 +1,8 @@
 /*!
  *  \file GasSpeciesKnudsenDiffusionCorrection.h
- *    \brief AuxKernel kernel to compute the effective pore diffusivity with Knudsen correction for the micro-scale
- *    \details This file is responsible for calculating the effective pore diffusion in m^2/s
+ *    \brief AuxKernel kernel to compute the effective pore diffusivity with Knudsen correction for
+ * the micro-scale \details This file is responsible for calculating the effective pore diffusion in
+ * m^2/s
  *
  *
  *  \author Austin Ladshaw
@@ -30,20 +31,19 @@
 class GasSpeciesKnudsenDiffusionCorrection : public GasPropertiesBase
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    GasSpeciesKnudsenDiffusionCorrection(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  GasSpeciesKnudsenDiffusionCorrection(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    unsigned int _index;            ///< Index of the gas species to which the diffusion belongs
-    const VariableValue & _porosity;                ///< Variable for the particle/washcoat porosity
-    const VariableValue & _pore_rad;                ///< Variable for the micro-pore radius (m)
+  unsigned int _index;             ///< Index of the gas species to which the diffusion belongs
+  const VariableValue & _porosity; ///< Variable for the particle/washcoat porosity
+  const VariableValue & _pore_rad; ///< Variable for the micro-pore radius (m)
 
 private:
-
 };

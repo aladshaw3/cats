@@ -23,22 +23,20 @@
 
 registerMooseObject("catsApp", GasSpecHeat);
 
-InputParameters GasSpecHeat::validParams()
+InputParameters
+GasSpecHeat::validParams()
 {
-    InputParameters params = GasPropertiesBase::validParams();
-    return params;
+  InputParameters params = GasPropertiesBase::validParams();
+  return params;
 }
 
-GasSpecHeat::GasSpecHeat(const InputParameters & parameters) :
-GasPropertiesBase(parameters)
+GasSpecHeat::GasSpecHeat(const InputParameters & parameters) : GasPropertiesBase(parameters) {}
+
+Real
+GasSpecHeat::computeValue()
 {
+  prepareEgret();
+  calculateAllProperties();
 
-}
-
-Real GasSpecHeat::computeValue()
-{
-    prepareEgret();
-    calculateAllProperties();
-
-    return _egret_dat.total_specific_heat*1000.0;
+  return _egret_dat.total_specific_heat * 1000.0;
 }

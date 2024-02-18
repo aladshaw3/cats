@@ -42,25 +42,25 @@
 class GasVelocityCylindricalReactor : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    GasVelocityCylindricalReactor(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  GasVelocityCylindricalReactor(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    const VariableValue & _space_velocity;           ///< Variable for space-velocity (reactor volumes / time)
-    Real _radius;                                   ///< Value for the radius of the cylindrical reactor
-    Real _length;                                   ///< Value for reactor length
-    const VariableValue &  _porosity;               ///< Variable for the porosity
-    const VariableValue & _temperature_in;          ///< Variable for inlet temperature (in K)
-    const VariableValue & _pressure_in;             ///< Variable for inlet pressure (in kPa)
-    Real _temperature_ref;                          ///< Value of the reference temperature (in K)
-    Real _pressure_ref;                             ///< Value of the reference pressure (in kPa)
-    bool _total_vol_basis;                          ///< Boolean used to determine whether or not to use a total volume basis for flow 
-
+  const VariableValue & _space_velocity; ///< Variable for space-velocity (reactor volumes / time)
+  Real _radius;                          ///< Value for the radius of the cylindrical reactor
+  Real _length;                          ///< Value for reactor length
+  const VariableValue & _porosity;       ///< Variable for the porosity
+  const VariableValue & _temperature_in; ///< Variable for inlet temperature (in K)
+  const VariableValue & _pressure_in;    ///< Variable for inlet pressure (in kPa)
+  Real _temperature_ref;                 ///< Value of the reference temperature (in K)
+  Real _pressure_ref;                    ///< Value of the reference pressure (in kPa)
+  bool
+      _total_vol_basis; ///< Boolean used to determine whether or not to use a total volume basis for flow
 };

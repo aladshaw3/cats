@@ -25,7 +25,7 @@
 
 /// CoupledNeumannBC class object inherits from IntegratedBC object
 /** This class object inherits from the IntegratedBC object.
- 	All public and protected members of this class are required function overrides.
+  All public and protected members of this class are required function overrides.
   Boundary condition of a Neumann style whose value is computed by a anoher variable*/
 class CoupledNeumannBC : public IntegratedBC
 {
@@ -38,19 +38,19 @@ public:
 
 protected:
   /// Required function override for BC objects in MOOSE
-	/** This function returns a residual contribution for this object.*/
-	virtual Real computeQpResidual() override;
-	/// Required function override for BC objects in MOOSE
-	/** This function returns a Jacobian contribution for this object. The Jacobian being
-		computed is the associated diagonal element in the overall Jacobian matrix for the
-		system and is used in preconditioning of the linear sub-problem. */
-	virtual Real computeQpJacobian() override;
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+    computed is the associated diagonal element in the overall Jacobian matrix for the
+    system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian() override;
   /// Not Required, but aids in the preconditioning step
-	/** This function returns the off diagonal Jacobian contribution for this object. By
-		returning a non-zero value we will hopefully improve the convergence rate for the
-		cross coupling of the variables. */
+  /** This function returns the off diagonal Jacobian contribution for this object. By
+    returning a non-zero value we will hopefully improve the convergence rate for the
+    cross coupling of the variables. */
   virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-  const VariableValue & _coupled;			      ///< Coupled variable
-	const unsigned int _coupled_var;					///< Variable identification for coupled variable
+  const VariableValue & _coupled;  ///< Coupled variable
+  const unsigned int _coupled_var; ///< Variable identification for coupled variable
 };

@@ -25,35 +25,37 @@
 
 registerMooseObject("catsApp", SimpleGasPoreDiffusivity);
 
-InputParameters SimpleGasPoreDiffusivity::validParams()
+InputParameters
+SimpleGasPoreDiffusivity::validParams()
 {
-    InputParameters params = SimpleGasPropertiesBase::validParams();
-    params.addParam< std::string >("output_length_unit","m","Length units for mass transfer on output");
-    params.addParam< std::string >("output_time_unit","s","Time units for mass transfer on output");
+  InputParameters params = SimpleGasPropertiesBase::validParams();
+  params.addParam<std::string>(
+      "output_length_unit", "m", "Length units for mass transfer on output");
+  params.addParam<std::string>("output_time_unit", "s", "Time units for mass transfer on output");
 
-    return params;
+  return params;
 }
 
-SimpleGasPoreDiffusivity::SimpleGasPoreDiffusivity(const InputParameters & parameters) :
-SimpleGasPropertiesBase(parameters),
-_output_length_unit(getParam<std::string >("output_length_unit")),
-_output_time_unit(getParam<std::string >("output_time_unit"))
+SimpleGasPoreDiffusivity::SimpleGasPoreDiffusivity(const InputParameters & parameters)
+  : SimpleGasPropertiesBase(parameters),
+    _output_length_unit(getParam<std::string>("output_length_unit")),
+    _output_time_unit(getParam<std::string>("output_time_unit"))
 {
-
 }
 
-Real SimpleGasPoreDiffusivity::computeValue()
+Real
+SimpleGasPoreDiffusivity::computeValue()
 {
-    // Put diffusivity into cm^2/s
-    Real Dm = _ref_diffusivity*exp(-887.5*((1/_temperature[_qp])-(1/_ref_diff_temp)));
-    Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
-    Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
-    Dm = 1/SimpleGasPropertiesBase::time_conversion(1/Dm, _diff_time_unit, "s");
+  // Put diffusivity into cm^2/s
+  Real Dm = _ref_diffusivity * exp(-887.5 * ((1 / _temperature[_qp]) - (1 / _ref_diff_temp)));
+  Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
+  Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
+  Dm = 1 / SimpleGasPropertiesBase::time_conversion(1 / Dm, _diff_time_unit, "s");
 
-    Real Deff = pow(_micro_pore[_qp],_eff_diff_factor)*Dm;
-    // ends up in cm^2/s
-    Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
-    Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
-    Deff = 1/SimpleGasPropertiesBase::time_conversion(1/Deff, "s", _output_time_unit);
-    return Deff;
+  Real Deff = pow(_micro_pore[_qp], _eff_diff_factor) * Dm;
+  // ends up in cm^2/s
+  Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
+  Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
+  Deff = 1 / SimpleGasPropertiesBase::time_conversion(1 / Deff, "s", _output_time_unit);
+  return Deff;
 }

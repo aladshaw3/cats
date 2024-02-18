@@ -3,9 +3,9 @@
  *    \brief Initial Condition kernel for the energy of a phase in the system
  *    \details This file creates an initial condition for phase energy in a system as a function
  *              of the initial temperature, initial density of the phase, initial heat capacity
- *              of the phase, and the volume fraction of the phase in the domain. All other variables
- *              that this kernel couples with must have their own initial conditions specified and
- *              may not couple with the phase energy variable.
+ *              of the phase, and the volume fraction of the phase in the domain. All other
+ * variables that this kernel couples with must have their own initial conditions specified and may
+ * not couple with the phase energy variable.
  *
  *
  *  \author Austin Ladshaw
@@ -27,28 +27,29 @@
 
 registerMooseObject("catsApp", InitialPhaseEnergy);
 
-InputParameters InitialPhaseEnergy::validParams()
+InputParameters
+InitialPhaseEnergy::validParams()
 {
-    InputParameters params = InitialCondition::validParams();
-    params.addRequiredCoupledVar("specific_heat","Variable for specific heat (J/kg/K)");
-    params.addRequiredCoupledVar("density","Variable for density (kg/m^3)");
-    params.addRequiredCoupledVar("temperature","Variable for temperature (K)");
-    return params;
+  InputParameters params = InitialCondition::validParams();
+  params.addRequiredCoupledVar("specific_heat", "Variable for specific heat (J/kg/K)");
+  params.addRequiredCoupledVar("density", "Variable for density (kg/m^3)");
+  params.addRequiredCoupledVar("temperature", "Variable for temperature (K)");
+  return params;
 }
 
 InitialPhaseEnergy::InitialPhaseEnergy(const InputParameters & parameters)
-: InitialCondition(parameters),
-_density(coupledValue("density")),
-_density_var(coupled("density")),
-_specheat(coupledValue("specific_heat")),
-_specheat_var(coupled("specific_heat")),
-_temp(coupledValue("temperature")),
-_temp_var(coupled("temperature"))
+  : InitialCondition(parameters),
+    _density(coupledValue("density")),
+    _density_var(coupled("density")),
+    _specheat(coupledValue("specific_heat")),
+    _specheat_var(coupled("specific_heat")),
+    _temp(coupledValue("temperature")),
+    _temp_var(coupled("temperature"))
 {
-
 }
 
-Real InitialPhaseEnergy::value(const Point & /*p*/)
+Real
+InitialPhaseEnergy::value(const Point & /*p*/)
 {
-    return _density[_qp]*_specheat[_qp]*_temp[_qp];
+  return _density[_qp] * _specheat[_qp] * _temp[_qp];
 }

@@ -1,10 +1,11 @@
 /*!
  *  \file DGAnisotropicDiffusion.h
  *	\brief Discontinous Galerkin kernel for anisotropic diffusion
- *	\details This file creates a discontinous Galerkin kernel for anisotropic diffusion in a given domain. It is a generic
- *			diffusion kernel that is meant to be inherited from to make a more specific kernel for a given problem. The
- *			physical parameter in this kernel's formulation is a diffusion tensor. That tensor can be built piecewise by
- *			the respective components of the tensor at a given quadrature point.
+ *	\details This file creates a discontinous Galerkin kernel for anisotropic diffusion in a given
+ *domain. It is a generic diffusion kernel that is meant to be inherited from to make a more
+ *specific kernel for a given problem. The physical parameter in this kernel's formulation is a
+ *diffusion tensor. That tensor can be built piecewise by the respective components of the tensor at
+ *a given quadrature point.
  *
  *      The DG method for diffusion involves 2 correction parameters:
  *
@@ -24,14 +25,15 @@
  *                                   work for symmetic and non-symmetric systems. Much
  *                                   less dependent on sigma values for convergence.
  *
- *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic equations:
- *                    Theory and Implementation, SIAM, Houston, TX, 2008.
+ *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic
+ *equations: Theory and Implementation, SIAM, Houston, TX, 2008.
  *
- *	\note Any DG kernel under DGOSPREY will have a cooresponding G kernel (usually of same name) that must be included
- *		with the DG kernel in the input file. This is because the DG finite element method breaks into several different
- *		residual pieces, only a handful of which are handled by the DG kernel system and the other parts must be handled
- *		by the standard Galerkin system. This my be due to some legacy code in MOOSE. I am not sure if it is possible to
- *		lump all of these actions into a single DG kernel.
+ *	\note Any DG kernel under DGOSPREY will have a cooresponding G kernel (usually of same name)
+ *that must be included with the DG kernel in the input file. This is because the DG finite element
+ *method breaks into several different residual pieces, only a handful of which are handled by the
+ *DG kernel system and the other parts must be handled by the standard Galerkin system. This my be
+ *due to some legacy code in MOOSE. I am not sure if it is possible to lump all of these actions
+ *into a single DG kernel.
  *
  *  \author Austin Ladshaw
  *	\date 11/20/2015
@@ -52,162 +54,169 @@
 
 registerMooseObject("catsApp", DGAnisotropicDiffusion);
 
-InputParameters DGAnisotropicDiffusion::validParams()
+InputParameters
+DGAnisotropicDiffusion::validParams()
 {
-    InputParameters params = DGKernel::validParams();
-    params.addParam<Real>("sigma", 10.0, "sigma penalty value (>=0 for NIPG, but >0 for others)");
-    MooseEnum dgscheme("sipg iipg nipg", "nipg");
-    params.addParam<MooseEnum>("dg_scheme", dgscheme, "DG scheme options: nipg, iipg, sipg");
-    params.addParam<Real>("Dxx",0,"xx-component of diffusion tensor");
-    params.addParam<Real>("Dxy",0,"xy-component of diffusion tensor");
-    params.addParam<Real>("Dxz",0,"xz-component of diffusion tensor");
-    params.addParam<Real>("Dyx",0,"yx-component of diffusion tensor");
-    params.addParam<Real>("Dyy",0,"yy-component of diffusion tensor");
-    params.addParam<Real>("Dyz",0,"yz-component of diffusion tensor");
-    params.addParam<Real>("Dzx",0,"zx-component of diffusion tensor");
-    params.addParam<Real>("Dzy",0,"zy-component of diffusion tensor");
-    params.addParam<Real>("Dzz",0,"zz-component of diffusion tensor");
-    return params;
+  InputParameters params = DGKernel::validParams();
+  params.addParam<Real>("sigma", 10.0, "sigma penalty value (>=0 for NIPG, but >0 for others)");
+  MooseEnum dgscheme("sipg iipg nipg", "nipg");
+  params.addParam<MooseEnum>("dg_scheme", dgscheme, "DG scheme options: nipg, iipg, sipg");
+  params.addParam<Real>("Dxx", 0, "xx-component of diffusion tensor");
+  params.addParam<Real>("Dxy", 0, "xy-component of diffusion tensor");
+  params.addParam<Real>("Dxz", 0, "xz-component of diffusion tensor");
+  params.addParam<Real>("Dyx", 0, "yx-component of diffusion tensor");
+  params.addParam<Real>("Dyy", 0, "yy-component of diffusion tensor");
+  params.addParam<Real>("Dyz", 0, "yz-component of diffusion tensor");
+  params.addParam<Real>("Dzx", 0, "zx-component of diffusion tensor");
+  params.addParam<Real>("Dzy", 0, "zy-component of diffusion tensor");
+  params.addParam<Real>("Dzz", 0, "zz-component of diffusion tensor");
+  return params;
 }
 
-DGAnisotropicDiffusion::DGAnisotropicDiffusion(const InputParameters & parameters) :
-DGKernel(parameters),
-_dg_scheme(getParam<MooseEnum>("dg_scheme")),
-_sigma(getParam<Real>("sigma")),
-_Dxx(getParam<Real>("Dxx")),
-_Dxy(getParam<Real>("Dxy")),
-_Dxz(getParam<Real>("Dxz")),
-_Dyx(getParam<Real>("Dyx")),
-_Dyy(getParam<Real>("Dyy")),
-_Dyz(getParam<Real>("Dyz")),
-_Dzx(getParam<Real>("Dzx")),
-_Dzy(getParam<Real>("Dzy")),
-_Dzz(getParam<Real>("Dzz"))
+DGAnisotropicDiffusion::DGAnisotropicDiffusion(const InputParameters & parameters)
+  : DGKernel(parameters),
+    _dg_scheme(getParam<MooseEnum>("dg_scheme")),
+    _sigma(getParam<Real>("sigma")),
+    _Dxx(getParam<Real>("Dxx")),
+    _Dxy(getParam<Real>("Dxy")),
+    _Dxz(getParam<Real>("Dxz")),
+    _Dyx(getParam<Real>("Dyx")),
+    _Dyy(getParam<Real>("Dyy")),
+    _Dyz(getParam<Real>("Dyz")),
+    _Dzx(getParam<Real>("Dzx")),
+    _Dzy(getParam<Real>("Dzy")),
+    _Dzz(getParam<Real>("Dzz"))
 {
-	_Diffusion(0,0) = _Dxx;
-	_Diffusion(0,1) = _Dxy;
-	_Diffusion(0,2) = _Dxz;
+  _Diffusion(0, 0) = _Dxx;
+  _Diffusion(0, 1) = _Dxy;
+  _Diffusion(0, 2) = _Dxz;
 
-	_Diffusion(1,0) = _Dyx;
-	_Diffusion(1,1) = _Dyy;
-	_Diffusion(1,2) = _Dyz;
+  _Diffusion(1, 0) = _Dyx;
+  _Diffusion(1, 1) = _Dyy;
+  _Diffusion(1, 2) = _Dyz;
 
-	_Diffusion(2,0) = _Dzx;
-	_Diffusion(2,1) = _Dzy;
-	_Diffusion(2,2) = _Dzz;
+  _Diffusion(2, 0) = _Dzx;
+  _Diffusion(2, 1) = _Dzy;
+  _Diffusion(2, 2) = _Dzz;
 
-  _Diffusion_neighbor(0,0) = _Dxx;
-	_Diffusion_neighbor(0,1) = _Dxy;
-	_Diffusion_neighbor(0,2) = _Dxz;
+  _Diffusion_neighbor(0, 0) = _Dxx;
+  _Diffusion_neighbor(0, 1) = _Dxy;
+  _Diffusion_neighbor(0, 2) = _Dxz;
 
-	_Diffusion_neighbor(1,0) = _Dyx;
-	_Diffusion_neighbor(1,1) = _Dyy;
-	_Diffusion_neighbor(1,2) = _Dyz;
+  _Diffusion_neighbor(1, 0) = _Dyx;
+  _Diffusion_neighbor(1, 1) = _Dyy;
+  _Diffusion_neighbor(1, 2) = _Dyz;
 
-	_Diffusion_neighbor(2,0) = _Dzx;
-	_Diffusion_neighbor(2,1) = _Dzy;
-	_Diffusion_neighbor(2,2) = _Dzz;
+  _Diffusion_neighbor(2, 0) = _Dzx;
+  _Diffusion_neighbor(2, 1) = _Dzy;
+  _Diffusion_neighbor(2, 2) = _Dzz;
 
-	if (_sigma < 0.0)
-		_sigma = 0.0;
+  if (_sigma < 0.0)
+    _sigma = 0.0;
 
-	switch (_dg_scheme)
-	{
-		//sipg
-		case 0:
-			_epsilon = -1.0;
-			if (_sigma == 0.0)
-				_sigma = 10.0;
-			break;
+  switch (_dg_scheme)
+  {
+    // sipg
+    case 0:
+      _epsilon = -1.0;
+      if (_sigma == 0.0)
+        _sigma = 10.0;
+      break;
 
-		//iipg
-		case 1:
-			_epsilon = 0.0;
-			if (_sigma == 0.0)
-				_sigma = 10.0;
-			break;
+    // iipg
+    case 1:
+      _epsilon = 0.0;
+      if (_sigma == 0.0)
+        _sigma = 10.0;
+      break;
 
-		//nipg
-		case 2:
-			_epsilon = 1.0;
-			break;
+    // nipg
+    case 2:
+      _epsilon = 1.0;
+      break;
 
-		//nipg
-		default:
-			_epsilon = 1.0;
-			break;
-	}
+    // nipg
+    default:
+      _epsilon = 1.0;
+      break;
+  }
 }
 
-Real DGAnisotropicDiffusion::computeQpResidual(Moose::DGResidualType type)
+Real
+DGAnisotropicDiffusion::computeQpResidual(Moose::DGResidualType type)
 {
-	Real r = 0;
+  Real r = 0;
 
-	const unsigned int elem_b_order = static_cast<unsigned int> (_var.order());
-	const double h_elem = _current_elem->volume()/_current_side_elem->volume() * 1./std::pow(elem_b_order, 2.);
+  const unsigned int elem_b_order = static_cast<unsigned int>(_var.order());
+  const double h_elem =
+      _current_elem->volume() / _current_side_elem->volume() * 1. / std::pow(elem_b_order, 2.);
 
-	switch (type)
-	{
-		case Moose::Element:
-			r -= 0.5 * (_Diffusion * _grad_u[_qp] * _normals[_qp] +
-						_Diffusion_neighbor * _grad_u_neighbor[_qp] * _normals[_qp]) *
-			_test[_i][_qp];
-			r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion * _grad_test[_i][_qp] *
-			_normals[_qp];
-			r += _sigma / h_elem * (_u[_qp] - _u_neighbor[_qp]) * _test[_i][_qp];
-			break;
+  switch (type)
+  {
+    case Moose::Element:
+      r -= 0.5 *
+           (_Diffusion * _grad_u[_qp] * _normals[_qp] +
+            _Diffusion_neighbor * _grad_u_neighbor[_qp] * _normals[_qp]) *
+           _test[_i][_qp];
+      r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion * _grad_test[_i][_qp] *
+           _normals[_qp];
+      r += _sigma / h_elem * (_u[_qp] - _u_neighbor[_qp]) * _test[_i][_qp];
+      break;
 
-		case Moose::Neighbor:
-			r += 0.5 * (_Diffusion * _grad_u[_qp] * _normals[_qp] +
-						_Diffusion_neighbor * _grad_u_neighbor[_qp] * _normals[_qp]) *
-			_test_neighbor[_i][_qp];
-			r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion_neighbor *
-			_grad_test_neighbor[_i][_qp] * _normals[_qp];
-			r -= _sigma / h_elem * (_u[_qp] - _u_neighbor[_qp]) * _test_neighbor[_i][_qp];
-			break;
-	}
+    case Moose::Neighbor:
+      r += 0.5 *
+           (_Diffusion * _grad_u[_qp] * _normals[_qp] +
+            _Diffusion_neighbor * _grad_u_neighbor[_qp] * _normals[_qp]) *
+           _test_neighbor[_i][_qp];
+      r += _epsilon * 0.5 * (_u[_qp] - _u_neighbor[_qp]) * _Diffusion_neighbor *
+           _grad_test_neighbor[_i][_qp] * _normals[_qp];
+      r -= _sigma / h_elem * (_u[_qp] - _u_neighbor[_qp]) * _test_neighbor[_i][_qp];
+      break;
+  }
 
-	return r;
+  return r;
 }
 
-Real DGAnisotropicDiffusion::computeQpJacobian(Moose::DGJacobianType type)
+Real
+DGAnisotropicDiffusion::computeQpJacobian(Moose::DGJacobianType type)
 {
-	Real r = 0;
+  Real r = 0;
 
-	const unsigned int elem_b_order = static_cast<unsigned int> (_var.order());
-	const double h_elem = _current_elem->volume()/_current_side_elem->volume() * 1./std::pow(elem_b_order, 2.);
+  const unsigned int elem_b_order = static_cast<unsigned int>(_var.order());
+  const double h_elem =
+      _current_elem->volume() / _current_side_elem->volume() * 1. / std::pow(elem_b_order, 2.);
 
-	switch (type)
-	{
+  switch (type)
+  {
 
-		case Moose::ElementElement:
-			r -= 0.5 * _Diffusion * _grad_phi[_j][_qp] * _normals[_qp] * _test[_i][_qp];
-			r += _epsilon * 0.5 * _phi[_j][_qp] * _Diffusion * _grad_test[_i][_qp] * _normals[_qp];
-			r += _sigma / h_elem * _phi[_j][_qp] * _test[_i][_qp];
-			break;
+    case Moose::ElementElement:
+      r -= 0.5 * _Diffusion * _grad_phi[_j][_qp] * _normals[_qp] * _test[_i][_qp];
+      r += _epsilon * 0.5 * _phi[_j][_qp] * _Diffusion * _grad_test[_i][_qp] * _normals[_qp];
+      r += _sigma / h_elem * _phi[_j][_qp] * _test[_i][_qp];
+      break;
 
-		case Moose::ElementNeighbor:
-			r -= 0.5 * _Diffusion_neighbor * _grad_phi_neighbor[_j][_qp] * _normals[_qp] * _test[_i][_qp];
-			r += _epsilon * 0.5 * -_phi_neighbor[_j][_qp] * _Diffusion * _grad_test[_i][_qp] *
-			_normals[_qp];
-			r += _sigma / h_elem * -_phi_neighbor[_j][_qp] * _test[_i][_qp];
-			break;
+    case Moose::ElementNeighbor:
+      r -= 0.5 * _Diffusion_neighbor * _grad_phi_neighbor[_j][_qp] * _normals[_qp] * _test[_i][_qp];
+      r += _epsilon * 0.5 * -_phi_neighbor[_j][_qp] * _Diffusion * _grad_test[_i][_qp] *
+           _normals[_qp];
+      r += _sigma / h_elem * -_phi_neighbor[_j][_qp] * _test[_i][_qp];
+      break;
 
-		case Moose::NeighborElement:
-			r += 0.5 * _Diffusion * _grad_phi[_j][_qp] * _normals[_qp] * _test_neighbor[_i][_qp];
-			r += _epsilon * 0.5 * _phi[_j][_qp] * _Diffusion_neighbor * _grad_test_neighbor[_i][_qp] *
-			_normals[_qp];
-			r -= _sigma / h_elem * _phi[_j][_qp] * _test_neighbor[_i][_qp];
-			break;
+    case Moose::NeighborElement:
+      r += 0.5 * _Diffusion * _grad_phi[_j][_qp] * _normals[_qp] * _test_neighbor[_i][_qp];
+      r += _epsilon * 0.5 * _phi[_j][_qp] * _Diffusion_neighbor * _grad_test_neighbor[_i][_qp] *
+           _normals[_qp];
+      r -= _sigma / h_elem * _phi[_j][_qp] * _test_neighbor[_i][_qp];
+      break;
 
-		case Moose::NeighborNeighbor:
-			r += 0.5 * _Diffusion_neighbor * _grad_phi_neighbor[_j][_qp] * _normals[_qp] *
-			_test_neighbor[_i][_qp];
-			r += _epsilon * 0.5 * -_phi_neighbor[_j][_qp] * _Diffusion_neighbor *
-			_grad_test_neighbor[_i][_qp] * _normals[_qp];
-			r -= _sigma / h_elem * -_phi_neighbor[_j][_qp] * _test_neighbor[_i][_qp];
-			break;
-	}
+    case Moose::NeighborNeighbor:
+      r += 0.5 * _Diffusion_neighbor * _grad_phi_neighbor[_j][_qp] * _normals[_qp] *
+           _test_neighbor[_i][_qp];
+      r += _epsilon * 0.5 * -_phi_neighbor[_j][_qp] * _Diffusion_neighbor *
+           _grad_test_neighbor[_i][_qp] * _normals[_qp];
+      r -= _sigma / h_elem * -_phi_neighbor[_j][_qp] * _test_neighbor[_i][_qp];
+      break;
+  }
 
-	return r;
+  return r;
 }

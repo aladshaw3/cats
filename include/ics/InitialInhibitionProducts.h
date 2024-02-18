@@ -32,21 +32,20 @@
 class InitialInhibitionProducts : public InitialCondition
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for BC objects in MOOSE
-    InitialInhibitionProducts(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  InitialInhibitionProducts(const InputParameters & parameters);
 
 protected:
-    /// Required function override for IC objects in MOOSE
-    /** This function returns the value of the variable at point p in the mesh.*/
-    virtual Real value(const Point & p) override;
+  /// Required function override for IC objects in MOOSE
+  /** This function returns the value of the variable at point p in the mesh.*/
+  virtual Real value(const Point & p) override;
 
-    std::vector<Real> _power;                            ///< Inhibition term list powers
-    std::vector<const VariableValue *> _inhibition;      ///< Pointer list to the coupled inhibitions
-    std::vector<unsigned int> _inhibition_vars;          ///< Indices for the coupled reactants
+  std::vector<Real> _power;                       ///< Inhibition term list powers
+  std::vector<const VariableValue *> _inhibition; ///< Pointer list to the coupled inhibitions
+  std::vector<unsigned int> _inhibition_vars;     ///< Indices for the coupled reactants
 
 private:
-
 };

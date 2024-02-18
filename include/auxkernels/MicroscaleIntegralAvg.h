@@ -1,9 +1,10 @@
 /*!
  *  \file MicroscaleIntegralAvg.h
- *    \brief Custom auxkernel for integrating a series of microscale variables over the fictious microscale space
- *    \details This file creates a custom MOOSE kernel for the diffusion at the microscale
- *              of a fictious mesh. Generally this kernel is to be used in conjunction with other
- *              Microscale kernels for mass transfer, time derivatives on the microscale, or reactions.
+ *    \brief Custom auxkernel for integrating a series of microscale variables over the fictious
+ * microscale space \details This file creates a custom MOOSE kernel for the diffusion at the
+ * microscale of a fictious mesh. Generally this kernel is to be used in conjunction with other
+ *              Microscale kernels for mass transfer, time derivatives on the microscale, or
+ * reactions.
  *
  *  \author Austin Ladshaw
  *    \date 04/16/2020
@@ -25,16 +26,15 @@
 class MicroscaleIntegralAvg : public MicroscaleIntegralTotal
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    MicroscaleIntegralAvg(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  MicroscaleIntegralAvg(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-
 };

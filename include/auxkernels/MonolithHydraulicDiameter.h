@@ -26,18 +26,17 @@
 class MonolithHydraulicDiameter : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    MonolithHydraulicDiameter(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  MonolithHydraulicDiameter(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    Real _cell_density;        ///< Cell density of the monolith (cells per total face area)
-    const VariableValue & _bulk_porosity;       ///< Ratio of channel volume to total volume
-
+  Real _cell_density; ///< Cell density of the monolith (cells per total face area)
+  const VariableValue & _bulk_porosity; ///< Ratio of channel volume to total volume
 };

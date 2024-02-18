@@ -23,32 +23,37 @@
 
 registerMooseObject("catsApp", MonolithAreaVolumeRatio);
 
-InputParameters MonolithAreaVolumeRatio::validParams()
+InputParameters
+MonolithAreaVolumeRatio::validParams()
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addParam<Real>("cell_density",50,"Cell density of the monolith (# of cells per face area)");
-    params.addRequiredCoupledVar("channel_vol_ratio","Ratio of channel volume to total volume ");
-    params.addParam<bool>("per_solids_volume",true,"If true, then ratio is in units of solid area per solid volume. If false, then ratio is in solids volume per total volume ");
-    return params;
+  InputParameters params = AuxKernel::validParams();
+  params.addParam<Real>(
+      "cell_density", 50, "Cell density of the monolith (# of cells per face area)");
+  params.addRequiredCoupledVar("channel_vol_ratio", "Ratio of channel volume to total volume ");
+  params.addParam<bool>("per_solids_volume",
+                        true,
+                        "If true, then ratio is in units of solid area per solid volume. If false, "
+                        "then ratio is in solids volume per total volume ");
+  return params;
 }
 
-MonolithAreaVolumeRatio::MonolithAreaVolumeRatio(const InputParameters & parameters) :
-AuxKernel(parameters),
-_cell_density(getParam<Real>("cell_density")),
-_bulk_porosity(coupledValue("channel_vol_ratio")),
-_PerSolidsVolume(getParam<bool>("per_solids_volume"))
+MonolithAreaVolumeRatio::MonolithAreaVolumeRatio(const InputParameters & parameters)
+  : AuxKernel(parameters),
+    _cell_density(getParam<Real>("cell_density")),
+    _bulk_porosity(coupledValue("channel_vol_ratio")),
+    _PerSolidsVolume(getParam<bool>("per_solids_volume"))
 {
-
 }
 
-Real MonolithAreaVolumeRatio::computeValue()
+Real
+MonolithAreaVolumeRatio::computeValue()
 {
-    Real Ac = _bulk_porosity[_qp]/_cell_density;
-    Real dc = 2.0*sqrt((Ac/3.14159));
-    Real ds = sqrt(Ac);
-    Real dh = 0.5*(dc+ds);
-    if (_PerSolidsVolume == true)
-      return 4.0*_cell_density*dh/(1-_bulk_porosity[_qp]);
-    else
-      return 4.0*_cell_density*dh;
+  Real Ac = _bulk_porosity[_qp] / _cell_density;
+  Real dc = 2.0 * sqrt((Ac / 3.14159));
+  Real ds = sqrt(Ac);
+  Real dh = 0.5 * (dc + ds);
+  if (_PerSolidsVolume == true)
+    return 4.0 * _cell_density * dh / (1 - _bulk_porosity[_qp]);
+  else
+    return 4.0 * _cell_density * dh;
 }

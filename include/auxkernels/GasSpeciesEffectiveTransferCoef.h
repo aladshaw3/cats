@@ -1,7 +1,7 @@
 /*!
  *  \file GasSpeciesEffectiveTransferCoef.h
- *    \brief AuxKernel kernel to compute the effective mass transfer coefficient for a given gas species
- *    \details This file is responsible for calculating the mass transfer in m/s
+ *    \brief AuxKernel kernel to compute the effective mass transfer coefficient for a given gas
+ * species \details This file is responsible for calculating the mass transfer in m/s
  *
  *
  *  \author Austin Ladshaw
@@ -30,19 +30,18 @@
 class GasSpeciesEffectiveTransferCoef : public GasPropertiesBase
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    GasSpeciesEffectiveTransferCoef(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  GasSpeciesEffectiveTransferCoef(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    unsigned int _index;            ///< Index of the gas species to which the diffusion belongs
-    const VariableValue & _porosity;                ///< Variable for the particle/washcoat porosity
+  unsigned int _index;             ///< Index of the gas species to which the diffusion belongs
+  const VariableValue & _porosity; ///< Variable for the particle/washcoat porosity
 
 private:
-
 };

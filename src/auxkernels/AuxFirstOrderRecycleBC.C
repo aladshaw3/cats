@@ -28,24 +28,27 @@
 
 registerMooseObject("catsApp", AuxFirstOrderRecycleBC);
 
-InputParameters AuxFirstOrderRecycleBC::validParams()
+InputParameters
+AuxFirstOrderRecycleBC::validParams()
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addRequiredParam<PostprocessorName>("outlet_postprocessor","Name of the postprocessor variable at outlet boundary");
-    params.addCoupledVar("recycle_rate",1.0,"Rate of recycle (can be constant or a variable to change with time)");
-    return params;
+  InputParameters params = AuxKernel::validParams();
+  params.addRequiredParam<PostprocessorName>(
+      "outlet_postprocessor", "Name of the postprocessor variable at outlet boundary");
+  params.addCoupledVar(
+      "recycle_rate", 1.0, "Rate of recycle (can be constant or a variable to change with time)");
+  return params;
 }
 
-AuxFirstOrderRecycleBC::AuxFirstOrderRecycleBC(const InputParameters & parameters) :
-AuxKernel(parameters),
-_u_out(getPostprocessorValue("outlet_postprocessor")),
-_recycle_rate(coupledValue("recycle_rate")),
-_u_old(uOld())
+AuxFirstOrderRecycleBC::AuxFirstOrderRecycleBC(const InputParameters & parameters)
+  : AuxKernel(parameters),
+    _u_out(getPostprocessorValue("outlet_postprocessor")),
+    _recycle_rate(coupledValue("recycle_rate")),
+    _u_old(uOld())
 {
-
 }
 
-Real AuxFirstOrderRecycleBC::computeValue()
+Real
+AuxFirstOrderRecycleBC::computeValue()
 {
-    return (_u_old[_qp] + _dt*_recycle_rate[_qp]*_u_out)/(1.0+_dt*_recycle_rate[_qp]);
+  return (_u_old[_qp] + _dt * _recycle_rate[_qp] * _u_out) / (1.0 + _dt * _recycle_rate[_qp]);
 }

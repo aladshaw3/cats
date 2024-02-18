@@ -31,40 +31,46 @@
 
 registerMooseObject("catsApp", SimpleGasEffectivePoreDiffusivity);
 
-InputParameters SimpleGasEffectivePoreDiffusivity::validParams()
+InputParameters
+SimpleGasEffectivePoreDiffusivity::validParams()
 {
-    InputParameters params = SimpleGasPropertiesBase::validParams();
-    params.addParam< std::string >("output_length_unit","m","Length units for mass transfer on output");
-    params.addParam< std::string >("output_time_unit","s","Time units for mass transfer on output");
-    params.addParam<bool>("per_solids_volume",true,"If true, then ratio is in units of solid area per solid volume. If false, then ratio is in solids volume per total volume ");
-    return params;
+  InputParameters params = SimpleGasPropertiesBase::validParams();
+  params.addParam<std::string>(
+      "output_length_unit", "m", "Length units for mass transfer on output");
+  params.addParam<std::string>("output_time_unit", "s", "Time units for mass transfer on output");
+  params.addParam<bool>("per_solids_volume",
+                        true,
+                        "If true, then ratio is in units of solid area per solid volume. If false, "
+                        "then ratio is in solids volume per total volume ");
+  return params;
 }
 
-SimpleGasEffectivePoreDiffusivity::SimpleGasEffectivePoreDiffusivity(const InputParameters & parameters) :
-SimpleGasPropertiesBase(parameters),
-_output_length_unit(getParam<std::string >("output_length_unit")),
-_output_time_unit(getParam<std::string >("output_time_unit")),
-_PerSolidsVolume(getParam<bool>("per_solids_volume"))
+SimpleGasEffectivePoreDiffusivity::SimpleGasEffectivePoreDiffusivity(
+    const InputParameters & parameters)
+  : SimpleGasPropertiesBase(parameters),
+    _output_length_unit(getParam<std::string>("output_length_unit")),
+    _output_time_unit(getParam<std::string>("output_time_unit")),
+    _PerSolidsVolume(getParam<bool>("per_solids_volume"))
 {
-
 }
 
-Real SimpleGasEffectivePoreDiffusivity::computeValue()
+Real
+SimpleGasEffectivePoreDiffusivity::computeValue()
 {
-    // Put diffusivity into cm^2/s
-    Real Dm = _ref_diffusivity*exp(-887.5*((1/_temperature[_qp])-(1/_ref_diff_temp)));
-    Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
-    Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
-    Dm = 1/SimpleGasPropertiesBase::time_conversion(1/Dm, _diff_time_unit, "s");
+  // Put diffusivity into cm^2/s
+  Real Dm = _ref_diffusivity * exp(-887.5 * ((1 / _temperature[_qp]) - (1 / _ref_diff_temp)));
+  Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
+  Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
+  Dm = 1 / SimpleGasPropertiesBase::time_conversion(1 / Dm, _diff_time_unit, "s");
 
-    Real Deff = pow(_micro_pore[_qp],_eff_diff_factor)*Dm;
-    // ends up in cm^2/s
-    Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
-    Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
-    Deff = 1/SimpleGasPropertiesBase::time_conversion(1/Deff, "s", _output_time_unit);
+  Real Deff = pow(_micro_pore[_qp], _eff_diff_factor) * Dm;
+  // ends up in cm^2/s
+  Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
+  Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
+  Deff = 1 / SimpleGasPropertiesBase::time_conversion(1 / Deff, "s", _output_time_unit);
 
-    if (_PerSolidsVolume == true)
-      return Deff*_micro_pore[_qp];
-    else
-      return Deff*_micro_pore[_qp]*(1.0-_macro_pore[_qp]);
+  if (_PerSolidsVolume == true)
+    return Deff * _micro_pore[_qp];
+  else
+    return Deff * _micro_pore[_qp] * (1.0 - _macro_pore[_qp]);
 }

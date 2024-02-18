@@ -1,12 +1,11 @@
 /*!
  *  \file SchloeglDarcyCoefficient.h
- *    \brief Auxillary kernel for a Schloegl coefficient for implementation of Darcy's Law in membranes
- *    \details This file is responsible for calculating the value of an auxvariable
- *              according to the Schloegl relationship for Darcy flow in membranes. This calculated
- *              coefficient is to be used in the calculation of velocity in/across a membrane
- *              assuming Darcy flow. This is where all velocities are resolved via only
- *              pressure gradients in the domain and the pressure is resolved with a Laplace's
- *              equation with proper boundary conditions applied.
+ *    \brief Auxillary kernel for a Schloegl coefficient for implementation of Darcy's Law in
+ *membranes \details This file is responsible for calculating the value of an auxvariable according
+ *to the Schloegl relationship for Darcy flow in membranes. This calculated coefficient is to be
+ *used in the calculation of velocity in/across a membrane assuming Darcy flow. This is where all
+ *velocities are resolved via only pressure gradients in the domain and the pressure is resolved
+ *with a Laplace's equation with proper boundary conditions applied.
  *
  *              vel = Coeff * grad(P)   where Coeff is calculated from this kernel.
  *
@@ -36,18 +35,19 @@
 class SchloeglDarcyCoefficient : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    SchloeglDarcyCoefficient(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  SchloeglDarcyCoefficient(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    const VariableValue & _viscosity;                 ///< Variable for the viscosity of the fluid (typical units: Pressure * Time)
-    const VariableValue & _hydro_perm;                ///< Variable for the hydrolic permeability of the membrane (units: Length^2)
-
+  const VariableValue &
+      _viscosity; ///< Variable for the viscosity of the fluid (typical units: Pressure * Time)
+  const VariableValue &
+      _hydro_perm; ///< Variable for the hydrolic permeability of the membrane (units: Length^2)
 };

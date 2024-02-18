@@ -24,21 +24,21 @@
 
 registerMooseObject("catsApp", AuxPostprocessorValue);
 
-InputParameters AuxPostprocessorValue::validParams()
+InputParameters
+AuxPostprocessorValue::validParams()
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addRequiredParam<PostprocessorName>("postprocessor","Name of the postprocessor variable");
-    return params;
+  InputParameters params = AuxKernel::validParams();
+  params.addRequiredParam<PostprocessorName>("postprocessor", "Name of the postprocessor variable");
+  return params;
 }
 
-AuxPostprocessorValue::AuxPostprocessorValue(const InputParameters & parameters) :
-AuxKernel(parameters),
-_post_val(getPostprocessorValue("postprocessor"))
+AuxPostprocessorValue::AuxPostprocessorValue(const InputParameters & parameters)
+  : AuxKernel(parameters), _post_val(getPostprocessorValue("postprocessor"))
 {
-
 }
 
-Real AuxPostprocessorValue::computeValue()
+Real
+AuxPostprocessorValue::computeValue()
 {
-    return _post_val;
+  return _post_val;
 }

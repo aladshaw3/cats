@@ -21,32 +21,33 @@
 
 registerMooseObject("catsApp", SimpleGasDensity);
 
-InputParameters SimpleGasDensity::validParams()
+InputParameters
+SimpleGasDensity::validParams()
 {
-    InputParameters params = SimpleGasPropertiesBase::validParams();
-    params.addParam< std::string >("output_length_unit","m","Length units for gas density on output");
-    params.addParam< std::string >("output_mass_unit","kg","Mass units for gas density on output");
+  InputParameters params = SimpleGasPropertiesBase::validParams();
+  params.addParam<std::string>("output_length_unit", "m", "Length units for gas density on output");
+  params.addParam<std::string>("output_mass_unit", "kg", "Mass units for gas density on output");
 
-    return params;
+  return params;
 }
 
-SimpleGasDensity::SimpleGasDensity(const InputParameters & parameters) :
-SimpleGasPropertiesBase(parameters),
-_output_length_unit(getParam<std::string >("output_length_unit")),
-_output_mass_unit(getParam<std::string >("output_mass_unit"))
+SimpleGasDensity::SimpleGasDensity(const InputParameters & parameters)
+  : SimpleGasPropertiesBase(parameters),
+    _output_length_unit(getParam<std::string>("output_length_unit")),
+    _output_mass_unit(getParam<std::string>("output_mass_unit"))
 {
-
 }
 
-Real SimpleGasDensity::computeValue()
+Real
+SimpleGasDensity::computeValue()
 {
-    // rho [g/cm^3]
-    Real press = SimpleGasPropertiesBase::pressure_conversion(_pressure[_qp], _pressure_unit, "kPa");
-    Real rho = press*1000/287.058/_temperature[_qp]*1000;
-    rho = rho/100/100/100;
-    rho = 1/SimpleGasPropertiesBase::length_conversion(1/rho, "cm", _output_length_unit);
-    rho = 1/SimpleGasPropertiesBase::length_conversion(1/rho, "cm", _output_length_unit);
-    rho = 1/SimpleGasPropertiesBase::length_conversion(1/rho, "cm", _output_length_unit);
-    rho = SimpleGasPropertiesBase::mass_conversion(rho, "g", _output_mass_unit);
-    return rho;
+  // rho [g/cm^3]
+  Real press = SimpleGasPropertiesBase::pressure_conversion(_pressure[_qp], _pressure_unit, "kPa");
+  Real rho = press * 1000 / 287.058 / _temperature[_qp] * 1000;
+  rho = rho / 100 / 100 / 100;
+  rho = 1 / SimpleGasPropertiesBase::length_conversion(1 / rho, "cm", _output_length_unit);
+  rho = 1 / SimpleGasPropertiesBase::length_conversion(1 / rho, "cm", _output_length_unit);
+  rho = 1 / SimpleGasPropertiesBase::length_conversion(1 / rho, "cm", _output_length_unit);
+  rho = SimpleGasPropertiesBase::mass_conversion(rho, "g", _output_mass_unit);
+  return rho;
 }

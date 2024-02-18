@@ -30,20 +30,19 @@
 class GasSolidHeatTransCoef : public GasPropertiesBase
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    GasSolidHeatTransCoef(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  GasSolidHeatTransCoef(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    Real _Cp_Cv_ratio;            ///< Value for the ratio of Cp to Cv for the gas (assumed = 1.4 if not given)
-    const VariableValue & _solid_cond;                ///< Variable for the solid thermal conductivity (W/m/K)
-    const VariableValue & _porosity;                ///< Variable for the porosity
+  Real _Cp_Cv_ratio; ///< Value for the ratio of Cp to Cv for the gas (assumed = 1.4 if not given)
+  const VariableValue & _solid_cond; ///< Variable for the solid thermal conductivity (W/m/K)
+  const VariableValue & _porosity;   ///< Variable for the porosity
 
 private:
-
 };

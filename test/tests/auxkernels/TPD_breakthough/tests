@@ -1,7 +1,0 @@
-[Tests]
-  [./lin_temp_tpd_coupled]
-    type = 'CSVDiff'
-    input = 'TPD_150C.i'
-    csvdiff = 'TPD_150C_out.csv'
-  [../]
-[]

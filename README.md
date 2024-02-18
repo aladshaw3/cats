@@ -1,6 +1,6 @@
 ## Last Updated
 
-January 26, 2024
+February 17, 2024
 
 NOTES:
 - Removed Mac Workflow support due to persistent up-stream failures in the GitHub action tool for Mac
@@ -48,7 +48,33 @@ To use CATS, a user must first download and install the MOOSE framework (https:/
 
  - Basic Instructions for keeping moose environment updated 
  
+ 
+ (1) Update the conda environment 
+ 
 <code> mamba update --all </code>
+
+
+ (2) Update your moose folder
+
+<code> cd ~/projects/moose </code>
+
+<code> git fetch origin </code>
+
+<code> git rebase origin/master </code>
+
+
+ (3) Update and rebuild the CATS application
+
+<code> cd ~/projects/CATS </code>
+
+<code> make clobberall </code>
+
+<code> make -j 4 </code>
+
+<code> ./run_tests -j 4 </code>
+
+Additional information available [here](https://mooseframework.inl.gov/getting_started/new_users.html).
+
 
 **NOTE**: The `wasp` library is now required in moose. You may need to run `./update_and_rebuild_wasp.sh` from the `scripts` directory of your `moose` folder. 
 If you still have trouble, try uninstalling and reinstalling `moose` from scratch. 
@@ -93,6 +119,13 @@ For example...
 Or, to run on multiple CPU cores...
 
 <code> mpiexec --n 4 ./cats-opt -i path/to/file.i </code>
+
+
+Code Formatting
+-----
+CATS is bundled with a .clang-format file to automatically format `*.C` and `*.h` files. To auto-format all files, run the following command from the top directory.
+
+<code> find . -regex '.*\.\(cpp\|h\|cc\|C\)' -exec clang-format -style=file -i {} \; </code>
 
 
 WARNINGS

@@ -27,25 +27,23 @@
 class InitialActivity : public InitialCondition
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for BC objects in MOOSE
-    InitialActivity(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  InitialActivity(const InputParameters & parameters);
 
 protected:
+  /// Required function override for IC objects in MOOSE
+  /** This function returns the value of the variable at point p in the mesh.*/
+  virtual Real value(const Point & p) override;
 
-    /// Required function override for IC objects in MOOSE
-    /** This function returns the value of the variable at point p in the mesh.*/
-    virtual Real value(const Point & p) override;
-
-    const VariableValue & _gamma;          ///< Variable for activity coefficient
-    const unsigned int _gamma_var;         ///< Variable identification for activity coefficent
-    const VariableValue & _conc;           ///< Variable for concentration of species
-    const unsigned int _conc_var;          ///< Variable identification for concentration
-    const VariableValue & _ref_conc;       ///< Variable for reference/total concentration
-    const unsigned int _ref_conc_var;      ///< Variable identification for reference concentration
+  const VariableValue & _gamma;     ///< Variable for activity coefficient
+  const unsigned int _gamma_var;    ///< Variable identification for activity coefficent
+  const VariableValue & _conc;      ///< Variable for concentration of species
+  const unsigned int _conc_var;     ///< Variable identification for concentration
+  const VariableValue & _ref_conc;  ///< Variable for reference/total concentration
+  const unsigned int _ref_conc_var; ///< Variable identification for reference concentration
 
 private:
-
 };

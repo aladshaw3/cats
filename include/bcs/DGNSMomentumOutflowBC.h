@@ -9,8 +9,8 @@
  *			an output or input boundary, then apply the appropriate conditions. If the boundary is
  *      an input boundary, then no flux will be applied.
  *
- *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic equations:
- *                    Theory and Implementation, SIAM, Houston, TX, 2008.
+ *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic
+ *equations: Theory and Implementation, SIAM, Houston, TX, 2008.
  *
  *
  *  \author Austin Ladshaw
@@ -31,43 +31,43 @@
 
 /// DGNSMomentumOutflowBC class object inherits from DGConcentrationFluxBC object
 /** This class object inherits from the DGConcentrationFluxBC object.
-	All public and protected members of this class are required function overrides.
-	The flux BC uses the velocity in the system to apply a boundary
-	condition based on whether or not material is leaving or entering the boundary. */
+  All public and protected members of this class are required function overrides.
+  The flux BC uses the velocity in the system to apply a boundary
+  condition based on whether or not material is leaving or entering the boundary. */
 class DGNSMomentumOutflowBC : public DGConcentrationFluxBC
 {
 public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
 
-	/// Required constructor for BC objects in MOOSE
-	DGNSMomentumOutflowBC(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  DGNSMomentumOutflowBC(const InputParameters & parameters);
 
 protected:
-	/// Required function override for BC objects in MOOSE
-	/** This function returns a residual contribution for this object.*/
-	virtual Real computeQpResidual() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual() override;
 
-	/// Required function override for BC objects in MOOSE
-	/** This function returns a Jacobian contribution for this object. The Jacobian being
-		computed is the associated diagonal element in the overall Jacobian matrix for the
-		system and is used in preconditioning of the linear sub-problem. */
-	virtual Real computeQpJacobian() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+    computed is the associated diagonal element in the overall Jacobian matrix for the
+    system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian() override;
 
-	/// Not Required, but aids in the preconditioning step
-	/** This function returns the off diagonal Jacobian contribution for this object. By
-		returning a non-zero value we will hopefully improve the convergence rate for the
-		cross coupling of the variables. */
-	virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
+  /// Not Required, but aids in the preconditioning step
+  /** This function returns the off diagonal Jacobian contribution for this object. By
+    returning a non-zero value we will hopefully improve the convergence rate for the
+    cross coupling of the variables. */
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-  const VariableValue & _density;			    ///< Porosity variable
-  const unsigned int _density_var;				///< Variable identification for porosity
+  const VariableValue & _density;  ///< Porosity variable
+  const unsigned int _density_var; ///< Variable identification for porosity
 
-  const VariableValue & _coupled_main;    ///< Primary velocity component variable (i.e., diagonal)
-  const unsigned int _main_var;           ///< Variable identification for the primary velocity variable (i.e., diagonal)
+  const VariableValue & _coupled_main; ///< Primary velocity component variable (i.e., diagonal)
+  const unsigned int
+      _main_var; ///< Variable identification for the primary velocity variable (i.e., diagonal)
 
-  unsigned int _dir;                      ///< Direction that '_main_var' acts on
+  unsigned int _dir; ///< Direction that '_main_var' acts on
 
 private:
-
 };

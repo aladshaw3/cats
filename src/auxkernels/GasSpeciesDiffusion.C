@@ -23,27 +23,29 @@
 
 registerMooseObject("catsApp", GasSpeciesDiffusion);
 
-InputParameters GasSpeciesDiffusion::validParams()
+InputParameters
+GasSpeciesDiffusion::validParams()
 {
-    InputParameters params = GasPropertiesBase::validParams();
-    params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
-    return params;
+  InputParameters params = GasPropertiesBase::validParams();
+  params.addParam<unsigned int>(
+      "species_index", 0, "Index of the gas species we want the diffusion of");
+  return params;
 }
 
-GasSpeciesDiffusion::GasSpeciesDiffusion(const InputParameters & parameters) :
-GasPropertiesBase(parameters),
-_index(getParam< unsigned int >("species_index"))
+GasSpeciesDiffusion::GasSpeciesDiffusion(const InputParameters & parameters)
+  : GasPropertiesBase(parameters), _index(getParam<unsigned int>("species_index"))
 {
-    if (_index > _gases.size())
-    {
-        moose::internal::mooseErrorRaw("Index out of bounds!");
-    }
+  if (_index > _gases.size())
+  {
+    moose::internal::mooseErrorRaw("Index out of bounds!");
+  }
 }
 
-Real GasSpeciesDiffusion::computeValue()
+Real
+GasSpeciesDiffusion::computeValue()
 {
-    prepareEgret();
-    calculateAllProperties();
+  prepareEgret();
+  calculateAllProperties();
 
-    return _egret_dat.species_dat[_index].molecular_diffusion/100.0/100.0;
+  return _egret_dat.species_dat[_index].molecular_diffusion / 100.0 / 100.0;
 }

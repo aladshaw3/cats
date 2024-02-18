@@ -22,38 +22,41 @@
 
 registerMooseObject("catsApp", VariableCoefTimeDerivative);
 
-InputParameters VariableCoefTimeDerivative::validParams()
+InputParameters
+VariableCoefTimeDerivative::validParams()
 {
-    InputParameters params = CoefTimeDerivative::validParams();
-    params.addRequiredCoupledVar("coupled_coef","Variable coefficient for the time derivative");
-    return params;
+  InputParameters params = CoefTimeDerivative::validParams();
+  params.addRequiredCoupledVar("coupled_coef", "Variable coefficient for the time derivative");
+  return params;
 }
 
-VariableCoefTimeDerivative::VariableCoefTimeDerivative(const InputParameters & parameters) :
-CoefTimeDerivative(parameters),
-_coupled(coupledValue("coupled_coef")),
-_coupled_var(coupled("coupled_coef"))
+VariableCoefTimeDerivative::VariableCoefTimeDerivative(const InputParameters & parameters)
+  : CoefTimeDerivative(parameters),
+    _coupled(coupledValue("coupled_coef")),
+    _coupled_var(coupled("coupled_coef"))
 {
-
 }
 
-Real VariableCoefTimeDerivative::computeQpResidual()
+Real
+VariableCoefTimeDerivative::computeQpResidual()
 {
   _coef = _coupled[_qp];
   return CoefTimeDerivative::computeQpResidual();
 }
 
-Real VariableCoefTimeDerivative::computeQpJacobian()
+Real
+VariableCoefTimeDerivative::computeQpJacobian()
 {
   _coef = _coupled[_qp];
   return CoefTimeDerivative::computeQpJacobian();
 }
 
-Real VariableCoefTimeDerivative::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+VariableCoefTimeDerivative::computeQpOffDiagJacobian(unsigned int jvar)
 {
   if (jvar == _coupled_var)
-	{
-		return _phi[_j][_qp]*_test[_i][_qp] * _u_dot[_qp];
-	}
-	return 0.0;
+  {
+    return _phi[_j][_qp] * _test[_i][_qp] * _u_dot[_qp];
+  }
+  return 0.0;
 }

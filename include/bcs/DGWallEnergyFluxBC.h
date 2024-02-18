@@ -31,38 +31,37 @@
 class DGWallEnergyFluxBC : public IntegratedBC
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for BC objects in MOOSE
-    DGWallEnergyFluxBC(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  DGWallEnergyFluxBC(const InputParameters & parameters);
 
 protected:
-    /// Required function override for BC objects in MOOSE
-    /** This function returns a residual contribution for this object.*/
-    virtual Real computeQpResidual() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual() override;
 
-    /// Required function override for BC objects in MOOSE
-    /** This function returns a Jacobian contribution for this object. The Jacobian being
-        computed is the associated diagonal element in the overall Jacobian matrix for the
-        system and is used in preconditioning of the linear sub-problem. */
-    virtual Real computeQpJacobian() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+      computed is the associated diagonal element in the overall Jacobian matrix for the
+      system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian() override;
 
-    /// Not required, but recomended function for DG kernels in MOOSE
-    /** This function returns an off-diagonal jacobian contribution for this object. The jacobian
-     being computed will be associated with the variables coupled to this object and not the
-     main coupled variable itself. */
-    virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
+  /// Not required, but recomended function for DG kernels in MOOSE
+  /** This function returns an off-diagonal jacobian contribution for this object. The jacobian
+   being computed will be associated with the variables coupled to this object and not the
+   main coupled variable itself. */
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-    const VariableValue & _hw;            ///< Variable for Heat transfer coefficient (W/m^2/K)
-    const unsigned int _hw_var;           ///< Variable identification for hw
-    const VariableValue & _temp;          ///< Variable for phase temperature (K)
-    const unsigned int _temp_var;         ///< Variable identification for phase temperature
-    const VariableValue & _walltemp;      ///< Variable for wall temperature (K)
-    const unsigned int _walltemp_var;     ///< Variable identification for wall temperature
-    const VariableValue & _areafrac;      ///< Variable for area fraction (-)
-    const unsigned int _areafrac_var;     ///< Variable identification for area fraction
+  const VariableValue & _hw;        ///< Variable for Heat transfer coefficient (W/m^2/K)
+  const unsigned int _hw_var;       ///< Variable identification for hw
+  const VariableValue & _temp;      ///< Variable for phase temperature (K)
+  const unsigned int _temp_var;     ///< Variable identification for phase temperature
+  const VariableValue & _walltemp;  ///< Variable for wall temperature (K)
+  const unsigned int _walltemp_var; ///< Variable identification for wall temperature
+  const VariableValue & _areafrac;  ///< Variable for area fraction (-)
+  const unsigned int _areafrac_var; ///< Variable identification for area fraction
 
 private:
-
 };

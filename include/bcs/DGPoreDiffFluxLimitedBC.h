@@ -1,12 +1,11 @@
 /*!
  *  \file DGPoreDiffFluxLimitedBC.h
- *	\brief Boundary Condition kernel to mimic a Dirichlet BC for DG methods with coupled velocity, diffusivity, and porosity
- *	\details This file creates a boundary condition kernel to impose a dirichlet-like boundary
- *			condition in DG methods. True DG methods do not have Dirichlet boundary conditions,
- *			so this kernel seeks to impose a constraint on the inlet of a boundary that is met
- *			if the value of a variable at the inlet boundary is equal to the finite element
- *			solution at that boundary. When the condition is not met, the residuals get penalyzed
- *			until the condition is met.
+ *	\brief Boundary Condition kernel to mimic a Dirichlet BC for DG methods with coupled velocity,
+ *diffusivity, and porosity \details This file creates a boundary condition kernel to impose a
+ *dirichlet-like boundary condition in DG methods. True DG methods do not have Dirichlet boundary
+ *conditions, so this kernel seeks to impose a constraint on the inlet of a boundary that is met if
+ *the value of a variable at the inlet boundary is equal to the finite element solution at that
+ *boundary. When the condition is not met, the residuals get penalyzed until the condition is met.
  *
  *      This kernel inherits from DGFluxLimitedBC and uses coupled x, y, and z components
  *      of the coupled velocity to build an edge velocity vector. This also now requires the
@@ -31,8 +30,8 @@
  *                                   work for symmetic and non-symmetric systems. Much
  *                                   less dependent on sigma values for convergence.
  *
- *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic equations:
- *                    Theory and Implementation, SIAM, Houston, TX, 2008.
+ *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic
+ *equations: Theory and Implementation, SIAM, Houston, TX, 2008.
  *
  *  \author Austin Ladshaw
  *	\date 03/09/2020
@@ -55,26 +54,26 @@
 
 /// DGPoreDiffFluxLimitedBC class object inherits from DGVarVelDiffFluxLimitedBC object
 /** This class object inherits from the DGVarVelDiffFluxLimitedBC object.
-	All public and protected members of this class are required function overrides.  */
+  All public and protected members of this class are required function overrides.  */
 class DGPoreDiffFluxLimitedBC : public DGVarVelDiffFluxLimitedBC
 {
 public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
 
-	/// Required constructor for BC objects in MOOSE
-	DGPoreDiffFluxLimitedBC(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  DGPoreDiffFluxLimitedBC(const InputParameters & parameters);
 
 protected:
-	/// Required function override for BC objects in MOOSE
-	/** This function returns a residual contribution for this object.*/
-	virtual Real computeQpResidual() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual() override;
 
-	/// Required function override for BC objects in MOOSE
-	/** This function returns a Jacobian contribution for this object. The Jacobian being
-		computed is the associated diagonal element in the overall Jacobian matrix for the
-		system and is used in preconditioning of the linear sub-problem. */
-	virtual Real computeQpJacobian() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+    computed is the associated diagonal element in the overall Jacobian matrix for the
+    system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian() override;
 
   /// Not required, but recomended function for DG kernels in MOOSE
   /** This function returns an off-diagonal jacobian contribution for this object. The jacobian
@@ -82,9 +81,8 @@ protected:
   main coupled variable itself. */
   virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-  const VariableValue & _porosity;			    ///< Porosity variable
-  const unsigned int _porosity_var;					///< Variable identification for porosity
+  const VariableValue & _porosity;  ///< Porosity variable
+  const unsigned int _porosity_var; ///< Variable identification for porosity
 
 private:
-
 };

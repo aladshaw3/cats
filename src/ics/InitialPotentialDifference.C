@@ -26,25 +26,28 @@
 
 registerMooseObject("catsApp", InitialPotentialDifference);
 
-InputParameters InitialPotentialDifference::validParams()
+InputParameters
+InitialPotentialDifference::validParams()
 {
-    InputParameters params = InitialCondition::validParams();
-    params.addRequiredCoupledVar("electrode_potential","Variable for the electrode potential (V or J/C)");
-    params.addRequiredCoupledVar("electrolyte_potential","Variable for the electrolyte potential (V or J/C)");
-    return params;
+  InputParameters params = InitialCondition::validParams();
+  params.addRequiredCoupledVar("electrode_potential",
+                               "Variable for the electrode potential (V or J/C)");
+  params.addRequiredCoupledVar("electrolyte_potential",
+                               "Variable for the electrolyte potential (V or J/C)");
+  return params;
 }
 
 InitialPotentialDifference::InitialPotentialDifference(const InputParameters & parameters)
-: InitialCondition(parameters),
-_electrode_pot(coupledValue("electrode_potential")),
-_electrode_pot_var(coupled("electrode_potential")),
-_electrolyte_pot(coupledValue("electrolyte_potential")),
-_electrolyte_pot_var(coupled("electrolyte_potential"))
+  : InitialCondition(parameters),
+    _electrode_pot(coupledValue("electrode_potential")),
+    _electrode_pot_var(coupled("electrode_potential")),
+    _electrolyte_pot(coupledValue("electrolyte_potential")),
+    _electrolyte_pot_var(coupled("electrolyte_potential"))
 {
-
 }
 
-Real InitialPotentialDifference::value(const Point & /*p*/)
+Real
+InitialPotentialDifference::value(const Point & /*p*/)
 {
-    return _electrode_pot[_qp] - _electrolyte_pot[_qp];
+  return _electrode_pot[_qp] - _electrolyte_pot[_qp];
 }

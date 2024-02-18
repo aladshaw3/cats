@@ -23,21 +23,21 @@
 
 registerMooseObject("catsApp", SolidsVolumeFraction);
 
-InputParameters SolidsVolumeFraction::validParams()
+InputParameters
+SolidsVolumeFraction::validParams()
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addRequiredCoupledVar("porosity","Bulk porosity of the reactor system ");
-    return params;
+  InputParameters params = AuxKernel::validParams();
+  params.addRequiredCoupledVar("porosity", "Bulk porosity of the reactor system ");
+  return params;
 }
 
-SolidsVolumeFraction::SolidsVolumeFraction(const InputParameters & parameters) :
-AuxKernel(parameters),
-_bulk_porosity(coupledValue("porosity"))
+SolidsVolumeFraction::SolidsVolumeFraction(const InputParameters & parameters)
+  : AuxKernel(parameters), _bulk_porosity(coupledValue("porosity"))
 {
-
 }
 
-Real SolidsVolumeFraction::computeValue()
+Real
+SolidsVolumeFraction::computeValue()
 {
-    return (1 - _bulk_porosity[_qp]);
+  return (1 - _bulk_porosity[_qp]);
 }

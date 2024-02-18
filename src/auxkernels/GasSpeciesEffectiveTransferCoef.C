@@ -1,7 +1,7 @@
 /*!
  *  \file GasSpeciesEffectiveTransferCoef.h
- *    \brief AuxKernel kernel to compute the effective mass transfer coefficient for a given gas species
- *    \details This file is responsible for calculating the mass transfer in m/s
+ *    \brief AuxKernel kernel to compute the effective mass transfer coefficient for a given gas
+ * species \details This file is responsible for calculating the mass transfer in m/s
  *
  *
  *  \author Austin Ladshaw
@@ -23,29 +23,39 @@
 
 registerMooseObject("catsApp", GasSpeciesEffectiveTransferCoef);
 
-InputParameters GasSpeciesEffectiveTransferCoef::validParams()
+InputParameters
+GasSpeciesEffectiveTransferCoef::validParams()
 {
-    InputParameters params = GasPropertiesBase::validParams();
-    params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
-    params.addRequiredCoupledVar("micro_porosity","Name of the micro-porosity variable");
-    return params;
+  InputParameters params = GasPropertiesBase::validParams();
+  params.addParam<unsigned int>(
+      "species_index", 0, "Index of the gas species we want the diffusion of");
+  params.addRequiredCoupledVar("micro_porosity", "Name of the micro-porosity variable");
+  return params;
 }
 
-GasSpeciesEffectiveTransferCoef::GasSpeciesEffectiveTransferCoef(const InputParameters & parameters) :
-GasPropertiesBase(parameters),
-_index(getParam< unsigned int >("species_index")),
-_porosity(coupledValue("micro_porosity"))
+GasSpeciesEffectiveTransferCoef::GasSpeciesEffectiveTransferCoef(const InputParameters & parameters)
+  : GasPropertiesBase(parameters),
+    _index(getParam<unsigned int>("species_index")),
+    _porosity(coupledValue("micro_porosity"))
 {
-    if (_index > _gases.size())
-    {
-        moose::internal::mooseErrorRaw("Index out of bounds!");
-    }
+  if (_index > _gases.size())
+  {
+    moose::internal::mooseErrorRaw("Index out of bounds!");
+  }
 }
 
-Real GasSpeciesEffectiveTransferCoef::computeValue()
+Real
+GasSpeciesEffectiveTransferCoef::computeValue()
 {
-    prepareEgret();
-    calculateAllProperties();
+  prepareEgret();
+  calculateAllProperties();
 
-    return FilmMTCoeff(_egret_dat.species_dat[_index].molecular_diffusion*_porosity[_qp]*_porosity[_qp], _egret_dat.char_length, _egret_dat.Reynolds, ScNum(_egret_dat.kinematic_viscosity,_egret_dat.species_dat[_index].molecular_diffusion*_porosity[_qp]*_porosity[_qp]))/100.0;
+  return FilmMTCoeff(_egret_dat.species_dat[_index].molecular_diffusion * _porosity[_qp] *
+                         _porosity[_qp],
+                     _egret_dat.char_length,
+                     _egret_dat.Reynolds,
+                     ScNum(_egret_dat.kinematic_viscosity,
+                           _egret_dat.species_dat[_index].molecular_diffusion * _porosity[_qp] *
+                               _porosity[_qp])) /
+         100.0;
 }

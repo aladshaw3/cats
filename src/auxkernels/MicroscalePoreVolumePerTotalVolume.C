@@ -25,23 +25,26 @@
 
 registerMooseObject("catsApp", MicroscalePoreVolumePerTotalVolume);
 
-InputParameters MicroscalePoreVolumePerTotalVolume::validParams()
+InputParameters
+MicroscalePoreVolumePerTotalVolume::validParams()
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addRequiredCoupledVar("porosity","Bulk porosity of the reactor system ");
-    params.addRequiredCoupledVar("microscale_porosity","Microscale porosity of the microscale system ");
-    return params;
+  InputParameters params = AuxKernel::validParams();
+  params.addRequiredCoupledVar("porosity", "Bulk porosity of the reactor system ");
+  params.addRequiredCoupledVar("microscale_porosity",
+                               "Microscale porosity of the microscale system ");
+  return params;
 }
 
-MicroscalePoreVolumePerTotalVolume::MicroscalePoreVolumePerTotalVolume(const InputParameters & parameters) :
-AuxKernel(parameters),
-_bulk_porosity(coupledValue("porosity")),
-_microscale_porosity(coupledValue("microscale_porosity"))
+MicroscalePoreVolumePerTotalVolume::MicroscalePoreVolumePerTotalVolume(
+    const InputParameters & parameters)
+  : AuxKernel(parameters),
+    _bulk_porosity(coupledValue("porosity")),
+    _microscale_porosity(coupledValue("microscale_porosity"))
 {
-
 }
 
-Real MicroscalePoreVolumePerTotalVolume::computeValue()
+Real
+MicroscalePoreVolumePerTotalVolume::computeValue()
 {
-    return _microscale_porosity[_qp]*(1 - _bulk_porosity[_qp]);
+  return _microscale_porosity[_qp] * (1 - _bulk_porosity[_qp]);
 }

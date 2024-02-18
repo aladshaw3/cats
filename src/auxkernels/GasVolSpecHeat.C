@@ -1,7 +1,8 @@
 /*!
  *  \file GasVolSpecHeat.h
  *    \brief AuxKernel kernel to compute the gas phase volumetric specific heat (Cv)
- *    \details This file is responsible for calculating the gas volumetric specific heat (Cv) in J/kg/K
+ *    \details This file is responsible for calculating the gas volumetric specific heat (Cv) in
+ * J/kg/K
  *
  *
  *  \author Austin Ladshaw
@@ -23,33 +24,35 @@
 
 registerMooseObject("catsApp", GasVolSpecHeat);
 
-InputParameters GasVolSpecHeat::validParams()
+InputParameters
+GasVolSpecHeat::validParams()
 {
-    InputParameters params = GasPropertiesBase::validParams();
-    params.addParam< Real >("heat_cap_ratio",1.4,"Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
+  InputParameters params = GasPropertiesBase::validParams();
+  params.addParam<Real>(
+      "heat_cap_ratio", 1.4, "Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
 
-    return params;
+  return params;
 }
 
-GasVolSpecHeat::GasVolSpecHeat(const InputParameters & parameters) :
-GasPropertiesBase(parameters),
-_Cp_Cv_ratio(getParam< Real >("heat_cap_ratio"))
+GasVolSpecHeat::GasVolSpecHeat(const InputParameters & parameters)
+  : GasPropertiesBase(parameters), _Cp_Cv_ratio(getParam<Real>("heat_cap_ratio"))
 {
-    // Check the bounds of the correction factor (typical values: 1.3 - 1.6)
-    if (_Cp_Cv_ratio < 0.56)
-    {
-        _Cp_Cv_ratio = 0.56;
-    }
-    if (_Cp_Cv_ratio > 1.67)
-    {
-        _Cp_Cv_ratio = 1.67;
-    }
+  // Check the bounds of the correction factor (typical values: 1.3 - 1.6)
+  if (_Cp_Cv_ratio < 0.56)
+  {
+    _Cp_Cv_ratio = 0.56;
+  }
+  if (_Cp_Cv_ratio > 1.67)
+  {
+    _Cp_Cv_ratio = 1.67;
+  }
 }
 
-Real GasVolSpecHeat::computeValue()
+Real
+GasVolSpecHeat::computeValue()
 {
-    prepareEgret();
-    calculateAllProperties();
-    Real Cv = _egret_dat.total_specific_heat*1000.0/_Cp_Cv_ratio;
-    return Cv;
+  prepareEgret();
+  calculateAllProperties();
+  Real Cv = _egret_dat.total_specific_heat * 1000.0 / _Cp_Cv_ratio;
+  return Cv;
 }

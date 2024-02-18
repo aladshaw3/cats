@@ -29,18 +29,19 @@
 class AuxRatio : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    AuxRatio(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  AuxRatio(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    std::vector<const VariableValue *> _numerator;     ///< Pointer list to the coupled vars as the numerator (top)
-    std::vector<const VariableValue *> _denominator;     ///< Pointer list to the coupled vars as the denominator (bottom)
-
+  std::vector<const VariableValue *>
+      _numerator; ///< Pointer list to the coupled vars as the numerator (top)
+  std::vector<const VariableValue *>
+      _denominator; ///< Pointer list to the coupled vars as the denominator (bottom)
 };

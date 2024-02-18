@@ -21,35 +21,40 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
- #include "ErgunCoefficient.h"
+#include "ErgunCoefficient.h"
 
- registerMooseObject("catsApp", ErgunCoefficient);
+registerMooseObject("catsApp", ErgunCoefficient);
 
- InputParameters ErgunCoefficient::validParams()
- {
-     InputParameters params = AuxKernel::validParams();
-     params.addCoupledVar("porosity",0.5,"Name of the bulk porosity variable");
-     params.addCoupledVar("viscosity",1.81E-5,"Name of the viscosity variable (default = 1.81E-5 kg/m/s)");
-     params.addCoupledVar("density",1.225,"Name of the density variable (default = 1.225 kg/m^3)");
-     params.addCoupledVar("velocity",0,"Name of the velocity variable (default = 0 m/s)");
-     params.addCoupledVar("particle_diameter",0.01,"Average particle diameter of fibers/spheres/etc in the porous domain");
-     return params;
- }
+InputParameters
+ErgunCoefficient::validParams()
+{
+  InputParameters params = AuxKernel::validParams();
+  params.addCoupledVar("porosity", 0.5, "Name of the bulk porosity variable");
+  params.addCoupledVar(
+      "viscosity", 1.81E-5, "Name of the viscosity variable (default = 1.81E-5 kg/m/s)");
+  params.addCoupledVar("density", 1.225, "Name of the density variable (default = 1.225 kg/m^3)");
+  params.addCoupledVar("velocity", 0, "Name of the velocity variable (default = 0 m/s)");
+  params.addCoupledVar("particle_diameter",
+                       0.01,
+                       "Average particle diameter of fibers/spheres/etc in the porous domain");
+  return params;
+}
 
- ErgunCoefficient::ErgunCoefficient(const InputParameters & parameters) :
- AuxKernel(parameters),
- _velocity(coupledValue("velocity")),
- _viscosity(coupledValue("viscosity")),
- _density(coupledValue("density")),
- _macro_pore(coupledValue("porosity")),
- _particle_dia(coupledValue("particle_diameter"))
- {
+ErgunCoefficient::ErgunCoefficient(const InputParameters & parameters)
+  : AuxKernel(parameters),
+    _velocity(coupledValue("velocity")),
+    _viscosity(coupledValue("viscosity")),
+    _density(coupledValue("density")),
+    _macro_pore(coupledValue("porosity")),
+    _particle_dia(coupledValue("particle_diameter"))
+{
+}
 
- }
-
- Real ErgunCoefficient::computeValue()
- {
-     return (_particle_dia[_qp]*_particle_dia[_qp]*_macro_pore[_qp]*_macro_pore[_qp]*_macro_pore[_qp])/
-            ((150.0*_viscosity[_qp]*(1.0-_macro_pore[_qp])*(1.0-_macro_pore[_qp]))
-            +(1.75*_density[_qp]*_particle_dia[_qp]*(1.0-_macro_pore[_qp])*_velocity[_qp]));
- }
+Real
+ErgunCoefficient::computeValue()
+{
+  return (_particle_dia[_qp] * _particle_dia[_qp] * _macro_pore[_qp] * _macro_pore[_qp] *
+          _macro_pore[_qp]) /
+         ((150.0 * _viscosity[_qp] * (1.0 - _macro_pore[_qp]) * (1.0 - _macro_pore[_qp])) +
+          (1.75 * _density[_qp] * _particle_dia[_qp] * (1.0 - _macro_pore[_qp]) * _velocity[_qp]));
+}

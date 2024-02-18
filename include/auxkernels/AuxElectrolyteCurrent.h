@@ -38,44 +38,46 @@
 class AuxElectrolyteCurrent : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    AuxElectrolyteCurrent(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  AuxElectrolyteCurrent(const InputParameters & parameters);
 
 protected:
-    /// Helper function to formulate the sum of ion terms
-    Real sum_ion_terms();
+  /// Helper function to formulate the sum of ion terms
+  Real sum_ion_terms();
 
-    /// Helper function to formulate the full coupled coefficent
-    Real effective_ionic_conductivity();
+  /// Helper function to formulate the full coupled coefficent
+  Real effective_ionic_conductivity();
 
-    /// Helper function to formulate the sum of ion terms
-    Real sum_ion_gradient_terms();
+  /// Helper function to formulate the sum of ion terms
+  Real sum_ion_gradient_terms();
 
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
+  RealVectorValue _norm_vec; ///< Vector for direction of gradient
+  unsigned int _dir;         ///< Direction of current this kernel acts on (0=x, 1=y, 2=z)
+  const VariableGradient & _e_potential_grad; ///< Coupled eletric potential variable (V or J/C)
+  const VariableValue & _porosity;            ///< Porosity variable
+  const VariableValue & _temp;                ///< Temperature variable (K)
 
-    RealVectorValue _norm_vec;	    ///< Vector for direction of gradient
-    unsigned int _dir;				      ///< Direction of current this kernel acts on (0=x, 1=y, 2=z)
-    const VariableGradient & _e_potential_grad;            ///< Coupled eletric potential variable (V or J/C)
-    const VariableValue & _porosity;			  ///< Porosity variable
-    const VariableValue & _temp;			  ///< Temperature variable (K)
+  Real _faraday;   ///< Value of Faraday's Constant (default = 96485.3 C/mol)
+  Real _gas_const; ///< Value of the Gas law constant (default = 8.314462 J/K/mol)
 
-    Real _faraday;                      ///< Value of Faraday's Constant (default = 96485.3 C/mol)
-    Real _gas_const;                    ///< Value of the Gas law constant (default = 8.314462 J/K/mol)
+  std::vector<const VariableValue *>
+      _ion_conc; ///< Pointer list to the coupled ion concentrations (mol/L^3)
+  std::vector<const VariableGradient *>
+      _ion_conc_grad; ///< Pointer list to the coupled ion concentration gradients (mol/L^3/L)
+  std::vector<const VariableValue *>
+      _diffusion; ///< Pointer list to the coupled diffusion coeffs (L^2/T)
 
-    std::vector<const VariableValue *> _ion_conc;           ///< Pointer list to the coupled ion concentrations (mol/L^3)
-    std::vector<const VariableGradient *> _ion_conc_grad;   ///< Pointer list to the coupled ion concentration gradients (mol/L^3/L)
-    std::vector<const VariableValue *> _diffusion;          ///< Pointer list to the coupled diffusion coeffs (L^2/T)
+  std::vector<Real> _valence; ///< Valence list for corresponding ions
 
-    std::vector<Real> _valence;                             ///< Valence list for corresponding ions
+  Real _min_conductivity; ///< Minimum allowable value for conductivity (based on sum of ions)
 
-    Real _min_conductivity;                                 ///< Minimum allowable value for conductivity (based on sum of ions)
-
-    bool _includeIonGrads;                                  ///< Boolean used to determine whether or not to include ion gradients in calculation 
-
+  bool
+      _includeIonGrads; ///< Boolean used to determine whether or not to include ion gradients in calculation
 };

@@ -31,62 +31,64 @@
 class InitialModifiedButlerVolmerReaction : public InitialCondition
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for BC objects in MOOSE
-    InitialModifiedButlerVolmerReaction(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  InitialModifiedButlerVolmerReaction(const InputParameters & parameters);
 
 protected:
-    ///Helper function for the oxidation rate (ka)
-    Real oxidation_rate_fun();
+  ///Helper function for the oxidation rate (ka)
+  Real oxidation_rate_fun();
 
-    ///Helper function for the reduction rate (kc)
-    Real reduction_rate_fun();
+  ///Helper function for the reduction rate (kc)
+  Real reduction_rate_fun();
 
-    /// Helper function for oxidation exponential
-    Real oxidation_exp_fun();
+  /// Helper function for oxidation exponential
+  Real oxidation_exp_fun();
 
-    /// Helper function for reduction exponential
-    Real reduction_exp_fun();
+  /// Helper function for reduction exponential
+  Real reduction_exp_fun();
 
-    /// Helper function for product of reduction state
-    Real reduction_state();
+  /// Helper function for product of reduction state
+  Real reduction_state();
 
-    /// Helper function for product of oxidation state
-    Real oxidation_state();
+  /// Helper function for product of oxidation state
+  Real oxidation_state();
 
-    /// Required function override for IC objects in MOOSE
-    /** This function returns the value of the variable at point p in the mesh.*/
-    virtual Real value(const Point & p) override;
+  /// Required function override for IC objects in MOOSE
+  /** This function returns the value of the variable at point p in the mesh.*/
+  virtual Real value(const Point & p) override;
 
-    Real _oxidation_rate;                               ///< Rate constant for forward oxidation reaction
-    Real _reduction_rate;                               ///< Rate constant for reverse reduction reaction
+  Real _oxidation_rate; ///< Rate constant for forward oxidation reaction
+  Real _reduction_rate; ///< Rate constant for reverse reduction reaction
 
-    Real _reaction_rate;                                ///< (optional) Alternative rate parameter
-    Real _equ_pot;                                      ///< (optional) Equilibrium potential (in V or J/C)
-    bool useEquilibriumPotential;                       ///< Boolean used to determine whether to use Equilibrium potential or not
+  Real _reaction_rate; ///< (optional) Alternative rate parameter
+  Real _equ_pot;       ///< (optional) Equilibrium potential (in V or J/C)
+  bool
+      useEquilibriumPotential; ///< Boolean used to determine whether to use Equilibrium potential or not
 
-    Real _alpha;                                        ///< Electron transfer coefficient (default = 0.5)
-    Real _n;                                            ///< Number of electrons transferred (default = 1)
+  Real _alpha; ///< Electron transfer coefficient (default = 0.5)
+  Real _n;     ///< Number of electrons transferred (default = 1)
 
-    Real _faraday;                                      ///< Value of Faraday's Constant (default = 96485.3 C/mol)
-    Real _gas_const;                                    ///< Value of the Gas law constant (default = 8.314462 J/K/mol)
+  Real _faraday;   ///< Value of Faraday's Constant (default = 96485.3 C/mol)
+  Real _gas_const; ///< Value of the Gas law constant (default = 8.314462 J/K/mol)
 
-    Real _scale;                                        ///< Scaling parameter for the reaction
-    std::vector<Real> _reduced_stoich;                  ///< Reduced-state Reactant list stoichiometries
-    std::vector<Real> _oxidized_stoich;                 ///< Oxidized-state Product list stoichiometries
-    std::vector<const VariableValue *> _reduced;        ///< Pointer list to the coupled reduced-state reactants
-    std::vector<const VariableValue *> _oxidized;       ///< Pointer list to the coupled oxidized-state products
-    std::vector<unsigned int> _reduced_vars;            ///< Indices for the coupled reduced-state reactants
-    std::vector<unsigned int> _oxidized_vars;           ///< Indices for the coupled oxidized-state products
+  Real _scale;                        ///< Scaling parameter for the reaction
+  std::vector<Real> _reduced_stoich;  ///< Reduced-state Reactant list stoichiometries
+  std::vector<Real> _oxidized_stoich; ///< Oxidized-state Product list stoichiometries
+  std::vector<const VariableValue *>
+      _reduced; ///< Pointer list to the coupled reduced-state reactants
+  std::vector<const VariableValue *>
+      _oxidized;                            ///< Pointer list to the coupled oxidized-state products
+  std::vector<unsigned int> _reduced_vars;  ///< Indices for the coupled reduced-state reactants
+  std::vector<unsigned int> _oxidized_vars; ///< Indices for the coupled oxidized-state products
 
-    const VariableValue & _temp;                        ///< temperature variable (in K)
-    const unsigned int _temp_var;                       ///< Variable identification for the temperature
+  const VariableValue & _temp;  ///< temperature variable (in K)
+  const unsigned int _temp_var; ///< Variable identification for the temperature
 
-    const VariableValue & _pot_diff;                    ///< potential difference variable (in V or J/C)
-    const unsigned int _pot_diff_var;                   ///< Variable identification for the temperature
+  const VariableValue & _pot_diff;  ///< potential difference variable (in V or J/C)
+  const unsigned int _pot_diff_var; ///< Variable identification for the temperature
 
 private:
-
 };

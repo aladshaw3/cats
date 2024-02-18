@@ -26,48 +26,50 @@
 
 registerMooseObject("catsApp", SimpleGasSphericalMassTransCoef);
 
-InputParameters SimpleGasSphericalMassTransCoef::validParams()
+InputParameters
+SimpleGasSphericalMassTransCoef::validParams()
 {
-    InputParameters params = SimpleGasPropertiesBase::validParams();
-    params.addParam< std::string >("output_length_unit","m","Length units for mass transfer on output");
-    params.addParam< std::string >("output_time_unit","s","Time units for mass transfer on output");
+  InputParameters params = SimpleGasPropertiesBase::validParams();
+  params.addParam<std::string>(
+      "output_length_unit", "m", "Length units for mass transfer on output");
+  params.addParam<std::string>("output_time_unit", "s", "Time units for mass transfer on output");
 
-    return params;
+  return params;
 }
 
-SimpleGasSphericalMassTransCoef::SimpleGasSphericalMassTransCoef(const InputParameters & parameters) :
-SimpleGasPropertiesBase(parameters),
-_output_length_unit(getParam<std::string >("output_length_unit")),
-_output_time_unit(getParam<std::string >("output_time_unit"))
+SimpleGasSphericalMassTransCoef::SimpleGasSphericalMassTransCoef(const InputParameters & parameters)
+  : SimpleGasPropertiesBase(parameters),
+    _output_length_unit(getParam<std::string>("output_length_unit")),
+    _output_time_unit(getParam<std::string>("output_time_unit"))
 {
-
 }
 
-Real SimpleGasSphericalMassTransCoef::computeValue()
+Real
+SimpleGasSphericalMassTransCoef::computeValue()
 {
-    // rho [g/cm^3]
-    Real press = SimpleGasPropertiesBase::pressure_conversion(_pressure[_qp], _pressure_unit, "kPa");
-    Real rho = press*1000/287.058/_temperature[_qp]*1000;
-    rho = rho/100/100/100;
-    // mu [g/cm/s]
-    Real mu = 0.1458*pow(_temperature[_qp],1.5)/(110.4+_temperature[_qp])/10000;
-    // Put velocity into cm/s and char length into cm
-    Real v = SimpleGasPropertiesBase::length_conversion(_velocity[_qp], _velocity_length_unit, "cm");
-    v = 1/SimpleGasPropertiesBase::time_conversion(1/v, _velocity_time_unit, "s");
-    Real dh = SimpleGasPropertiesBase::length_conversion(_char_len[_qp], _char_len_unit, "cm");
-    Real Re = rho*v*dh/mu;
-    // Put diffusivity into cm^2/s
-    Real Dm = _ref_diffusivity*exp(-887.5*((1/_temperature[_qp])-(1/_ref_diff_temp)));
-    Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
-    Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
-    Dm = 1/SimpleGasPropertiesBase::time_conversion(1/Dm, _diff_time_unit, "s");
-    Real Sc = mu/rho/Dm;
-    Real Sh = (2+(0.4*sqrt(Re)+0.06*pow(Re,0.67))*pow(Sc,0.4));
-    Real Deff = pow(_micro_pore[_qp],_eff_diff_factor)*Dm;
+  // rho [g/cm^3]
+  Real press = SimpleGasPropertiesBase::pressure_conversion(_pressure[_qp], _pressure_unit, "kPa");
+  Real rho = press * 1000 / 287.058 / _temperature[_qp] * 1000;
+  rho = rho / 100 / 100 / 100;
+  // mu [g/cm/s]
+  Real mu = 0.1458 * pow(_temperature[_qp], 1.5) / (110.4 + _temperature[_qp]) / 10000;
+  // Put velocity into cm/s and char length into cm
+  Real v = SimpleGasPropertiesBase::length_conversion(_velocity[_qp], _velocity_length_unit, "cm");
+  v = 1 / SimpleGasPropertiesBase::time_conversion(1 / v, _velocity_time_unit, "s");
+  Real dh = SimpleGasPropertiesBase::length_conversion(_char_len[_qp], _char_len_unit, "cm");
+  Real Re = rho * v * dh / mu;
+  // Put diffusivity into cm^2/s
+  Real Dm = _ref_diffusivity * exp(-887.5 * ((1 / _temperature[_qp]) - (1 / _ref_diff_temp)));
+  Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
+  Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
+  Dm = 1 / SimpleGasPropertiesBase::time_conversion(1 / Dm, _diff_time_unit, "s");
+  Real Sc = mu / rho / Dm;
+  Real Sh = (2 + (0.4 * sqrt(Re) + 0.06 * pow(Re, 0.67)) * pow(Sc, 0.4));
+  Real Deff = pow(_micro_pore[_qp], _eff_diff_factor) * Dm;
 
-    // ends up in cm/s
-    Real km = Sh*Deff/dh;
-    km = SimpleGasPropertiesBase::length_conversion(km, "cm", _output_length_unit);
-    km = 1/SimpleGasPropertiesBase::time_conversion(1/km, "s", _output_time_unit);
-    return km;
+  // ends up in cm/s
+  Real km = Sh * Deff / dh;
+  km = SimpleGasPropertiesBase::length_conversion(km, "cm", _output_length_unit);
+  km = 1 / SimpleGasPropertiesBase::time_conversion(1 / km, "s", _output_time_unit);
+  return km;
 }

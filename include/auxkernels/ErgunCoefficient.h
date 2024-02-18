@@ -29,22 +29,22 @@
 class ErgunCoefficient : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    ErgunCoefficient(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  ErgunCoefficient(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    const VariableValue & _velocity;                  ///< Variable for the magnitude of velocity (length / time)
-    const VariableValue & _viscosity;                 ///< Variable for the viscosity of the fluid (mass / length / time)
-    const VariableValue & _density;                   ///< Variable for the density of the fluid (mass / length^3)
-    const VariableValue & _macro_pore;                ///< Variable for the macro porosity
-    const VariableValue & _particle_dia;              ///< Particle diameter in the porous media (length)
+  const VariableValue & _velocity; ///< Variable for the magnitude of velocity (length / time)
+  const VariableValue &
+      _viscosity; ///< Variable for the viscosity of the fluid (mass / length / time)
+  const VariableValue & _density;      ///< Variable for the density of the fluid (mass / length^3)
+  const VariableValue & _macro_pore;   ///< Variable for the macro porosity
+  const VariableValue & _particle_dia; ///< Particle diameter in the porous media (length)
 
 private:
-
 };

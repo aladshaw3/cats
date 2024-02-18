@@ -30,8 +30,8 @@
  *                                   work for symmetic and non-symmetric systems. Much
  *                                   less dependent on sigma values for convergence.
  *
- *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic equations:
- *                    Theory and Implementation, SIAM, Houston, TX, 2008.
+ *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic
+ *equations: Theory and Implementation, SIAM, Houston, TX, 2008.
  *
  *  \author Austin Ladshaw
  *	\date 07/12/2018
@@ -52,137 +52,142 @@
 
 registerMooseObject("catsApp", DGConcentrationFluxLimitedBC);
 
-InputParameters DGConcentrationFluxLimitedBC::validParams()
+InputParameters
+DGConcentrationFluxLimitedBC::validParams()
 {
   InputParameters params = DGFluxLimitedBC::validParams();
-  params.addCoupledVar("ux",0,"Variable for velocity in x-direction");
-  params.addCoupledVar("uy",0,"Variable for velocity in y-direction");
-  params.addCoupledVar("uz",0,"Variable for velocity in z-direction");
+  params.addCoupledVar("ux", 0, "Variable for velocity in x-direction");
+  params.addCoupledVar("uy", 0, "Variable for velocity in y-direction");
+  params.addCoupledVar("uz", 0, "Variable for velocity in z-direction");
   return params;
 }
 
-DGConcentrationFluxLimitedBC::DGConcentrationFluxLimitedBC(const InputParameters & parameters) :
-DGFluxLimitedBC(parameters),
-_ux(coupledValue("ux")),
-_uy(coupledValue("uy")),
-_uz(coupledValue("uz")),
-_ux_var(coupled("ux")),
-_uy_var(coupled("uy")),
-_uz_var(coupled("uz"))
+DGConcentrationFluxLimitedBC::DGConcentrationFluxLimitedBC(const InputParameters & parameters)
+  : DGFluxLimitedBC(parameters),
+    _ux(coupledValue("ux")),
+    _uy(coupledValue("uy")),
+    _uz(coupledValue("uz")),
+    _ux_var(coupled("ux")),
+    _uy_var(coupled("uy")),
+    _uz_var(coupled("uz"))
 {
-
 }
 
-Real DGConcentrationFluxLimitedBC::computeQpResidual()
+Real
+DGConcentrationFluxLimitedBC::computeQpResidual()
 {
-	_velocity(0)=_ux[_qp];
-	_velocity(1)=_uy[_qp];
-	_velocity(2)=_uz[_qp];
+  _velocity(0) = _ux[_qp];
+  _velocity(1) = _uy[_qp];
+  _velocity(2) = _uz[_qp];
 
   Real r = 0;
 
-	const unsigned int elem_b_order = static_cast<unsigned int> (_var.order());
-	const double h_elem = _current_elem->volume()/_current_side_elem->volume() * 1./std::pow(elem_b_order, 2.);
+  const unsigned int elem_b_order = static_cast<unsigned int>(_var.order());
+  const double h_elem =
+      _current_elem->volume() / _current_side_elem->volume() * 1. / std::pow(elem_b_order, 2.);
 
-	//Output (Standard Flux Out)
-	if ((_velocity)*_normals[_qp] > 0.0)
-	{
-		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u[_qp];
-	}
-	//Input (Dirichlet BC)
-	else
-	{
-		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_u_input;
-		r -= _test[_i][_qp]*(_velocity*_normals[_qp])*(_u[_qp] - _u_input);
-		r += _epsilon * (_u[_qp] - _u_input) * _Diffusion * _grad_test[_i][_qp] * _normals[_qp];
-		r += _sigma/h_elem * (_u[_qp] - _u_input) * _test[_i][_qp];
-		r -= (_Diffusion * _grad_u[_qp] * _normals[_qp] * _test[_i][_qp]);
-	}
+  // Output (Standard Flux Out)
+  if ((_velocity)*_normals[_qp] > 0.0)
+  {
+    r += _test[_i][_qp] * (_velocity * _normals[_qp]) * _u[_qp];
+  }
+  // Input (Dirichlet BC)
+  else
+  {
+    r += _test[_i][_qp] * (_velocity * _normals[_qp]) * _u_input;
+    r -= _test[_i][_qp] * (_velocity * _normals[_qp]) * (_u[_qp] - _u_input);
+    r += _epsilon * (_u[_qp] - _u_input) * _Diffusion * _grad_test[_i][_qp] * _normals[_qp];
+    r += _sigma / h_elem * (_u[_qp] - _u_input) * _test[_i][_qp];
+    r -= (_Diffusion * _grad_u[_qp] * _normals[_qp] * _test[_i][_qp]);
+  }
 
-	return r;
+  return r;
 }
 
-Real DGConcentrationFluxLimitedBC::computeQpJacobian()
+Real
+DGConcentrationFluxLimitedBC::computeQpJacobian()
 {
-	_velocity(0)=_ux[_qp];
-	_velocity(1)=_uy[_qp];
-	_velocity(2)=_uz[_qp];
+  _velocity(0) = _ux[_qp];
+  _velocity(1) = _uy[_qp];
+  _velocity(2) = _uz[_qp];
 
   Real r = 0;
 
-	const unsigned int elem_b_order = static_cast<unsigned int> (_var.order());
-	const double h_elem = _current_elem->volume()/_current_side_elem->volume() * 1./std::pow(elem_b_order, 2.);
+  const unsigned int elem_b_order = static_cast<unsigned int>(_var.order());
+  const double h_elem =
+      _current_elem->volume() / _current_side_elem->volume() * 1. / std::pow(elem_b_order, 2.);
 
-	//Output (Standard Flux Out)
-	if ((_velocity)*_normals[_qp] > 0.0)
-	{
-		r += _test[_i][_qp]*(_velocity*_normals[_qp])*_phi[_j][_qp];
-	}
-	//Input (Dirichlet BC)
-	else
-	{
-		r += 0.0;
-		r -= _test[_i][_qp]*(_velocity*_normals[_qp])*_phi[_j][_qp];
-		r += _epsilon * _phi[_j][_qp] * _Diffusion * _grad_test[_i][_qp] * _normals[_qp];
-		r += _sigma/h_elem * _phi[_j][_qp] * _test[_i][_qp];
-		r -= (_Diffusion * _grad_phi[_j][_qp] * _normals[_qp] * _test[_i][_qp]);
-	}
+  // Output (Standard Flux Out)
+  if ((_velocity)*_normals[_qp] > 0.0)
+  {
+    r += _test[_i][_qp] * (_velocity * _normals[_qp]) * _phi[_j][_qp];
+  }
+  // Input (Dirichlet BC)
+  else
+  {
+    r += 0.0;
+    r -= _test[_i][_qp] * (_velocity * _normals[_qp]) * _phi[_j][_qp];
+    r += _epsilon * _phi[_j][_qp] * _Diffusion * _grad_test[_i][_qp] * _normals[_qp];
+    r += _sigma / h_elem * _phi[_j][_qp] * _test[_i][_qp];
+    r -= (_Diffusion * _grad_phi[_j][_qp] * _normals[_qp] * _test[_i][_qp]);
+  }
 
-	return r;
+  return r;
 }
 
-Real DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+DGConcentrationFluxLimitedBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
-	_velocity(0)=_ux[_qp];
-	_velocity(1)=_uy[_qp];
-	_velocity(2)=_uz[_qp];
+  _velocity(0) = _ux[_qp];
+  _velocity(1) = _uy[_qp];
+  _velocity(2) = _uz[_qp];
 
   Real r = 0;
 
   if (jvar == _ux_var)
   {
-    //Output
+    // Output
     if ((_velocity)*_normals[_qp] > 0.0)
     {
-      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](0));
+      r += _test[_i][_qp] * _u[_qp] * (_phi[_j][_qp] * _normals[_qp](0));
     }
-    //Input
+    // Input
     else
     {
-      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](0));
-      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](0));
+      r += _test[_i][_qp] * _u_input * (_phi[_j][_qp] * _normals[_qp](0));
+      r -= _test[_i][_qp] * (_u[_qp] - _u_input) * (_phi[_j][_qp] * _normals[_qp](0));
     }
     return r;
   }
 
   if (jvar == _uy_var)
   {
-    //Output
+    // Output
     if ((_velocity)*_normals[_qp] > 0.0)
     {
-      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](1));
+      r += _test[_i][_qp] * _u[_qp] * (_phi[_j][_qp] * _normals[_qp](1));
     }
-    //Input
+    // Input
     else
     {
-      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](1));
-      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](1));
+      r += _test[_i][_qp] * _u_input * (_phi[_j][_qp] * _normals[_qp](1));
+      r -= _test[_i][_qp] * (_u[_qp] - _u_input) * (_phi[_j][_qp] * _normals[_qp](1));
     }
     return r;
   }
 
   if (jvar == _uz_var)
   {
-    //Output
+    // Output
     if ((_velocity)*_normals[_qp] > 0.0)
     {
-      r += _test[_i][_qp]*_u[_qp]*(_phi[_j][_qp]*_normals[_qp](2));
+      r += _test[_i][_qp] * _u[_qp] * (_phi[_j][_qp] * _normals[_qp](2));
     }
-    //Input
+    // Input
     else
     {
-      r += _test[_i][_qp]*_u_input*(_phi[_j][_qp]*_normals[_qp](2));
-      r -= _test[_i][_qp]*(_u[_qp] - _u_input)*(_phi[_j][_qp]*_normals[_qp](2));
+      r += _test[_i][_qp] * _u_input * (_phi[_j][_qp] * _normals[_qp](2));
+      r -= _test[_i][_qp] * (_u[_qp] - _u_input) * (_phi[_j][_qp] * _normals[_qp](2));
     }
     return r;
   }

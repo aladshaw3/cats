@@ -25,43 +25,45 @@
 
 registerMooseObject("catsApp", InitialInhibitionProducts);
 
-InputParameters InitialInhibitionProducts::validParams()
+InputParameters
+InitialInhibitionProducts::validParams()
 {
-    InputParameters params = InitialCondition::validParams();
-    params.addRequiredParam< std::vector<Real> >("power_list","List of powers for coupled inhibition terms");
-    params.addRequiredCoupledVar("coupled_list","List of names of the inhibition variables");
-    return params;
+  InputParameters params = InitialCondition::validParams();
+  params.addRequiredParam<std::vector<Real>>("power_list",
+                                             "List of powers for coupled inhibition terms");
+  params.addRequiredCoupledVar("coupled_list", "List of names of the inhibition variables");
+  return params;
 }
 
 InitialInhibitionProducts::InitialInhibitionProducts(const InputParameters & parameters)
-: InitialCondition(parameters),
-_power(getParam<std::vector<Real> >("power_list"))
+  : InitialCondition(parameters), _power(getParam<std::vector<Real>>("power_list"))
 {
-    unsigned int r = coupledComponents("coupled_list");
-    _inhibition_vars.resize(r);
-    _inhibition.resize(r);
+  unsigned int r = coupledComponents("coupled_list");
+  _inhibition_vars.resize(r);
+  _inhibition.resize(r);
 
-    if (_inhibition.size() != _power.size())
-    {
-        moose::internal::mooseErrorRaw("User is required to provide (at minimum) a list of power factors equal to the number of coupled inhibition terms.");
-    }
+  if (_inhibition.size() != _power.size())
+  {
+    moose::internal::mooseErrorRaw("User is required to provide (at minimum) a list of power "
+                                   "factors equal to the number of coupled inhibition terms.");
+  }
 
-    for (unsigned int i = 0; i<_inhibition.size(); ++i)
-    {
-        _inhibition_vars[i] = coupled("coupled_list",i);
-        _inhibition[i] = &coupledValue("coupled_list",i);
-    }
-
+  for (unsigned int i = 0; i < _inhibition.size(); ++i)
+  {
+    _inhibition_vars[i] = coupled("coupled_list", i);
+    _inhibition[i] = &coupledValue("coupled_list", i);
+  }
 }
 
-Real InitialInhibitionProducts::value(const Point & /*p*/)
+Real
+InitialInhibitionProducts::value(const Point & /*p*/)
 {
-    Real prod = 1.0;
-    if (_inhibition.size() == 0)
-        prod = 0.0;
-    for (unsigned int i = 0; i<_inhibition.size(); ++i)
-    {
-        prod = prod * std::pow( (*_inhibition[i])[_qp], _power[i] );
-    }
-    return prod;
+  Real prod = 1.0;
+  if (_inhibition.size() == 0)
+    prod = 0.0;
+  for (unsigned int i = 0; i < _inhibition.size(); ++i)
+  {
+    prod = prod * std::pow((*_inhibition[i])[_qp], _power[i]);
+  }
+  return prod;
 }

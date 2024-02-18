@@ -1,20 +1,19 @@
 /*!
  *  \file DGPoreDiffFluxLimitedStepwiseBC.h
- *    \brief Boundary Condition kernel to mimic a Dirichlet BC for DG methods with coupled velocity, diffusivity, and porosity
- *    \details This file creates a boundary condition kernel to impose a dirichlet-like boundary
- *            condition in DG methods. True DG methods do not have Dirichlet boundary conditions,
- *            so this kernel seeks to impose a constraint on the inlet of a boundary that is met
- *            if the value of a variable at the inlet boundary is equal to the finite element
- *            solution at that boundary. When the condition is not met, the residuals get penalyzed
- *            until the condition is met.
+ *    \brief Boundary Condition kernel to mimic a Dirichlet BC for DG methods with coupled velocity,
+ * diffusivity, and porosity \details This file creates a boundary condition kernel to impose a
+ * dirichlet-like boundary condition in DG methods. True DG methods do not have Dirichlet boundary
+ * conditions, so this kernel seeks to impose a constraint on the inlet of a boundary that is met if
+ * the value of a variable at the inlet boundary is equal to the finite element solution at that
+ * boundary. When the condition is not met, the residuals get penalyzed until the condition is met.
  *
  *      This kernel inherits from DGFluxLimitedBC and uses coupled x, y, and z components
  *      of the coupled velocity to build an edge velocity vector. This also now requires the
  *      addition of OffDiagJacobian elements. In addition, we now also coupled with a variable
  *      diffusivity.
  *
- *           Stepwise inputs are determined from a list of input values and times at which those input
- *            values are to occur. Optionally, users can also provide a list of "ramp up" times that are
+ *           Stepwise inputs are determined from a list of input values and times at which those
+ * input values are to occur. Optionally, users can also provide a list of "ramp up" times that are
  *            used to create a smoother transition instead of abrupt change in inputs.
  *
  *      The DG method for diffusion involves 2 correction parameters:
@@ -35,8 +34,8 @@
  *                                   work for symmetic and non-symmetric systems. Much
  *                                   less dependent on sigma values for convergence.
  *
- *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic equations:
- *                    Theory and Implementation, SIAM, Houston, TX, 2008.
+ *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic
+ * equations: Theory and Implementation, SIAM, Houston, TX, 2008.
  *
  *  \author Austin Ladshaw
  *    \date 03/19/2020
@@ -89,12 +88,11 @@ protected:
   main coupled variable itself. */
   virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-  std::vector<Real> _input_vals;         ///< Values for _u_input that update at corresponding times
-  std::vector<Real> _input_times;        ///< Values for determining when to change _u_input
-  std::vector<Real> _time_spans;         ///< Amount of time it take to change to new input value
-  std::vector<Real> _slopes;             ///< Slopes between each subsequent u_input
-  int index;                             ///< Index variable to keep track of location in vectors
+  std::vector<Real> _input_vals;  ///< Values for _u_input that update at corresponding times
+  std::vector<Real> _input_times; ///< Values for determining when to change _u_input
+  std::vector<Real> _time_spans;  ///< Amount of time it take to change to new input value
+  std::vector<Real> _slopes;      ///< Slopes between each subsequent u_input
+  int index;                      ///< Index variable to keep track of location in vectors
 
 private:
-
 };
