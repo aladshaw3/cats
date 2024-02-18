@@ -17,58 +17,68 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
- #include "GElectrodeOhmicHeating.h"
+#include "GElectrodeOhmicHeating.h"
 
- registerMooseObject("catsApp", GElectrodeOhmicHeating);
+registerMooseObject("catsApp", GElectrodeOhmicHeating);
 
- InputParameters GElectrodeOhmicHeating::validParams()
- {
-     InputParameters params = Kernel::validParams();
+InputParameters
+GElectrodeOhmicHeating::validParams()
+{
+  InputParameters params = Kernel::validParams();
 
-     params.addCoupledVar("solid_frac",1,"Variable for volume fraction or porosity (default = 1)");
-     params.addCoupledVar("conductivity",50,"Variable for conductivity of the electrode in units of C/V/length/time or similar (default = 50 C/V/m/s)");
-     params.addRequiredCoupledVar("electric_potential","Variable for electric potential (V or J/C)");
+  params.addCoupledVar("solid_frac", 1, "Variable for volume fraction or porosity (default = 1)");
+  params.addCoupledVar("conductivity",
+                       50,
+                       "Variable for conductivity of the electrode in units of C/V/length/time or "
+                       "similar (default = 50 C/V/m/s)");
+  params.addRequiredCoupledVar("electric_potential", "Variable for electric potential (V or J/C)");
 
-     return params;
- }
+  return params;
+}
 
- GElectrodeOhmicHeating::GElectrodeOhmicHeating(const InputParameters & parameters) :
- Kernel(parameters),
+GElectrodeOhmicHeating::GElectrodeOhmicHeating(const InputParameters & parameters)
+  : Kernel(parameters),
 
- _sol_frac(coupledValue("solid_frac")),
- _sol_frac_var(coupled("solid_frac")),
- _conductivity(coupledValue("conductivity")),
- _conductivity_var(coupled("conductivity")),
- _e_potential_grad(coupledGradient("electric_potential")),
- _e_potential_var(coupled("electric_potential"))
- {
+    _sol_frac(coupledValue("solid_frac")),
+    _sol_frac_var(coupled("solid_frac")),
+    _conductivity(coupledValue("conductivity")),
+    _conductivity_var(coupled("conductivity")),
+    _e_potential_grad(coupledGradient("electric_potential")),
+    _e_potential_var(coupled("electric_potential"))
+{
+}
 
- }
+Real
+GElectrodeOhmicHeating::computeQpResidual()
+{
+  return -_test[_i][_qp] * _conductivity[_qp] * _sol_frac[_qp] *
+         (_e_potential_grad[_qp] * _e_potential_grad[_qp]);
+}
 
- Real GElectrodeOhmicHeating::computeQpResidual()
- {
-     return -_test[_i][_qp]*_conductivity[_qp]*_sol_frac[_qp]*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
- }
+Real
+GElectrodeOhmicHeating::computeQpJacobian()
+{
+  return 0.0;
+}
 
- Real GElectrodeOhmicHeating::computeQpJacobian()
- {
-     return 0.0;
- }
+Real
+GElectrodeOhmicHeating::computeQpOffDiagJacobian(unsigned int jvar)
+{
+  if (jvar == _sol_frac_var)
+  {
+    return -_test[_i][_qp] * _conductivity[_qp] * _phi[_j][_qp] *
+           (_e_potential_grad[_qp] * _e_potential_grad[_qp]);
+  }
+  if (jvar == _conductivity_var)
+  {
+    return -_test[_i][_qp] * _phi[_j][_qp] * _sol_frac[_qp] *
+           (_e_potential_grad[_qp] * _e_potential_grad[_qp]);
+  }
+  if (jvar == _e_potential_var)
+  {
+    return -_test[_i][_qp] * _conductivity[_qp] * _sol_frac[_qp] *
+           (2.0 * _grad_phi[_j][_qp] * _e_potential_grad[_qp]);
+  }
 
- Real GElectrodeOhmicHeating::computeQpOffDiagJacobian(unsigned int jvar)
- {
-     if (jvar == _sol_frac_var)
-     {
-         return -_test[_i][_qp]*_conductivity[_qp]*_phi[_j][_qp]*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
-     }
-     if (jvar == _conductivity_var)
-     {
-         return -_test[_i][_qp]*_phi[_j][_qp]*_sol_frac[_qp]*(_e_potential_grad[_qp]*_e_potential_grad[_qp]);
-     }
-     if (jvar == _e_potential_var)
-     {
-         return -_test[_i][_qp]*_conductivity[_qp]*_sol_frac[_qp]*(2.0*_grad_phi[_j][_qp]*_e_potential_grad[_qp]);
-     }
-
-     return 0.0;
- }
+  return 0.0;
+}

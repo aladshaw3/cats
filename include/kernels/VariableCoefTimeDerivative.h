@@ -39,19 +39,19 @@ public:
 
 protected:
   /// Required residual function for standard kernels in MOOSE
-	/** This function returns a residual contribution for this object.*/
+  /** This function returns a residual contribution for this object.*/
   virtual Real computeQpResidual() override;
   /// Required Jacobian function for standard kernels in MOOSE
-	/** This function returns a Jacobian contribution for this object. The Jacobian being
-		computed is the associated diagonal element in the overall Jacobian matrix for the
-		system and is used in preconditioning of the linear sub-problem. */
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+    computed is the associated diagonal element in the overall Jacobian matrix for the
+    system and is used in preconditioning of the linear sub-problem. */
   virtual Real computeQpJacobian() override;
   /// Not Required, but aids in the preconditioning step
-	/** This function returns the off diagonal Jacobian contribution for this object. By
-		returning a non-zero value we will hopefully improve the convergence rate for the
-		cross coupling of the variables. */
-	virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
+  /** This function returns the off diagonal Jacobian contribution for this object. By
+    returning a non-zero value we will hopefully improve the convergence rate for the
+    cross coupling of the variables. */
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-  const VariableValue & _coupled;			///< Coupled non-linear variable
-	const unsigned int _coupled_var;		///< Variable identification for _coupled
+  const VariableValue & _coupled;  ///< Coupled non-linear variable
+  const unsigned int _coupled_var; ///< Variable identification for _coupled
 };

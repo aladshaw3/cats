@@ -32,20 +32,20 @@
 class KozenyCarmanDarcyCoefficient : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    KozenyCarmanDarcyCoefficient(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  KozenyCarmanDarcyCoefficient(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    const VariableValue & _viscosity;                 ///< Variable for the viscosity of the fluid (typical units: Pressure * Time)
-    const VariableValue & _macro_pore;                ///< Variable for the macro porosity
-    const VariableValue & _particle_dia;              ///< Particle diameter in the porous media (length)
-    Real _K;                                         ///< Kozeny-Carman constant of the porous media
-
+  const VariableValue &
+      _viscosity; ///< Variable for the viscosity of the fluid (typical units: Pressure * Time)
+  const VariableValue & _macro_pore;   ///< Variable for the macro porosity
+  const VariableValue & _particle_dia; ///< Particle diameter in the porous media (length)
+  Real _K;                             ///< Kozeny-Carman constant of the porous media
 };

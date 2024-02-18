@@ -23,29 +23,33 @@
 
 registerMooseObject("catsApp", GasSpeciesPoreDiffusion);
 
-InputParameters GasSpeciesPoreDiffusion::validParams()
+InputParameters
+GasSpeciesPoreDiffusion::validParams()
 {
-    InputParameters params = GasPropertiesBase::validParams();
-    params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
-    params.addRequiredCoupledVar("micro_porosity","Name of the micro-porosity variable");
-    return params;
+  InputParameters params = GasPropertiesBase::validParams();
+  params.addParam<unsigned int>(
+      "species_index", 0, "Index of the gas species we want the diffusion of");
+  params.addRequiredCoupledVar("micro_porosity", "Name of the micro-porosity variable");
+  return params;
 }
 
-GasSpeciesPoreDiffusion::GasSpeciesPoreDiffusion(const InputParameters & parameters) :
-GasPropertiesBase(parameters),
-_index(getParam< unsigned int >("species_index")),
-_porosity(coupledValue("micro_porosity"))
+GasSpeciesPoreDiffusion::GasSpeciesPoreDiffusion(const InputParameters & parameters)
+  : GasPropertiesBase(parameters),
+    _index(getParam<unsigned int>("species_index")),
+    _porosity(coupledValue("micro_porosity"))
 {
-    if (_index > _gases.size())
-    {
-        moose::internal::mooseErrorRaw("Index out of bounds!");
-    }
+  if (_index > _gases.size())
+  {
+    moose::internal::mooseErrorRaw("Index out of bounds!");
+  }
 }
 
-Real GasSpeciesPoreDiffusion::computeValue()
+Real
+GasSpeciesPoreDiffusion::computeValue()
 {
-    prepareEgret();
-    calculateAllProperties();
+  prepareEgret();
+  calculateAllProperties();
 
-    return _egret_dat.species_dat[_index].molecular_diffusion*_porosity[_qp]*_porosity[_qp]/100.0/100.0;
+  return _egret_dat.species_dat[_index].molecular_diffusion * _porosity[_qp] * _porosity[_qp] /
+         100.0 / 100.0;
 }

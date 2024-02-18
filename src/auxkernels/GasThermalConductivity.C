@@ -23,36 +23,38 @@
 
 registerMooseObject("catsApp", GasThermalConductivity);
 
-InputParameters GasThermalConductivity::validParams()
+InputParameters
+GasThermalConductivity::validParams()
 {
-    InputParameters params = GasPropertiesBase::validParams();
-    params.addParam< Real >("heat_cap_ratio",1.4,"Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
+  InputParameters params = GasPropertiesBase::validParams();
+  params.addParam<Real>(
+      "heat_cap_ratio", 1.4, "Ratio of heat capacities (Cp/Cv) ==> Assumed = 1.4");
 
-    return params;
+  return params;
 }
 
-GasThermalConductivity::GasThermalConductivity(const InputParameters & parameters) :
-GasPropertiesBase(parameters),
-_Cp_Cv_ratio(getParam< Real >("heat_cap_ratio"))
+GasThermalConductivity::GasThermalConductivity(const InputParameters & parameters)
+  : GasPropertiesBase(parameters), _Cp_Cv_ratio(getParam<Real>("heat_cap_ratio"))
 {
-    // Check the bounds of the correction factor (typical values: 1.3 - 1.6)
-    if (_Cp_Cv_ratio < 0.56)
-    {
-        _Cp_Cv_ratio = 0.56;
-    }
-    if (_Cp_Cv_ratio > 1.67)
-    {
-        _Cp_Cv_ratio = 1.67;
-    }
+  // Check the bounds of the correction factor (typical values: 1.3 - 1.6)
+  if (_Cp_Cv_ratio < 0.56)
+  {
+    _Cp_Cv_ratio = 0.56;
+  }
+  if (_Cp_Cv_ratio > 1.67)
+  {
+    _Cp_Cv_ratio = 1.67;
+  }
 }
 
-Real GasThermalConductivity::computeValue()
+Real
+GasThermalConductivity::computeValue()
 {
-    prepareEgret();
-    calculateAllProperties();
-    Real Cv = _egret_dat.total_specific_heat*1000.0/_Cp_Cv_ratio;
-    Real mu = _egret_dat.total_dyn_vis/1000.0*100.0;
-    Real f = 0.25*(9.0*_Cp_Cv_ratio - 5.0);
+  prepareEgret();
+  calculateAllProperties();
+  Real Cv = _egret_dat.total_specific_heat * 1000.0 / _Cp_Cv_ratio;
+  Real mu = _egret_dat.total_dyn_vis / 1000.0 * 100.0;
+  Real f = 0.25 * (9.0 * _Cp_Cv_ratio - 5.0);
 
-    return f*mu*Cv;
+  return f * mu * Cv;
 }

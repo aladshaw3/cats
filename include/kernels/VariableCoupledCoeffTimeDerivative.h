@@ -4,9 +4,10 @@
  *    \details This file creates a standard MOOSE kernel for the coupling of time derivative
  *            functions between different non-linear variables to represent a transfer of mass
  *      from one phase to another. The differences in phases is identified by a bulk density
- *      variable (r) that also couples with this kernel. This is similar to the CoupledPorePhaseTransfer
- *      kernel, but is a more direct way for coupling adsorption that simultaneouly involves a
- *      unit conversion from mass/volume (in the gas phase) to mass/mass (in the solid).
+ *      variable (r) that also couples with this kernel. This is similar to the
+ * CoupledPorePhaseTransfer kernel, but is a more direct way for coupling adsorption that
+ * simultaneouly involves a unit conversion from mass/volume (in the gas phase) to mass/mass (in the
+ * solid).
  *
  *      R(u) = r*dv/dt
  *
@@ -38,31 +39,30 @@
 class VariableCoupledCoeffTimeDerivative : public CoupledCoeffTimeDerivative
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    VariableCoupledCoeffTimeDerivative(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  VariableCoupledCoeffTimeDerivative(const InputParameters & parameters);
 
 protected:
-    /// Required residual function for standard kernels in MOOSE
-    /** This function returns a residual contribution for this object.*/
-    virtual Real computeQpResidual();
-    /// Required Jacobian function for standard kernels in MOOSE
-    /** This function returns a Jacobian contribution for this object. The Jacobian being
-        computed is the associated diagonal element in the overall Jacobian matrix for the
-        system and is used in preconditioning of the linear sub-problem. */
-    virtual Real computeQpJacobian();
+  /// Required residual function for standard kernels in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual();
+  /// Required Jacobian function for standard kernels in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+      computed is the associated diagonal element in the overall Jacobian matrix for the
+      system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian();
 
-    /// Not Required, but aids in the preconditioning step
-    /** This function returns the off diagonal Jacobian contribution for this object. By
-        returning a non-zero value we will hopefully improve the convergence rate for the
-        cross coupling of the variables. */
-    virtual Real computeQpOffDiagJacobian(unsigned int jvar);
+  /// Not Required, but aids in the preconditioning step
+  /** This function returns the off diagonal Jacobian contribution for this object. By
+      returning a non-zero value we will hopefully improve the convergence rate for the
+      cross coupling of the variables. */
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-    const VariableValue & _coeff;                   ///< Coupled time coefficient (usually bulk density)
-    const unsigned int _coeff_var;                 ///< Variable identification for coupled time coefficient
+  const VariableValue & _coeff;  ///< Coupled time coefficient (usually bulk density)
+  const unsigned int _coeff_var; ///< Variable identification for coupled time coefficient
 
 private:
-
 };

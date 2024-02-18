@@ -24,41 +24,46 @@
 
 registerMooseObject("catsApp", CoupledCoeffTimeDerivative);
 
-InputParameters CoupledCoeffTimeDerivative::validParams()
+InputParameters
+CoupledCoeffTimeDerivative::validParams()
 {
-    InputParameters params = Kernel::validParams();
-    params.addParam<bool>("gaining",false,"If coupled time derivative is a sink term, then gaining = false");
-    params.addParam<Real>("time_coeff",1.0,"Coefficient for the time derivative kernel");
-    params.addRequiredCoupledVar("coupled","Name of the variable being coupled");
-    return params;
+  InputParameters params = Kernel::validParams();
+  params.addParam<bool>(
+      "gaining", false, "If coupled time derivative is a sink term, then gaining = false");
+  params.addParam<Real>("time_coeff", 1.0, "Coefficient for the time derivative kernel");
+  params.addRequiredCoupledVar("coupled", "Name of the variable being coupled");
+  return params;
 }
 
 CoupledCoeffTimeDerivative::CoupledCoeffTimeDerivative(const InputParameters & parameters)
-: Kernel(parameters),
-	_gaining(getParam<bool>("gaining")),
-	_time_coef(getParam<Real>("time_coeff")),
-	_coupled_dot(coupledDot("coupled")),
-	_coupled_ddot(coupledDotDu("coupled")),
-	_coupled_var(coupled("coupled"))
+  : Kernel(parameters),
+    _gaining(getParam<bool>("gaining")),
+    _time_coef(getParam<Real>("time_coeff")),
+    _coupled_dot(coupledDot("coupled")),
+    _coupled_ddot(coupledDotDu("coupled")),
+    _coupled_var(coupled("coupled"))
 {
-  	if (_gaining == true)
-  		_time_coef = -_time_coef;
+  if (_gaining == true)
+    _time_coef = -_time_coef;
 }
 
-Real CoupledCoeffTimeDerivative::computeQpResidual()
+Real
+CoupledCoeffTimeDerivative::computeQpResidual()
 {
-  	return _time_coef*_coupled_dot[_qp]*_test[_i][_qp];
+  return _time_coef * _coupled_dot[_qp] * _test[_i][_qp];
 }
 
-Real CoupledCoeffTimeDerivative::computeQpJacobian()
+Real
+CoupledCoeffTimeDerivative::computeQpJacobian()
 {
-  	return 0.0;
+  return 0.0;
 }
 
-Real CoupledCoeffTimeDerivative::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+CoupledCoeffTimeDerivative::computeQpOffDiagJacobian(unsigned int jvar)
 {
-  	if (jvar == _coupled_var)
-  		return _time_coef*_test[_i][_qp] * _phi[_j][_qp] * _coupled_ddot[_qp];
+  if (jvar == _coupled_var)
+    return _time_coef * _test[_i][_qp] * _phi[_j][_qp] * _coupled_ddot[_qp];
 
-  	return 0.0;
+  return 0.0;
 }

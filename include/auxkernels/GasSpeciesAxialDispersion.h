@@ -30,19 +30,18 @@
 class GasSpeciesAxialDispersion : public GasPropertiesBase
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    GasSpeciesAxialDispersion(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  GasSpeciesAxialDispersion(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    unsigned int _index;                                 ///< Index of the gas species to which the dispersion belongs
-    const VariableValue & _column_dia;                   ///< Variable for the column diameter (m)
+  unsigned int _index;               ///< Index of the gas species to which the dispersion belongs
+  const VariableValue & _column_dia; ///< Variable for the column diameter (m)
 
 private:
-
 };

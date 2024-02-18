@@ -31,21 +31,20 @@
 class IonicStrength : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    IonicStrength(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  IonicStrength(const InputParameters & parameters);
 
 protected:
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
-
-    std::vector<const VariableValue *> _ion_conc;           ///< Pointer list to the coupled ion concentrations (mol/L^3)
-    std::vector<Real> _valence;                             ///< Valence list for corresponding ions
-    Real _conv_factor;                                      ///< Conversion factor from mol/L^3 to moles/liter (where L is any length)
+  std::vector<const VariableValue *>
+      _ion_conc;              ///< Pointer list to the coupled ion concentrations (mol/L^3)
+  std::vector<Real> _valence; ///< Valence list for corresponding ions
+  Real _conv_factor; ///< Conversion factor from mol/L^3 to moles/liter (where L is any length)
 
 private:
-
 };

@@ -30,18 +30,17 @@
 class GasSpeciesMassTransCoef : public GasPropertiesBase
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    GasSpeciesMassTransCoef(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  GasSpeciesMassTransCoef(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    unsigned int _index;            ///< Index of the gas species to which the diffusion belongs
+  unsigned int _index; ///< Index of the gas species to which the diffusion belongs
 
 private:
-
 };

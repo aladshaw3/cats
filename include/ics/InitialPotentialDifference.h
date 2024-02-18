@@ -32,22 +32,22 @@
 class InitialPotentialDifference : public InitialCondition
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for BC objects in MOOSE
-    InitialPotentialDifference(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  InitialPotentialDifference(const InputParameters & parameters);
 
 protected:
-    /// Required function override for IC objects in MOOSE
-    /** This function returns the value of the variable at point p in the mesh.*/
-    virtual Real value(const Point & p) override;
+  /// Required function override for IC objects in MOOSE
+  /** This function returns the value of the variable at point p in the mesh.*/
+  virtual Real value(const Point & p) override;
 
-    const VariableValue & _electrode_pot;           ///< Variable for the electrode potential (V or J/C)
-    const unsigned int _electrode_pot_var;          ///< Variable identification for the electrode potential
-    const VariableValue & _electrolyte_pot;         ///< Variable for the electrolyte potential (V or J/C)
-    const unsigned int _electrolyte_pot_var;        ///< Variable identification for the electrolyte potential
+  const VariableValue & _electrode_pot;   ///< Variable for the electrode potential (V or J/C)
+  const unsigned int _electrode_pot_var;  ///< Variable identification for the electrode potential
+  const VariableValue & _electrolyte_pot; ///< Variable for the electrolyte potential (V or J/C)
+  const unsigned int
+      _electrolyte_pot_var; ///< Variable identification for the electrolyte potential
 
 private:
-
 };

@@ -1,9 +1,10 @@
 /*!
  *  \file MicroscaleIntegralAvg.h
- *    \brief Custom auxkernel for integrating a series of microscale variables over the fictious microscale space
- *    \details This file creates a custom MOOSE kernel for the diffusion at the microscale
- *              of a fictious mesh. Generally this kernel is to be used in conjunction with other
- *              Microscale kernels for mass transfer, time derivatives on the microscale, or reactions.
+ *    \brief Custom auxkernel for integrating a series of microscale variables over the fictious
+ * microscale space \details This file creates a custom MOOSE kernel for the diffusion at the
+ * microscale of a fictious mesh. Generally this kernel is to be used in conjunction with other
+ *              Microscale kernels for mass transfer, time derivatives on the microscale, or
+ * reactions.
  *
  *  \author Austin Ladshaw
  *    \date 04/16/2020
@@ -21,34 +22,35 @@
 
 registerMooseObject("catsApp", MicroscaleIntegralAvg);
 
-InputParameters MicroscaleIntegralAvg::validParams()
+InputParameters
+MicroscaleIntegralAvg::validParams()
 {
-    InputParameters params = MicroscaleIntegralTotal::validParams();
+  InputParameters params = MicroscaleIntegralTotal::validParams();
 
-    return params;
+  return params;
 }
 
-MicroscaleIntegralAvg::MicroscaleIntegralAvg(const InputParameters & parameters) :
-MicroscaleIntegralTotal(parameters)
+MicroscaleIntegralAvg::MicroscaleIntegralAvg(const InputParameters & parameters)
+  : MicroscaleIntegralTotal(parameters)
 {
-
 }
 
-Real MicroscaleIntegralAvg::computeValue()
+Real
+MicroscaleIntegralAvg::computeValue()
 {
-    Real uT = MicroscaleIntegralTotal::computeIntegral();
-    Real uAvg = 0;
-    if (_coord_id == 0)
-    {
-        uAvg = uT/_space_factor/_total_length;
-    }
-    else if (_coord_id == 1)
-    {
-        uAvg = uT/_space_factor/M_PI/_total_length/_total_length;
-    }
-    else
-    {
-        uAvg = uT/(4.0/3.0)/M_PI/_total_length/_total_length/_total_length;
-    }
-    return uAvg;
+  Real uT = MicroscaleIntegralTotal::computeIntegral();
+  Real uAvg = 0;
+  if (_coord_id == 0)
+  {
+    uAvg = uT / _space_factor / _total_length;
+  }
+  else if (_coord_id == 1)
+  {
+    uAvg = uT / _space_factor / M_PI / _total_length / _total_length;
+  }
+  else
+  {
+    uAvg = uT / (4.0 / 3.0) / M_PI / _total_length / _total_length / _total_length;
+  }
+  return uAvg;
 }

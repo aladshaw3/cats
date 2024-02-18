@@ -34,28 +34,27 @@ public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
 
-	/// Required constructor for objects in MOOSE
-	CoupledPorePhaseTransfer(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  CoupledPorePhaseTransfer(const InputParameters & parameters);
 
 protected:
-	/// Required residual function for standard kernels in MOOSE
-	/** This function returns a residual contribution for this object.*/
-	virtual Real computeQpResidual();
-	/// Required Jacobian function for standard kernels in MOOSE
-	/** This function returns a Jacobian contribution for this object. The Jacobian being
-		computed is the associated diagonal element in the overall Jacobian matrix for the
-		system and is used in preconditioning of the linear sub-problem. */
-	virtual Real computeQpJacobian();
+  /// Required residual function for standard kernels in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual();
+  /// Required Jacobian function for standard kernels in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+    computed is the associated diagonal element in the overall Jacobian matrix for the
+    system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian();
 
-	/// Not Required, but aids in the preconditioning step
-	/** This function returns the off diagonal Jacobian contribution for this object. By
-		returning a non-zero value we will hopefully improve the convergence rate for the
-		cross coupling of the variables. */
-	virtual Real computeQpOffDiagJacobian(unsigned int jvar);
+  /// Not Required, but aids in the preconditioning step
+  /** This function returns the off diagonal Jacobian contribution for this object. By
+    returning a non-zero value we will hopefully improve the convergence rate for the
+    cross coupling of the variables. */
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-  const VariableValue & _porosity;			///< Porosity variable
-	const unsigned int _porosity_var;				///< Variable identification for porosity
+  const VariableValue & _porosity;  ///< Porosity variable
+  const unsigned int _porosity_var; ///< Variable identification for porosity
 
 private:
-
 };

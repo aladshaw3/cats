@@ -31,19 +31,18 @@
 class SimpleGasMonolithHeatTransCoef : public SimpleGasPropertiesBase
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    SimpleGasMonolithHeatTransCoef(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  SimpleGasMonolithHeatTransCoef(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    std::string _output_energy_unit;                ///< Units of the energy term in thermal conductivity (kJ, J)
-    std::string _output_length_unit;                ///< Units of the length term in thermal conductivity (m, cm, mm)
-    std::string _output_time_unit;                  ///< Units of the time term in thermal conductivity (hr, min, s)
-
+  std::string _output_energy_unit; ///< Units of the energy term in thermal conductivity (kJ, J)
+  std::string _output_length_unit; ///< Units of the length term in thermal conductivity (m, cm, mm)
+  std::string _output_time_unit;   ///< Units of the time term in thermal conductivity (hr, min, s)
 };

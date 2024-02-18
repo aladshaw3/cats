@@ -34,22 +34,19 @@
 class AuxFirstOrderRecycleBC : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    AuxFirstOrderRecycleBC(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  AuxFirstOrderRecycleBC(const InputParameters & parameters);
 
 protected:
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
-
-    const PostprocessorValue & _u_out;     ///< Postprocessor value for the outlet boundary
-    const VariableValue & _recycle_rate;   ///< Rate of recycle (per time)
-    const VariableValue & _u_old;          ///< Value of this variable's old state
-
+  const PostprocessorValue & _u_out;   ///< Postprocessor value for the outlet boundary
+  const VariableValue & _recycle_rate; ///< Rate of recycle (per time)
+  const VariableValue & _u_old;        ///< Value of this variable's old state
 
 private:
-
 };

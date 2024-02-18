@@ -1,10 +1,10 @@
 /*!
  *  \file GConcentrationAdvection.h
  *	\brief Kernel for use with the corresponding DGConcentrationAdvection object
- *	\details This file creates a standard MOOSE kernel that is to be used in conjunction with DGConcentrationAdvection
- *			for the discontinous Galerkin formulation of momentum advection in MOOSE. In order to complete the DG
- *			formulation of the advective physics, this kernel must be utilized with every variable that also uses
- *			the DGConcentrationAdvection kernel.
+ *	\details This file creates a standard MOOSE kernel that is to be used in conjunction with
+ *DGConcentrationAdvection for the discontinous Galerkin formulation of momentum advection in MOOSE.
+ *In order to complete the DG formulation of the advective physics, this kernel must be utilized
+ *with every variable that also uses the DGConcentrationAdvection kernel.
  *
  *  \author Austin Ladshaw
  *	\date 07/12/2018
@@ -25,65 +25,68 @@
 
 registerMooseObject("catsApp", GConcentrationAdvection);
 
-InputParameters GConcentrationAdvection::validParams()
+InputParameters
+GConcentrationAdvection::validParams()
 {
-    InputParameters params = GAdvection::validParams();
-    params.addRequiredCoupledVar("ux","Variable for velocity in x-direction");
-    params.addRequiredCoupledVar("uy","Variable for velocity in y-direction");
-    params.addRequiredCoupledVar("uz","Variable for velocity in z-direction");
-    return params;
+  InputParameters params = GAdvection::validParams();
+  params.addRequiredCoupledVar("ux", "Variable for velocity in x-direction");
+  params.addRequiredCoupledVar("uy", "Variable for velocity in y-direction");
+  params.addRequiredCoupledVar("uz", "Variable for velocity in z-direction");
+  return params;
 }
 
-GConcentrationAdvection::GConcentrationAdvection(const InputParameters & parameters) :
-GAdvection(parameters),
-_ux(coupledValue("ux")),
-_uy(coupledValue("uy")),
-_uz(coupledValue("uz")),
-_ux_var(coupled("ux")),
-_uy_var(coupled("uy")),
-_uz_var(coupled("uz"))
+GConcentrationAdvection::GConcentrationAdvection(const InputParameters & parameters)
+  : GAdvection(parameters),
+    _ux(coupledValue("ux")),
+    _uy(coupledValue("uy")),
+    _uz(coupledValue("uz")),
+    _ux_var(coupled("ux")),
+    _uy_var(coupled("uy")),
+    _uz_var(coupled("uz"))
 {
-
 }
 
-Real GConcentrationAdvection::computeQpResidual()
+Real
+GConcentrationAdvection::computeQpResidual()
 {
-	_velocity(0)=_ux[_qp];
-	_velocity(1)=_uy[_qp];
-	_velocity(2)=_uz[_qp];
+  _velocity(0) = _ux[_qp];
+  _velocity(1) = _uy[_qp];
+  _velocity(2) = _uz[_qp];
 
-	return GAdvection::computeQpResidual();
+  return GAdvection::computeQpResidual();
 }
 
-Real GConcentrationAdvection::computeQpJacobian()
+Real
+GConcentrationAdvection::computeQpJacobian()
 {
-	_velocity(0)=_ux[_qp];
-	_velocity(1)=_uy[_qp];
-	_velocity(2)=_uz[_qp];
+  _velocity(0) = _ux[_qp];
+  _velocity(1) = _uy[_qp];
+  _velocity(2) = _uz[_qp];
 
-	return GAdvection::computeQpJacobian();
+  return GAdvection::computeQpJacobian();
 }
 
-Real GConcentrationAdvection::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+GConcentrationAdvection::computeQpOffDiagJacobian(unsigned int jvar)
 {
-	_velocity(0)=_ux[_qp];
-	_velocity(1)=_uy[_qp];
-	_velocity(2)=_uz[_qp];
+  _velocity(0) = _ux[_qp];
+  _velocity(1) = _uy[_qp];
+  _velocity(2) = _uz[_qp];
 
-	if (jvar == _ux_var)
-	{
-		return -_u[_qp]*(_phi[_j][_qp]*_grad_test[_i][_qp](0));
-	}
+  if (jvar == _ux_var)
+  {
+    return -_u[_qp] * (_phi[_j][_qp] * _grad_test[_i][_qp](0));
+  }
 
-	if (jvar == _uy_var)
-	{
-		return -_u[_qp]*(_phi[_j][_qp]*_grad_test[_i][_qp](1));
-	}
+  if (jvar == _uy_var)
+  {
+    return -_u[_qp] * (_phi[_j][_qp] * _grad_test[_i][_qp](1));
+  }
 
-	if (jvar == _uz_var)
-	{
-		return -_u[_qp]*(_phi[_j][_qp]*_grad_test[_i][_qp](2));
-	}
+  if (jvar == _uz_var)
+  {
+    return -_u[_qp] * (_phi[_j][_qp] * _grad_test[_i][_qp](2));
+  }
 
-	return 0.0;
+  return 0.0;
 }

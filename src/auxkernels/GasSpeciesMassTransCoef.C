@@ -23,27 +23,33 @@
 
 registerMooseObject("catsApp", GasSpeciesMassTransCoef);
 
-InputParameters GasSpeciesMassTransCoef::validParams()
+InputParameters
+GasSpeciesMassTransCoef::validParams()
 {
-    InputParameters params = GasPropertiesBase::validParams();
-    params.addParam< unsigned int >("species_index",0,"Index of the gas species we want the diffusion of");
-    return params;
+  InputParameters params = GasPropertiesBase::validParams();
+  params.addParam<unsigned int>(
+      "species_index", 0, "Index of the gas species we want the diffusion of");
+  return params;
 }
 
-GasSpeciesMassTransCoef::GasSpeciesMassTransCoef(const InputParameters & parameters) :
-GasPropertiesBase(parameters),
-_index(getParam< unsigned int >("species_index"))
+GasSpeciesMassTransCoef::GasSpeciesMassTransCoef(const InputParameters & parameters)
+  : GasPropertiesBase(parameters), _index(getParam<unsigned int>("species_index"))
 {
-    if (_index > _gases.size())
-    {
-        moose::internal::mooseErrorRaw("Index out of bounds!");
-    }
+  if (_index > _gases.size())
+  {
+    moose::internal::mooseErrorRaw("Index out of bounds!");
+  }
 }
 
-Real GasSpeciesMassTransCoef::computeValue()
+Real
+GasSpeciesMassTransCoef::computeValue()
 {
-    prepareEgret();
-    calculateAllProperties();
+  prepareEgret();
+  calculateAllProperties();
 
-    return FilmMTCoeff(_egret_dat.species_dat[_index].molecular_diffusion, _egret_dat.char_length, _egret_dat.Reynolds, _egret_dat.species_dat[_index].Schmidt)/100.0;
+  return FilmMTCoeff(_egret_dat.species_dat[_index].molecular_diffusion,
+                     _egret_dat.char_length,
+                     _egret_dat.Reynolds,
+                     _egret_dat.species_dat[_index].Schmidt) /
+         100.0;
 }

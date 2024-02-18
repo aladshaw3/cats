@@ -26,52 +26,57 @@
 
 registerMooseObject("catsApp", SimpleFluidViscosity);
 
-InputParameters SimpleFluidViscosity::validParams()
+InputParameters
+SimpleFluidViscosity::validParams()
 {
-    InputParameters params = SimpleFluidPropertiesBase::validParams();
-    params.addParam< std::string >("output_length_unit","m","Length units for fluid viscosity on output");
-    params.addParam< std::string >("output_mass_unit","kg","Mass units for fluid viscosity on output");
-    params.addParam< std::string >("output_time_unit","s","Time units for fluid viscosity on output");
+  InputParameters params = SimpleFluidPropertiesBase::validParams();
+  params.addParam<std::string>(
+      "output_length_unit", "m", "Length units for fluid viscosity on output");
+  params.addParam<std::string>(
+      "output_mass_unit", "kg", "Mass units for fluid viscosity on output");
+  params.addParam<std::string>("output_time_unit", "s", "Time units for fluid viscosity on output");
 
-    params.addParam< std::string >("output_pressure_unit","kPa","Pressure units for fluid viscosity on output");
+  params.addParam<std::string>(
+      "output_pressure_unit", "kPa", "Pressure units for fluid viscosity on output");
 
-    MooseEnum unitBasis("pressure mass", "pressure");
-    params.addParam<MooseEnum>("unit_basis", unitBasis, "Unit basis options: pressure, mass");
+  MooseEnum unitBasis("pressure mass", "pressure");
+  params.addParam<MooseEnum>("unit_basis", unitBasis, "Unit basis options: pressure, mass");
 
-    return params;
+  return params;
 }
 
-SimpleFluidViscosity::SimpleFluidViscosity(const InputParameters & parameters) :
-SimpleFluidPropertiesBase(parameters),
-_output_length_unit(getParam<std::string >("output_length_unit")),
-_output_mass_unit(getParam<std::string >("output_mass_unit")),
-_output_time_unit(getParam<std::string >("output_time_unit")),
-_output_pressure_unit(getParam<std::string >("output_pressure_unit")),
-_output_basis(getParam<MooseEnum>("unit_basis"))
+SimpleFluidViscosity::SimpleFluidViscosity(const InputParameters & parameters)
+  : SimpleFluidPropertiesBase(parameters),
+    _output_length_unit(getParam<std::string>("output_length_unit")),
+    _output_mass_unit(getParam<std::string>("output_mass_unit")),
+    _output_time_unit(getParam<std::string>("output_time_unit")),
+    _output_pressure_unit(getParam<std::string>("output_pressure_unit")),
+    _output_basis(getParam<MooseEnum>("unit_basis"))
 {
-
 }
 
-Real SimpleFluidViscosity::computeValue()
+Real
+SimpleFluidViscosity::computeValue()
 {
-    Real mu = SimpleFluidPropertiesBase::fluid_viscosity(_temperature[_qp]);
-    switch (_output_basis)
-  	{
-  		//pressure
-  		case 0:
-  			mu = SimpleFluidPropertiesBase::pressure_conversion(mu, _mu_pressure_unit, _output_pressure_unit);
-        mu = SimpleFluidPropertiesBase::time_conversion(mu, _mu_time_unit, _output_time_unit);
-  			break;
+  Real mu = SimpleFluidPropertiesBase::fluid_viscosity(_temperature[_qp]);
+  switch (_output_basis)
+  {
+    // pressure
+    case 0:
+      mu = SimpleFluidPropertiesBase::pressure_conversion(
+          mu, _mu_pressure_unit, _output_pressure_unit);
+      mu = SimpleFluidPropertiesBase::time_conversion(mu, _mu_time_unit, _output_time_unit);
+      break;
 
-  		//mass
-  		case 1:
-        mu = SimpleFluidPropertiesBase::pressure_conversion(mu, _mu_pressure_unit, "mPa");
-        mu = SimpleFluidPropertiesBase::time_conversion(mu, _mu_time_unit, "s");
-        // 1 mPa*s = 1 g/m/s
-        mu = 1/SimpleFluidPropertiesBase::length_conversion(1/mu, "m", _output_length_unit);
-        mu = 1/SimpleFluidPropertiesBase::time_conversion(1/mu, "s", _output_time_unit);
-        mu = SimpleFluidPropertiesBase::mass_conversion(mu, "g", _output_mass_unit);
-  			break;
-  	}
-    return mu;
+    // mass
+    case 1:
+      mu = SimpleFluidPropertiesBase::pressure_conversion(mu, _mu_pressure_unit, "mPa");
+      mu = SimpleFluidPropertiesBase::time_conversion(mu, _mu_time_unit, "s");
+      // 1 mPa*s = 1 g/m/s
+      mu = 1 / SimpleFluidPropertiesBase::length_conversion(1 / mu, "m", _output_length_unit);
+      mu = 1 / SimpleFluidPropertiesBase::time_conversion(1 / mu, "s", _output_time_unit);
+      mu = SimpleFluidPropertiesBase::mass_conversion(mu, "g", _output_mass_unit);
+      break;
+  }
+  return mu;
 }

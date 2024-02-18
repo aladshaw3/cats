@@ -29,143 +29,170 @@
 
 registerMooseObject("catsApp", ElectrolyteCurrentFromPotentialGradient);
 
-InputParameters ElectrolyteCurrentFromPotentialGradient::validParams()
+InputParameters
+ElectrolyteCurrentFromPotentialGradient::validParams()
 {
-    InputParameters params = Kernel::validParams();
-    params.addRequiredParam<unsigned int>("direction","Directional index for current that this kernel acts on (0 = x, 1 = y, 2 = z)");
+  InputParameters params = Kernel::validParams();
+  params.addRequiredParam<unsigned int>(
+      "direction", "Directional index for current that this kernel acts on (0 = x, 1 = y, 2 = z)");
 
-    params.addRequiredCoupledVar("electric_potential","Variable for electric potential (V or J/C)");
-    params.addCoupledVar("porosity",1,"Variable for volume fraction or porosity (default = 1)");
-    params.addCoupledVar("temperature",298,"Variable for temperature of the media (default = 298 K)");
+  params.addRequiredCoupledVar("electric_potential", "Variable for electric potential (V or J/C)");
+  params.addCoupledVar("porosity", 1, "Variable for volume fraction or porosity (default = 1)");
+  params.addCoupledVar(
+      "temperature", 298, "Variable for temperature of the media (default = 298 K)");
 
-    params.addParam<Real>("faraday_const",96485.3, "Value of Faraday's constant (default = 96485.3 C/mol)");
-    params.addParam<Real>("gas_const",8.314462, "Value of the gas law constant (default = 8.314462 J/K/mol)");
+  params.addParam<Real>(
+      "faraday_const", 96485.3, "Value of Faraday's constant (default = 96485.3 C/mol)");
+  params.addParam<Real>(
+      "gas_const", 8.314462, "Value of the gas law constant (default = 8.314462 J/K/mol)");
 
-    params.addRequiredCoupledVar("ion_conc","List of names of the ion concentration variables (mol/L^3)");
-    params.addRequiredCoupledVar("diffusion","List of names of the diffusion variables (L^2/T)");
-    params.addRequiredParam< std::vector<Real> >("ion_valence","List of valences for coupled ion concentrations");
+  params.addRequiredCoupledVar("ion_conc",
+                               "List of names of the ion concentration variables (mol/L^3)");
+  params.addRequiredCoupledVar("diffusion", "List of names of the diffusion variables (L^2/T)");
+  params.addRequiredParam<std::vector<Real>>("ion_valence",
+                                             "List of valences for coupled ion concentrations");
 
-    params.addParam<Real>("min_conductivity",0, "Minimum/background value of conductivity of the media");
-    return params;
+  params.addParam<Real>(
+      "min_conductivity", 0, "Minimum/background value of conductivity of the media");
+  return params;
 }
 
-ElectrolyteCurrentFromPotentialGradient::ElectrolyteCurrentFromPotentialGradient(const InputParameters & parameters) :
-Kernel(parameters),
-_dir(getParam<unsigned int>("direction")),
+ElectrolyteCurrentFromPotentialGradient::ElectrolyteCurrentFromPotentialGradient(
+    const InputParameters & parameters)
+  : Kernel(parameters),
+    _dir(getParam<unsigned int>("direction")),
 
-_e_potential_grad(coupledGradient("electric_potential")),
-_e_potential_var(coupled("electric_potential")),
-_porosity(coupledValue("porosity")),
-_porosity_var(coupled("porosity")),
-_temp(coupledValue("temperature")),
-_temp_var(coupled("temperature")),
+    _e_potential_grad(coupledGradient("electric_potential")),
+    _e_potential_var(coupled("electric_potential")),
+    _porosity(coupledValue("porosity")),
+    _porosity_var(coupled("porosity")),
+    _temp(coupledValue("temperature")),
+    _temp_var(coupled("temperature")),
 
-_faraday(getParam<Real>("faraday_const")),
-_gas_const(getParam<Real>("gas_const")),
+    _faraday(getParam<Real>("faraday_const")),
+    _gas_const(getParam<Real>("gas_const")),
 
-_valence(getParam<std::vector<Real> >("ion_valence")),
-_min_conductivity(getParam<Real>("min_conductivity"))
+    _valence(getParam<std::vector<Real>>("ion_valence")),
+    _min_conductivity(getParam<Real>("min_conductivity"))
 {
-    if (_dir > 2 || _dir < 0)
-    {
-        moose::internal::mooseErrorRaw("Invalid current direction index!");
-    }
+  if (_dir > 2 || _dir < 0)
+  {
+    moose::internal::mooseErrorRaw("Invalid current direction index!");
+  }
 
-    _norm_vec(0) = 0.0;
-    _norm_vec(1) = 0.0;
-    _norm_vec(2) = 0.0;
-    _norm_vec(_dir) = 1.0;
+  _norm_vec(0) = 0.0;
+  _norm_vec(1) = 0.0;
+  _norm_vec(2) = 0.0;
+  _norm_vec(_dir) = 1.0;
 
-    unsigned int c = coupledComponents("ion_conc");
-    _ion_conc_vars.resize(c);
-    _ion_conc.resize(c);
+  unsigned int c = coupledComponents("ion_conc");
+  _ion_conc_vars.resize(c);
+  _ion_conc.resize(c);
 
-    unsigned int d = coupledComponents("diffusion");
-    _diffusion_vars.resize(d);
-    _diffusion.resize(d);
+  unsigned int d = coupledComponents("diffusion");
+  _diffusion_vars.resize(d);
+  _diffusion.resize(d);
 
-    //Check lists to ensure they are of same size
-    if (c != d)
-    {
-        moose::internal::mooseErrorRaw("User is required to provide list of ion concentration variables of the same length as list of diffusion coefficients.");
-    }
-    if (_ion_conc_vars.size() != _valence.size())
-    {
-        moose::internal::mooseErrorRaw("User is required to provide list of ion concentration variables of the same length as list of ion valences.");
-    }
+  // Check lists to ensure they are of same size
+  if (c != d)
+  {
+    moose::internal::mooseErrorRaw(
+        "User is required to provide list of ion concentration variables of the same length as "
+        "list of diffusion coefficients.");
+  }
+  if (_ion_conc_vars.size() != _valence.size())
+  {
+    moose::internal::mooseErrorRaw("User is required to provide list of ion concentration "
+                                   "variables of the same length as list of ion valences.");
+  }
 
-    if (_diffusion_vars.size() != _valence.size())
-    {
-        moose::internal::mooseErrorRaw("User is required to provide list of diffusion variables of the same length as list of ion valences.");
-    }
+  if (_diffusion_vars.size() != _valence.size())
+  {
+    moose::internal::mooseErrorRaw("User is required to provide list of diffusion variables of the "
+                                   "same length as list of ion valences.");
+  }
 
-    //Grab the variables
-    for (unsigned int i = 0; i<_ion_conc.size(); ++i)
-    {
-        _ion_conc_vars[i] = coupled("ion_conc",i);
-        _ion_conc[i] = &coupledValue("ion_conc",i);
-    }
+  // Grab the variables
+  for (unsigned int i = 0; i < _ion_conc.size(); ++i)
+  {
+    _ion_conc_vars[i] = coupled("ion_conc", i);
+    _ion_conc[i] = &coupledValue("ion_conc", i);
+  }
 
-    for (unsigned int i = 0; i<_diffusion.size(); ++i)
-    {
-        _diffusion_vars[i] = coupled("diffusion",i);
-        _diffusion[i] = &coupledValue("diffusion",i);
-    }
+  for (unsigned int i = 0; i < _diffusion.size(); ++i)
+  {
+    _diffusion_vars[i] = coupled("diffusion", i);
+    _diffusion[i] = &coupledValue("diffusion", i);
+  }
 
-    if (_min_conductivity < 0.0)
-        _min_conductivity = 0.0;
+  if (_min_conductivity < 0.0)
+    _min_conductivity = 0.0;
 }
 
-Real ElectrolyteCurrentFromPotentialGradient::sum_ion_terms()
+Real
+ElectrolyteCurrentFromPotentialGradient::sum_ion_terms()
 {
-    Real sum = 0.0;
-    for (unsigned int i = 0; i<_ion_conc.size(); ++i)
-    {
-        sum = sum + _valence[i]*_valence[i]*(*_diffusion[i])[_qp]*(*_ion_conc[i])[_qp];
-    }
-    return sum;
+  Real sum = 0.0;
+  for (unsigned int i = 0; i < _ion_conc.size(); ++i)
+  {
+    sum = sum + _valence[i] * _valence[i] * (*_diffusion[i])[_qp] * (*_ion_conc[i])[_qp];
+  }
+  return sum;
 }
 
-Real ElectrolyteCurrentFromPotentialGradient::effective_ionic_conductivity()
+Real
+ElectrolyteCurrentFromPotentialGradient::effective_ionic_conductivity()
 {
-    return ((_faraday*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*sum_ion_terms()) + _min_conductivity;
+  return ((_faraday * _faraday / _gas_const / _temp[_qp]) * _porosity[_qp] * sum_ion_terms()) +
+         _min_conductivity;
 }
 
-Real ElectrolyteCurrentFromPotentialGradient::computeQpResidual()
+Real
+ElectrolyteCurrentFromPotentialGradient::computeQpResidual()
 {
-    return _test[_i][_qp]*effective_ionic_conductivity()*(_norm_vec*_e_potential_grad[_qp]);
+  return _test[_i][_qp] * effective_ionic_conductivity() * (_norm_vec * _e_potential_grad[_qp]);
 }
 
-Real ElectrolyteCurrentFromPotentialGradient::computeQpJacobian()
+Real
+ElectrolyteCurrentFromPotentialGradient::computeQpJacobian()
 {
-    return 0.0;
+  return 0.0;
 }
 
-Real ElectrolyteCurrentFromPotentialGradient::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+ElectrolyteCurrentFromPotentialGradient::computeQpOffDiagJacobian(unsigned int jvar)
 {
-    if (jvar == _e_potential_var)
-    {
-        return _test[_i][_qp]*effective_ionic_conductivity()*(_norm_vec*_grad_phi[_j][_qp]);
-    }
-    if (jvar == _porosity_var)
-    {
-        return _test[_i][_qp]*(_faraday*_faraday/_gas_const/_temp[_qp])*_phi[_j][_qp]*sum_ion_terms()*(_norm_vec*_e_potential_grad[_qp]);
-    }
-    if (jvar == _temp_var)
-    {
-        return _test[_i][_qp]*effective_ionic_conductivity()*(_norm_vec*_e_potential_grad[_qp])*(-1.0/_temp[_qp])*_phi[_j][_qp];
-    }
+  if (jvar == _e_potential_var)
+  {
+    return _test[_i][_qp] * effective_ionic_conductivity() * (_norm_vec * _grad_phi[_j][_qp]);
+  }
+  if (jvar == _porosity_var)
+  {
+    return _test[_i][_qp] * (_faraday * _faraday / _gas_const / _temp[_qp]) * _phi[_j][_qp] *
+           sum_ion_terms() * (_norm_vec * _e_potential_grad[_qp]);
+  }
+  if (jvar == _temp_var)
+  {
+    return _test[_i][_qp] * effective_ionic_conductivity() * (_norm_vec * _e_potential_grad[_qp]) *
+           (-1.0 / _temp[_qp]) * _phi[_j][_qp];
+  }
 
-    Real offjac = 0.0;
-    for (unsigned int i = 0; i<_ion_conc.size(); ++i)
-    {
-        if (jvar == _ion_conc_vars[i])
-          offjac = _test[_i][_qp]*( (_faraday*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*_valence[i]*_valence[i]*(*_diffusion[i])[_qp]*_phi[_j][_qp] )*(_norm_vec*_e_potential_grad[_qp]);
-          break;
-        if (jvar == _diffusion_vars[i])
-          offjac = _test[_i][_qp]*( (_faraday*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*_valence[i]*_valence[i]*_phi[_j][_qp]*(*_ion_conc[i])[_qp] )*(_norm_vec*_e_potential_grad[_qp]);
-          break;
-    }
+  Real offjac = 0.0;
+  for (unsigned int i = 0; i < _ion_conc.size(); ++i)
+  {
+    if (jvar == _ion_conc_vars[i])
+      offjac = _test[_i][_qp] *
+               ((_faraday * _faraday / _gas_const / _temp[_qp]) * _porosity[_qp] * _valence[i] *
+                _valence[i] * (*_diffusion[i])[_qp] * _phi[_j][_qp]) *
+               (_norm_vec * _e_potential_grad[_qp]);
+    break;
+    if (jvar == _diffusion_vars[i])
+      offjac = _test[_i][_qp] *
+               ((_faraday * _faraday / _gas_const / _temp[_qp]) * _porosity[_qp] * _valence[i] *
+                _valence[i] * _phi[_j][_qp] * (*_ion_conc[i])[_qp]) *
+               (_norm_vec * _e_potential_grad[_qp]);
+    break;
+  }
 
-    return offjac;
+  return offjac;
 }

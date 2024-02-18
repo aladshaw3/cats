@@ -1,12 +1,11 @@
 /*!
  *  \file SchloeglDarcyCoefficient.h
- *    \brief Auxillary kernel for a Schloegl coefficient for implementation of Darcy's Law in membranes
- *    \details This file is responsible for calculating the value of an auxvariable
- *              according to the Schloegl relationship for Darcy flow in membranes. This calculated
- *              coefficient is to be used in the calculation of velocity in/across a membrane
- *              assuming Darcy flow. This is where all velocities are resolved via only
- *              pressure gradients in the domain and the pressure is resolved with a Laplace's
- *              equation with proper boundary conditions applied.
+ *    \brief Auxillary kernel for a Schloegl coefficient for implementation of Darcy's Law in
+ *membranes \details This file is responsible for calculating the value of an auxvariable according
+ *to the Schloegl relationship for Darcy flow in membranes. This calculated coefficient is to be
+ *used in the calculation of velocity in/across a membrane assuming Darcy flow. This is where all
+ *velocities are resolved via only pressure gradients in the domain and the pressure is resolved
+ *with a Laplace's equation with proper boundary conditions applied.
  *
  *              vel = Coeff * grad(P)   where Coeff is calculated from this kernel.
  *
@@ -32,23 +31,26 @@
 
 registerMooseObject("catsApp", SchloeglDarcyCoefficient);
 
-InputParameters SchloeglDarcyCoefficient::validParams()
+InputParameters
+SchloeglDarcyCoefficient::validParams()
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addCoupledVar("hydraulic_permeability",1.58E-14,"Name of the hydraulic permeability variable (default = 1.58E-14 cm^2)");
-    params.addCoupledVar("viscosity",0.001,"Name of the viscosity variable (default = 10^-3 Pa*s)");
-    return params;
+  InputParameters params = AuxKernel::validParams();
+  params.addCoupledVar("hydraulic_permeability",
+                       1.58E-14,
+                       "Name of the hydraulic permeability variable (default = 1.58E-14 cm^2)");
+  params.addCoupledVar("viscosity", 0.001, "Name of the viscosity variable (default = 10^-3 Pa*s)");
+  return params;
 }
 
-SchloeglDarcyCoefficient::SchloeglDarcyCoefficient(const InputParameters & parameters) :
-AuxKernel(parameters),
-_viscosity(coupledValue("viscosity")),
-_hydro_perm(coupledValue("hydraulic_permeability"))
+SchloeglDarcyCoefficient::SchloeglDarcyCoefficient(const InputParameters & parameters)
+  : AuxKernel(parameters),
+    _viscosity(coupledValue("viscosity")),
+    _hydro_perm(coupledValue("hydraulic_permeability"))
 {
-
 }
 
-Real SchloeglDarcyCoefficient::computeValue()
+Real
+SchloeglDarcyCoefficient::computeValue()
 {
-    return _hydro_perm[_qp]/(_viscosity[_qp]+1e-15);
+  return _hydro_perm[_qp] / (_viscosity[_qp] + 1e-15);
 }

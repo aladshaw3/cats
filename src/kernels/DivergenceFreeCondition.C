@@ -33,73 +33,80 @@
 
 registerMooseObject("catsApp", DivergenceFreeCondition);
 
-InputParameters DivergenceFreeCondition::validParams()
+InputParameters
+DivergenceFreeCondition::validParams()
 {
-    InputParameters params = Kernel::validParams();
-    params.addCoupledVar("ux",0,"Vector Variable coefficent in x-direction");
-    params.addCoupledVar("uy",0,"Vector Variable coefficent in y-direction");
-    params.addCoupledVar("uz",0,"Vector Variable coefficent in z-direction");
-    params.addCoupledVar("coupled_scalar",1,"Scalar variable that we couple the divergence to (default = 1)");
-    return params;
+  InputParameters params = Kernel::validParams();
+  params.addCoupledVar("ux", 0, "Vector Variable coefficent in x-direction");
+  params.addCoupledVar("uy", 0, "Vector Variable coefficent in y-direction");
+  params.addCoupledVar("uz", 0, "Vector Variable coefficent in z-direction");
+  params.addCoupledVar(
+      "coupled_scalar", 1, "Scalar variable that we couple the divergence to (default = 1)");
+  return params;
 }
 
-DivergenceFreeCondition::DivergenceFreeCondition(const InputParameters & parameters) :
-Kernel(parameters),
-_ux(coupledValue("ux")),
-_ux_grad(coupledGradient("ux")),
+DivergenceFreeCondition::DivergenceFreeCondition(const InputParameters & parameters)
+  : Kernel(parameters),
+    _ux(coupledValue("ux")),
+    _ux_grad(coupledGradient("ux")),
 
-_uy(coupledValue("uy")),
-_uy_grad(coupledGradient("uy")),
+    _uy(coupledValue("uy")),
+    _uy_grad(coupledGradient("uy")),
 
-_uz(coupledValue("uz")),
-_uz_grad(coupledGradient("uz")),
+    _uz(coupledValue("uz")),
+    _uz_grad(coupledGradient("uz")),
 
-_ux_var(coupled("ux")),
-_uy_var(coupled("uy")),
-_uz_var(coupled("uz")),
+    _ux_var(coupled("ux")),
+    _uy_var(coupled("uy")),
+    _uz_var(coupled("uz")),
 
-_coupled(coupledValue("coupled_scalar")),
-_coupled_grad(coupledGradient("coupled_scalar")),
-_coupled_var(coupled("coupled_scalar"))
+    _coupled(coupledValue("coupled_scalar")),
+    _coupled_grad(coupledGradient("coupled_scalar")),
+    _coupled_var(coupled("coupled_scalar"))
 {
-
 }
 
-Real DivergenceFreeCondition::computeQpResidual()
+Real
+DivergenceFreeCondition::computeQpResidual()
 {
-    return _test[_i][_qp]*(_coupled[_qp]*_ux_grad[_qp](0) + _ux[_qp]*_coupled_grad[_qp](0)
-                          + _coupled[_qp]*_uy_grad[_qp](1) + _uy[_qp]*_coupled_grad[_qp](1)
-                          + _coupled[_qp]*_uz_grad[_qp](2) + _uz[_qp]*_coupled_grad[_qp](2));
+  return _test[_i][_qp] * (_coupled[_qp] * _ux_grad[_qp](0) + _ux[_qp] * _coupled_grad[_qp](0) +
+                           _coupled[_qp] * _uy_grad[_qp](1) + _uy[_qp] * _coupled_grad[_qp](1) +
+                           _coupled[_qp] * _uz_grad[_qp](2) + _uz[_qp] * _coupled_grad[_qp](2));
 }
 
-Real DivergenceFreeCondition::computeQpJacobian()
+Real
+DivergenceFreeCondition::computeQpJacobian()
 {
-    return 0.0;
+  return 0.0;
 }
 
-Real DivergenceFreeCondition::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+DivergenceFreeCondition::computeQpOffDiagJacobian(unsigned int jvar)
 {
   if (jvar == _coupled_var)
   {
-      return _test[_i][_qp]*(_phi[_j][_qp]*_ux_grad[_qp](0) + _ux[_qp]*_grad_phi[_j][_qp](0)
-                            + _phi[_j][_qp]*_uy_grad[_qp](1) + _uy[_qp]*_grad_phi[_j][_qp](1)
-                            + _phi[_j][_qp]*_uz_grad[_qp](2) + _uz[_qp]*_grad_phi[_j][_qp](2));
+    return _test[_i][_qp] * (_phi[_j][_qp] * _ux_grad[_qp](0) + _ux[_qp] * _grad_phi[_j][_qp](0) +
+                             _phi[_j][_qp] * _uy_grad[_qp](1) + _uy[_qp] * _grad_phi[_j][_qp](1) +
+                             _phi[_j][_qp] * _uz_grad[_qp](2) + _uz[_qp] * _grad_phi[_j][_qp](2));
   }
 
   if (jvar == _ux_var)
-	{
-  		return _test[_i][_qp]*(_coupled[_qp]*_grad_phi[_j][_qp](0) + _phi[_j][_qp]*_coupled_grad[_qp](0));
-	}
+  {
+    return _test[_i][_qp] *
+           (_coupled[_qp] * _grad_phi[_j][_qp](0) + _phi[_j][_qp] * _coupled_grad[_qp](0));
+  }
 
-	if (jvar == _uy_var)
-	{
-		  return _test[_i][_qp]*(_coupled[_qp]*_grad_phi[_j][_qp](1) + _phi[_j][_qp]*_coupled_grad[_qp](1));
-	}
+  if (jvar == _uy_var)
+  {
+    return _test[_i][_qp] *
+           (_coupled[_qp] * _grad_phi[_j][_qp](1) + _phi[_j][_qp] * _coupled_grad[_qp](1));
+  }
 
-	if (jvar == _uz_var)
-	{
-		  return _test[_i][_qp]*(_coupled[_qp]*_grad_phi[_j][_qp](2) + _phi[_j][_qp]*_coupled_grad[_qp](2));
-	}
+  if (jvar == _uz_var)
+  {
+    return _test[_i][_qp] *
+           (_coupled[_qp] * _grad_phi[_j][_qp](2) + _phi[_j][_qp] * _coupled_grad[_qp](2));
+  }
 
   return 0.0;
 }

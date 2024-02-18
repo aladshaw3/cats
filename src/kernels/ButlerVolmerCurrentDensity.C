@@ -12,10 +12,9 @@
  *
  *                          where J = current density (C / (total volume) / time)
  *                                n = number of electrons transferred in reaction 'r'
- *                                As = specific surface area (total electrode surface area / total volume)
- *                                      [total volume would include void volume]
- *                                F = Faraday's constant (default = 96,485.3 C/mol)
- *                                r = reaction rate variable (moles / electrode surface area / time)
+ *                                As = specific surface area (total electrode surface area / total
+ * volume) [total volume would include void volume] F = Faraday's constant (default = 96,485.3
+ * C/mol) r = reaction rate variable (moles / electrode surface area / time)
  *
  *
  *  \author Austin Ladshaw
@@ -34,50 +33,60 @@
 
 registerMooseObject("catsApp", ButlerVolmerCurrentDensity);
 
-InputParameters ButlerVolmerCurrentDensity::validParams()
+InputParameters
+ButlerVolmerCurrentDensity::validParams()
 {
-    InputParameters params = Kernel::validParams();
-    params.addRequiredCoupledVar("rate_var","Variable for reaction rate that exchanges electrons (moles / electrode area / time)");
-    params.addCoupledVar("specific_area",1.0,"Specific area for transfer [surface area of electrode / total volume] (m^-1)");
+  InputParameters params = Kernel::validParams();
+  params.addRequiredCoupledVar(
+      "rate_var",
+      "Variable for reaction rate that exchanges electrons (moles / electrode area / time)");
+  params.addCoupledVar(
+      "specific_area",
+      1.0,
+      "Specific area for transfer [surface area of electrode / total volume] (m^-1)");
 
-    params.addParam<Real>("faraday_const",96485.3, "Value of Faraday's constant (default = 96485.3 C/mol)");
-    params.addParam<Real>("number_of_electrons",1.0,"Number of electrons transferred the redox reaction");
-    return params;
+  params.addParam<Real>(
+      "faraday_const", 96485.3, "Value of Faraday's constant (default = 96485.3 C/mol)");
+  params.addParam<Real>(
+      "number_of_electrons", 1.0, "Number of electrons transferred the redox reaction");
+  return params;
 }
 
 ButlerVolmerCurrentDensity::ButlerVolmerCurrentDensity(const InputParameters & parameters)
-: Kernel(parameters),
-_rate(coupledValue("rate_var")),
-_rate_var(coupled("rate_var")),
-_specarea(coupledValue("specific_area")),
-_specarea_var(coupled("specific_area")),
-_n(getParam<Real>("number_of_electrons")),
-_faraday(getParam<Real>("faraday_const"))
+  : Kernel(parameters),
+    _rate(coupledValue("rate_var")),
+    _rate_var(coupled("rate_var")),
+    _specarea(coupledValue("specific_area")),
+    _specarea_var(coupled("specific_area")),
+    _n(getParam<Real>("number_of_electrons")),
+    _faraday(getParam<Real>("faraday_const"))
 {
-
 }
 
-Real ButlerVolmerCurrentDensity::computeQpResidual()
+Real
+ButlerVolmerCurrentDensity::computeQpResidual()
 {
-    return _test[_i][_qp] * _n * _specarea[_qp] * _faraday * (-_rate[_qp]);
+  return _test[_i][_qp] * _n * _specarea[_qp] * _faraday * (-_rate[_qp]);
 }
 
-Real ButlerVolmerCurrentDensity::computeQpJacobian()
+Real
+ButlerVolmerCurrentDensity::computeQpJacobian()
 {
-    return 0.0;
+  return 0.0;
 }
 
-Real ButlerVolmerCurrentDensity::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+ButlerVolmerCurrentDensity::computeQpOffDiagJacobian(unsigned int jvar)
 {
 
-    if (jvar == _specarea_var)
-    {
-        return _test[_i][_qp] * _n * _phi[_j][_qp] * _faraday * (-_rate[_qp]);
-    }
-    if (jvar == _rate_var)
-    {
-        return _test[_i][_qp] * _n * _specarea[_qp] * _faraday * (-_phi[_j][_qp]);
-    }
+  if (jvar == _specarea_var)
+  {
+    return _test[_i][_qp] * _n * _phi[_j][_qp] * _faraday * (-_rate[_qp]);
+  }
+  if (jvar == _rate_var)
+  {
+    return _test[_i][_qp] * _n * _specarea[_qp] * _faraday * (-_phi[_j][_qp]);
+  }
 
-    return 0.0;
+  return 0.0;
 }

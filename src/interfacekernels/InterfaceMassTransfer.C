@@ -1,14 +1,15 @@
 /*!
  *  \file InterfaceMassTransfer.h
  *  \brief Interface Kernel for creating an exchange of mass (or energy) across a physical boundary
- *  \details This file creates an iterface kernel for the coupling a pair of non-linear variables in different
- *            subdomains across a boundary designated as a side-set in the mesh. The variables are
+ *  \details This file creates an iterface kernel for the coupling a pair of non-linear variables in
+ * different subdomains across a boundary designated as a side-set in the mesh. The variables are
  *            coupled linearly in a via a constant transfer coefficient as shown below:
  *                  Res = test * km * (u - v)
  *                          where u = master variable in master domain
  *                          and v = neighbor variable in the adjacent subdomain
  *
- *  \note Only need 1 interface kernel for both non-linear variables that are coupled to handle transfer in both domains
+ *  \note Only need 1 interface kernel for both non-linear variables that are coupled to handle
+ * transfer in both domains
  *
  *
  *  \author Austin Ladshaw
@@ -27,24 +28,28 @@
 
 registerMooseObject("catsApp", InterfaceMassTransfer);
 
-InputParameters InterfaceMassTransfer::validParams()
+InputParameters
+InterfaceMassTransfer::validParams()
 {
-    InputParameters params = InterfaceKernel::validParams();
-    params.addCoupledVar("transfer_rate",1.0,"Variable for mass transfer coefficient (length/time)");
-    params.addCoupledVar("area_frac",1,"Variable for contact area fraction (or volume fraction) (-)");
-    return params;
+  InputParameters params = InterfaceKernel::validParams();
+  params.addCoupledVar(
+      "transfer_rate", 1.0, "Variable for mass transfer coefficient (length/time)");
+  params.addCoupledVar(
+      "area_frac", 1, "Variable for contact area fraction (or volume fraction) (-)");
+  return params;
 }
 
 InterfaceMassTransfer::InterfaceMassTransfer(const InputParameters & parameters)
   : InterfaceKernel(parameters),
-  _km(coupledValue("transfer_rate")),
-  _km_var(coupled("transfer_rate")),
-  _areafrac(coupledValue("area_frac")),
-  _areafrac_var(coupled("area_frac"))
+    _km(coupledValue("transfer_rate")),
+    _km_var(coupled("transfer_rate")),
+    _areafrac(coupledValue("area_frac")),
+    _areafrac_var(coupled("area_frac"))
 {
 }
 
-Real InterfaceMassTransfer::computeQpResidual(Moose::DGResidualType type)
+Real
+InterfaceMassTransfer::computeQpResidual(Moose::DGResidualType type)
 {
   Real r = 0;
   switch (type)
@@ -65,7 +70,8 @@ Real InterfaceMassTransfer::computeQpResidual(Moose::DGResidualType type)
   return r;
 }
 
-Real InterfaceMassTransfer::computeQpJacobian(Moose::DGJacobianType type)
+Real
+InterfaceMassTransfer::computeQpJacobian(Moose::DGJacobianType type)
 {
   Real jac = 0;
   switch (type)
@@ -86,55 +92,60 @@ Real InterfaceMassTransfer::computeQpJacobian(Moose::DGJacobianType type)
   return jac;
 }
 
-Real InterfaceMassTransfer::computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar)
+Real
+InterfaceMassTransfer::computeQpOffDiagJacobian(Moose::DGJacobianType type, unsigned int jvar)
 {
-    Real jac = 0.0;
+  Real jac = 0.0;
 
-    if (jvar == _km_var)
+  if (jvar == _km_var)
+  {
+    switch (type)
     {
-        switch (type)
-        {
-            case Moose::ElementElement:
-                jac = _test[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
-                break;
+      case Moose::ElementElement:
+        jac = _test[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp] * (_u[_qp] - _neighbor_value[_qp]);
+        break;
 
-            case Moose::NeighborNeighbor:
-                jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
-                break;
+      case Moose::NeighborNeighbor:
+        jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp] *
+              (_u[_qp] - _neighbor_value[_qp]);
+        break;
 
-            case Moose::NeighborElement:
-                jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
-                break;
+      case Moose::NeighborElement:
+        jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp] *
+              (_u[_qp] - _neighbor_value[_qp]);
+        break;
 
-            case Moose::ElementNeighbor:
-                jac = _test[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
-                break;
-        }
-        return jac;
+      case Moose::ElementNeighbor:
+        jac = _test[_i][_qp] * _phi[_j][_qp] * _areafrac[_qp] * (_u[_qp] - _neighbor_value[_qp]);
+        break;
     }
+    return jac;
+  }
 
-    if (jvar == _areafrac_var)
+  if (jvar == _areafrac_var)
+  {
+    switch (type)
     {
-        switch (type)
-        {
-            case Moose::ElementElement:
-                jac = _test[_i][_qp] * _phi[_j][_qp] * _km[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
-                break;
+      case Moose::ElementElement:
+        jac = _test[_i][_qp] * _phi[_j][_qp] * _km[_qp] * (_u[_qp] - _neighbor_value[_qp]);
+        break;
 
-            case Moose::NeighborNeighbor:
-                jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _km[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
-                break;
+      case Moose::NeighborNeighbor:
+        jac =
+            -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _km[_qp] * (_u[_qp] - _neighbor_value[_qp]);
+        break;
 
-            case Moose::NeighborElement:
-                jac = -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _km[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
-                break;
+      case Moose::NeighborElement:
+        jac =
+            -_test_neighbor[_i][_qp] * _phi[_j][_qp] * _km[_qp] * (_u[_qp] - _neighbor_value[_qp]);
+        break;
 
-            case Moose::ElementNeighbor:
-                jac = _test[_i][_qp] * _phi[_j][_qp] * _km[_qp]  * (_u[_qp] - _neighbor_value[_qp]);
-                break;
-        }
-        return jac;
+      case Moose::ElementNeighbor:
+        jac = _test[_i][_qp] * _phi[_j][_qp] * _km[_qp] * (_u[_qp] - _neighbor_value[_qp]);
+        break;
     }
+    return jac;
+  }
 
-    return 0.0;
+  return 0.0;
 }

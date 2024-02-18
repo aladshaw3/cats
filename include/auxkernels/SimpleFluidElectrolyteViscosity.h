@@ -1,7 +1,7 @@
 /*!
  *  \file SimpleFluidElectrolyteViscosity.h
- *    \brief AuxKernel kernel to calculate viscosity of an electrolyte liquid (default = water + NaCl)
- *    \details This file is responsible for calculating the viscosity of an electrolyte liquid by
+ *    \brief AuxKernel kernel to calculate viscosity of an electrolyte liquid (default = water +
+ *NaCl) \details This file is responsible for calculating the viscosity of an electrolyte liquid by
  *            using an emperical relationship (see SimpleFluidPropertiesBase for
  *            more details). That relationship is a function of the ionic strength
  *            of the electrolyte solution. User can specify if they want a pressure unit basis
@@ -31,16 +31,15 @@
 class SimpleFluidElectrolyteViscosity : public SimpleFluidViscosity
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    SimpleFluidElectrolyteViscosity(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  SimpleFluidElectrolyteViscosity(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-
 };

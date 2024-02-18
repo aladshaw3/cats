@@ -28,23 +28,22 @@
 class VectorMagnitude : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    VectorMagnitude(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  VectorMagnitude(const InputParameters & parameters);
 
 protected:
-    /// Calculation of the magnitude of velocity
-    Real vector_magnitude(Real ux, Real uy, Real uz);
+  /// Calculation of the magnitude of velocity
+  Real vector_magnitude(Real ux, Real uy, Real uz);
 
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    const VariableValue & _vec_x;                     ///< Variable for the vector in x
-    const VariableValue & _vec_y;                     ///< Variable for the vector in y
-    const VariableValue & _vec_z;                     ///< Variable for the vector in z
+  const VariableValue & _vec_x; ///< Variable for the vector in x
+  const VariableValue & _vec_y; ///< Variable for the vector in y
+  const VariableValue & _vec_z; ///< Variable for the vector in z
 
 private:
-
 };

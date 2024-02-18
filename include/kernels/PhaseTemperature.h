@@ -1,10 +1,10 @@
 /*!
  *  \file PhaseTemperature.h
- *    \brief Kernel to create a residual to solve for the temperature of a given phase based on energy per volume
- *    \details This file creates a standard MOOSE kernel that is used to calculate the temperature of a phase
- *              from the energy per volume, as well as density, specific heat, and volume fraction of the phase.
- *              This kernel is a necessary component when doing energy balances where density and heat
- *              capacity change in space-time.
+ *    \brief Kernel to create a residual to solve for the temperature of a given phase based on
+ * energy per volume \details This file creates a standard MOOSE kernel that is used to calculate
+ * the temperature of a phase from the energy per volume, as well as density, specific heat, and
+ * volume fraction of the phase. This kernel is a necessary component when doing energy balances
+ * where density and heat capacity change in space-time.
  *
  *  \author Austin Ladshaw
  *    \date 05/04/2020
@@ -26,36 +26,35 @@
 class PhaseTemperature : public Kernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    PhaseTemperature(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  PhaseTemperature(const InputParameters & parameters);
 
 protected:
-    /// Required residual function for standard kernels in MOOSE
-    /** This function returns a residual contribution for this object.*/
-    virtual Real computeQpResidual();
+  /// Required residual function for standard kernels in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual();
 
-    /// Required Jacobian function for standard kernels in MOOSE
-    /** This function returns a Jacobian contribution for this object. The Jacobian being
-     computed is the associated diagonal element in the overall Jacobian matrix for the
-     system and is used in preconditioning of the linear sub-problem. */
-    virtual Real computeQpJacobian();
+  /// Required Jacobian function for standard kernels in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+   computed is the associated diagonal element in the overall Jacobian matrix for the
+   system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian();
 
-    /// Not Required, but aids in the preconditioning step
-    /** This function returns the off diagonal Jacobian contribution for this object. By
-     returning a non-zero value we will hopefully improve the convergence rate for the
-     cross coupling of the variables. */
-    virtual Real computeQpOffDiagJacobian(unsigned int jvar);
+  /// Not Required, but aids in the preconditioning step
+  /** This function returns the off diagonal Jacobian contribution for this object. By
+   returning a non-zero value we will hopefully improve the convergence rate for the
+   cross coupling of the variables. */
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-    const VariableValue & _energy;               ///< Variable for the energy density (J/m^3)
-    const unsigned int _energy_var;              ///< Variable identification for the energy density
-    const VariableValue & _density;              ///< Variable for the density (kg/m^3)
-    const unsigned int _density_var;             ///< Variable identification for the density
-    const VariableValue & _specheat;              ///< Variable for the specific heat (J/kg/K)
-    const unsigned int _specheat_var;             ///< Variable identification for the specific heat
+  const VariableValue & _energy;    ///< Variable for the energy density (J/m^3)
+  const unsigned int _energy_var;   ///< Variable identification for the energy density
+  const VariableValue & _density;   ///< Variable for the density (kg/m^3)
+  const unsigned int _density_var;  ///< Variable identification for the density
+  const VariableValue & _specheat;  ///< Variable for the specific heat (J/kg/K)
+  const unsigned int _specheat_var; ///< Variable identification for the specific heat
 
 private:
-
 };

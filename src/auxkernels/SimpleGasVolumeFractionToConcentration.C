@@ -20,35 +20,41 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
- #include "SimpleGasVolumeFractionToConcentration.h"
+#include "SimpleGasVolumeFractionToConcentration.h"
 
- registerMooseObject("catsApp", SimpleGasVolumeFractionToConcentration);
+registerMooseObject("catsApp", SimpleGasVolumeFractionToConcentration);
 
- InputParameters SimpleGasVolumeFractionToConcentration::validParams()
- {
-     InputParameters params = SimpleGasPropertiesBase::validParams();
-     params.addParam< std::string >("output_volume_unit","L","Volume units for gas concentration on output");
-     params.addParam< std::string >("input_volfrac_unit","ppm","Volume fraction units for gas concentration on input");
-     params.addRequiredCoupledVar("volfrac","Volume fraction variable to convert to concentration");
+InputParameters
+SimpleGasVolumeFractionToConcentration::validParams()
+{
+  InputParameters params = SimpleGasPropertiesBase::validParams();
+  params.addParam<std::string>(
+      "output_volume_unit", "L", "Volume units for gas concentration on output");
+  params.addParam<std::string>(
+      "input_volfrac_unit", "ppm", "Volume fraction units for gas concentration on input");
+  params.addRequiredCoupledVar("volfrac", "Volume fraction variable to convert to concentration");
 
-     return params;
- }
+  return params;
+}
 
- SimpleGasVolumeFractionToConcentration::SimpleGasVolumeFractionToConcentration(const InputParameters & parameters) :
- SimpleGasPropertiesBase(parameters),
- _output_volume_unit(getParam<std::string >("output_volume_unit")),
- _input_volfrac_unit(getParam<std::string >("input_volfrac_unit")),
- _volfrac(coupledValue("volfrac"))
- {
+SimpleGasVolumeFractionToConcentration::SimpleGasVolumeFractionToConcentration(
+    const InputParameters & parameters)
+  : SimpleGasPropertiesBase(parameters),
+    _output_volume_unit(getParam<std::string>("output_volume_unit")),
+    _input_volfrac_unit(getParam<std::string>("input_volfrac_unit")),
+    _volfrac(coupledValue("volfrac"))
+{
+}
 
- }
-
- Real SimpleGasVolumeFractionToConcentration::computeValue()
- {
-     Real y = SimpleGasPropertiesBase::volume_fraction_conversion(_volfrac[_qp], _input_volfrac_unit, "%")/100.0;
-     // Conc in mol/L
-     Real press = SimpleGasPropertiesBase::pressure_conversion(_pressure[_qp], _pressure_unit, "kPa");
-     Real conc = press*y/Rstd/_temperature[_qp];
-     conc = 1/SimpleGasPropertiesBase::volume_conversion(1/conc, "L", _output_volume_unit);
-     return conc;
- }
+Real
+SimpleGasVolumeFractionToConcentration::computeValue()
+{
+  Real y =
+      SimpleGasPropertiesBase::volume_fraction_conversion(_volfrac[_qp], _input_volfrac_unit, "%") /
+      100.0;
+  // Conc in mol/L
+  Real press = SimpleGasPropertiesBase::pressure_conversion(_pressure[_qp], _pressure_unit, "kPa");
+  Real conc = press * y / Rstd / _temperature[_qp];
+  conc = 1 / SimpleGasPropertiesBase::volume_conversion(1 / conc, "L", _output_volume_unit);
+  return conc;
+}

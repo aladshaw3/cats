@@ -26,19 +26,19 @@
 class SphericalAreaVolumeRatio : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    SphericalAreaVolumeRatio(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  SphericalAreaVolumeRatio(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    Real _particle_diameter;        ///< Diameter of the particle for which the ratio is calculated (L)
-    const VariableValue & _bulk_porosity;       ///< Ratio of channel volume to total volume
-    bool _PerSolidsVolume;     ///< Boolean to determine if ratio to be calculated is per solid volume or per total volume
-
+  Real _particle_diameter; ///< Diameter of the particle for which the ratio is calculated (L)
+  const VariableValue & _bulk_porosity; ///< Ratio of channel volume to total volume
+  bool
+      _PerSolidsVolume; ///< Boolean to determine if ratio to be calculated is per solid volume or per total volume
 };

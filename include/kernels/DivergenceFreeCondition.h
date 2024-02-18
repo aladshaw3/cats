@@ -35,28 +35,28 @@
 
 /// DivergenceFreeCondition class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
-	All public and protected members of this class are required function overrides.
-	The kernel has a vector whose components can be set piecewise in an
-	input file. */
+  All public and protected members of this class are required function overrides.
+  The kernel has a vector whose components can be set piecewise in an
+  input file. */
 class DivergenceFreeCondition : public Kernel
 {
 public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
 
-	/// Required constructor for objects in MOOSE
-	DivergenceFreeCondition(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  DivergenceFreeCondition(const InputParameters & parameters);
 
 protected:
-	/// Required residual function for standard kernels in MOOSE
-	/** This function returns a residual contribution for this object.*/
-	virtual Real computeQpResidual() override;
+  /// Required residual function for standard kernels in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual() override;
 
-	/// Required Jacobian function for standard kernels in MOOSE
-	/** This function returns a Jacobian contribution for this object. The Jacobian being
-		computed is the associated diagonal element in the overall Jacobian matrix for the
-		system and is used in preconditioning of the linear sub-problem. */
-	virtual Real computeQpJacobian() override;
+  /// Required Jacobian function for standard kernels in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+    computed is the associated diagonal element in the overall Jacobian matrix for the
+    system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian() override;
 
   /// Not Required, but aids in the preconditioning step
   /** This function returns the off diagonal Jacobian contribution for this object. By
@@ -64,21 +64,20 @@ protected:
         cross coupling of the variables. */
   virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-  const VariableValue & _ux;			               ///< variable for the x-direction derivatives
-  const VariableGradient & _ux_grad;             ///< Coupled variable gradient for the x-direction derivatives
-	const VariableValue & _uy;			               ///< variable for the y-direction derivatives
-  const VariableGradient & _uy_grad;             ///< Coupled variable gradient for the y-direction derivatives
-	const VariableValue & _uz;			               ///< variable for the z-direction derivatives
-  const VariableGradient & _uz_grad;             ///< Coupled variable gradient for the z-direction derivatives
+  const VariableValue & _ux;         ///< variable for the x-direction derivatives
+  const VariableGradient & _ux_grad; ///< Coupled variable gradient for the x-direction derivatives
+  const VariableValue & _uy;         ///< variable for the y-direction derivatives
+  const VariableGradient & _uy_grad; ///< Coupled variable gradient for the y-direction derivatives
+  const VariableValue & _uz;         ///< variable for the z-direction derivatives
+  const VariableGradient & _uz_grad; ///< Coupled variable gradient for the z-direction derivatives
 
-	const unsigned int _ux_var;					///< Variable identification for ux
-	const unsigned int _uy_var;					///< Variable identification for uy
-	const unsigned int _uz_var;					///< Variable identification for uz
+  const unsigned int _ux_var; ///< Variable identification for ux
+  const unsigned int _uy_var; ///< Variable identification for uy
+  const unsigned int _uz_var; ///< Variable identification for uz
 
-  const VariableValue & _coupled;			               ///< Scalar variable
-  const VariableGradient & _coupled_grad;            ///< Coupled variable gradient
-  const unsigned int _coupled_var;                   ///< Variable identification for coupled variable
+  const VariableValue & _coupled;         ///< Scalar variable
+  const VariableGradient & _coupled_grad; ///< Coupled variable gradient
+  const unsigned int _coupled_var;        ///< Variable identification for coupled variable
 
 private:
-
 };

@@ -30,40 +30,41 @@
 class MicroscaleCoupledCoefTimeDerivative : public Kernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    MicroscaleCoupledCoefTimeDerivative(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  MicroscaleCoupledCoefTimeDerivative(const InputParameters & parameters);
 
 protected:
-    /// Required residual function for standard kernels in MOOSE
-    /** This function returns a residual contribution for this object.*/
-    virtual Real computeQpResidual();
-    /// Required Jacobian function for standard kernels in MOOSE
-    /** This function returns a Jacobian contribution for this object. The Jacobian being
-        computed is the associated diagonal element in the overall Jacobian matrix for the
-        system and is used in preconditioning of the linear sub-problem. */
-    virtual Real computeQpJacobian();
-    /// Not Required, but aids in the preconditioning step
-    /** This function returns the off diagonal Jacobian contribution for this object. By
-        returning a non-zero value we will hopefully improve the convergence rate for the
-        cross coupling of the variables. */
-    virtual Real computeQpOffDiagJacobian(unsigned int jvar);
+  /// Required residual function for standard kernels in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual();
+  /// Required Jacobian function for standard kernels in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+      computed is the associated diagonal element in the overall Jacobian matrix for the
+      system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian();
+  /// Not Required, but aids in the preconditioning step
+  /** This function returns the off diagonal Jacobian contribution for this object. By
+      returning a non-zero value we will hopefully improve the convergence rate for the
+      cross coupling of the variables. */
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-    Real _nodal_time_coef;                ///< Time coefficient for the coupled time derivative at given node in microscale
-    Real _total_length;                   ///< Total length of the microscale [Global]
-    Real _dr;                             ///< Segment length ( = _total_length / (_total_nodes - 1) )
-    Real _rl;                             ///< Spatial position at current node (internally calculated)
-    Real _rd_l;                           ///< Spatial position raised to power at current node (internally calculated)
-    unsigned int _node;                   ///< Current node in the microscale
-    unsigned int _total_nodes;            ///< Total number of nodes to discretize the microscale with [Global]
-    unsigned int _coord_id;               ///< Coordinate id number ( 0 = cartesian, 1 = r-cylindrical, 2 = r-spherical ) [Global]
+  Real
+      _nodal_time_coef; ///< Time coefficient for the coupled time derivative at given node in microscale
+  Real _total_length; ///< Total length of the microscale [Global]
+  Real _dr;           ///< Segment length ( = _total_length / (_total_nodes - 1) )
+  Real _rl;           ///< Spatial position at current node (internally calculated)
+  Real _rd_l;         ///< Spatial position raised to power at current node (internally calculated)
+  unsigned int _node; ///< Current node in the microscale
+  unsigned int _total_nodes; ///< Total number of nodes to discretize the microscale with [Global]
+  unsigned int
+      _coord_id; ///< Coordinate id number ( 0 = cartesian, 1 = r-cylindrical, 2 = r-spherical ) [Global]
 
-    const VariableValue & _coupled_dot;        ///< Time derivative of the coupled variable
-    const VariableValue & _coupled_ddot;    ///< Cross derivative term for the coupled variables
-    const unsigned int _coupled_var;        ///< Variable identification for the coupled variable
+  const VariableValue & _coupled_dot;  ///< Time derivative of the coupled variable
+  const VariableValue & _coupled_ddot; ///< Cross derivative term for the coupled variables
+  const unsigned int _coupled_var;     ///< Variable identification for the coupled variable
 
 private:
-
 };

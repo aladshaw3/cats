@@ -36,22 +36,21 @@
 class AuxErgunPressure : public GasPropertiesBase
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    AuxErgunPressure(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  AuxErgunPressure(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    unsigned int _dir;                              ///< Direction of the Ergun gradient for pressure (0 = x, 1 = y, 2 = z)
-    const VariableValue & _porosity;                ///< Variable for the porosity
-    Real _start;                                    ///< Distance from which pressure drop starts (m)
-    Real _end;                                      ///< Distance at which pressure drop ends (m)
-    bool _inlet;                                    ///< if true, then given pressure is inlet; if false, then given pressure is outlet
+  unsigned int _dir; ///< Direction of the Ergun gradient for pressure (0 = x, 1 = y, 2 = z)
+  const VariableValue & _porosity; ///< Variable for the porosity
+  Real _start;                     ///< Distance from which pressure drop starts (m)
+  Real _end;                       ///< Distance at which pressure drop ends (m)
+  bool _inlet; ///< if true, then given pressure is inlet; if false, then given pressure is outlet
 
 private:
-
 };

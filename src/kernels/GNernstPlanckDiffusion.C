@@ -7,8 +7,8 @@
  *            formulation of Nernst-Planck diffusion, this kernel must be utilized with
  *            every variable that also uses the DGNernstPlanckDiffusion kernel.
  *
- *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic equations:
- *                    Theory and Implementation, SIAM, Houston, TX, 2008.
+ *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic
+ * equations: Theory and Implementation, SIAM, Houston, TX, 2008.
  *
  *  \author Austin Ladshaw
  *    \date 10/27/2021
@@ -26,117 +26,132 @@
 
 registerMooseObject("catsApp", GNernstPlanckDiffusion);
 
-InputParameters GNernstPlanckDiffusion::validParams()
+InputParameters
+GNernstPlanckDiffusion::validParams()
 {
-    InputParameters params = GVariableDiffusion::validParams();
-    params.addRequiredCoupledVar("electric_potential","Variable for electric potential (V or J/C)");
-    params.addCoupledVar("porosity",1,"Variable for volume fraction or porosity (default = 1)");
-    params.addCoupledVar("temperature",298,"Variable for temperature of the media (default = 298 K)");
+  InputParameters params = GVariableDiffusion::validParams();
+  params.addRequiredCoupledVar("electric_potential", "Variable for electric potential (V or J/C)");
+  params.addCoupledVar("porosity", 1, "Variable for volume fraction or porosity (default = 1)");
+  params.addCoupledVar(
+      "temperature", 298, "Variable for temperature of the media (default = 298 K)");
 
-    params.addParam<Real>("valence",0, "Valence of the species being transported (default = 0)");
-    params.addParam<Real>("faraday_const",96485.3, "Value of Faraday's constant (default = 96485.3 C/mol)");
-    params.addParam<Real>("gas_const",8.314462, "Value of the gas law constant (default = 8.314462 J/K/mol)");
-    return params;
+  params.addParam<Real>("valence", 0, "Valence of the species being transported (default = 0)");
+  params.addParam<Real>(
+      "faraday_const", 96485.3, "Value of Faraday's constant (default = 96485.3 C/mol)");
+  params.addParam<Real>(
+      "gas_const", 8.314462, "Value of the gas law constant (default = 8.314462 J/K/mol)");
+  return params;
 }
 
-GNernstPlanckDiffusion::GNernstPlanckDiffusion(const InputParameters & parameters) :
-GVariableDiffusion(parameters),
-_e_potential_grad(coupledGradient("electric_potential")),
-_e_potential_var(coupled("electric_potential")),
-_porosity(coupledValue("porosity")),
-_porosity_var(coupled("porosity")),
-_temp(coupledValue("temperature")),
-_temp_var(coupled("temperature")),
-_valence(getParam<Real>("valence")),
-_faraday(getParam<Real>("faraday_const")),
-_gas_const(getParam<Real>("gas_const"))
+GNernstPlanckDiffusion::GNernstPlanckDiffusion(const InputParameters & parameters)
+  : GVariableDiffusion(parameters),
+    _e_potential_grad(coupledGradient("electric_potential")),
+    _e_potential_var(coupled("electric_potential")),
+    _porosity(coupledValue("porosity")),
+    _porosity_var(coupled("porosity")),
+    _temp(coupledValue("temperature")),
+    _temp_var(coupled("temperature")),
+    _valence(getParam<Real>("valence")),
+    _faraday(getParam<Real>("faraday_const")),
+    _gas_const(getParam<Real>("gas_const"))
 {
-
 }
 
-Real GNernstPlanckDiffusion::computeQpResidual()
+Real
+GNernstPlanckDiffusion::computeQpResidual()
 {
-    _Diffusion(0,0) = _Dx[_qp];
-    _Diffusion(0,1) = 0.0;
-    _Diffusion(0,2) = 0.0;
+  _Diffusion(0, 0) = _Dx[_qp];
+  _Diffusion(0, 1) = 0.0;
+  _Diffusion(0, 2) = 0.0;
 
-    _Diffusion(1,0) = 0.0;
-    _Diffusion(1,1) = _Dy[_qp];
-    _Diffusion(1,2) = 0.0;
+  _Diffusion(1, 0) = 0.0;
+  _Diffusion(1, 1) = _Dy[_qp];
+  _Diffusion(1, 2) = 0.0;
 
-    _Diffusion(2,0) = 0.0;
-    _Diffusion(2,1) = 0.0;
-    _Diffusion(2,2) = _Dz[_qp];
+  _Diffusion(2, 0) = 0.0;
+  _Diffusion(2, 1) = 0.0;
+  _Diffusion(2, 2) = _Dz[_qp];
 
-    return (_valence*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*_Diffusion*_u[_qp]*_grad_test[_i][_qp]*_e_potential_grad[_qp];
+  return (_valence * _faraday / _gas_const / _temp[_qp]) * _porosity[_qp] * _Diffusion * _u[_qp] *
+         _grad_test[_i][_qp] * _e_potential_grad[_qp];
 }
 
-Real GNernstPlanckDiffusion::computeQpJacobian()
+Real
+GNernstPlanckDiffusion::computeQpJacobian()
 {
-    return (_valence*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*_Diffusion*_phi[_j][_qp]*_grad_test[_i][_qp]*_e_potential_grad[_qp];
+  return (_valence * _faraday / _gas_const / _temp[_qp]) * _porosity[_qp] * _Diffusion *
+         _phi[_j][_qp] * _grad_test[_i][_qp] * _e_potential_grad[_qp];
 }
 
-Real GNernstPlanckDiffusion::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+GNernstPlanckDiffusion::computeQpOffDiagJacobian(unsigned int jvar)
 {
-    if (jvar == _Dx_var)
-    {
-        return (_valence*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*_phi[_j][_qp]*_u[_qp]*_grad_test[_i][_qp](0)*_e_potential_grad[_qp](0);
-    }
-    if (jvar == _Dy_var)
-    {
-        return (_valence*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*_phi[_j][_qp]*_u[_qp]*_grad_test[_i][_qp](1)*_e_potential_grad[_qp](1);
-    }
-    if (jvar == _Dz_var)
-    {
-        return (_valence*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*_phi[_j][_qp]*_u[_qp]*_grad_test[_i][_qp](2)*_e_potential_grad[_qp](2);
-    }
-    if (jvar == _e_potential_var)
-    {
-        _Diffusion(0,0) = _Dx[_qp];
-        _Diffusion(0,1) = 0.0;
-        _Diffusion(0,2) = 0.0;
+  if (jvar == _Dx_var)
+  {
+    return (_valence * _faraday / _gas_const / _temp[_qp]) * _porosity[_qp] * _phi[_j][_qp] *
+           _u[_qp] * _grad_test[_i][_qp](0) * _e_potential_grad[_qp](0);
+  }
+  if (jvar == _Dy_var)
+  {
+    return (_valence * _faraday / _gas_const / _temp[_qp]) * _porosity[_qp] * _phi[_j][_qp] *
+           _u[_qp] * _grad_test[_i][_qp](1) * _e_potential_grad[_qp](1);
+  }
+  if (jvar == _Dz_var)
+  {
+    return (_valence * _faraday / _gas_const / _temp[_qp]) * _porosity[_qp] * _phi[_j][_qp] *
+           _u[_qp] * _grad_test[_i][_qp](2) * _e_potential_grad[_qp](2);
+  }
+  if (jvar == _e_potential_var)
+  {
+    _Diffusion(0, 0) = _Dx[_qp];
+    _Diffusion(0, 1) = 0.0;
+    _Diffusion(0, 2) = 0.0;
 
-        _Diffusion(1,0) = 0.0;
-        _Diffusion(1,1) = _Dy[_qp];
-        _Diffusion(1,2) = 0.0;
+    _Diffusion(1, 0) = 0.0;
+    _Diffusion(1, 1) = _Dy[_qp];
+    _Diffusion(1, 2) = 0.0;
 
-        _Diffusion(2,0) = 0.0;
-        _Diffusion(2,1) = 0.0;
-        _Diffusion(2,2) = _Dz[_qp];
+    _Diffusion(2, 0) = 0.0;
+    _Diffusion(2, 1) = 0.0;
+    _Diffusion(2, 2) = _Dz[_qp];
 
-        return (_valence*_faraday/_gas_const/_temp[_qp])*_porosity[_qp]*_Diffusion*_u[_qp]*_grad_test[_i][_qp]*_grad_phi[_j][_qp];
-    }
-    if (jvar == _porosity_var)
-    {
-        _Diffusion(0,0) = _Dx[_qp];
-        _Diffusion(0,1) = 0.0;
-        _Diffusion(0,2) = 0.0;
+    return (_valence * _faraday / _gas_const / _temp[_qp]) * _porosity[_qp] * _Diffusion * _u[_qp] *
+           _grad_test[_i][_qp] * _grad_phi[_j][_qp];
+  }
+  if (jvar == _porosity_var)
+  {
+    _Diffusion(0, 0) = _Dx[_qp];
+    _Diffusion(0, 1) = 0.0;
+    _Diffusion(0, 2) = 0.0;
 
-        _Diffusion(1,0) = 0.0;
-        _Diffusion(1,1) = _Dy[_qp];
-        _Diffusion(1,2) = 0.0;
+    _Diffusion(1, 0) = 0.0;
+    _Diffusion(1, 1) = _Dy[_qp];
+    _Diffusion(1, 2) = 0.0;
 
-        _Diffusion(2,0) = 0.0;
-        _Diffusion(2,1) = 0.0;
-        _Diffusion(2,2) = _Dz[_qp];
+    _Diffusion(2, 0) = 0.0;
+    _Diffusion(2, 1) = 0.0;
+    _Diffusion(2, 2) = _Dz[_qp];
 
-        return (_valence*_faraday/_gas_const/_temp[_qp])*_phi[_j][_qp]*_Diffusion*_u[_qp]*_grad_test[_i][_qp]*_e_potential_grad[_qp];
-    }
-    if (jvar == _temp_var)
-    {
-        _Diffusion(0,0) = _Dx[_qp];
-        _Diffusion(0,1) = 0.0;
-        _Diffusion(0,2) = 0.0;
+    return (_valence * _faraday / _gas_const / _temp[_qp]) * _phi[_j][_qp] * _Diffusion * _u[_qp] *
+           _grad_test[_i][_qp] * _e_potential_grad[_qp];
+  }
+  if (jvar == _temp_var)
+  {
+    _Diffusion(0, 0) = _Dx[_qp];
+    _Diffusion(0, 1) = 0.0;
+    _Diffusion(0, 2) = 0.0;
 
-        _Diffusion(1,0) = 0.0;
-        _Diffusion(1,1) = _Dy[_qp];
-        _Diffusion(1,2) = 0.0;
+    _Diffusion(1, 0) = 0.0;
+    _Diffusion(1, 1) = _Dy[_qp];
+    _Diffusion(1, 2) = 0.0;
 
-        _Diffusion(2,0) = 0.0;
-        _Diffusion(2,1) = 0.0;
-        _Diffusion(2,2) = _Dz[_qp];
+    _Diffusion(2, 0) = 0.0;
+    _Diffusion(2, 1) = 0.0;
+    _Diffusion(2, 2) = _Dz[_qp];
 
-        return (_valence*_faraday/_gas_const)*_porosity[_qp]*_Diffusion*_u[_qp]*_grad_test[_i][_qp]*_e_potential_grad[_qp]*(-1.0/_temp[_qp]/_temp[_qp])*_phi[_j][_qp];
-    }
+    return (_valence * _faraday / _gas_const) * _porosity[_qp] * _Diffusion * _u[_qp] *
+           _grad_test[_i][_qp] * _e_potential_grad[_qp] * (-1.0 / _temp[_qp] / _temp[_qp]) *
+           _phi[_j][_qp];
+  }
   return 0.0;
 }

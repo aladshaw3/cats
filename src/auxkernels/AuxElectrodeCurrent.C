@@ -31,35 +31,41 @@
 
 registerMooseObject("catsApp", AuxElectrodeCurrent);
 
-InputParameters AuxElectrodeCurrent::validParams()
+InputParameters
+AuxElectrodeCurrent::validParams()
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addRequiredParam<unsigned int>("direction","Directional index for current that this kernel acts on (0 = x, 1 = y, 2 = z)");
-    params.addRequiredCoupledVar("electric_potential","Variable for electric potential (V or J/C)");
-    params.addCoupledVar("solid_frac",1,"Variable for volume fraction or porosity (default = 1)");
-    params.addCoupledVar("conductivity",50,"Variable for conductivity of the electrode in units of C/V/length/time or similar (default = 50 C/V/m/s)");
-    return params;
+  InputParameters params = AuxKernel::validParams();
+  params.addRequiredParam<unsigned int>(
+      "direction", "Directional index for current that this kernel acts on (0 = x, 1 = y, 2 = z)");
+  params.addRequiredCoupledVar("electric_potential", "Variable for electric potential (V or J/C)");
+  params.addCoupledVar("solid_frac", 1, "Variable for volume fraction or porosity (default = 1)");
+  params.addCoupledVar("conductivity",
+                       50,
+                       "Variable for conductivity of the electrode in units of C/V/length/time or "
+                       "similar (default = 50 C/V/m/s)");
+  return params;
 }
 
-AuxElectrodeCurrent::AuxElectrodeCurrent(const InputParameters & parameters) :
-AuxKernel(parameters),
-_dir(getParam<unsigned int>("direction")),
-_e_potential_grad(coupledGradient("electric_potential")),
-_sol_frac(coupledValue("solid_frac")),
-_conductivity(coupledValue("conductivity"))
+AuxElectrodeCurrent::AuxElectrodeCurrent(const InputParameters & parameters)
+  : AuxKernel(parameters),
+    _dir(getParam<unsigned int>("direction")),
+    _e_potential_grad(coupledGradient("electric_potential")),
+    _sol_frac(coupledValue("solid_frac")),
+    _conductivity(coupledValue("conductivity"))
 {
-    if (_dir > 2 || _dir < 0)
-    {
-        moose::internal::mooseErrorRaw("Invalid current direction index!");
-    }
+  if (_dir > 2 || _dir < 0)
+  {
+    moose::internal::mooseErrorRaw("Invalid current direction index!");
+  }
 
-    _norm_vec(0) = 0.0;
-    _norm_vec(1) = 0.0;
-    _norm_vec(2) = 0.0;
-    _norm_vec(_dir) = 1.0;
+  _norm_vec(0) = 0.0;
+  _norm_vec(1) = 0.0;
+  _norm_vec(2) = 0.0;
+  _norm_vec(_dir) = 1.0;
 }
 
-Real AuxElectrodeCurrent::computeValue()
+Real
+AuxElectrodeCurrent::computeValue()
 {
-    return -_sol_frac[_qp]*_conductivity[_qp]*(_norm_vec*_e_potential_grad[_qp]);
+  return -_sol_frac[_qp] * _conductivity[_qp] * (_norm_vec * _e_potential_grad[_qp]);
 }

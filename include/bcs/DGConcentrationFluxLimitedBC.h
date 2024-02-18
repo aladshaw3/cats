@@ -30,8 +30,8 @@
  *                                   work for symmetic and non-symmetric systems. Much
  *                                   less dependent on sigma values for convergence.
  *
- *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic equations:
- *                    Theory and Implementation, SIAM, Houston, TX, 2008.
+ *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic
+ *equations: Theory and Implementation, SIAM, Houston, TX, 2008.
  *
  *  \author Austin Ladshaw
  *	\date 07/12/2018
@@ -54,26 +54,26 @@
 
 /// DGConcentrationFluxLimitedBC class object inherits from DGFluxLimitedBC object
 /** This class object inherits from the IntegratedBC object.
-	All public and protected members of this class are required function overrides.  */
+  All public and protected members of this class are required function overrides.  */
 class DGConcentrationFluxLimitedBC : public DGFluxLimitedBC
 {
 public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
 
-	/// Required constructor for BC objects in MOOSE
-	DGConcentrationFluxLimitedBC(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  DGConcentrationFluxLimitedBC(const InputParameters & parameters);
 
 protected:
-	/// Required function override for BC objects in MOOSE
-	/** This function returns a residual contribution for this object.*/
-	virtual Real computeQpResidual() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual() override;
 
-	/// Required function override for BC objects in MOOSE
-	/** This function returns a Jacobian contribution for this object. The Jacobian being
-		computed is the associated diagonal element in the overall Jacobian matrix for the
-		system and is used in preconditioning of the linear sub-problem. */
-	virtual Real computeQpJacobian() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+    computed is the associated diagonal element in the overall Jacobian matrix for the
+    system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian() override;
 
   /// Not required, but recomended function for DG kernels in MOOSE
   /** This function returns an off-diagonal jacobian contribution for this object. The jacobian
@@ -81,14 +81,13 @@ protected:
   main coupled variable itself. */
   virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-  const VariableValue & _ux;			///< Velocity in the x-direction
-  const VariableValue & _uy;			///< Velocity in the y-direction
-  const VariableValue & _uz;			///< Velocity in the z-direction
+  const VariableValue & _ux; ///< Velocity in the x-direction
+  const VariableValue & _uy; ///< Velocity in the y-direction
+  const VariableValue & _uz; ///< Velocity in the z-direction
 
-  const unsigned int _ux_var;					///< Variable identification for ux
-  const unsigned int _uy_var;					///< Variable identification for uy
-  const unsigned int _uz_var;					///< Variable identification for uz
+  const unsigned int _ux_var; ///< Variable identification for ux
+  const unsigned int _uy_var; ///< Variable identification for uy
+  const unsigned int _uz_var; ///< Variable identification for uz
 
 private:
-
 };

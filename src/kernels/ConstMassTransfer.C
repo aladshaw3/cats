@@ -25,38 +25,41 @@
 
 registerMooseObject("catsApp", ConstMassTransfer);
 
-InputParameters ConstMassTransfer::validParams()
+InputParameters
+ConstMassTransfer::validParams()
 {
-    InputParameters params = Kernel::validParams();
-    params.addParam< Real >("transfer_rate",1.0,"Mass/energy transfer coefficient");
-    params.addRequiredCoupledVar("coupled","Name of the coupled variable");
-    return params;
+  InputParameters params = Kernel::validParams();
+  params.addParam<Real>("transfer_rate", 1.0, "Mass/energy transfer coefficient");
+  params.addRequiredCoupledVar("coupled", "Name of the coupled variable");
+  return params;
 }
 
 ConstMassTransfer::ConstMassTransfer(const InputParameters & parameters)
-: Kernel(parameters),
-_trans_rate(getParam< Real >("transfer_rate")),
-_coupled(coupledValue("coupled")),
-_coupled_var(coupled("coupled"))
+  : Kernel(parameters),
+    _trans_rate(getParam<Real>("transfer_rate")),
+    _coupled(coupledValue("coupled")),
+    _coupled_var(coupled("coupled"))
 {
-
 }
 
-Real ConstMassTransfer::computeQpResidual()
+Real
+ConstMassTransfer::computeQpResidual()
 {
-    return _test[_i][_qp] * _trans_rate * (_u[_qp] - _coupled[_qp]);
+  return _test[_i][_qp] * _trans_rate * (_u[_qp] - _coupled[_qp]);
 }
 
-Real ConstMassTransfer::computeQpJacobian()
+Real
+ConstMassTransfer::computeQpJacobian()
 {
-    return _test[_i][_qp] * _trans_rate * _phi[_j][_qp];
+  return _test[_i][_qp] * _trans_rate * _phi[_j][_qp];
 }
 
-Real ConstMassTransfer::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+ConstMassTransfer::computeQpOffDiagJacobian(unsigned int jvar)
 {
-    if (jvar == _coupled_var)
-    {
-        return -_test[_i][_qp] * _trans_rate * _phi[_j][_qp];
-    }
-    return 0.0;
+  if (jvar == _coupled_var)
+  {
+    return -_test[_i][_qp] * _trans_rate * _phi[_j][_qp];
+  }
+  return 0.0;
 }

@@ -1,9 +1,9 @@
 /*!
  *  \file WeightedCoupledSumFunction.h
  *	\brief Standard kernel for coupling a vector non-linear variables via a weighted summation
- *	\details This file creates a standard MOOSE kernel for the coupling of a vector non-linear variables
- *			together to a variable whose value is to be determined by those coupled sums. This kernel is
- *      particularly useful if you have a variable that is a function of several different rate
+ *	\details This file creates a standard MOOSE kernel for the coupling of a vector non-linear
+ *variables together to a variable whose value is to be determined by those coupled sums. This
+ *kernel is particularly useful if you have a variable that is a function of several different rate
  *      variables (e.g., dq/dt = r1 + 2*r2). In these cases, instead of rewriting each reaction
  *      kernel and redefining all parameters, you create a set of rate variables (r1, r2, etc), then
  *      coupled those rates to other non-linear variables and kernels.
@@ -32,8 +32,8 @@
 
 /// WeightedCoupledSumFunction class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
-	All public and protected members of this class are required function overrides.
-	The kernel interfaces the set of non-linear variables to couple a summation functions
+  All public and protected members of this class are required function overrides.
+  The kernel interfaces the set of non-linear variables to couple a summation functions
   to a list of coupled variables and their associated weight values. */
 class WeightedCoupledSumFunction : public Kernel
 {
@@ -41,30 +41,29 @@ public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
 
-	/// Required constructor for objects in MOOSE
-	WeightedCoupledSumFunction(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  WeightedCoupledSumFunction(const InputParameters & parameters);
 
 protected:
-	/// Required residual function for standard kernels in MOOSE
-	/** This function returns a residual contribution for this object.*/
-	virtual Real computeQpResidual();
+  /// Required residual function for standard kernels in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual();
 
-	/// Required Jacobian function for standard kernels in MOOSE
-	/** This function returns a Jacobian contribution for this object. The Jacobian being
-	 computed is the associated diagonal element in the overall Jacobian matrix for the
-	 system and is used in preconditioning of the linear sub-problem. */
-	virtual Real computeQpJacobian();
+  /// Required Jacobian function for standard kernels in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+   computed is the associated diagonal element in the overall Jacobian matrix for the
+   system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian();
 
-	/// Not Required, but aids in the preconditioning step
-	/** This function returns the off diagonal Jacobian contribution for this object. By
-	 returning a non-zero value we will hopefully improve the convergence rate for the
-	 cross coupling of the variables. */
-	virtual Real computeQpOffDiagJacobian(unsigned int jvar);
+  /// Not Required, but aids in the preconditioning step
+  /** This function returns the off diagonal Jacobian contribution for this object. By
+   returning a non-zero value we will hopefully improve the convergence rate for the
+   cross coupling of the variables. */
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-	std::vector<const VariableValue *> _coupled;		///< Pointer list to the coupled variables
-  std::vector<Real> _weight;		                  ///< Pointer list to the weights of variables
-	std::vector<unsigned int> _coupled_vars;			  ///< Indices for the variables in the system
+  std::vector<const VariableValue *> _coupled; ///< Pointer list to the coupled variables
+  std::vector<Real> _weight;                   ///< Pointer list to the weights of variables
+  std::vector<unsigned int> _coupled_vars;     ///< Indices for the variables in the system
 
 private:
-
 };

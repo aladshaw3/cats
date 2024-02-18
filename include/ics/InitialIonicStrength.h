@@ -33,22 +33,21 @@
 class InitialIonicStrength : public InitialCondition
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for BC objects in MOOSE
-    InitialIonicStrength(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  InitialIonicStrength(const InputParameters & parameters);
 
 protected:
+  /// Required function override for IC objects in MOOSE
+  /** This function returns the value of the variable at point p in the mesh.*/
+  virtual Real value(const Point & p) override;
 
-    /// Required function override for IC objects in MOOSE
-    /** This function returns the value of the variable at point p in the mesh.*/
-    virtual Real value(const Point & p) override;
-
-    std::vector<const VariableValue *> _ion_conc;           ///< Pointer list to the coupled ion concentrations (mol/L^3)
-    std::vector<Real> _valence;                             ///< Valence list for corresponding ions
-    Real _conv_factor;                                      ///< Conversion factor from mol/L^3 to moles/liter (where L is any length)
+  std::vector<const VariableValue *>
+      _ion_conc;              ///< Pointer list to the coupled ion concentrations (mol/L^3)
+  std::vector<Real> _valence; ///< Valence list for corresponding ions
+  Real _conv_factor; ///< Conversion factor from mol/L^3 to moles/liter (where L is any length)
 
 private:
-
 };

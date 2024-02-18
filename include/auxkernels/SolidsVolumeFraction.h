@@ -27,17 +27,16 @@
 class SolidsVolumeFraction : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    SolidsVolumeFraction(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  SolidsVolumeFraction(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    const VariableValue & _bulk_porosity;       ///< Variable for bulk porosity
-
+  const VariableValue & _bulk_porosity; ///< Variable for bulk porosity
 };

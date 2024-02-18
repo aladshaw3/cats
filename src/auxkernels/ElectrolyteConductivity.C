@@ -24,75 +24,87 @@
 
 registerMooseObject("catsApp", ElectrolyteConductivity);
 
-InputParameters ElectrolyteConductivity::validParams()
+InputParameters
+ElectrolyteConductivity::validParams()
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addCoupledVar("temperature",298,"Variable for temperature of the media (default = 298 K)");
+  InputParameters params = AuxKernel::validParams();
+  params.addCoupledVar(
+      "temperature", 298, "Variable for temperature of the media (default = 298 K)");
 
-    params.addParam<Real>("faraday_const",96485.3, "Value of Faraday's constant (default = 96485.3 C/mol)");
-    params.addParam<Real>("gas_const",8.314462, "Value of the gas law constant (default = 8.314462 J/K/mol)");
+  params.addParam<Real>(
+      "faraday_const", 96485.3, "Value of Faraday's constant (default = 96485.3 C/mol)");
+  params.addParam<Real>(
+      "gas_const", 8.314462, "Value of the gas law constant (default = 8.314462 J/K/mol)");
 
-    params.addRequiredCoupledVar("ion_conc","List of names of the ion concentration variables (mol/L^3)");
-    params.addRequiredCoupledVar("diffusion","List of names of the diffusion variables (L^2/T)");
-    params.addRequiredParam< std::vector<Real> >("ion_valence","List of valences for coupled ion concentrations");
+  params.addRequiredCoupledVar("ion_conc",
+                               "List of names of the ion concentration variables (mol/L^3)");
+  params.addRequiredCoupledVar("diffusion", "List of names of the diffusion variables (L^2/T)");
+  params.addRequiredParam<std::vector<Real>>("ion_valence",
+                                             "List of valences for coupled ion concentrations");
 
-    params.addParam<Real>("min_conductivity",1e-30, "Minimum/background value of conductivity of the media");
-    return params;
+  params.addParam<Real>(
+      "min_conductivity", 1e-30, "Minimum/background value of conductivity of the media");
+  return params;
 }
 
-ElectrolyteConductivity::ElectrolyteConductivity(const InputParameters & parameters) :
-AuxKernel(parameters),
-_temp(coupledValue("temperature")),
+ElectrolyteConductivity::ElectrolyteConductivity(const InputParameters & parameters)
+  : AuxKernel(parameters),
+    _temp(coupledValue("temperature")),
 
-_faraday(getParam<Real>("faraday_const")),
-_gas_const(getParam<Real>("gas_const")),
+    _faraday(getParam<Real>("faraday_const")),
+    _gas_const(getParam<Real>("gas_const")),
 
-_valence(getParam<std::vector<Real> >("ion_valence")),
-_min_conductivity(getParam<Real>("min_conductivity"))
+    _valence(getParam<std::vector<Real>>("ion_valence")),
+    _min_conductivity(getParam<Real>("min_conductivity"))
 {
-    unsigned int c = coupledComponents("ion_conc");
-    _ion_conc.resize(c);
+  unsigned int c = coupledComponents("ion_conc");
+  _ion_conc.resize(c);
 
-    unsigned int d = coupledComponents("diffusion");
-    _diffusion.resize(d);
+  unsigned int d = coupledComponents("diffusion");
+  _diffusion.resize(d);
 
-    //Check lists to ensure they are of same size
-    if (c != d)
-    {
-        moose::internal::mooseErrorRaw("User is required to provide list of ion concentration variables of the same length as list of diffusion coefficients.");
-    }
-    if (_ion_conc.size() != _valence.size())
-    {
-        moose::internal::mooseErrorRaw("User is required to provide list of ion concentration variables of the same length as list of ion valences.");
-    }
+  // Check lists to ensure they are of same size
+  if (c != d)
+  {
+    moose::internal::mooseErrorRaw(
+        "User is required to provide list of ion concentration variables of the same length as "
+        "list of diffusion coefficients.");
+  }
+  if (_ion_conc.size() != _valence.size())
+  {
+    moose::internal::mooseErrorRaw("User is required to provide list of ion concentration "
+                                   "variables of the same length as list of ion valences.");
+  }
 
-    if (_diffusion.size() != _valence.size())
-    {
-        moose::internal::mooseErrorRaw("User is required to provide list of diffusion variables of the same length as list of ion valences.");
-    }
+  if (_diffusion.size() != _valence.size())
+  {
+    moose::internal::mooseErrorRaw("User is required to provide list of diffusion variables of the "
+                                   "same length as list of ion valences.");
+  }
 
-    //Grab the variables
-    for (unsigned int i = 0; i<_ion_conc.size(); ++i)
-    {
-        _ion_conc[i] = &coupledValue("ion_conc",i);
-    }
+  // Grab the variables
+  for (unsigned int i = 0; i < _ion_conc.size(); ++i)
+  {
+    _ion_conc[i] = &coupledValue("ion_conc", i);
+  }
 
-    for (unsigned int i = 0; i<_diffusion.size(); ++i)
-    {
-        _diffusion[i] = &coupledValue("diffusion",i);
-    }
+  for (unsigned int i = 0; i < _diffusion.size(); ++i)
+  {
+    _diffusion[i] = &coupledValue("diffusion", i);
+  }
 
-    if (_min_conductivity < 1e-30)
-        _min_conductivity = 1e-30;
+  if (_min_conductivity < 1e-30)
+    _min_conductivity = 1e-30;
 }
 
-Real ElectrolyteConductivity::computeValue()
+Real
+ElectrolyteConductivity::computeValue()
 {
-    Real sum = 0.0;
-    for (unsigned int i = 0; i<_ion_conc.size(); ++i)
-    {
-        sum = sum + _valence[i]*_valence[i]*(*_diffusion[i])[_qp]*(*_ion_conc[i])[_qp];
-    }
+  Real sum = 0.0;
+  for (unsigned int i = 0; i < _ion_conc.size(); ++i)
+  {
+    sum = sum + _valence[i] * _valence[i] * (*_diffusion[i])[_qp] * (*_ion_conc[i])[_qp];
+  }
 
-    return ((_faraday*_faraday/_gas_const/_temp[_qp])*sum)+_min_conductivity;
+  return ((_faraday * _faraday / _gas_const / _temp[_qp]) * sum) + _min_conductivity;
 }

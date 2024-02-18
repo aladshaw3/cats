@@ -20,44 +20,49 @@
 
 registerMooseObject("catsApp", MicroscaleCoupledVariableCoefTimeDerivative);
 
-InputParameters MicroscaleCoupledVariableCoefTimeDerivative::validParams()
+InputParameters
+MicroscaleCoupledVariableCoefTimeDerivative::validParams()
 {
-    InputParameters params = MicroscaleCoupledCoefTimeDerivative::validParams();
-    params.addRequiredCoupledVar("nodal_time_var","Variable coefficient at the current node for the time derivative");
+  InputParameters params = MicroscaleCoupledCoefTimeDerivative::validParams();
+  params.addRequiredCoupledVar("nodal_time_var",
+                               "Variable coefficient at the current node for the time derivative");
 
-    return params;
+  return params;
 }
 
-MicroscaleCoupledVariableCoefTimeDerivative::MicroscaleCoupledVariableCoefTimeDerivative(const InputParameters & parameters)
-: MicroscaleCoupledCoefTimeDerivative(parameters),
-_coupled_coef(coupledValue("nodal_time_var")),
-_coupled_coef_var(coupled("nodal_time_var"))
+MicroscaleCoupledVariableCoefTimeDerivative::MicroscaleCoupledVariableCoefTimeDerivative(
+    const InputParameters & parameters)
+  : MicroscaleCoupledCoefTimeDerivative(parameters),
+    _coupled_coef(coupledValue("nodal_time_var")),
+    _coupled_coef_var(coupled("nodal_time_var"))
 {
-
 }
 
-Real MicroscaleCoupledVariableCoefTimeDerivative::computeQpResidual()
+Real
+MicroscaleCoupledVariableCoefTimeDerivative::computeQpResidual()
 {
-    _nodal_time_coef = _coupled_coef[_qp];
-    return MicroscaleCoupledCoefTimeDerivative::computeQpResidual();
+  _nodal_time_coef = _coupled_coef[_qp];
+  return MicroscaleCoupledCoefTimeDerivative::computeQpResidual();
 }
 
-Real MicroscaleCoupledVariableCoefTimeDerivative::computeQpJacobian()
+Real
+MicroscaleCoupledVariableCoefTimeDerivative::computeQpJacobian()
 {
-    return 0.0;
+  return 0.0;
 }
 
-Real MicroscaleCoupledVariableCoefTimeDerivative::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+MicroscaleCoupledVariableCoefTimeDerivative::computeQpOffDiagJacobian(unsigned int jvar)
 {
-    _nodal_time_coef = _coupled_coef[_qp];
-    if (jvar == _coupled_var)
-    {
-        return _rd_l*_nodal_time_coef*_test[_i][_qp] * _phi[_j][_qp] * _coupled_ddot[_qp];
-    }
-    if (jvar == _coupled_coef_var)
-    {
-        return _rd_l*_phi[_j][_qp]*_test[_i][_qp] * _coupled_dot[_qp];
-    }
+  _nodal_time_coef = _coupled_coef[_qp];
+  if (jvar == _coupled_var)
+  {
+    return _rd_l * _nodal_time_coef * _test[_i][_qp] * _phi[_j][_qp] * _coupled_ddot[_qp];
+  }
+  if (jvar == _coupled_coef_var)
+  {
+    return _rd_l * _phi[_j][_qp] * _test[_i][_qp] * _coupled_dot[_qp];
+  }
 
-    return 0.0;
+  return 0.0;
 }

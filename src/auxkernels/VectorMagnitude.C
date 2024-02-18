@@ -20,35 +20,37 @@
  *               by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
- #include "VectorMagnitude.h"
+#include "VectorMagnitude.h"
 
- registerMooseObject("catsApp", VectorMagnitude);
+registerMooseObject("catsApp", VectorMagnitude);
 
- InputParameters VectorMagnitude::validParams()
- {
-     InputParameters params = AuxKernel::validParams();
-     params.addCoupledVar("ux",0.0,"Variable for vector in x");
-     params.addCoupledVar("uy",0.0,"Variable for vector in y");
-     params.addCoupledVar("uz",0.0,"Variable for vector in z");
+InputParameters
+VectorMagnitude::validParams()
+{
+  InputParameters params = AuxKernel::validParams();
+  params.addCoupledVar("ux", 0.0, "Variable for vector in x");
+  params.addCoupledVar("uy", 0.0, "Variable for vector in y");
+  params.addCoupledVar("uz", 0.0, "Variable for vector in z");
 
-     return params;
- }
+  return params;
+}
 
- VectorMagnitude::VectorMagnitude(const InputParameters & parameters) :
- AuxKernel(parameters),
- _vec_x(coupledValue("ux")),
- _vec_y(coupledValue("uy")),
- _vec_z(coupledValue("uz"))
- {
+VectorMagnitude::VectorMagnitude(const InputParameters & parameters)
+  : AuxKernel(parameters),
+    _vec_x(coupledValue("ux")),
+    _vec_y(coupledValue("uy")),
+    _vec_z(coupledValue("uz"))
+{
+}
 
- }
+Real
+VectorMagnitude::vector_magnitude(Real ux, Real uy, Real uz)
+{
+  return std::sqrt(ux * ux + uy * uy + uz * uz);
+}
 
- Real VectorMagnitude::vector_magnitude(Real ux, Real uy, Real uz)
- {
-     return std::sqrt(ux*ux + uy*uy + uz*uz);
- }
-
- Real VectorMagnitude::computeValue()
- {
-     return vector_magnitude(_vec_x[_qp], _vec_y[_qp], _vec_z[_qp]);
- }
+Real
+VectorMagnitude::computeValue()
+{
+  return vector_magnitude(_vec_x[_qp], _vec_y[_qp], _vec_z[_qp]);
+}

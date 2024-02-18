@@ -30,16 +30,15 @@
 class GasSpecHeat : public GasPropertiesBase
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    GasSpecHeat(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  GasSpecHeat(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-
 };

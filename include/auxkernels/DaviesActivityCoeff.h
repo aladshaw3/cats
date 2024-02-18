@@ -29,22 +29,21 @@
 class DaviesActivityCoeff : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    DaviesActivityCoeff(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  DaviesActivityCoeff(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
-    const VariableValue & _ionic_strength;                ///< Variable for the ionic strength (in M)
-    const VariableValue & _temp;                          ///< Variable for the temperature (in K)
-    Real _fitted_param;                                   ///< Value of the Davies Fitting parameter
-    Real _dielec;                                         ///< Value for the dielectric constant of the media (water = 78.325)
-    Real _charge;                                         ///< Value of the valence/charge of the ion
+  const VariableValue & _ionic_strength; ///< Variable for the ionic strength (in M)
+  const VariableValue & _temp;           ///< Variable for the temperature (in K)
+  Real _fitted_param;                    ///< Value of the Davies Fitting parameter
+  Real _dielec; ///< Value for the dielectric constant of the media (water = 78.325)
+  Real _charge; ///< Value of the valence/charge of the ion
 
 private:
-
 };

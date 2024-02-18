@@ -26,8 +26,8 @@
  *                                   work for symmetic and non-symmetric systems. Much
  *                                   less dependent on sigma values for convergence.
  *
- *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic equations:
- *                    Theory and Implementation, SIAM, Houston, TX, 2008.
+ *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic
+ *equations: Theory and Implementation, SIAM, Houston, TX, 2008.
  *
  *  \author Austin Ladshaw
  *	\date 11/20/2015
@@ -52,48 +52,47 @@
 
 /// DGFluxLimitedBC class object inherits from IntegratedBC object
 /** This class object inherits from the IntegratedBC object.
-	All public and protected members of this class are required function overrides.  */
+  All public and protected members of this class are required function overrides.  */
 class DGFluxLimitedBC : public IntegratedBC
 {
 public:
   /// Required new syntax for InputParameters
   static InputParameters validParams();
 
-	/// Required constructor for BC objects in MOOSE
-	DGFluxLimitedBC(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  DGFluxLimitedBC(const InputParameters & parameters);
 
 protected:
-	/// Required function override for BC objects in MOOSE
-	/** This function returns a residual contribution for this object.*/
-	virtual Real computeQpResidual() override;
-	/// Required function override for BC objects in MOOSE
-	/** This function returns a Jacobian contribution for this object. The Jacobian being
-		computed is the associated diagonal element in the overall Jacobian matrix for the
-		system and is used in preconditioning of the linear sub-problem. */
-	virtual Real computeQpJacobian() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual() override;
+  /// Required function override for BC objects in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+    computed is the associated diagonal element in the overall Jacobian matrix for the
+    system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian() override;
 
-	MooseEnum _dg_scheme;					///< Enumerator to determine what scheme to use (NIPG, IIPG, or SIPG)
-	/// Penalty term applied to the difference between the solution at the inlet and the value it is supposed to be
-	Real _epsilon;
-	/// Penalty term based on the size of the element at the boundary
-	Real _sigma;
+  MooseEnum _dg_scheme; ///< Enumerator to determine what scheme to use (NIPG, IIPG, or SIPG)
+  /// Penalty term applied to the difference between the solution at the inlet and the value it is supposed to be
+  Real _epsilon;
+  /// Penalty term based on the size of the element at the boundary
+  Real _sigma;
 
-	/// Velocity vector in the system or at the boundary
-	RealVectorValue _velocity;
-	/// Diffusivity tensory in the system or at the boundary
-	RealTensorValue _Diffusion;
+  /// Velocity vector in the system or at the boundary
+  RealVectorValue _velocity;
+  /// Diffusivity tensory in the system or at the boundary
+  RealTensorValue _Diffusion;
 
-	Real _vx;
-	Real _vy;
-	Real _vz;
+  Real _vx;
+  Real _vy;
+  Real _vz;
 
-	Real _Dxx, _Dxy, _Dxz;
-	Real _Dyx, _Dyy, _Dyz;
-	Real _Dzx, _Dzy, _Dzz;
+  Real _Dxx, _Dxy, _Dxz;
+  Real _Dyx, _Dyy, _Dyz;
+  Real _Dzx, _Dzy, _Dzz;
 
-	/// Value of the non-linear variable at the input of the boundary
-	Real _u_input;
+  /// Value of the non-linear variable at the input of the boundary
+  Real _u_input;
 
 private:
-
 };

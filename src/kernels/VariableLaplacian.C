@@ -22,38 +22,39 @@
 
 registerMooseObject("catsApp", VariableLaplacian);
 
-InputParameters VariableLaplacian::validParams()
+InputParameters
+VariableLaplacian::validParams()
 {
-    InputParameters params = Kernel::validParams();
-    params.addCoupledVar("coupled_coef",1,"Variable coefficient for the Laplacian");
+  InputParameters params = Kernel::validParams();
+  params.addCoupledVar("coupled_coef", 1, "Variable coefficient for the Laplacian");
 
-    return params;
+  return params;
 }
 
-VariableLaplacian::VariableLaplacian(const InputParameters & parameters) :
-Kernel(parameters),
-_coeff(coupledValue("coupled_coef")),
-_coeff_var(coupled("coupled_coef"))
+VariableLaplacian::VariableLaplacian(const InputParameters & parameters)
+  : Kernel(parameters), _coeff(coupledValue("coupled_coef")), _coeff_var(coupled("coupled_coef"))
 {
-
 }
 
-Real VariableLaplacian::computeQpResidual()
+Real
+VariableLaplacian::computeQpResidual()
 {
-    return _grad_test[_i][_qp]*_coeff[_qp]*_grad_u[_qp];
+  return _grad_test[_i][_qp] * _coeff[_qp] * _grad_u[_qp];
 }
 
-Real VariableLaplacian::computeQpJacobian()
+Real
+VariableLaplacian::computeQpJacobian()
 {
-    return _grad_test[_i][_qp]*_coeff[_qp]*_grad_phi[_j][_qp];
+  return _grad_test[_i][_qp] * _coeff[_qp] * _grad_phi[_j][_qp];
 }
 
-Real VariableLaplacian::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+VariableLaplacian::computeQpOffDiagJacobian(unsigned int jvar)
 {
-    if (jvar == _coeff_var)
-    {
-        return _grad_test[_i][_qp]*_phi[_j][_qp]*_grad_u[_qp];
-    }
+  if (jvar == _coeff_var)
+  {
+    return _grad_test[_i][_qp] * _phi[_j][_qp] * _grad_u[_qp];
+  }
 
-    return 0.0;
+  return 0.0;
 }

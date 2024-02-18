@@ -30,27 +30,28 @@
 class ElectrolyteConductivity : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    ElectrolyteConductivity(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  ElectrolyteConductivity(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    const VariableValue & _temp;			  ///< Temperature variable (K)
+  const VariableValue & _temp; ///< Temperature variable (K)
 
-    Real _faraday;                      ///< Value of Faraday's Constant (default = 96485.3 C/mol)
-    Real _gas_const;                    ///< Value of the Gas law constant (default = 8.314462 J/K/mol)
+  Real _faraday;   ///< Value of Faraday's Constant (default = 96485.3 C/mol)
+  Real _gas_const; ///< Value of the Gas law constant (default = 8.314462 J/K/mol)
 
-    std::vector<const VariableValue *> _ion_conc;           ///< Pointer list to the coupled ion concentrations (mol/L^3)
-    std::vector<const VariableValue *> _diffusion;          ///< Pointer list to the coupled diffusion coeffs (L^2/T)
+  std::vector<const VariableValue *>
+      _ion_conc; ///< Pointer list to the coupled ion concentrations (mol/L^3)
+  std::vector<const VariableValue *>
+      _diffusion; ///< Pointer list to the coupled diffusion coeffs (L^2/T)
 
-    std::vector<Real> _valence;                             ///< Valence list for corresponding ions
+  std::vector<Real> _valence; ///< Valence list for corresponding ions
 
-    Real _min_conductivity;                                 ///< Minimum allowable value for conductivity (based on sum of ions)
-
+  Real _min_conductivity; ///< Minimum allowable value for conductivity (based on sum of ions)
 };

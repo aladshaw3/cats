@@ -1,13 +1,13 @@
 /*!
  *  \file GThermalConductivity.h
  *    \brief Kernel for use with the corresponding DGThermalConductivity object
- *    \details This file creates a standard MOOSE kernel that is to be used in conjunction with the DGThermalConductivity kernel
- *            for the discontinous Galerkin formulation of thermal conductivity physics in MOOSE. In order to complete the DG
- *            formulation of the conductivity physics, this kernel must be utilized with every variable that also uses
- *            the DGThermalConductivity kernel.
+ *    \details This file creates a standard MOOSE kernel that is to be used in conjunction with the
+ * DGThermalConductivity kernel for the discontinous Galerkin formulation of thermal conductivity
+ * physics in MOOSE. In order to complete the DG formulation of the conductivity physics, this
+ * kernel must be utilized with every variable that also uses the DGThermalConductivity kernel.
  *
- *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic equations:
- *                    Theory and Implementation, SIAM, Houston, TX, 2008.
+ *      Reference: B. Riviere, Discontinous Galerkin methods for solving elliptic and parabolic
+ * equations: Theory and Implementation, SIAM, Houston, TX, 2008.
  *
  *  \author Austin Ladshaw
  *    \date 05/04/2020
@@ -37,30 +37,29 @@
 class GThermalConductivity : public GVariableDiffusion
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    GThermalConductivity(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  GThermalConductivity(const InputParameters & parameters);
 
 protected:
-    /// Required residual function for standard kernels in MOOSE
-    /** This function returns a residual contribution for this object.*/
-    virtual Real computeQpResidual() override;
-    /// Required Jacobian function for standard kernels in MOOSE
-    /** This function returns a Jacobian contribution for this object. The Jacobian being
-        computed is the associated diagonal element in the overall Jacobian matrix for the
-        system and is used in preconditioning of the linear sub-problem. */
-    virtual Real computeQpJacobian() override;
+  /// Required residual function for standard kernels in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual() override;
+  /// Required Jacobian function for standard kernels in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+      computed is the associated diagonal element in the overall Jacobian matrix for the
+      system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian() override;
   /// Not Required, but aids in the preconditioning step
-    /** This function returns the off diagonal Jacobian contribution for this object. By
-        returning a non-zero value we will hopefully improve the convergence rate for the
-        cross coupling of the variables. */
-    virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
+  /** This function returns the off diagonal Jacobian contribution for this object. By
+      returning a non-zero value we will hopefully improve the convergence rate for the
+      cross coupling of the variables. */
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
-    const VariableGradient & _temp_grad;            ///< Coupled temperature variable (K)
-    const unsigned int _temp_var;                   ///< Variable identification for coupled temperature
+  const VariableGradient & _temp_grad; ///< Coupled temperature variable (K)
+  const unsigned int _temp_var;        ///< Variable identification for coupled temperature
 
 private:
-
 };

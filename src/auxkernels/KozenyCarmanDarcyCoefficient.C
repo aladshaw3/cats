@@ -28,28 +28,32 @@
 
 registerMooseObject("catsApp", KozenyCarmanDarcyCoefficient);
 
-InputParameters KozenyCarmanDarcyCoefficient::validParams()
+InputParameters
+KozenyCarmanDarcyCoefficient::validParams()
 {
-    InputParameters params = AuxKernel::validParams();
-    params.addCoupledVar("porosity",0.5,"Name of the bulk porosity variable");
-    params.addCoupledVar("viscosity",0.001,"Name of the viscosity variable (default = 10^-3 Pa*s)");
-    params.addCoupledVar("particle_diameter",0.01,"Average particle diameter of fibers/spheres/etc in the porous domain");
-    params.addParam< Real >("kozeny_carman_const",5.55,"Kozeny-Carman Constant for the porous media");
-    return params;
+  InputParameters params = AuxKernel::validParams();
+  params.addCoupledVar("porosity", 0.5, "Name of the bulk porosity variable");
+  params.addCoupledVar("viscosity", 0.001, "Name of the viscosity variable (default = 10^-3 Pa*s)");
+  params.addCoupledVar("particle_diameter",
+                       0.01,
+                       "Average particle diameter of fibers/spheres/etc in the porous domain");
+  params.addParam<Real>("kozeny_carman_const", 5.55, "Kozeny-Carman Constant for the porous media");
+  return params;
 }
 
-KozenyCarmanDarcyCoefficient::KozenyCarmanDarcyCoefficient(const InputParameters & parameters) :
-AuxKernel(parameters),
-_viscosity(coupledValue("viscosity")),
-_macro_pore(coupledValue("porosity")),
-_particle_dia(coupledValue("particle_diameter")),
-_K(getParam< Real >("kozeny_carman_const"))
+KozenyCarmanDarcyCoefficient::KozenyCarmanDarcyCoefficient(const InputParameters & parameters)
+  : AuxKernel(parameters),
+    _viscosity(coupledValue("viscosity")),
+    _macro_pore(coupledValue("porosity")),
+    _particle_dia(coupledValue("particle_diameter")),
+    _K(getParam<Real>("kozeny_carman_const"))
 {
-
 }
 
-Real KozenyCarmanDarcyCoefficient::computeValue()
+Real
+KozenyCarmanDarcyCoefficient::computeValue()
 {
-    return _particle_dia[_qp]*_particle_dia[_qp]*_macro_pore[_qp]*_macro_pore[_qp]*_macro_pore[_qp]/
-          _K/(_viscosity[_qp]+1e-15)/(1.0-_macro_pore[_qp])/(1.0-_macro_pore[_qp]);
+  return _particle_dia[_qp] * _particle_dia[_qp] * _macro_pore[_qp] * _macro_pore[_qp] *
+         _macro_pore[_qp] / _K / (_viscosity[_qp] + 1e-15) / (1.0 - _macro_pore[_qp]) /
+         (1.0 - _macro_pore[_qp]);
 }

@@ -29,67 +29,79 @@
 
 registerMooseObject("catsApp", AuxErgunPressure);
 
-InputParameters AuxErgunPressure::validParams()
+InputParameters
+AuxErgunPressure::validParams()
 {
-    InputParameters params = GasPropertiesBase::validParams();
-    params.addRequiredParam< unsigned int >("direction","Direction that the Ergun gradient acts on (0=x, 1=y, 2=z)");
-    params.addParam< bool >("is_inlet_press",true,"If true, calculation assumes given pressure is inlet pressure. If false, calculation assumes given pressure is outlet pressure.");
-    params.addRequiredCoupledVar("porosity","Name of the bulk porosity variable");
-    params.addParam< Real >("start_point",0.0,"Starting distance for pressure drop (m)");
-    params.addParam< Real >("end_point",-1.0,"Ending distance for pressure drop (m)");
-    return params;
+  InputParameters params = GasPropertiesBase::validParams();
+  params.addRequiredParam<unsigned int>(
+      "direction", "Direction that the Ergun gradient acts on (0=x, 1=y, 2=z)");
+  params.addParam<bool>("is_inlet_press",
+                        true,
+                        "If true, calculation assumes given pressure is inlet pressure. If false, "
+                        "calculation assumes given pressure is outlet pressure.");
+  params.addRequiredCoupledVar("porosity", "Name of the bulk porosity variable");
+  params.addParam<Real>("start_point", 0.0, "Starting distance for pressure drop (m)");
+  params.addParam<Real>("end_point", -1.0, "Ending distance for pressure drop (m)");
+  return params;
 }
 
-AuxErgunPressure::AuxErgunPressure(const InputParameters & parameters) :
-GasPropertiesBase(parameters),
-_dir(getParam<unsigned int>("direction")),
-_porosity(coupledValue("porosity")),
-_start(getParam<Real>("start_point")),
-_end(getParam<Real>("end_point")),
-_inlet(getParam<bool>("is_inlet_press"))
+AuxErgunPressure::AuxErgunPressure(const InputParameters & parameters)
+  : GasPropertiesBase(parameters),
+    _dir(getParam<unsigned int>("direction")),
+    _porosity(coupledValue("porosity")),
+    _start(getParam<Real>("start_point")),
+    _end(getParam<Real>("end_point")),
+    _inlet(getParam<bool>("is_inlet_press"))
 {
-    if (_dir < 0 || _dir > 2)
-    {
-        moose::internal::mooseErrorRaw("Invalid direction for pressure gradient!");
-    }
+  if (_dir < 0 || _dir > 2)
+  {
+    moose::internal::mooseErrorRaw("Invalid direction for pressure gradient!");
+  }
 
-    if (_inlet == false && _end == -1.0)
-    {
-        moose::internal::mooseErrorRaw("Must provide an end_point if given pressure is not inlet pressure!");
-    }
+  if (_inlet == false && _end == -1.0)
+  {
+    moose::internal::mooseErrorRaw(
+        "Must provide an end_point if given pressure is not inlet pressure!");
+  }
 }
 
-Real AuxErgunPressure::computeValue()
+Real
+AuxErgunPressure::computeValue()
 {
-    prepareEgret();
-    calculateAllProperties();
+  prepareEgret();
+  calculateAllProperties();
 
-    Real vis = _egret_dat.total_dyn_vis/1000.0*100.0;
-    Real dens = _egret_dat.total_density/1000.0*100.0*100.0*100.0;
-    Real vel = 0.0;
-    if (_dir == 0)
-    {
-        vel = _velx[_qp];
-    }
-    if (_dir == 1)
-    {
-        vel = _vely[_qp];
-    }
-    if (_dir == 2)
-    {
-        vel = _velz[_qp];
-    }
+  Real vis = _egret_dat.total_dyn_vis / 1000.0 * 100.0;
+  Real dens = _egret_dat.total_density / 1000.0 * 100.0 * 100.0 * 100.0;
+  Real vel = 0.0;
+  if (_dir == 0)
+  {
+    vel = _velx[_qp];
+  }
+  if (_dir == 1)
+  {
+    vel = _vely[_qp];
+  }
+  if (_dir == 2)
+  {
+    vel = _velz[_qp];
+  }
 
-    Real z = _q_point[_qp](_dir);
-    Real vis_term = 150.0*vis*(1.0-_porosity[_qp])*(1.0-_porosity[_qp])*_porosity[_qp]*vel/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
-    Real dens_term = 1.75*(1.0-_porosity[_qp])*_char_len[_qp]*dens*_porosity[_qp]*vel*_porosity[_qp]*fabs(vel)/(_porosity[_qp]*_porosity[_qp]*_porosity[_qp]*_char_len[_qp]*_char_len[_qp]);
+  Real z = _q_point[_qp](_dir);
+  Real vis_term =
+      150.0 * vis * (1.0 - _porosity[_qp]) * (1.0 - _porosity[_qp]) * _porosity[_qp] * vel /
+      (_porosity[_qp] * _porosity[_qp] * _porosity[_qp] * _char_len[_qp] * _char_len[_qp]);
+  Real dens_term =
+      1.75 * (1.0 - _porosity[_qp]) * _char_len[_qp] * dens * _porosity[_qp] * vel *
+      _porosity[_qp] * fabs(vel) /
+      (_porosity[_qp] * _porosity[_qp] * _porosity[_qp] * _char_len[_qp] * _char_len[_qp]);
 
-    if (_inlet == true)
-    {
-        return _press[_qp] - (vis_term+dens_term)*(z-_start);
-    }
-    else
-    {
-        return _press[_qp] + (vis_term+dens_term)*(_end-z);
-    }
+  if (_inlet == true)
+  {
+    return _press[_qp] - (vis_term + dens_term) * (z - _start);
+  }
+  else
+  {
+    return _press[_qp] + (vis_term + dens_term) * (_end - z);
+  }
 }

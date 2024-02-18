@@ -44,19 +44,18 @@
 class MonolithMicroscaleTotalThickness : public AuxKernel
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Standard MOOSE public constructor
-    MonolithMicroscaleTotalThickness(const InputParameters & parameters);
+  /// Standard MOOSE public constructor
+  MonolithMicroscaleTotalThickness(const InputParameters & parameters);
 
 protected:
-    /// Required MOOSE function override
-    virtual Real computeValue() override;
+  /// Required MOOSE function override
+  virtual Real computeValue() override;
 
 private:
-    Real _cell_density;        ///< Cell density of the monolith (cells per total face area)
-    const VariableValue & _bulk_porosity;       ///< Ratio of channel volume to total volume
-    Real _wall_factor;        ///< Multiplicity factor for the number of walls (default = 1)
-
+  Real _cell_density; ///< Cell density of the monolith (cells per total face area)
+  const VariableValue & _bulk_porosity; ///< Ratio of channel volume to total volume
+  Real _wall_factor; ///< Multiplicity factor for the number of walls (default = 1)
 };

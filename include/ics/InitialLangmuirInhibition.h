@@ -27,7 +27,7 @@
 #include "InitialCondition.h"
 
 #ifndef Rstd
-#define Rstd 8.3144621                        ///< Gas Constant in J/K/mol (or) L*kPa/K/mol (Standard Units)
+#define Rstd 8.3144621 ///< Gas Constant in J/K/mol (or) L*kPa/K/mol (Standard Units)
 #endif
 
 /// InitialLangmuirInhibition class object inherits from InitialCondition object
@@ -37,32 +37,33 @@
 class InitialLangmuirInhibition : public InitialCondition
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for BC objects in MOOSE
-    InitialLangmuirInhibition(const InputParameters & parameters);
+  /// Required constructor for BC objects in MOOSE
+  InitialLangmuirInhibition(const InputParameters & parameters);
 
 protected:
-    /// Function to compute all langmuir coefficients from temperature
-    void computeAllLangmuirCoeffs();
+  /// Function to compute all langmuir coefficients from temperature
+  void computeAllLangmuirCoeffs();
 
-    /// Function to compute the i-th term in the Langmuir function
-    Real computeLangmuirTerm(int i);
+  /// Function to compute the i-th term in the Langmuir function
+  Real computeLangmuirTerm(int i);
 
-    /// Required function override for IC objects in MOOSE
-    /** This function returns the value of the variable at point p in the mesh.*/
-    virtual Real value(const Point & p) override;
+  /// Required function override for IC objects in MOOSE
+  /** This function returns the value of the variable at point p in the mesh.*/
+  virtual Real value(const Point & p) override;
 
-    std::vector<Real> _langmuir_coef;                   ///< Langmuir Coefficients for the coupled variables (units are inverse concentration)
-    std::vector<Real> _pre_exp;                         ///< Pre-exponential factors for Langmuir coefficients
-    std::vector<Real> _beta;                            ///< Beta factors for the Langmuir coefficients
-    std::vector<Real> _act_energy;                      ///< Activation energies for Langmuir coefficients
-    std::vector<const VariableValue *> _coupled;        ///< Pointer list to the coupled gases (concentration units)
-    std::vector<unsigned int> _coupled_vars;            ///< Indices for the concentration species in the system
-    const VariableValue & _temp;                        ///< Coupled variable for temperature
-    const unsigned int _temp_var;                       ///< Index for the coupled temperature variable
+  std::vector<Real>
+      _langmuir_coef; ///< Langmuir Coefficients for the coupled variables (units are inverse concentration)
+  std::vector<Real> _pre_exp;    ///< Pre-exponential factors for Langmuir coefficients
+  std::vector<Real> _beta;       ///< Beta factors for the Langmuir coefficients
+  std::vector<Real> _act_energy; ///< Activation energies for Langmuir coefficients
+  std::vector<const VariableValue *>
+      _coupled; ///< Pointer list to the coupled gases (concentration units)
+  std::vector<unsigned int> _coupled_vars; ///< Indices for the concentration species in the system
+  const VariableValue & _temp;             ///< Coupled variable for temperature
+  const unsigned int _temp_var;            ///< Index for the coupled temperature variable
 
 private:
-
 };

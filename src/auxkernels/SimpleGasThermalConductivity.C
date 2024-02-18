@@ -27,30 +27,34 @@
 
 registerMooseObject("catsApp", SimpleGasThermalConductivity);
 
-InputParameters SimpleGasThermalConductivity::validParams()
+InputParameters
+SimpleGasThermalConductivity::validParams()
 {
-    InputParameters params = SimpleGasPropertiesBase::validParams();
-    params.addParam< std::string >("output_energy_unit","kJ","Energy units for gas thermal conductivity on output");
-    params.addParam< std::string >("output_length_unit","m","Length units for gas thermal conductivity on output");
-    params.addParam< std::string >("output_time_unit","s","Time units for gas thermal conductivity on output");
-    return params;
+  InputParameters params = SimpleGasPropertiesBase::validParams();
+  params.addParam<std::string>(
+      "output_energy_unit", "kJ", "Energy units for gas thermal conductivity on output");
+  params.addParam<std::string>(
+      "output_length_unit", "m", "Length units for gas thermal conductivity on output");
+  params.addParam<std::string>(
+      "output_time_unit", "s", "Time units for gas thermal conductivity on output");
+  return params;
 }
 
-SimpleGasThermalConductivity::SimpleGasThermalConductivity(const InputParameters & parameters) :
-SimpleGasPropertiesBase(parameters),
-_output_energy_unit(getParam<std::string >("output_energy_unit")),
-_output_length_unit(getParam<std::string >("output_length_unit")),
-_output_time_unit(getParam<std::string >("output_time_unit"))
+SimpleGasThermalConductivity::SimpleGasThermalConductivity(const InputParameters & parameters)
+  : SimpleGasPropertiesBase(parameters),
+    _output_energy_unit(getParam<std::string>("output_energy_unit")),
+    _output_length_unit(getParam<std::string>("output_length_unit")),
+    _output_time_unit(getParam<std::string>("output_time_unit"))
 {
-
 }
 
-Real SimpleGasThermalConductivity::computeValue()
+Real
+SimpleGasThermalConductivity::computeValue()
 {
-    // Kg [J/s/m/K]
-    Real Kg = 2.66E-04*pow(_temperature[_qp],0.805);
-    Kg = SimpleGasPropertiesBase::energy_conversion(Kg, "J", _output_energy_unit);
-    Kg = 1/SimpleGasPropertiesBase::length_conversion(1/Kg, "m", _output_length_unit);
-    Kg = 1/SimpleGasPropertiesBase::time_conversion(1/Kg, "s", _output_time_unit);
-    return Kg;
+  // Kg [J/s/m/K]
+  Real Kg = 2.66E-04 * pow(_temperature[_qp], 0.805);
+  Kg = SimpleGasPropertiesBase::energy_conversion(Kg, "J", _output_energy_unit);
+  Kg = 1 / SimpleGasPropertiesBase::length_conversion(1 / Kg, "m", _output_length_unit);
+  Kg = 1 / SimpleGasPropertiesBase::time_conversion(1 / Kg, "s", _output_time_unit);
+  return Kg;
 }

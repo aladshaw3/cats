@@ -21,31 +21,33 @@
 
 registerMooseObject("catsApp", SimpleGasViscosity);
 
-InputParameters SimpleGasViscosity::validParams()
+InputParameters
+SimpleGasViscosity::validParams()
 {
-    InputParameters params = SimpleGasPropertiesBase::validParams();
-    params.addParam< std::string >("output_length_unit","m","Length units for gas viscosity on output");
-    params.addParam< std::string >("output_mass_unit","kg","Mass units for gas viscosity on output");
-    params.addParam< std::string >("output_time_unit","s","Time units for gas viscosity on output");
+  InputParameters params = SimpleGasPropertiesBase::validParams();
+  params.addParam<std::string>(
+      "output_length_unit", "m", "Length units for gas viscosity on output");
+  params.addParam<std::string>("output_mass_unit", "kg", "Mass units for gas viscosity on output");
+  params.addParam<std::string>("output_time_unit", "s", "Time units for gas viscosity on output");
 
-    return params;
+  return params;
 }
 
-SimpleGasViscosity::SimpleGasViscosity(const InputParameters & parameters) :
-SimpleGasPropertiesBase(parameters),
-_output_length_unit(getParam<std::string >("output_length_unit")),
-_output_mass_unit(getParam<std::string >("output_mass_unit")),
-_output_time_unit(getParam<std::string >("output_time_unit"))
+SimpleGasViscosity::SimpleGasViscosity(const InputParameters & parameters)
+  : SimpleGasPropertiesBase(parameters),
+    _output_length_unit(getParam<std::string>("output_length_unit")),
+    _output_mass_unit(getParam<std::string>("output_mass_unit")),
+    _output_time_unit(getParam<std::string>("output_time_unit"))
 {
-
 }
 
-Real SimpleGasViscosity::computeValue()
+Real
+SimpleGasViscosity::computeValue()
 {
-    // mu [g/cm/s]
-    Real mu = 0.1458*pow(_temperature[_qp],1.5)/(110.4+_temperature[_qp])/10000;
-    mu = 1/SimpleGasPropertiesBase::length_conversion(1/mu, "cm", _output_length_unit);
-    mu = 1/SimpleGasPropertiesBase::time_conversion(1/mu, "s", _output_time_unit);
-    mu = SimpleGasPropertiesBase::mass_conversion(mu, "g", _output_mass_unit);
-    return mu;
+  // mu [g/cm/s]
+  Real mu = 0.1458 * pow(_temperature[_qp], 1.5) / (110.4 + _temperature[_qp]) / 10000;
+  mu = 1 / SimpleGasPropertiesBase::length_conversion(1 / mu, "cm", _output_length_unit);
+  mu = 1 / SimpleGasPropertiesBase::time_conversion(1 / mu, "s", _output_time_unit);
+  mu = SimpleGasPropertiesBase::mass_conversion(mu, "g", _output_mass_unit);
+  return mu;
 }

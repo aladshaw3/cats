@@ -29,45 +29,48 @@
 
 registerMooseObject("catsApp", SimpleGasKnudsenDiffusivity);
 
-InputParameters SimpleGasKnudsenDiffusivity::validParams()
+InputParameters
+SimpleGasKnudsenDiffusivity::validParams()
 {
-    InputParameters params = SimpleGasPropertiesBase::validParams();
-    params.addParam< std::string >("output_length_unit","m","Length units for mass transfer on output");
-    params.addParam< std::string >("output_time_unit","s","Time units for mass transfer on output");
-    params.addParam<Real>("molar_weight",28.97,"Molecular weight of the gas-species of interest (g/mol)");
+  InputParameters params = SimpleGasPropertiesBase::validParams();
+  params.addParam<std::string>(
+      "output_length_unit", "m", "Length units for mass transfer on output");
+  params.addParam<std::string>("output_time_unit", "s", "Time units for mass transfer on output");
+  params.addParam<Real>(
+      "molar_weight", 28.97, "Molecular weight of the gas-species of interest (g/mol)");
 
-    return params;
+  return params;
 }
 
-SimpleGasKnudsenDiffusivity::SimpleGasKnudsenDiffusivity(const InputParameters & parameters) :
-SimpleGasPropertiesBase(parameters),
-_output_length_unit(getParam<std::string >("output_length_unit")),
-_output_time_unit(getParam<std::string >("output_time_unit")),
-_molar_weight(getParam<Real>("molar_weight"))
+SimpleGasKnudsenDiffusivity::SimpleGasKnudsenDiffusivity(const InputParameters & parameters)
+  : SimpleGasPropertiesBase(parameters),
+    _output_length_unit(getParam<std::string>("output_length_unit")),
+    _output_time_unit(getParam<std::string>("output_time_unit")),
+    _molar_weight(getParam<Real>("molar_weight"))
 {
-
 }
 
-Real SimpleGasKnudsenDiffusivity::computeValue()
+Real
+SimpleGasKnudsenDiffusivity::computeValue()
 {
-    // Put diffusivity into cm^2/s
-    Real Dm = _ref_diffusivity*exp(-887.5*((1/_temperature[_qp])-(1/_ref_diff_temp)));
-    Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
-    Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
-    Dm = 1/SimpleGasPropertiesBase::time_conversion(1/Dm, _diff_time_unit, "s");
+  // Put diffusivity into cm^2/s
+  Real Dm = _ref_diffusivity * exp(-887.5 * ((1 / _temperature[_qp]) - (1 / _ref_diff_temp)));
+  Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
+  Dm = SimpleGasPropertiesBase::length_conversion(Dm, _diff_length_unit, "cm");
+  Dm = 1 / SimpleGasPropertiesBase::time_conversion(1 / Dm, _diff_time_unit, "s");
 
-    Real Dp = pow(_micro_pore[_qp],_eff_diff_factor)*Dm;
-    // ends up in cm^2/s
+  Real Dp = pow(_micro_pore[_qp], _eff_diff_factor) * Dm;
+  // ends up in cm^2/s
 
-    //Take given char_length and convert to cm to get Dk in cm^2/s
-    Real rp = SimpleGasPropertiesBase::length_conversion(_char_len[_qp], _char_len_unit, "cm");
-    Real Dk = 9700.0*rp*sqrt(_temperature[_qp]/_molar_weight);
+  // Take given char_length and convert to cm to get Dk in cm^2/s
+  Real rp = SimpleGasPropertiesBase::length_conversion(_char_len[_qp], _char_len_unit, "cm");
+  Real Dk = 9700.0 * rp * sqrt(_temperature[_qp] / _molar_weight);
 
-    //Calculate Deff in cm^2/s
-    Real Deff = 1/((1/Dk)+(1/Dp));
-    //Convert to desired units
-    Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
-    Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
-    Deff = 1/SimpleGasPropertiesBase::time_conversion(1/Deff, "s", _output_time_unit);
-    return Deff;
+  // Calculate Deff in cm^2/s
+  Real Deff = 1 / ((1 / Dk) + (1 / Dp));
+  // Convert to desired units
+  Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
+  Deff = SimpleGasPropertiesBase::length_conversion(Deff, "cm", _output_length_unit);
+  Deff = 1 / SimpleGasPropertiesBase::time_conversion(1 / Deff, "s", _output_time_unit);
+  return Deff;
 }

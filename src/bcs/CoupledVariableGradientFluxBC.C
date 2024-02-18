@@ -20,50 +20,53 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
- #include "CoupledVariableGradientFluxBC.h"
+#include "CoupledVariableGradientFluxBC.h"
 
- registerMooseObject("catsApp", CoupledVariableGradientFluxBC);
+registerMooseObject("catsApp", CoupledVariableGradientFluxBC);
 
- InputParameters CoupledVariableGradientFluxBC::validParams()
- {
-   InputParameters params = IntegratedBC::validParams();
-   params.addRequiredCoupledVar("coupled","Variable for the coupled gradient at the boundary");
-   params.addCoupledVar("coef",1.0,"Variable for the coupled coefficient");
-   return params;
- }
+InputParameters
+CoupledVariableGradientFluxBC::validParams()
+{
+  InputParameters params = IntegratedBC::validParams();
+  params.addRequiredCoupledVar("coupled", "Variable for the coupled gradient at the boundary");
+  params.addCoupledVar("coef", 1.0, "Variable for the coupled coefficient");
+  return params;
+}
 
- CoupledVariableGradientFluxBC::CoupledVariableGradientFluxBC(const InputParameters & parameters) :
- IntegratedBC(parameters),
- _coupled_grad(coupledGradient("coupled")),
- _coupled_var(coupled("coupled")),
+CoupledVariableGradientFluxBC::CoupledVariableGradientFluxBC(const InputParameters & parameters)
+  : IntegratedBC(parameters),
+    _coupled_grad(coupledGradient("coupled")),
+    _coupled_var(coupled("coupled")),
 
- _coef(coupledValue("coef")),
- _coef_var(coupled("coef"))
- {
+    _coef(coupledValue("coef")),
+    _coef_var(coupled("coef"))
+{
+}
 
- }
+Real
+CoupledVariableGradientFluxBC::computeQpResidual()
+{
+  return -_test[_i][_qp] * _coef[_qp] * (_coupled_grad[_qp] * _normals[_qp]);
+}
 
- Real CoupledVariableGradientFluxBC::computeQpResidual()
- {
- 	return -_test[_i][_qp]*_coef[_qp]*(_coupled_grad[_qp]*_normals[_qp]);
- }
+Real
+CoupledVariableGradientFluxBC::computeQpJacobian()
+{
+  return 0.0;
+}
 
- Real CoupledVariableGradientFluxBC::computeQpJacobian()
- {
- 	return 0.0;
- }
+Real
+CoupledVariableGradientFluxBC::computeQpOffDiagJacobian(unsigned int jvar)
+{
+  if (jvar == _coupled_var)
+  {
+    return -_test[_i][_qp] * _coef[_qp] * (_grad_phi[_j][_qp] * _normals[_qp]);
+  }
 
- Real CoupledVariableGradientFluxBC::computeQpOffDiagJacobian(unsigned int jvar)
- {
- 	if (jvar == _coupled_var)
- 	{
- 		return -_test[_i][_qp]*_coef[_qp]*(_grad_phi[_j][_qp]*_normals[_qp]);
- 	}
+  if (jvar == _coef_var)
+  {
+    return -_test[_i][_qp] * _phi[_j][_qp] * (_coupled_grad[_qp] * _normals[_qp]);
+  }
 
- 	if (jvar == _coef_var)
- 	{
- 		return -_test[_i][_qp]*_phi[_j][_qp]*(_coupled_grad[_qp]*_normals[_qp]);
- 	}
-
- 	return 0.0;
- }
+  return 0.0;
+}

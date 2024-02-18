@@ -30,38 +30,37 @@
 class MicroscaleVariableDiffusion : public MicroscaleDiffusion
 {
 public:
-    /// Required new syntax for InputParameters
-    static InputParameters validParams();
+  /// Required new syntax for InputParameters
+  static InputParameters validParams();
 
-    /// Required constructor for objects in MOOSE
-    MicroscaleVariableDiffusion(const InputParameters & parameters);
+  /// Required constructor for objects in MOOSE
+  MicroscaleVariableDiffusion(const InputParameters & parameters);
 
 protected:
-    /// Required residual function for standard kernels in MOOSE
-    /** This function returns a residual contribution for this object.*/
-    virtual Real computeQpResidual();
+  /// Required residual function for standard kernels in MOOSE
+  /** This function returns a residual contribution for this object.*/
+  virtual Real computeQpResidual();
 
-    /// Required Jacobian function for standard kernels in MOOSE
-    /** This function returns a Jacobian contribution for this object. The Jacobian being
-        computed is the associated diagonal element in the overall Jacobian matrix for the
-        system and is used in preconditioning of the linear sub-problem. */
-    virtual Real computeQpJacobian();
+  /// Required Jacobian function for standard kernels in MOOSE
+  /** This function returns a Jacobian contribution for this object. The Jacobian being
+      computed is the associated diagonal element in the overall Jacobian matrix for the
+      system and is used in preconditioning of the linear sub-problem. */
+  virtual Real computeQpJacobian();
 
-    /// Not Required, but aids in the preconditioning step
-    /** This function returns the off diagonal Jacobian contribution for this object. By
-        returning a non-zero value we will hopefully improve the convergence rate for the
-        cross coupling of the variables. */
-    virtual Real computeQpOffDiagJacobian(unsigned int jvar);
+  /// Not Required, but aids in the preconditioning step
+  /** This function returns the off diagonal Jacobian contribution for this object. By
+      returning a non-zero value we will hopefully improve the convergence rate for the
+      cross coupling of the variables. */
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-    const VariableValue & _current_diffusion;    ///< Variable for this node's diffusion
-    const unsigned int _current_diff_var;   ///< Variable identification for this diffusion
+  const VariableValue & _current_diffusion; ///< Variable for this node's diffusion
+  const unsigned int _current_diff_var;     ///< Variable identification for this diffusion
 
-    const VariableValue & _upper_diffusion;    ///< Variable for the upper diffusion
-    const unsigned int _upper_diff_var;   ///< Variable identification for the upper diffusion
+  const VariableValue & _upper_diffusion; ///< Variable for the upper diffusion
+  const unsigned int _upper_diff_var;     ///< Variable identification for the upper diffusion
 
-    const VariableValue & _lower_diffusion;    ///< Coupled variable for the lower diffusion
-    const unsigned int _lower_diff_var;   ///< Variable identification for the lower diffusion
+  const VariableValue & _lower_diffusion; ///< Coupled variable for the lower diffusion
+  const unsigned int _lower_diff_var;     ///< Variable identification for the lower diffusion
 
 private:
-
 };
