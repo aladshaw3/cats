@@ -73,6 +73,8 @@ To use CATS, a user must first download and install the MOOSE framework (https:/
 
 <code> ./run_tests -j 4 </code>
 
+Additional information available [here](https://mooseframework.inl.gov/getting_started/new_users.html).
+
 
 **NOTE**: The `wasp` library is now required in moose. You may need to run `./update_and_rebuild_wasp.sh` from the `scripts` directory of your `moose` folder. 
 If you still have trouble, try uninstalling and reinstalling `moose` from scratch. 
