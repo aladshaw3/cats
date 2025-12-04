@@ -680,6 +680,6 @@ rate_variable = 0.1
     print_linear_residuals = true
     exodus = true
     csv = true
-    interval = 1   #Number of time steps to wait before writing output
+time_step_interval = 1   #Number of time steps to wait before writing output
 [] #END Outputs
 
