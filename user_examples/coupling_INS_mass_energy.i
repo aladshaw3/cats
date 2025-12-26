@@ -892,5 +892,5 @@
     print_linear_residuals = true
     exodus = true
     csv = true
-    interval = 5
+    time_step_interval = 5
 [] #END Outputs

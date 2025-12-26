@@ -1,6 +1,6 @@
 ## Last Updated
 
-September 21, 2024
+December 25, 2025
 
 ## Build Status
 
@@ -33,18 +33,18 @@ To use CATS, a user must first download and install the MOOSE framework (https:/
 
  - Basic Instructions for the moose conda/mamba environment 
  
-<code> mamba init </code>
+<code> conda init </code>
 
-<code> mamba create -n moose moose-dev </code>
+<code> conda create -n moose moose-dev </code>
 
-<code> mamba activate moose </code>
+<code> conda activate moose </code>
 
  - Basic Instructions for keeping moose environment updated 
  
  
  (1) Update the conda environment 
  
-<code> mamba update --all </code>
+<code> conda update --all </code>
 
 
  (2) Update your moose folder

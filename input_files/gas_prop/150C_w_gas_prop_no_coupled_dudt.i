@@ -733,5 +733,5 @@
   print_linear_residuals = false
   exodus = true
   csv = true
-  interval = 1   #Number of time steps to wait before writing output
+  time_step_interval = 1   #Number of time steps to wait before writing output
 [] #END Outputs

@@ -1097,6 +1097,6 @@
     print_linear_residuals = true
     exodus = true
     csv = true
-    interval = 10   #Number of time steps to wait before writing output
+    time_step_interval = 10   #Number of time steps to wait before writing output
 [] #END Outputs
 

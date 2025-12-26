@@ -24,15 +24,15 @@ jobs:
         mamba-version: "*"
         channels: https://conda.software.inl.gov/public,conda-forge,defaults
         channel-priority: true
-        miniforge-variant: Mambaforge
+        miniforge-variant: Miniforge3
         miniforge-version: latest
         activate-environment: moose
     - name: Install dependencies
       shell: bash -l {0}
       run: |
-        mamba init
+        conda init
         conda activate moose
-        mamba install moose-dev
+        conda install moose-dev
     - name: Install MOOSE
       shell: bash -l {0}
       run: |

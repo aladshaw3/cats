@@ -3681,6 +3681,6 @@
     exodus = true
     csv = true
     print_linear_residuals = true
-    interval = 1
+    time_step_interval = 1
 
 [] #END Outputs
