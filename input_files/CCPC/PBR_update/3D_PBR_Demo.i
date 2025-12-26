@@ -1040,6 +1040,6 @@ initial_condition = 0.45       #kg/m^3  ( double check comsol calculations )
     print_linear_residuals = true
     exodus = true
     csv = true
-    interval = 20   #Number of time steps to wait before writing output
+    time_step_interval = 20   #Number of time steps to wait before writing output
 [] #END Outputs
 

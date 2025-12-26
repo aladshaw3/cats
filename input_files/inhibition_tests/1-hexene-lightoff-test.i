@@ -859,7 +859,7 @@ scale = 18.0
   print_linear_residuals = true
   exodus = true
   csv = true
-  interval = 1
+  time_step_interval = 1
 [] #END Outputs
 
 
