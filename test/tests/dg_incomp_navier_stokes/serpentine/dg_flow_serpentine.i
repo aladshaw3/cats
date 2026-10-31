@@ -518,7 +518,7 @@
   # NOTE: Add arg -ksp_view to get info on methods used at linear steps
   petsc_options = '-snes_converged_reason
 
-                    -ksp_gmres_modifiedgramschmidt'
+                    -ksp_orthogonalization'
 
   # NOTE: The sub_pc_type arg not used if pc_type is ksp,
   #       Instead, set the ksp_ksp_type to the pc method
@@ -530,12 +530,7 @@
   petsc_options_iname ='-ksp_type
                         -pc_type
 
-                        -snes_max_it
-
                         -ksp_pc_factor_shift_type
-
-                        -snes_atol
-                        -snes_rtol
 
                         -ksp_ksp_type
                         -ksp_pc_type'
@@ -544,12 +539,7 @@
   petsc_options_value = 'fgmres
                          ksp
 
-                         20
-
                          NONZERO
-
-                         1E-12
-                         1E-12
 
                          fgmres
                          lu'

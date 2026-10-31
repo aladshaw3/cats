@@ -1,3 +1,5 @@
+*.gz*
+*.rd*
 .libs
 *.la
 *.lo
