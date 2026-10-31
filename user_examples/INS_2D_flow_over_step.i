@@ -239,7 +239,7 @@
   scheme = implicit-euler
   petsc_options = '-snes_converged_reason
 
-                    -ksp_gmres_modifiedgramschmidt'
+                    -ksp_orthogonalization'
 
   # NOTE: The sub_pc_type arg not used if pc_type is ksp,
   #       Instead, set the ksp_ksp_type to the pc method
@@ -253,13 +253,8 @@
 
                         -sub_pc_type
 
-                        -snes_max_it
-
                         -sub_pc_factor_shift_type
                         -pc_asm_overlap
-
-                        -snes_atol
-                        -snes_rtol
 
                         -ksp_ksp_type
                         -ksp_pc_type'
@@ -270,11 +265,8 @@
 
                          lu
 
-                         10
                          NONZERO
                          20
-                         1E-8
-                         1E-10
 
                          fgmres
                          lu'

@@ -1720,7 +1720,7 @@
   # NOTE: Add arg -ksp_view to get info on methods used at linear steps
   petsc_options = '-snes_converged_reason
 
-                    -ksp_gmres_modifiedgramschmidt'
+                    -ksp_orthogonalization'
 
   # NOTE: The sub_pc_type arg not used if pc_type is ksp,
   #       Instead, set the ksp_ksp_type to the pc method
@@ -1733,8 +1733,6 @@
                         -pc_type
 
                         -sub_pc_type
-
-                        -snes_max_it
 
                         -sub_pc_factor_shift_type
                         -pc_asm_overlap
@@ -1751,11 +1749,8 @@
 
                          lu
 
-                         10
                          NONZERO
                          10
-                         1E-8
-                         1E-10
 
                          gmres
                          lu'

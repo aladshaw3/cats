@@ -60,7 +60,7 @@
   type = Steady
   line_search = bt
   petsc_options = '-snes_converged_reason
-                  -ksp_gmres_modifiedgramschmidt
+                  -ksp_orthogonalization
                   -ksp_view'
 
 	petsc_options_iname = '-ksp_type
@@ -81,7 +81,6 @@
                         -sub_pc_gasm_subdomains      -sub_pc_gasm_overlap
                         -ksp_pc_gasm_subdomains       -ksp_pc_gasm_overlap
 
-                        -snes_max_it     -snes_atol      -snes_rtol   -snes_stol
                         -ksp_max_it       -ksp_atol         -ksp_rtol'
 
 
@@ -104,7 +103,6 @@
                           3     50
                           3     50
 
-                          20     1e-8     1e-10   1e-10
                           100   1e-6     1e-6'
 []
 
