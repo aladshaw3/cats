@@ -167,8 +167,8 @@
 		type = SMP
 		full = true
 		petsc_options = '-snes_converged_reason'
-		petsc_options_iname = '-pc_type -sub_pc_type -pc_hypre_type -ksp_gmres_restart  -snes_max_funcs'
-		petsc_options_value = 'lu ilu boomeramg 2000 20000'
+		petsc_options_iname = '-pc_type -sub_pc_type -pc_hypre_type -ksp_gmres_restart'
+		petsc_options_value = 'lu ilu boomeramg 2000'
 	[../]
 
 [] #END Preconditioning

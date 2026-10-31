@@ -653,8 +653,8 @@
   type = Transient
   scheme = implicit-euler
   petsc_options = '-snes_converged_reason'
-  petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap -snes_atol -snes_rtol'
-  petsc_options_value = 'gmres lu ilu 100 NONZERO 2 1E-14 1E-12'
+  petsc_options_iname ='-ksp_type -pc_type -sub_pc_type -sub_pc_factor_shift_type -pc_asm_overlap'
+  petsc_options_value = 'gmres lu ilu NONZERO 2'
 
   #NOTE: LEAVE LINE_SEARCH ON (Use bt or l2)
   #NOTE: For some reason, changing the line_search option hurts the solution

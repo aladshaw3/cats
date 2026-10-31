@@ -2794,8 +2794,8 @@
   petsc_options = '-snes_converged_reason
                   -snes_linesearch_monitor
 
-                    -ksp_gmres_modifiedgramschmidt
-                    -ksp_ksp_gmres_modifiedgramschmidt'
+                    -ksp_orthogonalization
+                    -ksp_ksp_orthogonalization'
 
   # NOTE: The sub_pc_type arg not used if pc_type is ksp,
   #       Instead, set the ksp_ksp_type to the pc method
@@ -2811,16 +2811,11 @@
 
                         -sub_pc_type
 
-                        -snes_max_it
-
                         -sub_pc_factor_shift_type
                         -pc_factor_shift_type
                         -ksp_pc_factor_shift_type
 
                         -pc_asm_overlap
-
-                        -snes_atol
-                        -snes_rtol
 
                         -ksp_ksp_type
                         -ksp_pc_type
@@ -2846,16 +2841,11 @@
 
                          ilu
 
-                         50
-
                          NONZERO
                          NONZERO
                          NONZERO
 
                          20
-
-                         1E-10
-                         1E-8
 
                          fgmres
                          lu
