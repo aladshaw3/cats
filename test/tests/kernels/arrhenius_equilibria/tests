@@ -1,8 +1,8 @@
 [Tests]
   [./coupled_arrhenius_equilibria]
-    type = 'Exodiff'
+    type = 'CSVDiff'
     rel_err = 1e-2
     input = 'temp_coupled_arrhenius_equ.i'
-    exodiff = 'temp_coupled_arrhenius_equ_out.e'
+    csvdiff = 'temp_coupled_arrhenius_equ_out.csv'
   [../]
 []

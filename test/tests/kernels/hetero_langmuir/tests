@@ -1,8 +1,8 @@
 [Tests]
   [./hetero_langmuir_test]
-    type = 'Exodiff'
+    type = 'CSVDiff'
     rel_err = 1e-2
     input = 'lang_sorption.i'
-    exodiff = 'lang_sorption_out.e'
+    csvdiff = 'lang_sorption_out.csv'
   [../]
 []
