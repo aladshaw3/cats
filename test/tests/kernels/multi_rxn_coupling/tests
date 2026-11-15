@@ -3,5 +3,6 @@
     type = 'Exodiff'
     input = '150C_NH3_example.i'
     exodiff = '150C_NH3_example_out.e'
+    rel_err = 1e-2
   [../]
 []

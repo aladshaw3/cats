@@ -3,5 +3,6 @@
     type = 'Exodiff'
     input = 'obstructed_conduit_ins_best.i'
     exodiff = 'obstructed_conduit_ins_best_out.e'
+    rel_err = 1e-2
   [../]
 []

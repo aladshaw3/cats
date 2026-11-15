@@ -365,5 +365,5 @@
 [Outputs]
   print_linear_residuals = true
   exodus = true
-  csv = false
+  csv = true
 [] #END Outputs
