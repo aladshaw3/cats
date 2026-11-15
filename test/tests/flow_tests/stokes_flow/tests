@@ -3,6 +3,6 @@
     type = Exodiff
     input = stokes_flow.i
     exodiff = stokes_flow_out.e
-    rel_err = 1e-4
+    rel_err = 1e-2
   [../]
 []

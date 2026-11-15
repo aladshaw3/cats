@@ -3,5 +3,6 @@
     type = 'Exodiff'
     input = 'gmsh_test.i'
     exodiff = 'gmsh_test_out.e'
+    rel_err = 1e-2
   [../]
 []

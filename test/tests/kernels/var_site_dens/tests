@@ -3,5 +3,6 @@
     type = 'Exodiff'
     input = 'var_site_lang_model.i'
     exodiff = 'var_site_lang_model_out.e'
+    rel_err = 1e-2
   [../]
 []

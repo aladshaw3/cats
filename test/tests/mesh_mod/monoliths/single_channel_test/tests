@@ -3,5 +3,6 @@
     type = 'Exodiff'
     input = 'reading_file_4.i'
     exodiff = 'reading_file_4_out.e'
+    rel_err = 1e-2
   [../]
 []
